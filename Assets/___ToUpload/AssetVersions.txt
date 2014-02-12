@@ -1,0 +1,2 @@
+local-store.bytes,202,0
+{PLATFORM}/coverpack0.unity3d,2,1
