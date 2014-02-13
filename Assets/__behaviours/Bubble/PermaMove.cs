@@ -34,7 +34,7 @@ public class PermaMove : MonoBehaviour
 	{
 		if(!m_paused)
 		{
-			transform.position = transform.position + (m_direction.normalized * m_speed);
+			transform.position = transform.position + (m_direction.normalized * m_speed * Time.deltaTime);
 		}
 	}
 

@@ -86,6 +86,33 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		m_trumpetParent.SetActive(false);
 	}
 
+	public IEnumerator RainLetters(float duration = 2.5f, int numPerSpawn = 1)
+	{
+		WingroveAudio.WingroveRoot.Instance.PostEvent("BUBBLE_MOVE");
+		
+		m_topBoundary.SetActive(false);
+		
+		float minX = m_spawnLeft.transform.position.x;
+		float maxX = m_spawnRight.transform.position.x;
+		
+		float timeElapsed = 0;
+		while(timeElapsed < duration)
+		{
+			for(int i = 0; i < numPerSpawn; ++i)
+			{
+				GameObject newRainLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_rainLetterPrefab, m_spawnLeft);
+				m_spawnedObjects.Add(newRainLetter);
+				newRainLetter.transform.position = new Vector3(Random.Range(minX, maxX), newRainLetter.transform.position.y, newRainLetter.transform.position.z);
+			}
+			
+			timeElapsed += Time.deltaTime;
+			yield return null;
+		}
+		
+		WingroveAudio.WingroveRoot.Instance.PostEvent("BUBBLE_MOVE_STOP");
+	}
+
+	/*
 	public IEnumerator RainLetters(float duration = 6, int numPerSpawn = 5)
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BUBBLE_MOVE");
@@ -106,12 +133,12 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 			}
 
 			timeElapsed += Time.deltaTime;
-			Debug.Log(timeElapsed);
 			yield return null;
 		}
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BUBBLE_MOVE_STOP");
 	}
+	*/
 
 	public IEnumerator RainLettersNoFloor()
 	{
@@ -154,6 +181,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 	public IEnumerator ExplodeLetters()
 	{
+		m_troll.SetActive(true);
+
 		float range = 150f;
 		float minX = m_explosionLetterParent.transform.localPosition.x - range;
 		float maxX = m_explosionLetterParent.transform.localPosition.x + range;
@@ -164,7 +193,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		m_explosionLetterParent.transform.parent.gameObject.SetActive(true);
 		m_explosionLetterParent.transform.localScale = Vector3.zero;
 
-		float dropTweenDuration = 1f;
+		float dropTweenDuration = 4.8f;
 
 		Hashtable dropTweenVar = new Hashtable();
 		dropTweenVar.Add("position", m_dropFromPosition);
@@ -172,6 +201,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		dropTweenVar.Add("easetype", iTween.EaseType.linear);
 		iTween.MoveFrom(m_troll, dropTweenVar);
 		iTween.MoveFrom(m_explosionLetterParent, dropTweenVar);
+
+		WingroveAudio.WingroveRoot.Instance.PostEvent("BOMB_WHISTLE");
 
 		//iTween.MoveFrom(m_troll, m_dropFromPosition.position, dropTweenDuration);
 		//iTween.MoveFrom(m_explosionLetterParent, m_dropFromPosition.position, dropTweenDuration);
@@ -196,6 +227,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 			letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
 		}
 
+		WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
+
 		yield return new WaitForSeconds(3f);
 	}
 
@@ -211,14 +244,15 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		yield return null;
 	}
 
-	public IEnumerator NewHighScore(int score, float readDuration = 1.5f)
+	public IEnumerator NewHighScore(int score, float readDuration = 3f)
 	{
 		m_newHighScore.GetComponentInChildren<UILabel>().text = score.ToString();
 		yield return StartCoroutine(TweenText(m_newHighScore, readDuration));
 	}
 
-	public IEnumerator LevelUp(float readDuration = 0.8f)
+	public IEnumerator LevelUp(int level, float readDuration = 0.8f)
 	{
+		m_levelUp.GetComponentInChildren<UILabel>().text = level.ToString();
 		WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
 		yield return StartCoroutine(TweenText(m_levelUp, readDuration));
 	}
@@ -285,7 +319,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 		if(Input.GetKeyDown(KeyCode.E))
 		{
-			StartCoroutine(ExplodeLetters());
+			StartCoroutine(ExplodeLettersOffScreen());
 		}
 
 		if(Input.GetKeyDown(KeyCode.V))

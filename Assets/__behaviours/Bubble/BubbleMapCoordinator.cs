@@ -24,7 +24,11 @@ public class BubbleMapCoordinator : MonoBehaviour
 		}
 	}
 
-	static int m_lastHighScore;
+	static bool m_newHighScore;
+	public static void SetNewHighScore(bool newHighScore)
+	{
+		m_newHighScore = newHighScore;
+	}
 
 	static bool m_leveledUp;
 	public static void SetLeveledUp(bool leveledUp)
@@ -63,13 +67,31 @@ public class BubbleMapCoordinator : MonoBehaviour
 #if UNITY_EDITOR
 		if(m_resetProgress)
 		{
-			PlayerPrefs.SetInt(m_bubbleGame, 0);
-			SkillProgressInformation.Instance.SetProgress(m_bubbleGame, 0);
+			PlayerPrefs.SetInt("NewBubblePopLetters", 0);
+			SkillProgressInformation.Instance.SetProgress("NewBubblePopLetters", 0);
+
+			PlayerPrefs.SetInt("NewBubblePopWords", 0);
+			SkillProgressInformation.Instance.SetProgress("NewBubblePopWords", 0);
 		}
 #endif
 
 		ClickEvent[] points = UnityEngine.Object.FindObjectsOfType(typeof(ClickEvent)) as ClickEvent[];
 		Array.Sort(points, ComparePointsByName);
+
+		Debug.Log("CurrentSkillProgress: " + SkillProgressInformation.Instance.GetCurrentSkillProgress());
+
+		int maxLevel = SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1;
+
+		if(maxLevel < 2)
+		{
+			JourneyPip.Instance.SetCurrentPoint(points[0].transform);
+		}
+		else if(maxLevel >= points.Length - 1)
+		{
+			JourneyPip.Instance.SetCurrentPoint(points[points.Length - 1].transform);
+		}
+
+		Debug.Log("Max Level: " + maxLevel);
 		
 		for(int i = 0; i < points.Length; ++i)
 		{
@@ -77,35 +99,39 @@ public class BubbleMapCoordinator : MonoBehaviour
 			
 			int level = GetPointLevel(points[i]);
 			
-			if(level > SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1 || level == -1)
+			if(level > maxLevel || level == -1)
 			{
 				points[i].transform.FindChild("Face").GetComponent<UISprite>().spriteName = "icon_head_troll";
 				Destroy(points[i].GetComponent<WobbleGUIElement>());
 			}
-			else if(level == SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1 || i == points.Length - 1)
+			else if(level == maxLevel)
 			{
 				JourneyPip.Instance.SetCurrentPoint(points[i].transform);
 			}
 		}
 
+
 		// High Score
+
 		if(!PlayerPrefs.HasKey(m_bubbleGame))
 		{
 			PlayerPrefs.SetInt(m_bubbleGame, 0);
-			m_lastHighScore = 0;
 		}
 		
-		int newHighScore = PlayerPrefs.GetInt(m_bubbleGame);
-		m_highScoreLabel.text = newHighScore.ToString();
+		int highScore = PlayerPrefs.GetInt(m_bubbleGame);
+		m_highScoreLabel.text = highScore.ToString();
 
-		if(newHighScore > m_lastHighScore && newHighScore != 0)
+		/*
+		if(m_newHighScore && highScore != 0)
 		{
+			//Debug.Log(
 			yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
-			StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(newHighScore));
+			StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(highScore));
 			yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLettersOffScreen());
 		}
 
-		m_lastHighScore = newHighScore;
+		m_newHighScore = false;
+		*/
 
 
 		// Level Up
@@ -113,8 +139,8 @@ public class BubbleMapCoordinator : MonoBehaviour
 		//if(1 == 1)
 		{
 			StartCoroutine(CelebrationCoordinator.Instance.RainLettersThenFall());
-			yield return new WaitForSeconds(4.5f);
-			StartCoroutine(CelebrationCoordinator.Instance.LevelUp(1.5f));
+			yield return new WaitForSeconds(2f);
+			StartCoroutine(CelebrationCoordinator.Instance.LevelUp(maxLevel, 2f));
 		}
 
 		m_leveledUp = false;
@@ -148,7 +174,7 @@ public class BubbleMapCoordinator : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.D))
 		{
-			StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(m_lastHighScore));
+			StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(6));
 			StartCoroutine(CelebrationCoordinator.Instance.ExplodeLettersOffScreen());
 		}
 	}
@@ -158,10 +184,11 @@ public class BubbleMapCoordinator : MonoBehaviour
 	{
 		int level = GetPointLevel(point);
 		
-		if(level <= SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1 && level != -1)
+		if(point.GetComponent<WobbleGUIElement>() != null)
 		{
-			SkillProgressInformation.Instance.SetCurrentLevel(level); 
+			Debug.Log("Level: " + level);
 
+			SkillProgressInformation.Instance.SetCurrentLevel(level); 
 
 
 			TransitionScreen.Instance.ChangeLevel(m_bubbleGame, false);

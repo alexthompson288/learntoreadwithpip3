@@ -34,7 +34,20 @@ public class BuyAllButton : Singleton<BuyAllButton>
 	{
 		Debug.Log("BuyallButton.OnClick()");
 		StartCoroutine(SmallTween());
-		StartCoroutine(AttemptPurchase());
+
+		ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+		ParentGate.Instance.On();
+	}
+
+	void OnParentGateAnswer(bool isCorrect)
+	{
+		ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
+
+		if(isCorrect)
+		{
+			Debug.Log("Purchasing all books");
+			StartCoroutine(AttemptPurchase());
+		}
 	}
 
 	IEnumerator SmallTween()
@@ -99,7 +112,16 @@ public class BuyAllButton : Singleton<BuyAllButton>
 
 	void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
 	{
-		Debug.Log("PURCHASE SUCCESS");
+		Debug.Log("PURCHASE SUCCESS: ALL STORIES");
+
+		gameObject.SetActive(false);
+
+		BuyButton buyButton = UnityEngine.Object.FindObjectOfType(typeof(BuyAllButton)) as BuyButton;
+		if(buyButton != null)
+		{
+			buyButton.gameObject.SetActive(false);
+		}
+
 
 		PlayerPrefs.SetInt(m_playerPrefsKey, 1);
 

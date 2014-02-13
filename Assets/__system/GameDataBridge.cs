@@ -344,7 +344,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 		for(int i = setNum; i > 0; --i)
 		{
-			Debug.Log("Set: " + i);
+			//Debug.Log("Set: " + i);
 
 			DataTable setTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + i);
 
@@ -354,7 +354,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 				
 				foreach(string id in dataIds)
 				{
-					Debug.Log("id: " + id);
+					//Debug.Log("id: " + id);
 					DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataType + " WHERE id='" + id + "'");
 					
 					if(dataTable.Rows.Count > 0)
@@ -395,7 +395,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 		case ContentType.Sets:
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-			Debug.Log("setNum: " + setNum);
+			//Debug.Log("setNum: " + setNum);
 			if(inclusiveSets)
 			{
 				letterData = GetInclusiveSetData(setNum, "setphonemes", "phonemes");
@@ -437,7 +437,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			break;
 			
 		case ContentType.Custom:
-			Debug.Log("ContentInformation.Instance: " + ContentInformation.Instance);
+			//Debug.Log("ContentInformation.Instance: " + ContentInformation.Instance);
 			wordData.AddRange(ContentInformation.Instance.GetWords());
 			break;
 			

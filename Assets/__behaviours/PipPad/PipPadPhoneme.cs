@@ -41,9 +41,9 @@ public class PipPadPhoneme : MonoBehaviour {
 	        m_highlight.enabled = false;
 	        if (pbi.m_audioFilename != null)
 	        {
-				Debug.Log("audioFilename: " + pbi.m_audioFilename);
+				//Debug.Log("audioFilename: " + pbi.m_audioFilename);
 	            m_audioClip = AudioBankManager.Instance.GetAudioClip(pbi.m_audioFilename);
-				Debug.Log("m_audioClip: " + m_audioClip);
+				//Debug.Log("m_audioClip: " + m_audioClip);
 	            m_audioSource.clip = m_audioClip;
 	        }
 	        else

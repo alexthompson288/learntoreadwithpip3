@@ -8,15 +8,27 @@ public class BuyButton : MonoBehaviour
 		Debug.Log("BuyButton.OnClick()");
 		StartCoroutine(SmallTween());
 
-		NewStoryBrowserBookButton currentBook = InfoPanelBox.Instance.GetCurrentBook();
-
-		if(currentBook != null)
+		if(InfoPanelBox.Instance.GetCurrentBook() != null)
 		{
-			currentBook.Purchase();
+			ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+			ParentGate.Instance.On();
 		}
 		else
 		{
 			Debug.Log("InfoPanel has no current book");
+		}
+	}
+
+	void OnParentGateAnswer(bool isCorrect)
+	{
+		ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
+
+		NewStoryBrowserBookButton currentBook = InfoPanelBox.Instance.GetCurrentBook();
+		if(isCorrect && currentBook != null)
+		{
+			Debug.Log("Purchasing book");
+			currentBook.Purchase();
+			gameObject.SetActive(false);
 		}
 	}
 

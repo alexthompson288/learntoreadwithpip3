@@ -82,7 +82,11 @@ public class BubbleCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		AddToDataPool(true);
 
-		PipPadBehaviour.Instance.OnPadHide += OnPipPadHide;
+		if(m_dataType == GameDataBridge.DataType.Words || m_dataType == GameDataBridge.DataType.Keywords)
+		{
+			PipPadBehaviour.Instance.OnPadHide += OnPipPadHide;
+		}
+
 		m_benny.OnSingleClick += OnBennyClick;
 
 		m_spawnThreshold = m_bubbleDistanceLocator.position.y;
@@ -133,21 +137,16 @@ public class BubbleCoordinator : MonoBehaviour
 
 	IEnumerator SpawnBubbles()
 	{
-		HashSet<DataRow> spawnData = new HashSet<DataRow>();
+		List<DataRow> spawnData = new List<DataRow>();
 		
 		while(spawnData.Count < m_numSpawn)
 		{
-			DataRow data = m_targetData;
-			
-			if(Random.Range(0f, 1f) > m_probabilityTarget || m_targetData == null)
-			{
-				while(data == m_targetData)
-				{
-					data = m_dataPool[Random.Range(0, m_dataPool.Count)];
-				}
-			}
-			
-			spawnData.Add(data);
+			spawnData.Add(m_dataPool[Random.Range(0, m_dataPool.Count)]);
+		}
+
+		if(m_targetData != null && !spawnData.Contains(m_targetData))
+		{
+			spawnData[Random.Range(0, spawnData.Count)] = m_targetData;
 		}
 		
 		GameObject newBubbleParent = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_bubbleParentPrefab, m_bubbleParentLocator);
@@ -205,29 +204,36 @@ public class BubbleCoordinator : MonoBehaviour
 				lowestBubbleParent = bubbleParent;
 			}
 		}
-		
+
+
+		List<DataRow> newData = new List<DataRow>();
 		ClickableWidget[] bubbles = lowestBubbleParent.GetComponentsInChildren<ClickableWidget>() as ClickableWidget[];
-		
-		foreach(ClickableWidget bubble in bubbles)
+
+		for(int i = 0; i < bubbles.Length; ++i)
 		{
-			//bubble.EnableWidgets(true);
-			bubble.Off();
-			
-			DataRow data = m_targetData;
-			
-			if(Random.Range(0f, 1f) > m_probabilityTarget || m_targetData == null)
+			newData.Add(m_dataPool[Random.Range(0, m_dataPool.Count)]);
+		}
+
+		if(m_targetData != null && !newData.Contains(m_targetData))
+		{
+			newData[Random.Range(0, newData.Count)] = m_targetData;
+		}
+
+
+		for(int i = 0; i < bubbles.Length; ++i)
+		{
+			bubbles[i].collider.enabled = true;
+
+			bubbles[i].Off();
+
+			if(i < newData.Count)
 			{
-				while(data == m_targetData)
-				{
-					data = m_dataPool[Random.Range(0, m_dataPool.Count)];
-				}
+				bubbles[i].SetUp(newData[i]);
 			}
 			
-			bubble.SetUp(data);
-			
-			Vector3 newLocalPos = bubble.transform.localPosition;
+			Vector3 newLocalPos = bubbles[i].transform.localPosition;
 			newLocalPos.y = Random.Range(-m_bubbleHeightRange, m_bubbleHeightRange);
-			bubble.transform.localPosition = newLocalPos;
+			bubbles[i].transform.localPosition = newLocalPos;
 		}
 		
 		// Move bubble parent back to the top
@@ -252,6 +258,8 @@ public class BubbleCoordinator : MonoBehaviour
 
 	void OnBubbleClick(ClickableWidget bubbleBehaviour) 
 	{
+		bubbleBehaviour.collider.enabled = false;
+
 		if(m_targetData != null)
 		{
 			DataRow data = bubbleBehaviour.GetData();
@@ -326,16 +334,17 @@ public class BubbleCoordinator : MonoBehaviour
 		
 		m_exp = 0;
 		++m_expToLevelUp;
+
+		++m_currentLevel;
 		
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 		{
-			++m_currentLevel;
 			Debug.Log("New Level: " + m_currentLevel);
 			SkillProgressInformation.Instance.SetCurrentLevel(m_currentLevel);
 			AddToDataPool(false);
 		}
 
-		StartCoroutine(CelebrationCoordinator.Instance.LevelUp());
+		StartCoroutine(CelebrationCoordinator.Instance.LevelUp(m_currentLevel));
 	}
 
 	void AddToDataPool(bool inclusive)
@@ -402,13 +411,21 @@ public class BubbleCoordinator : MonoBehaviour
 			if(!PlayerPrefs.HasKey(highScoreKey) || m_score > PlayerPrefs.GetInt(highScoreKey))
 			{
 				PlayerPrefs.SetInt(highScoreKey, m_score);
-				StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(m_score));
-				yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLetters());
+
+				if(m_score != 0)
+				{
+					BubbleMapCoordinator.SetNewHighScore(true);
+					StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(m_score));
+					yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLetters());
+				}
 			}
 
-			if(m_currentLevel > SkillProgressInformation.Instance.GetCurrentSkillProgress())
+			Debug.Log("Current Level: " + m_currentLevel);
+			Debug.Log("Previous Best: " + SkillProgressInformation.Instance.GetCurrentSkillProgress());
+
+			if(m_currentLevel > SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1) // level is one-based, progress is zero-based
 			{
-				SkillProgressInformation.Instance.SetProgress(SkillProgressInformation.Instance.GetCurrentSkill(), m_currentLevel);
+				SkillProgressInformation.Instance.SetProgress(SkillProgressInformation.Instance.GetCurrentSkill(), m_currentLevel - 1); // level is one-based, progress is zero-based
 				BubbleMapCoordinator.SetLeveledUp(true);
 			}
 
@@ -459,10 +476,10 @@ public class BubbleCoordinator : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log("SayShortAudio()");
-			Debug.Log("m_targetData: " + m_targetData);
-			Debug.Log("id: " + m_targetData["id"].ToString());
-			Debug.Log("word: " + m_targetData["word"].ToString());
+			//Debug.Log("SayShortAudio()");
+			//Debug.Log("m_targetData: " + m_targetData);
+			//Debug.Log("id: " + m_targetData["id"].ToString());
+			//Debug.Log("word: " + m_targetData["word"].ToString());
 			clip = LoaderHelpers.LoadAudioForWord(m_targetData["word"].ToString());
 		}
 		

@@ -141,7 +141,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 		
 		string editedWord = StringHelpers.Edit(word);
 
-		Debug.Log("editedWord: " + editedWord);
+		//Debug.Log("editedWord: " + editedWord);
 
 		try
 		{

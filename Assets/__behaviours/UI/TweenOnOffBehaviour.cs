@@ -99,7 +99,6 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 
     public void On()
     {
-		Debug.Log("TweenOnOffBehaviour.On()");
         if (!m_isOn)
         {
             List<GoTween> existing = Go.tweensWithTarget(transform);
@@ -129,7 +128,6 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 
     public void Off(bool disableColliders = true)
     {
-		Debug.Log("TweenOnOffBehaviour.Off()");
         if (m_isOn)
         {
             List<GoTween> existing = Go.tweensWithTarget(transform);
