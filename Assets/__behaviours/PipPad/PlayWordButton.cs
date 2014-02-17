@@ -10,19 +10,23 @@ public class PlayWordButton : MonoBehaviour {
     [SerializeField]
     private GameObject m_hideObject;
 
+	AudioClip m_loadedAudio;
+
     public void SetWordAudio(string audioFilename)
     {
         AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(audioFilename);
         if (loadedAudio == null)
         {
+			Debug.Log("No audio found for say whole word button");
             m_hideObject.SetActive(false);
         }
         else
         {
             m_hideObject.SetActive(true);
             m_spriteAnim.PlayAnimation("ON");
-            m_audioSource.clip = loadedAudio;
+			m_loadedAudio = loadedAudio;
             collider.enabled = true;
+			Debug.Log("Whole word audio: " + loadedAudio);
         }
     }
 
@@ -34,10 +38,11 @@ public class PlayWordButton : MonoBehaviour {
 
     void OnClick()
     {
-		if(Application.loadedLevelName != "NewSoundButtonsBasic") // TODO: Make a proper fix for the bug where pressing this button in NewSoundButtonsBasic causes the question to be answered and an error thrown
-		{
+		Debug.Log("Say whole word clcicked");
+		//if(Application.loadedLevelName != "NewSoundButtonsBasic") // TODO: Make a proper fix for the bug where pressing this button in NewSoundButtonsBasic causes the question to be answered and an error thrown
+		//{
         	PipPadBehaviour.Instance.SayAll(0.0f);
-		}
+		//}
     }
 
     public void Speak()
@@ -47,10 +52,12 @@ public class PlayWordButton : MonoBehaviour {
 
     IEnumerator PlayWord()
     {
+		Debug.Log("PWB.PlayWord()");
         PipPadBehaviour.Instance.HighlightWholeWord();
-        PipPadBehaviour.Instance.ReShowWordImage();
+        //PipPadBehaviour.Instance.ReShowWordImage();
         collider.enabled = false;
         m_spriteAnim.PlayAnimation("OFF");
+		m_audioSource.clip = m_loadedAudio;
         m_audioSource.Play();
         while (m_audioSource.isPlaying)
         {

@@ -71,13 +71,12 @@ public class BuildConfigurationEditor : Editor {
 
     public override void OnInspectorGUI()
     {
-
         serializedObject.Update();
 
         BuildConfiguration bc = (BuildConfiguration)target;
 		//Debug.Log("Found BuildConfiguration");
 		//Debug.Log(Path.Combine(Application.dataPath, bc.m_outputFolder));
-
+		
         bool build = false;
         BuildTarget bt = BuildTarget.iPhone;
         
@@ -101,6 +100,28 @@ public class BuildConfigurationEditor : Editor {
             bt = BuildTarget.Android;
             build = true;
         }
+		if(GUILayout.Button("Log Var"))
+		{
+			//PlayerSettings.bundleIdentifier = bc.m_packageName;
+			//PlayerSettings.iPhoneBundleIdentifier = bc.m_packageName;
+			int[] tempSizes = PlayerSettings.GetIconSizesForTargetGroup(BuildTargetGroup.iPhone);
+			Debug.Log("sizes.Length: " + tempSizes.Length);
+			Texture2D[] tempTex = new Texture2D[tempSizes.Length];
+			for (int index = 0; index < tempSizes.Length; ++index)
+			{
+				Debug.Log("Size: " + tempSizes[index]);
+				if (tempSizes[index] <= 1024)
+				{
+					tempTex[index] = bc.m_icon;
+					Debug.Log("Icon: " + bc.m_icon);
+				}
+				else
+				{
+					tempTex[index] = bc.m_splashScreen;
+					Debug.Log("SplashScreen: " + bc.m_splashScreen);
+				}
+			}
+		}
 
         m_devBuild = EditorGUILayout.Toggle("Development build?", m_devBuild);
 
@@ -171,18 +192,23 @@ public class BuildConfigurationEditor : Editor {
             PlayerSettings.bundleIdentifier = bc.m_packageName;
             PlayerSettings.iPhoneBundleIdentifier = bc.m_packageName;
             int[] sizes = PlayerSettings.GetIconSizesForTargetGroup(BuildTargetGroup.iPhone);
+			Debug.Log("sizes.Length: " + sizes.Length);
             Texture2D[] tex = new Texture2D[sizes.Length];
             for (int index = 0; index < sizes.Length; ++index)
             {
+				Debug.Log("Size: " + sizes[index]);
                 if (sizes[index] <= 1024)
                 {
                     tex[index] = bc.m_icon;
+					Debug.Log("Icon: " + bc.m_icon);
                 }
                 else
                 {
                     tex[index] = bc.m_splashScreen;
+					Debug.Log("SplashScreen: " + bc.m_splashScreen);
                 }
             }
+
             PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.iPhone,
                 tex);
             PlayerSettings.iOS.applicationDisplayName = bc.m_applicationDisplayName;

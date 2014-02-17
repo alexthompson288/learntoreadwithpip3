@@ -42,12 +42,13 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 	List<GameObject> m_spawnedObjects = new List<GameObject>();
 
-	void Start()
+	IEnumerator Start()
 	{
 		m_textDefaultPos = m_newHighScore.transform.position;
-
-		m_trumpetParent.SetActive(false);
 		m_explosionLetterParent.transform.parent.gameObject.SetActive(false);
+
+		yield return new WaitForSeconds(0.3f); // TweenOnOffBehaviour on trumpets need to initialize before we disable the parent
+		m_trumpetParent.SetActive(false);
 	}
 
 	public IEnumerator Trumpet()
@@ -86,7 +87,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		m_trumpetParent.SetActive(false);
 	}
 
-	public IEnumerator RainLetters(float duration = 2.5f, int numPerSpawn = 1)
+	//public IEnumerator RainLetters(float duration = 2.5f, int numPerSpawn = 1)
+	public IEnumerator RainLetters(float duration = 2.5f, int numPerSpawn = 2)
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BUBBLE_MOVE");
 		
@@ -155,6 +157,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 	public IEnumerator RainLettersThenFall()
 	{
+		Debug.Log("RainThenFall");
 		yield return StartCoroutine(RainLetters());
 
 		yield return new WaitForSeconds(0.8f);

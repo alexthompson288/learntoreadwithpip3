@@ -156,4 +156,9 @@ public class ImageBlackboard : MonoBehaviour {
 		
 		m_movedWidgets = false;
 	}
+
+	public string GetImageName()
+	{
+		return m_texture.mainTexture.name;
+	}
 }

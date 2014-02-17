@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PipPadPhoneme : MonoBehaviour {
-
+public class PipPadPhoneme : MonoBehaviour 
+{
     [SerializeField]
     private GameObject m_singleButton;
     [SerializeField]
@@ -161,6 +161,7 @@ public class PipPadPhoneme : MonoBehaviour {
 		return m_isSecondInSplitDigraph;
 	}
 
+	/*
 	public void EnableButtons(bool active)
 	{
 		if(m_label.text.Length == 1 || !active)
@@ -179,6 +180,61 @@ public class PipPadPhoneme : MonoBehaviour {
 		}
 
 		m_letterCollider.gameObject.SetActive(active);
+	}
+	*/
+
+	public void EnableButtons(bool enable)
+	{
+		EnableSubButtons(enable);
+		EnableButtonSprites(enable);
+	}
+
+	public void EnableSubButtons(bool enable)
+	{
+		PipPadPhonemeSubButton[] subButtons = Object.FindObjectsOfType(typeof(PipPadPhonemeSubButton)) as PipPadPhonemeSubButton[];
+
+		foreach(PipPadPhonemeSubButton subButton in subButtons)
+		{
+			subButton.collider.enabled = enable;
+		}
+	}
+
+	public void EnableButtonSprites(bool enable)
+	{
+		UISprite sprite = m_singleButton.GetComponentInChildren<UISprite>() as UISprite;
+
+		if(sprite == null)
+		{
+			sprite = m_doubleButton.GetComponentInChildren<UISprite>() as UISprite;
+		}
+
+		if(sprite == null)
+		{
+			sprite = m_tripleButton.GetComponentInChildren<UISprite>() as UISprite;
+		}
+
+		if(sprite != null)
+		{
+			StartCoroutine(EnableIndividualButtonSprite(enable, sprite));
+		}
+	}
+
+	IEnumerator EnableIndividualButtonSprite(bool enable, UISprite sprite)
+	{
+		if(enable)
+		{
+			sprite.enabled = enable;
+		}
+
+		float tweenDuration = 0.1f;
+		Vector3 localScale = enable ? Vector3.one : Vector3.zero;
+		//iTween.ScaleTo(sprite.gameObject, localScale, tweenDuration);
+		TweenScale.Begin(sprite.gameObject, tweenDuration, localScale);
+
+		yield return new WaitForSeconds(tweenDuration + 0.1f);
+
+
+		sprite.enabled = enable;
 	}
 
 	public void EnableLetterCollider(bool active)

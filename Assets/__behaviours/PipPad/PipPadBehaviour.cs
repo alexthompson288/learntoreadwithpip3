@@ -9,6 +9,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	public delegate void PadHide();
 	public event PadHide OnPadHide;
 
+	public delegate void BlackboardClick(ImageBlackboard clickedBoard);
+	public event BlackboardClick OnBlackboardClick;
+
 	[SerializeField]
 	private Transform m_mainHierarchyTransform;
 	[SerializeField]
@@ -39,7 +42,6 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	List<GameObject> m_createdPhonemeButtons = new List<GameObject>();
 	
 	bool m_showing;
-	Texture2D m_currentWordImage;
 	bool m_noPhonemeButtons;
 	bool m_multipleBlackboardMode = false;
 	
@@ -56,8 +58,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	IEnumerator Start()
 	{
 		HideAllBlackboards();
-
-
+		
 		m_mainHierarchyTransform.gameObject.SetActive(false);
 		if (!m_dismissable)
 		{
@@ -153,7 +154,8 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			{
 				m_pipWordNotFound.On();
 			}
-			
+
+			Debug.Log("editedWord: " + editedWord);
 			m_sayWholeWordButton.SetWordAudio(editedWord);
 			
 			if (dt.Rows.Count > 0)
@@ -322,8 +324,20 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			m_additionalImageBlackboards[1].ShowImage(imageCTex, null, null, null);
 			m_additionalImageBlackboards[1].EnableClick();
 		}
-		
-		
+	}
+
+	public void ShowMultipleBlackboards(IList<string> list)
+	{
+		m_multipleBlackboardMode = true;
+
+		for(int i = 0; i < 1 + m_additionalImageBlackboards.Length && i < list.Count; ++i)
+		{
+			ImageBlackboard blackboard = (i == 0 ? m_imageBlackboard : m_additionalImageBlackboards[i - 1]);
+
+			Texture2D tex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + list[i]);
+			blackboard.ShowImage(tex, null, null, null);
+			blackboard.EnableClick();
+		}
 	}
 	
 	public void HideAllBlackboards()
@@ -369,6 +383,11 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			{
 				CorrectPictureGameCoordinator.Instance.WordClicked(2, clickedBlackboard);
 			}
+		}
+
+		if(OnBlackboardClick != null)
+		{
+			OnBlackboardClick(clickedBlackboard);
 		}
 	}
 	
@@ -436,9 +455,11 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	{
 		if (m_multipleBlackboardMode == false)
 		{
-			if (m_currentWordImage != null)
+			Texture2D currentWordImage = Resources.Load("Images/word_images_png_350/_" + m_currentEnglishWord) as Texture2D;
+
+			if (currentWordImage != null)
 			{
-				m_imageBlackboard.ShowImage(m_currentWordImage, null, null, null);
+				m_imageBlackboard.ShowImage(currentWordImage, null, null, null);
 			}
 		}
 	}
@@ -472,6 +493,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	
 	public void SayAll(float delay)
 	{
+		Debug.Log("PPB.SayAll()");
 		StopAllCoroutines();
 		StartCoroutine(SayAllCo(delay));
 	}
@@ -490,7 +512,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 						continue;
 					}
 					
-					phonemeButton.BroadcastMessage("OnClick", SendMessageOptions.DontRequireReceiver);
+					//phonemeButton.BroadcastMessage("OnClick", SendMessageOptions.DontRequireReceiver);
+					phonemeButton.GetComponent<PipPadPhoneme>().Activate();
+
 					yield return new WaitForSeconds(m_postPhonemeSpeakDelay);
 				}
 				yield return new WaitForSeconds(0.5f);
@@ -506,6 +530,28 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	public List<GameObject> GetCreatedPhonemes()
 	{
 		return m_createdPhonemeButtons;
+	}
+
+	public void EnableSayWholeWordButton(bool enable)
+	{
+		StartCoroutine(EnableSayWholeWordButtonCo(enable));
+	}
+
+	IEnumerator EnableSayWholeWordButtonCo(bool enable)
+	{
+		if(enable)
+		{
+			m_sayWholeWordButton.gameObject.SetActive(enable);
+		}
+		
+		Vector3 localScale = enable ? Vector3.one : Vector3.zero;
+		float tweenDuration = 0.1f;
+
+		iTween.ScaleTo(m_sayWholeWordButton.gameObject, localScale, tweenDuration);
+
+		yield return new WaitForSeconds(tweenDuration);
+		
+		m_sayWholeWordButton.gameObject.SetActive(enable);
 	}
 
 	public void EnableButtons(bool active)

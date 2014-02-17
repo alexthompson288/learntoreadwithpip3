@@ -190,7 +190,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 		{
 			draggable.TweenToPos(correctPhoneme.GetButtonPos());
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-			correctPhoneme.EnableButtons(true);
+			correctPhoneme.EnableSubButtons(true);
 			correctPhoneme.EnableDragCollider(false);
 			draggable.enabled = false;
 			++m_correctPhonemes;

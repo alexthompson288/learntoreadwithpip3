@@ -8,7 +8,7 @@ public class ChallengeMenuCoordinator : Singleton<ChallengeMenuCoordinator>
 	private string m_levelProgress;
 	[SerializeField]
 	private string m_starsProgress;
-	
+
 	IEnumerator Start ()
 	{
 		SkillProgressInformation.Instance.SetCurrentSkill(m_levelProgress);

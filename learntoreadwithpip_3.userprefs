@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Flashcards/FlashcardMapCoordinator.cs">
+    <Files>
+      <File FileName="Assets/__behaviours/Flashcards/FlashcardSetButton.cs" Line="45" Column="2" />
+      <File FileName="Assets/__behaviours/Flashcards/FlashcardMapCoordinator.cs" Line="50" Column="100" />
+      <File FileName="Assets/__behaviours/Celebration/CelebrationCoordinator.cs" Line="91" Column="2" />
+      <File FileName="Assets/__behaviours/Flashcards/FlashcardPlayCoordinator.cs" Line="176" Column="74" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

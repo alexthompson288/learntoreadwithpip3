@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{A82FFFD0-1B63-22C8-8AA2-FB3F350F39B3}</ProjectGuid>
+	<ProjectGuid>{056A5B35-C9C5-A1CD-7B23-95072F0E1398}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -19,7 +19,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_0;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_WIN</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_IPHONE;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;UNITY_IPHONE_API;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_GAMECENTER;UNITY_IOS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_0;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -39,10 +39,10 @@
 	<Reference Include="System.Core" />
 	<Reference Include="System.Xml.Linq" />
 	<Reference Include="UnityEngine">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
@@ -189,31 +189,31 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
      <None Include="Assets\_textures\font\pipfont.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
- <Reference Include="HOTween">
+ <Reference Include="Assets\HOTween\Plugins\HOTween">
  <HintPath>Assets\HOTween\Plugins\HOTween.dll</HintPath>
  </Reference>
- <Reference Include="Mono.Data">
+ <Reference Include="Assets\Plugins\Mono.Data">
  <HintPath>Assets\Plugins\Mono.Data.dll</HintPath>
  </Reference>
- <Reference Include="Mono.Data.Sqlite">
+ <Reference Include="Assets\Plugins\Mono.Data.Sqlite">
  <HintPath>Assets\Plugins\Mono.Data.Sqlite.dll</HintPath>
  </Reference>
- <Reference Include="Mono.Data.SqliteClient">
+ <Reference Include="Assets\Plugins\Mono.Data.SqliteClient">
  <HintPath>Assets\Plugins\Mono.Data.SqliteClient.dll</HintPath>
  </Reference>
- <Reference Include="P31RestKit">
+ <Reference Include="Assets\Plugins\Prime31\P31RestKit">
  <HintPath>Assets\Plugins\Prime31\P31RestKit.dll</HintPath>
  </Reference>
- <Reference Include="System.Configuration">
+ <Reference Include="Assets\Plugins\System.Configuration">
  <HintPath>Assets\Plugins\System.Configuration.dll</HintPath>
  </Reference>
- <Reference Include="System.Data">
+ <Reference Include="Assets\Plugins\System.Data">
  <HintPath>Assets\Plugins\System.Data.dll</HintPath>
  </Reference>
- <Reference Include="System.EnterpriseServices">
+ <Reference Include="Assets\Plugins\System.EnterpriseServices">
  <HintPath>Assets\Plugins\System.EnterpriseServices.dll</HintPath>
  </Reference>
- <Reference Include="System.Security">
+ <Reference Include="Assets\Plugins\System.Security">
  <HintPath>Assets\Plugins\System.Security.dll</HintPath>
  </Reference>
   </ItemGroup>

@@ -149,6 +149,11 @@ public class SkillProgressInformation : Singleton<SkillProgressInformation>
 		return prog.GetProgress(progressName);
 	}
 
+	public int IncrementCurrentSkillProgress()
+	{
+		return IncrementProgress(m_currentSkill);
+	}
+
 	public int IncrementCurrentStarSkillProgress() // TODO: This method should probably return void
 	{
 		Debug.Log("IncrementCurrentStarSkillProgress(): " + m_currentStarSkill);
