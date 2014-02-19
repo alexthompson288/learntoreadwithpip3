@@ -641,7 +641,39 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		return nonsenseData;
 	}
 
+	public bool SetContainsData(DataRow set, string setAttribute, string dataType)
+	{
+		string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
 
+		/*
+		Debug.Log("ids.Length: " + ids.Length);
+		foreach(string id in ids)
+		{
+			Debug.Log(id);
+		}
+		*/
+
+		return (ids.Length > 0);
+	}
+
+	public List<DataRow> GetSetData(DataRow set, string setAttribute, string dataType)
+	{
+		string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
+		
+		List<DataRow> data = new List<DataRow>();
+		
+		foreach(string id in ids)
+		{
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataType + " WHERE id='" + id + "'");
+			
+			if(dt.Rows.Count > 0)
+			{
+				data.Add(dt.Rows[0]);
+			}
+		}
+		
+		return data;
+	}
 
 	public List<DataRow> GetSetPhonemes(DataRow set)
 	{
