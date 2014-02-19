@@ -1,11 +1,9 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Flashcards/FlashcardMapCoordinator.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/LessonPlans/LessonMenuCoordinator.cs">
     <Files>
-      <File FileName="Assets/__behaviours/Flashcards/FlashcardSetButton.cs" Line="45" Column="2" />
-      <File FileName="Assets/__behaviours/Flashcards/FlashcardMapCoordinator.cs" Line="50" Column="100" />
-      <File FileName="Assets/__behaviours/Celebration/CelebrationCoordinator.cs" Line="91" Column="2" />
-      <File FileName="Assets/__behaviours/Flashcards/FlashcardPlayCoordinator.cs" Line="176" Column="74" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonInfo.cs" Line="6" Column="48" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonMenuCoordinator.cs" Line="13" Column="21" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
