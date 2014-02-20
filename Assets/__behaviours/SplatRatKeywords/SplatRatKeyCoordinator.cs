@@ -221,15 +221,9 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 
 	void FinishGame(int winningIndex)
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			SessionInformation.Instance.SetWinner(winningIndex);
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		SessionInformation.Instance.SetWinner(winningIndex);
+
+		PipHelpers.OnGameFinish();
 	}
 	
 	void StopPlayer(int index)

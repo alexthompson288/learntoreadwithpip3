@@ -179,16 +179,8 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 		if (winningIndex != -1)
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-			{
-				JourneyInformation.Instance.OnGameFinish();
-			}
-			else
-			{
-				SessionInformation.Instance.SetWinner(winningIndex);
-				yield return new WaitForSeconds(1.5f);
-				TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-			}
+			PipHelpers.SetDefaultPlayerVar();
+			PipHelpers.OnGameFinish();
 		}
 		else
 		{

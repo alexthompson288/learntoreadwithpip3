@@ -266,17 +266,11 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 
 	IEnumerator OnFinish(int winningIndex = 0)
 	{
-		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
+		SessionInformation.Instance.SetWinner(winningIndex);
 
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			SessionInformation.Instance.SetWinner(winningIndex);
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+
+		PipHelpers.OnGameFinish();		
 	}
 	
 	void StopPlayer(int index)

@@ -319,7 +319,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	{
 		if(Input.GetKeyDown(KeyCode.S))
 		{
-			OnGameFinish();
+			//OnGameFinish();
 		}
 	}
 #endif

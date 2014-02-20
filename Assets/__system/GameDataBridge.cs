@@ -15,14 +15,14 @@ public class GameDataBridge : Singleton<GameDataBridge>
     [SerializeField]
     private TextAsset m_localDatabase;
 
-	public enum DataType
+	public enum DataType // TODO: There should only be one place to reference data types in the whole project. Make a class called Data, give it an enum called Type
 	{
 		Letters,
 		Words,
 		Keywords,
 	}
 
-	public enum ContentType
+	public enum ContentType // TODO: Move this to the Data class
 	{
 		Sets,
 		Voyage,
@@ -304,7 +304,26 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		}
     }
 
-	public List<DataRow> GetSetData(int setNum, string columnName, string dataType)
+	public List<DataRow> GetSetData(DataRow set, string columnName, string tableName) // TODO: Store the correct values for these strings, all classes which call these functions should use these references
+	{
+		string[] ids = set[columnName].ToString().Replace("[", "").Replace("]", "").Split(',');
+		
+		List<DataRow> data = new List<DataRow>();
+		
+		foreach(string id in ids)
+		{
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
+			
+			if(dt.Rows.Count > 0)
+			{
+				data.Add(dt.Rows[0]);
+			}
+		}
+		
+		return data;
+	}
+
+	public List<DataRow> GetSetData(int setNum, string columnName, string tableName)
 	{
 		List<DataRow> dataList = new List<DataRow>();
 
@@ -320,7 +339,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 				{
 					try
 					{
-						DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataType + " WHERE id=" + System.Convert.ToInt32(id));
+						DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
 						
 						if(dataTable.Rows.Count > 0)
 						{
@@ -329,7 +348,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 					}
 					catch
 					{
-						Debug.Log("Invalid ID: " + id);
+						Debug.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
 					}
 				}
 			}
@@ -338,7 +357,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		return dataList;
 	}
 
-	public List<DataRow> GetInclusiveSetData(int setNum, string columnName, string dataType)
+	public List<DataRow> GetInclusiveSetData(int setNum, string columnName, string tableName)
 	{
 		List<DataRow> dataList = new List<DataRow>();
 
@@ -355,7 +374,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 				foreach(string id in dataIds)
 				{
 					//Debug.Log("id: " + id);
-					DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataType + " WHERE id='" + id + "'");
+					DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
 					
 					if(dataTable.Rows.Count > 0)
 					{
@@ -390,7 +409,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			break;
 
 		case ContentType.Custom:
-			letterData.AddRange(ContentInformation.Instance.GetLetters());
+			letterData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Letters));
 			break;
 
 		case ContentType.Sets:
@@ -438,7 +457,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			
 		case ContentType.Custom:
 			//Debug.Log("ContentInformation.Instance: " + ContentInformation.Instance);
-			wordData.AddRange(ContentInformation.Instance.GetWords());
+			wordData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Words));
 			break;
 			
 		case ContentType.Sets:
@@ -498,7 +517,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			break;
 			
 		case ContentType.Custom:
-			keywordData.AddRange(ContentInformation.Instance.GetKeywords());
+			keywordData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Keywords));
 			break;
 			
 		case ContentType.Sets:
@@ -654,25 +673,6 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		*/
 
 		return (ids.Length > 0);
-	}
-
-	public List<DataRow> GetSetData(DataRow set, string setAttribute, string dataType)
-	{
-		string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
-		
-		List<DataRow> data = new List<DataRow>();
-		
-		foreach(string id in ids)
-		{
-			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataType + " WHERE id='" + id + "'");
-			
-			if(dt.Rows.Count > 0)
-			{
-				data.Add(dt.Rows[0]);
-			}
-		}
-		
-		return data;
 	}
 
 	public List<DataRow> GetSetPhonemes(DataRow set)

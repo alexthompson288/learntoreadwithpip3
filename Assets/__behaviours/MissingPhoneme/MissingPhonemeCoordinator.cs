@@ -364,14 +364,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	
 	void EndGame ()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		PipHelpers.SetDefaultPlayerVar();
+		PipHelpers.OnGameFinish();
 	}
 
 	void DestroyDraggables ()

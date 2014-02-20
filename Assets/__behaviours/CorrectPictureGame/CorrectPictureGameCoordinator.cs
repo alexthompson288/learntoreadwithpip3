@@ -206,17 +206,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 	void FinishGame()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			SessionInformation.Instance.SetNumPlayers(1);
-			SessionInformation.Instance.SetWinner(0);
-			SessionInformation.Instance.SetPlayerIndex(0, 3);
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		PipHelpers.SetDefaultPlayerVar();
+		PipHelpers.OnGameFinish();
 	}
 
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)

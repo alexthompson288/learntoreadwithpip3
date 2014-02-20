@@ -15,6 +15,10 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 		m_selectedGames.Sort(CollectionHelpers.ComparePosX);
 
 		m_selectedGames[m_currentIndex].On(true);
+
+		//List<string> gameNames = LessonInfo.Instance.GetGames();
+
+		//LessonSelectableGame[] selectableGames = Object.FindObjectsOfType(typeof(LessonSelectableGame)) as LessonSelectableGame[];
 	}
 
 	void Update()
@@ -66,7 +70,7 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 			}
 		}
 
-		if(index < maxIndex)
+		if(index <= maxIndex)
 		{
 			if(m_currentIndex < m_selectedGames.Count)
 			{

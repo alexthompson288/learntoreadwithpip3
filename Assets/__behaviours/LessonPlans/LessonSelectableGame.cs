@@ -11,5 +11,10 @@ public class LessonSelectableGame : MonoBehaviour
 	void OnClick()
 	{
 		LessonGameCoordinator.Instance.OnClickSelectable((Texture2D)m_texture.mainTexture, m_gameSceneName);
-	}	
+	}
+
+	public string GetGameSceneName()
+	{
+		return m_gameSceneName;
+	}
 }

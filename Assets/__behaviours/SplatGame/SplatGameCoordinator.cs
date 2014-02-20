@@ -201,14 +201,8 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 	IEnumerator FinishGameCo()
 	{
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+
+		PipHelpers.OnGameFinish();
 	}
 	
 	AudioClip GetCurrentAudio()

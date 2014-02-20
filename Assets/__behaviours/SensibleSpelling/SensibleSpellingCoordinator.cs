@@ -168,14 +168,8 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 	
 	void EndGame ()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
-		{
-			JourneyInformation.Instance.OnGameFinish();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		PipHelpers.SetDefaultPlayerVar();
+		PipHelpers.OnGameFinish();
 	}
 	
 	IEnumerator OnQuestionEnd()

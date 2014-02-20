@@ -7,6 +7,10 @@ using System;
 public class LessonContentCoordinator : Singleton<LessonContentCoordinator> 
 {
 	[SerializeField]
+	private GameObject m_storyPrefab;
+	[SerializeField]
+	private Transform m_storyParent;
+	[SerializeField]
 	private GameObject m_setButtonPrefab;
 	[SerializeField]
 	private UIDraggablePanel m_setPanel;
@@ -26,8 +30,6 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	Color m_deselectColor;
 	[SerializeField]
 	Color m_targetColor;
-	[SerializeField]
-	ClickEvent m_nextButton;
 
 	LessonInfo.DataType m_dataType = LessonInfo.DataType.Letters;
 	string m_setAttribute = "setphonemes";
@@ -38,26 +40,23 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 	UISprite m_targetSprite = null;
 
+	UISprite m_currentDataSprite;
+	UISprite m_currentSetSprite;
+	
+	Vector3 m_contentGridDefaultPos;
+	Vector3 m_setGridDefaultPos;
+
 	// Use this for initialization
 	IEnumerator Start () 
 	{
+		m_contentGridDefaultPos = m_contentGrid.position;
+		m_setGridDefaultPos = m_setGrid.transform.position;
+
 		m_selectAllButton.OnSingleClick += OnClickAll;
-		m_nextButton.OnSingleClick += OnClickNext;
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		StartCoroutine(FillGrids());
-	}
-
-	void OnClickNext(ClickEvent clickBehaviour)
-	{
-		CreateLessonCamera.Instance.MoveToMenu(LessonGameCoordinator.Instance.transform);
-		Invoke("DisableSelf", CreateLessonCamera.Instance.GetTweenDuration());
-	}
-
-	void DisableSelf()
-	{
-		gameObject.SetActive(false);
 	}
 
 	void DestroyChildren(Transform parent)
@@ -73,48 +72,98 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		DestroyChildren(m_setGrid);
 		DestroyChildren(m_contentGrid);
+		DestroyChildren(m_storyParent);
 
 		yield return null;
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets ORDER BY number");
 
-		int firstSet = -1;
-		foreach(DataRow set in dt.Rows)
-		{
-			if(GameDataBridge.Instance.SetContainsData(set, m_setAttribute, m_contentAttribute))
-			{
-				GameObject newSetButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_setButtonPrefab, m_setGrid);
-				newSetButton.GetComponentInChildren<UILabel>().text = String.Format("Set {0}", set["number"].ToString());
-				newSetButton.GetComponent<UIDragPanelContents>().draggablePanel = m_setPanel;
-				newSetButton.GetComponent<ClickEvent>().SetData(set);
-				newSetButton.GetComponent<ClickEvent>().OnSingleClick += OnClickSet;
+		m_setGrid.position = m_setGridDefaultPos;
 
-				if(firstSet == -1)
+		if(dt.Rows.Count > 0)
+		{
+			List<DataRow> sets = dt.Rows;
+
+			int lowestSetNum = -1;
+			for(int i = 0; i < sets.Count; ++i)
+			{
+				if(GameDataBridge.Instance.SetContainsData(sets[i], m_setAttribute, m_contentAttribute))
 				{
-					firstSet = Convert.ToInt32(set["number"]);
+					GameObject newSetButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_setButtonPrefab, m_setGrid);
+					newSetButton.GetComponentInChildren<UILabel>().text = String.Format("Set {0}", sets[i]["number"].ToString());
+					newSetButton.GetComponent<UIDragPanelContents>().draggablePanel = m_setPanel;
+					newSetButton.GetComponent<ClickEvent>().SetData(sets[i]);
+					newSetButton.GetComponent<ClickEvent>().OnSingleClick += OnClickSet;
+
+					if(lowestSetNum == -1)
+					{
+						m_currentSetSprite = newSetButton.GetComponentInChildren<UISprite>() as UISprite;
+						m_currentSetSprite.color = m_selectColor;
+
+						lowestSetNum = Convert.ToInt32(sets[i]["number"]);
+					}
 				}
 			}
 
-			++firstSet;
+			m_setGrid.GetComponent<UIGrid>().Reposition();
+
+			if(m_dataType != LessonInfo.DataType.Stories)
+			{
+				StartCoroutine(FillContentGrid(lowestSetNum));
+			}
+			else
+			{
+				SpawnStory();
+			}
 		}
+	}
 
-		m_setGrid.GetComponent<UIGrid>().Reposition();
+	void SpawnStory()
+	{
+		DestroyChildren(m_storyParent);
 
-		//Debug.Log("firstSet: " + firstSet);
-		//StartCoroutine(FillContentGrid(firstSet));
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + 1);
+		
+		if(dt.Rows.Count > 0)
+		{
+			List<DataRow> data = GameDataBridge.Instance.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
 
-		StartCoroutine(FillContentGrid(1));
+			if(data.Count > 0)
+			{
+				DataRow storyData = data[0];
+				GameObject newStory = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyParent);
+				//newStory.GetComponentInChildren<UILabel>().text = storyData["title"].ToString();
+				newStory.GetComponent<ClickEvent>().SetData(storyData);
+				newStory.GetComponent<ClickEvent>().OnSingleClick += OnStoryClick;
+
+				string coverName = dt.Rows[0]["storycoverartwork"] == null ? "" : dt.Rows[0]["storycoverartwork"].ToString().Replace(".png", "");
+				Texture2D coverTex = LoaderHelpers.LoadObject<Texture2D>("Images/story_covers/" + coverName);
+
+				if(coverTex != null)
+				{
+					newStory.GetComponentInChildren<UITexture>().mainTexture = coverTex;
+				}
+
+				if(LessonInfo.Instance.HasData(Convert.ToInt32(storyData), m_dataType))
+				{
+					newStory.GetComponentInChildren<UISprite>().color = m_selectColor;
+				}
+			}
+		}
 	}
 
 	IEnumerator FillContentGrid(int setNum)
 	{
 		DestroyChildren(m_contentGrid);
+
 		m_contentIds.Clear();
 		m_targetSprite = null;
 
 		yield return null;
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
+
+		m_contentGrid.position = m_contentGridDefaultPos;
 
 		if(dt.Rows.Count > 0)
 		{
@@ -154,6 +203,10 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		m_contentGrid.GetComponent<UIGrid>().Reposition();
 
 		UpdateSelectAllButton();
+	}
+
+	void OnStoryClick(ClickEvent clickBehaviour)
+	{
 	}
 
 	void OnClickAll(ClickEvent clickBehaviour)
@@ -259,8 +312,24 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 	void OnClickSet(ClickEvent clickBehaviour)
 	{
+		if(m_currentSetSprite != null)
+		{
+			m_currentSetSprite.color = m_deselectColor;
+		}
+
+		m_currentSetSprite = clickBehaviour.GetComponentInChildren<UISprite>() as UISprite;
+		m_currentSetSprite.color = m_selectColor;
+
 		int setNum = Convert.ToInt32(clickBehaviour.GetData()["number"]);
-		StartCoroutine(FillContentGrid(setNum));
+
+		if(m_dataType != LessonInfo.DataType.Stories)
+		{
+			StartCoroutine(FillContentGrid(setNum));
+		}
+		else
+		{
+			SpawnStory();
+		}
 	}
 
 	public void ChangeDataType(LessonInfo.DataType dataType)
@@ -292,5 +361,15 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		}
 
 		StartCoroutine(FillGrids());
+	}
+
+	public Color GetSelectColor()
+	{
+		return m_selectColor;
+	}
+
+	public Color GetDeselectColor()
+	{
+		return m_deselectColor;
 	}
 }

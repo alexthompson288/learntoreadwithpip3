@@ -22,14 +22,25 @@ public class LessonMenuCoordinator : MonoBehaviour
 		{
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseLessonButtonPrefab, m_grid.transform);
 			newButton.GetComponent<ClickEvent>().OnSingleClick += ChooseLesson;
+			m_spawnedButtons.Add(newButton.GetComponent<ClickEvent>() as ClickEvent);
 			newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
 			newButton.GetComponentInChildren<UILabel>().text = lesson;
 		} 
 		yield return null;
+
+		m_grid.Reposition();
 	}
 
 	void ChooseLesson(ClickEvent clickBehaviour)
 	{
-		LessonInfo.Instance.SetCurrentLesson(m_spawnedButtons.IndexOf(clickBehaviour));
+		int lessonIndex = m_spawnedButtons.IndexOf(clickBehaviour);
+
+		if(lessonIndex < 0)
+		{
+			lessonIndex = 0;
+		}
+
+		LessonInfo.Instance.SetCurrentLesson(lessonIndex);
+		LessonInfo.Instance.StartGames();
 	}
 }
