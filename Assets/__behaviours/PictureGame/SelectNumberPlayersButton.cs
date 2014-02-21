@@ -11,6 +11,7 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 	// TODO: Remove all references to m_pictureGameMenu when GameMenu has been completely deprecated
     void OnClick()
     {
+		/*
 		if(m_pictureGameMenu != null)
 		{
         	m_pictureGameMenu.SelectPlayerCount(m_numPlayers);
@@ -20,5 +21,7 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 		{
 			LevelMenuCoordinator.Instance.SelectPlayerCount(m_numPlayers);
 		}
+		*/
+		GameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);
     }
 }

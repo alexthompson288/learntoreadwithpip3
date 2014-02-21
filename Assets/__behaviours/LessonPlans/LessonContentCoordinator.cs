@@ -9,7 +9,9 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	[SerializeField]
 	private GameObject m_storyPrefab;
 	[SerializeField]
-	private Transform m_storyParent;
+	private Transform m_storyGrid;
+	[SerializeField]
+	private UIDraggablePanel m_storyPanel;
 	[SerializeField]
 	private GameObject m_setButtonPrefab;
 	[SerializeField]
@@ -45,12 +47,14 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	
 	Vector3 m_contentGridDefaultPos;
 	Vector3 m_setGridDefaultPos;
+	Vector3 m_storyGridDefaultPos;
 
 	// Use this for initialization
 	IEnumerator Start () 
 	{
 		m_contentGridDefaultPos = m_contentGrid.position;
 		m_setGridDefaultPos = m_setGrid.transform.position;
+		m_storyGridDefaultPos = m_storyGrid.transform.position;
 
 		m_selectAllButton.OnSingleClick += OnClickAll;
 
@@ -72,7 +76,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		DestroyChildren(m_setGrid);
 		DestroyChildren(m_contentGrid);
-		DestroyChildren(m_storyParent);
+		DestroyChildren(m_storyGrid);
 
 		yield return null;
 
@@ -113,49 +117,54 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 			}
 			else
 			{
-				SpawnStory();
+				StartCoroutine(FillStoryGrid(lowestSetNum));
 			}
 		}
 	}
 
-	void SpawnStory()
+	IEnumerator FillStoryGrid(int setNum)
 	{
-		DestroyChildren(m_storyParent);
+		m_contentIds.Clear();
+		m_targetSprite = null;
+		
+		yield return null;
 
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + 1);
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
+
+		m_storyGrid.position = m_storyGridDefaultPos;
 		
 		if(dt.Rows.Count > 0)
 		{
 			List<DataRow> data = GameDataBridge.Instance.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
-
-			if(data.Count > 0)
+			Debug.Log(String.Format("Found {0} stories", data.Count));
+			
+			for(int i = 0; i < data.Count; ++i)
 			{
-				DataRow storyData = data[0];
-				GameObject newStory = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyParent);
-				//newStory.GetComponentInChildren<UILabel>().text = storyData["title"].ToString();
-				newStory.GetComponent<ClickEvent>().SetData(storyData);
-				newStory.GetComponent<ClickEvent>().OnSingleClick += OnStoryClick;
-
-				string coverName = dt.Rows[0]["storycoverartwork"] == null ? "" : dt.Rows[0]["storycoverartwork"].ToString().Replace(".png", "");
+				GameObject newStory = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyGrid);
+				newStory.GetComponent<UIDragPanelContents>().draggablePanel = m_storyPanel;
+				newStory.GetComponent<ClickEvent>().SetData(data[i]);
+				newStory.GetComponent<ClickEvent>().OnSingleClick += OnClickStory;
+				
+				string coverName = data[i]["storycoverartwork"] == null ? "" : data[i]["storycoverartwork"].ToString().Replace(".png", "");
 				Texture2D coverTex = LoaderHelpers.LoadObject<Texture2D>("Images/story_covers/" + coverName);
-
+				
 				if(coverTex != null)
 				{
 					newStory.GetComponentInChildren<UITexture>().mainTexture = coverTex;
 				}
-
-				if(LessonInfo.Instance.HasData(Convert.ToInt32(storyData), m_dataType))
+				
+				if(LessonInfo.Instance.HasData(Convert.ToInt32(data[i]["id"]), m_dataType))
 				{
 					newStory.GetComponentInChildren<UISprite>().color = m_selectColor;
 				}
 			}
 		}
+
+		m_storyGrid.GetComponent<UIGrid>().Reposition();
 	}
 
 	IEnumerator FillContentGrid(int setNum)
 	{
-		DestroyChildren(m_contentGrid);
-
 		m_contentIds.Clear();
 		m_targetSprite = null;
 
@@ -205,9 +214,6 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		UpdateSelectAllButton();
 	}
 
-	void OnStoryClick(ClickEvent clickBehaviour)
-	{
-	}
 
 	void OnClickAll(ClickEvent clickBehaviour)
 	{
@@ -244,6 +250,28 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		}
 
 		UpdateSelectAllButton();
+	}
+
+	void OnClickStory(ClickEvent clickBehaviour) // TODO
+	{
+		int storyId = System.Convert.ToInt32(clickBehaviour.GetData()["id"]);
+
+		bool addStory = !LessonInfo.Instance.HasData(storyId, LessonInfo.DataType.Stories); // If LessonInfo does not have the story then we will add it
+
+		// Clear all story data and set the sprites to deselect color. Only one story can be saved at a time
+		LessonInfo.Instance.ClearData(LessonInfo.DataType.Stories); // m_dataType should be stories, but I hard coded the datatype to be safe
+		
+		int childCount = m_storyGrid.childCount;
+		for(int i = 0; i < childCount; ++i)
+		{
+			m_storyGrid.GetChild(i).GetComponentInChildren<UISprite>().color = m_deselectColor;
+		}
+
+		if(addStory)
+		{
+			LessonInfo.Instance.AddData(storyId, LessonInfo.DataType.Stories);
+			clickBehaviour.GetComponentInChildren<UISprite>().color = m_selectColor;
+		}
 	}
 
 	void OnClickContent(ClickEvent clickBehaviour)
@@ -322,13 +350,16 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		int setNum = Convert.ToInt32(clickBehaviour.GetData()["number"]);
 
+		DestroyChildren(m_contentGrid);
+		DestroyChildren(m_storyGrid);
+
 		if(m_dataType != LessonInfo.DataType.Stories)
 		{
 			StartCoroutine(FillContentGrid(setNum));
 		}
 		else
 		{
-			SpawnStory();
+			StartCoroutine(FillStoryGrid(setNum));
 		}
 	}
 

@@ -350,6 +350,22 @@ public class LessonInfo : Singleton<LessonInfo>
 				}
 			}
 		}
+
+		public void ClearData(DataType dataType)
+		{
+			if(dataType == DataType.Letters)
+			{
+				m_letters.Clear();
+			}
+			else if(dataType == DataType.Words)
+			{
+				m_words.Clear();
+			}
+			else
+			{
+				m_keywords.Clear();
+			}
+		}
 	}
 	
 	public string GetName()
@@ -508,6 +524,11 @@ public class LessonInfo : Singleton<LessonInfo>
 	public void RemoveData(int id, DataType dataType)
 	{
 		m_currentLesson.RemoveData(id, dataType);
+	}
+
+	public void ClearData(DataType dataType)
+	{
+		m_currentLesson.ClearData(dataType);
 	}
 
 	void Load()

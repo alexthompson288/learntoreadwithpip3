@@ -94,6 +94,10 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 				}
 			}
 		}
+		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		{
+			m_currentLetterData = LessonInfo.Instance.GetTargetData(LessonInfo.DataType.Keywords);
+		}
 		
 		if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme
 		{

@@ -7,6 +7,18 @@ public class LessonSelectableGame : MonoBehaviour
 	private UITexture m_texture;
 	[SerializeField]
 	private string m_gameSceneName;
+	[SerializeField]
+	private string m_gameUserName;
+
+	void Start()
+	{
+		if(System.String.IsNullOrEmpty(m_gameUserName))
+		{
+			m_gameUserName = m_gameSceneName.Replace("New", "");
+		}
+
+		GetComponentInChildren<UILabel>().text = m_gameUserName;
+	}
 
 	void OnClick()
 	{

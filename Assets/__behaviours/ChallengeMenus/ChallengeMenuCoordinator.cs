@@ -16,13 +16,13 @@ public class ChallengeMenuCoordinator : Singleton<ChallengeMenuCoordinator>
 
 		if(GetStarsProgress() >= SkillProgressInformation.Instance.GetStarsPerLevel())
 		{
-			yield return new WaitForSeconds(StarBar.Instance.GetLevelUpDelay());
+			//yield return new WaitForSeconds(StarBar.Instance.GetLevelUpDelay());
 
 			SkillProgressInformation.Instance.IncrementProgress(m_levelProgress);
 			SkillProgressInformation.Instance.SetProgress(m_starsProgress, 0);
 
 			// Call level up functions
-			yield return StartCoroutine(StarBar.Instance.LevelUp());
+			//yield return StartCoroutine(StarBar.Instance.LevelUp());
 			PipPlane.Instance.LevelUp();
 		}
 

@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class StarBar : Singleton<StarBar> 
+public class StarBar : MonoBehaviour
 {
+	[SerializeField]
+	private ChooseSkill m_skill;
 	[SerializeField]
 	private GameObject m_starPrefab;
 	[SerializeField]
@@ -24,8 +26,23 @@ public class StarBar : Singleton<StarBar>
 
 	void Start ()
 	{
-		SetUp();
+		string levelSkill = m_skill.GetLevelSkill();
+		string starSkill = m_skill.GetStarSkill();
+
+		if(SkillProgressInformation.Instance.GetProgress(starSkill) >= SkillProgressInformation.Instance.GetStarsPerLevel())
+		{
+			SkillProgressInformation.Instance.IncrementProgress(levelSkill);
+			SkillProgressInformation.Instance.SetProgress(starSkill, 0);
+		}
+
+		int starsEarned = SkillProgressInformation.Instance.GetProgress(starSkill);
+		int starsTotal = SkillProgressInformation.Instance.GetStarsPerLevel();
+		
+		SpawnStars(starsEarned, starsTotal);
+		
+		m_numberLabel.text = (SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1).ToString();
 	}
+	
 
 	public IEnumerator LevelUp()
 	{
@@ -69,12 +86,9 @@ public class StarBar : Singleton<StarBar>
 			
 			if(index < starsEarned)
 			{
-
-				iTween.PunchScale(newStar, new Vector3(1.5f, 1.5f, 1.5f), m_onTweenDuration);
-				iTween.PunchRotation(newStar, new Vector3(0f, 0f, 360f), m_onTweenDuration);
+				//iTween.PunchScale(newStar, new Vector3(1.5f, 1.5f, 1.5f), m_onTweenDuration);
+				//iTween.PunchRotation(newStar, new Vector3(0f, 0f, 360f), m_onTweenDuration);
 				m_spawnedStars[index].GetComponent<UISprite>().spriteName = m_starOnString;
-
-				//newStar.GetComponent<Star>().On();
 			}
 		}
 	}

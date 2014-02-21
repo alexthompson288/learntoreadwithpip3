@@ -32,6 +32,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
 	string m_currentLanguage = "text";
 
+	int m_storyID = 52;
+
 	// Use this for initialization
     IEnumerator Start() 
     {
@@ -39,8 +41,22 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + 52 + "'");
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		{
+			List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+
+			if(storyData.Count > 0)
+			{
+				m_storyID = System.Convert.ToInt32(storyData[0]["id"]);
+			}
+		}
+		else
+		{
+			m_storyID = SessionInformation.Instance.GetBookId();
+		}
+
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "'");
+		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
 		m_numPages = dt.Rows.Count;
 		Debug.Log("There are " + m_numPages + " pages");
 
@@ -51,9 +67,13 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
     IEnumerator LoadAssetBundle()
     {
-        DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
-            "select * from stories where id='"+SessionInformation.Instance.GetBookId()+
-            "' ");
+        //DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
+            //"select * from stories where id='"+SessionInformation.Instance.GetBookId()+
+            //"' ");
+
+		DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
+			"select * from stories where id='"+ m_storyID +
+			"' ");
 
         if ( dataTable.Rows.Count > 0 )
         {
@@ -171,8 +191,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 			m_pageCount.text = currentPageOneBased.ToString() + " \\ " + m_numPages.ToString();
 		}
 
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "' and pageorder='" + currentPageOneBased + "'");
-		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + 52 + "' and pageorder='" + currentPageOneBased + "'");
+		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "' and pageorder='" + currentPageOneBased + "'");
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "' and pageorder='" + currentPageOneBased + "'");
 
         if (dt.Rows.Count > 0)
         {

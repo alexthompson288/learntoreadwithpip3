@@ -41,8 +41,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	[SerializeField]
 	private bool m_useDifficultySections;
 	[SerializeField]
-	private int m_temporarySectionId = 1420;
-	[SerializeField]
 	private float m_imageScale = 0.4f;
 	
 	int m_score;
@@ -64,21 +62,20 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		int sectionId = m_temporarySectionId;
+		int sectionId = 1420;
 
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
 		{
-			Debug.Log("Voyage");
-			//int difficulty = SessionInformation.Instance.GetDifficulty();
-			//sectionId = (PipGameBuildSettings.[index];
 			sectionId = JourneyInformation.Instance.GetCurrentSectionId();
-			//DataTable bookTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE section_id=" + sectionId);
+		}
+		else if (GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		{
+			List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
 
-			//if(bookTable.Rows.Count == 0)
-			//{
-				//Debug.Log("No stories, using default");
-				//sectionId = m_temporarySectionId;
-			//}
+			if(storyData.Count > 0)
+			{
+				sectionId = Convert.ToInt32(storyData[0]["section_id"]);
+			}
 		}
 		else
 		{
@@ -92,17 +89,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 				DataRow row = bookTable.Rows[0];
 				sectionId = Convert.ToInt32(row["section_id"]);
 				Debug.Log("Found book, sectionId= " + sectionId);
-			}
-			else
-			{
-				Debug.Log("Could not find book, using m_temporarySectionId: " + m_temporarySectionId);
-				sectionId = m_temporarySectionId;
-			}
-
-			if(sectionId == 0)
-			{
-				Debug.Log("sectionId was 0, setting to m_temporarySectionId: " + m_temporarySectionId);
-				sectionId = m_temporarySectionId;
 			}
 		}
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
@@ -55,6 +54,11 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
 		{
 			return (Convert.ToInt32(this["id"]) == Convert.ToInt32(other["id"]));
 		}
+	}
+
+	public override int GetHashCode()
+	{
+		return Convert.ToInt32(this["id"]);
 	}
 }
 

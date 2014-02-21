@@ -306,7 +306,11 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 	public List<DataRow> GetSetData(DataRow set, string columnName, string tableName) // TODO: Store the correct values for these strings, all classes which call these functions should use these references
 	{
-		string[] ids = set[columnName].ToString().Replace("[", "").Replace("]", "").Split(',');
+		string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
+		foreach(string id in ids)
+		{
+			Debug.Log(id);
+		}
 		
 		List<DataRow> data = new List<DataRow>();
 		
