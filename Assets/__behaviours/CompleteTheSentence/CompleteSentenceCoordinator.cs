@@ -64,9 +64,9 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
 		int sectionId = 1420;
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+			sectionId = SessionManager.Instance.GetCurrentSectionId();
 		}
 		else if (GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
 		{
@@ -101,7 +101,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 		Debug.Log("There are " + dt.Rows.Count + " sentences");
 
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			foreach(DataRow row in rows)
 			{
@@ -156,7 +156,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
 		Debug.Log("There are " + dt.Rows.Count + " words");
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			m_words[0] = new List<DataRow>();
 			foreach(DataRow row in rows)
@@ -396,10 +396,10 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	void OnGameFinish()
 	{
 		Debug.Log("CompleteSentenceCoordinator.OnGameFinish()");
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			Debug.Log("Voyage");
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 		else
 		{

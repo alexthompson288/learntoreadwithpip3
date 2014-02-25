@@ -184,9 +184,9 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 		}
 		else
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 			{
-				JourneyInformation.Instance.OnGameFinish(false);
+				SessionManager.Instance.OnGameFinish(false);
 			}
 			else
 			{

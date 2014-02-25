@@ -26,7 +26,7 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		int sectionId = SessionManager.Instance.GetCurrentSectionId();
 		//int sectionId = 1446;
 
 		Debug.Log("sectionId: " + sectionId);
@@ -81,7 +81,7 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 		}
 		else
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 	}
 
@@ -112,6 +112,6 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 		yield return new WaitForSeconds(m_letterButton.GetAllAudioLength() + 0.8f);
 
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		JourneyInformation.Instance.OnGameFinish();
+		SessionManager.Instance.OnGameFinish();
 	}
 }

@@ -85,9 +85,9 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 		/*
 		List<DataRow> lettersPool = new List<DataRow>();
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
 			lettersPool.AddRange(dt.Rows);
 		}
@@ -126,7 +126,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 
 		if(lettersPool.Count > 0)
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 			{
 				foreach(DataRow letter in lettersPool)
 				{

@@ -289,9 +289,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 
 	void FinishGame()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 		else
 		{

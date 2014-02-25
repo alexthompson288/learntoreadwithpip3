@@ -18,42 +18,64 @@ public class VideoCoordinator : MonoBehaviour
 	IEnumerator Start () 
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
+		
 		List<DataRow> sentences = GameDataBridge.Instance.GetSectionSentences();
-
+		
 		Debug.Log("sentences.Count: " + sentences.Count);
 
-		if(sentences.Count > 0)
+#if UNITY_IPHONE || UNITY_ANDROID
+		foreach(DataRow sentence in sentences)
 		{
-			Debug.Log("id: " + sentences[0]["id"].ToString());
-
-			string filename = sentences[0]["text"].ToString();
-
-			AudioClip clip = (AudioClip)Resources.Load<AudioClip>(filename + "_audio");
-
-			if(clip != null)
+			if(sentence["is_target_sentence"].ToString() == "t")
 			{
-				m_audioSource.clip = clip;
-				m_audioSource.Play();
-			}
-
-			m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
-
-			try
-			{
-				m_movieTexture.Play();
-			}
-			catch
-			{
-				JourneyInformation.Instance.OnGameFinish();
+				Handheld.PlayFullScreenMovie(sentence["text"].ToString() + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+				break;
 			}
 		}
-
+#else
+		foreach(DataRow sentence in sentences)
+		{
+			if(sentence["is_target_sentence"].ToString() == "t")
+			{
+				PlayVideo(sentence["text"].ToString());
+			}
+			else if(sentence["is_dummy_sentence"].ToString() == "t")
+			{
+				PlayAudio(sentence["text"].ToString());
+			}
+		}
+		
 		while(m_movieTexture.isPlaying)
 		{
 			yield return null;
 		}
+#endif
 
-		JourneyInformation.Instance.OnGameFinish();
+		SessionManager.Instance.OnGameFinish();
+	}
+
+	void PlayAudio (string filename)
+	{
+		AudioClip clip = (AudioClip)Resources.Load<AudioClip>(filename);
+		
+		if(clip != null)
+		{
+			m_audioSource.clip = clip;
+			m_audioSource.Play();
+		}
+	}
+
+	void PlayVideo (string filename)
+	{
+		m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
+		
+		try
+		{
+			m_movieTexture.Play();
+		}
+		catch
+		{
+			SessionManager.Instance.OnGameFinish();
+		}
 	}
 }

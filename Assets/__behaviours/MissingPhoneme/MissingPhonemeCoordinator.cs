@@ -76,7 +76,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 
 		List<DataRow> letterPool = new List<DataRow>();
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage && m_wordPool[0]["linking_index"] != null)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session && m_wordPool[0]["linking_index"] != null)
 		{
 			m_useLinkingIndices = true;
 		}
@@ -99,9 +99,9 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			}
 		}
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			DataRow section = JourneyInformation.Instance.GetCurrentSection();
+			DataRow section = SessionManager.Instance.GetCurrentSection();
 
 			if(section["sectiontype"].ToString() == "Learn")
 			{
@@ -140,7 +140,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			Debug.Log(dummyLetter["phoneme"].ToString());
 		}
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage && !m_useLinkingIndices)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session && !m_useLinkingIndices)
 		{
 			for(int i = m_wordPool.Count - 1; i > -1; --i)
 			{
@@ -183,7 +183,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		HashSet<string> answerPhonemes = new HashSet<string>();
 		string targetPhoneme = null;
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			if(m_useLinkingIndices)
 			{
@@ -279,7 +279,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		
 		Debug.Log("currentWord: " + currentWord);
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			DataRow targetLetter = null;
 

@@ -161,9 +161,9 @@ public class JoinLettersCoordinator : Singleton<JoinLettersCoordinator>
 
 	void FinishGame()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 		else
 		{

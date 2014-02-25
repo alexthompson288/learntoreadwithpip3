@@ -45,7 +45,7 @@ public class EyeSpyBlendingCoordinator : Singleton<EyeSpyBlendingCoordinator>
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		int sectionId = SessionManager.Instance.GetCurrentSectionId();
 		//int sectionId = 1392;
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
 		m_wordPool.AddRange(dt.Rows);
@@ -166,7 +166,7 @@ public class EyeSpyBlendingCoordinator : Singleton<EyeSpyBlendingCoordinator>
 		else
 		{
 			yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 	}
 

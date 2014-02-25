@@ -75,7 +75,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		/*
 		List<DataRow> words = new List<DataRow>();
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			words = GameDataBridge.Instance.GetWords();
 			//words = GameDataBridge.Instance.GetSectionWords(1455).Rows;
@@ -334,9 +334,9 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 	IEnumerator OnGameFinish()
 	{
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 		else
 		{

@@ -116,7 +116,7 @@ public class SoundButtonToWordCoordinator : MonoBehaviour
 		}
 		else
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 	}
 	
@@ -270,7 +270,7 @@ public class SoundButtonToWordCoordinator : MonoBehaviour
 		}
 		else
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 	}
 	

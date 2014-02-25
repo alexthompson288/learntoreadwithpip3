@@ -5,9 +5,9 @@ public class PipHelpers : MonoBehaviour
 {
 	public static void OnGameFinish(bool won = true)
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
-			JourneyInformation.Instance.OnGameFinish();
+			SessionManager.Instance.OnGameFinish();
 		}
 		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
 		{

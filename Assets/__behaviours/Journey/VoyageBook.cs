@@ -10,8 +10,8 @@ public class VoyageBook : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//int sessionNum = JourneyInformation.Instance.GetSessionsCompleted();
-		int sessionNum = 55;
+		int sessionNum = JourneyInformation.Instance.GetSessionsCompleted();
+		//int sessionNum = 55;
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
 
@@ -30,6 +30,12 @@ public class VoyageBook : MonoBehaviour
 					m_texture.mainTexture = tex;
 				}
 			}
+		}
+
+		if(m_texture.mainTexture == null)
+		{
+			Debug.Log("Disabling story UITexture because tex is null");
+			m_texture.enabled = false;
 		}
 	}
 }

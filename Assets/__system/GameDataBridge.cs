@@ -25,7 +25,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	public enum ContentType // TODO: Move this to the Data class
 	{
 		Sets,
-		Voyage,
+		Session,
 		Custom,
 	}
 
@@ -262,7 +262,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	{
 		if(sectionId == -1)
 		{
-			sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+			sectionId = SessionManager.Instance.GetCurrentSectionId();
 		}
 
 		List<DataRow> letters = new List<DataRow>();
@@ -281,7 +281,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	{
 		if(sectionId == -1)
 		{
-			sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+			sectionId = SessionManager.Instance.GetCurrentSectionId();
 		}
 		
 		List<DataRow> sentenceData = new List<DataRow>();
@@ -398,8 +398,8 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 		switch(m_contentType)
 		{
-		case ContentType.Voyage:
-			int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		case ContentType.Session:
+			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
 			if(dt.Rows.Count > 0)
@@ -449,8 +449,8 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		
 		switch(m_contentType)
 		{
-		case ContentType.Voyage:
-			int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		case ContentType.Session:
+			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
 			if(dt.Rows.Count > 0)
@@ -499,8 +499,8 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		
 		switch(m_contentType)
 		{
-		case ContentType.Voyage:
-			int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		case ContentType.Session:
+			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
 			if(dt.Rows.Count > 0)
@@ -573,8 +573,8 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		
 		switch(m_contentType)
 		{
-		case ContentType.Voyage:
-			int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		case ContentType.Session:
+			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
 			if(dt.Rows.Count > 0)

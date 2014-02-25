@@ -82,7 +82,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			m_keywordAudio[myPh] = LoaderHelpers.LoadAudioForWord(audioFilename);
         }
 		
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Voyage)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			foreach(DataRow letter in lettersPool)
 			{

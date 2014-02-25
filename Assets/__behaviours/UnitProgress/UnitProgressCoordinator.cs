@@ -41,7 +41,7 @@ public class UnitProgressCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		int sectionId = JourneyInformation.Instance.GetCurrentSectionId();
+		int sectionId = SessionManager.Instance.GetCurrentSectionId();
 		//int sectionId = 1366;
 
 		List<DataRow> sentences = GameDataBridge.Instance.GetSectionSentences(sectionId);

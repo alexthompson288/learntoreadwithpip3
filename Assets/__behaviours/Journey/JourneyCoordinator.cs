@@ -28,6 +28,10 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	private TweenReceiver m_storyTweenReceiver;
 	[SerializeField]
 	private Transform m_storyTweenFromPos;
+	[SerializeField]
+	private GameObject m_storyPrefab;
+	[SerializeField]
+	private Transform m_storyParent;
 
 	List<GameObject> m_spawnedMaps = new List<GameObject>();
 	
@@ -59,7 +63,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	IEnumerator Start()
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Voyage);
+		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
 
 		m_phonemeAudioSource.loop = false;
 		m_ambientAudioSource.loop = true;
@@ -122,15 +126,12 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		{
 			JourneyInformation.Instance.SetRecentlyCompleted(false);
 
-			TimbleTombleSign.Instance.TweenCoin(m_storyTweenFromPos);
-			//TimbleTombleSign.Instance.TweenCoin(JourneyPip.Instance.transform);
-
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + sessionsCompleted);
 			if(dt.Rows.Count > 0 && dt.Rows[0]["story_id"] != null)
 			{
-				m_storyTweenReceiver.OnTweenFinish += OnStoryTweenFinish;
-				m_storyTweenReceiver.TweenObject(m_storyTweenFromPos);
-				//m_storyTweenReceiver.TweenObject(JourneyPip.Instance.transform);
+				//m_storyTweenReceiver.OnTweenFinish += OnStoryTweenFinish;
+				//m_storyTweenReceiver.TweenObject(m_storyTweenFromPos);
+				StartCoroutine(TweenStory());
 			}
 			else
 			{
@@ -141,7 +142,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			{
 				StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
 				StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff());
-
 			}
 		}
 		else
@@ -149,6 +149,25 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			m_actionsComplete["BookTween"] = true;
 			m_actionsComplete["CoinTween"] = true;
 		}
+	}
+
+	IEnumerator TweenStory()
+	{
+		GameObject story = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyParent);
+
+		iTween.ScaleFrom(story, Vector3.zero, 0.5f);
+
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHINGS_APPEARS");
+
+		yield return new WaitForSeconds(2.2f);
+
+		iTween.ScaleTo(story, Vector3.zero, 0.5f);
+
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHINGS_DISAPPEARS");
+
+		yield return new WaitForSeconds(0.6f);
+
+		Destroy(story);
 	}
 
 	void OnStoryTweenFinish(TweenReceiver tweenBehaviour)
@@ -272,6 +291,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	public void OnStarClick (int sessionNum) 
 	{
+		SessionManager.Instance.OnChooseSession(sessionNum);
+		/*
 		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
 		
 		DataTable dtSessions = db.ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
@@ -307,6 +328,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		{
 			JourneyInformation.Instance.SetSessionsCompleted(JourneyInformation.Instance.GetSessionsCompleted() + 1);
 		}
+		*/
 	}
 
 	public void OnClickLetter(DataRow data)

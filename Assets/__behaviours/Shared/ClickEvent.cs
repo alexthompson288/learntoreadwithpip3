@@ -18,6 +18,18 @@ public class ClickEvent : MonoBehaviour
 		m_data = data;
 	}
 
+	int m_int;
+
+	public int GetInt()
+	{
+		return m_int;
+	}
+
+	public void SetInt(int i)
+	{
+		m_int = i;
+	}
+
 	void OnClick()
 	{
 		if(OnSingleClick != null)

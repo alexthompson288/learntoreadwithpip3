@@ -14,10 +14,14 @@ public class NavMenu : Singleton<NavMenu>
 	private GameObject m_callButton;
 	[SerializeField]
 	private GameObject m_navMenuGoParent;
+	[SerializeField]
+	private bool m_showCallButton = true;
 
 	void Awake()
 	{
 		m_navMenuGoParent.SetActive(true);
+
+		m_callButton.SetActive(m_showCallButton);
 	}
 
 	void Start()

@@ -5,6 +5,18 @@ using System.IO;
 
 public class JourneyInformation : Singleton<JourneyInformation> 
 {
+	void OnSessionComplete()
+	{
+		int sessionNum = SessionManager.Instance.GetSessionNum();
+
+		if(sessionNum > GetSessionsCompleted())
+		{
+			SetSessionsCompleted(sessionNum);
+		}
+
+		SetRecentlyCompleted(true);
+	}
+
 	[SerializeField]
 	private TextAsset m_gameNameFile;
 
@@ -23,6 +35,8 @@ public class JourneyInformation : Singleton<JourneyInformation>
 
 	void Awake()
 	{
+		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
+
 		string allGameNames = m_gameNameFile.text;
 		string[] separatedGameNames = allGameNames.Split(',');
 
@@ -313,14 +327,4 @@ public class JourneyInformation : Singleton<JourneyInformation>
 			TransitionScreen.Instance.ChangeLevel("NewVoyage", true);
 		}
 	}
-
-#if UNITY_EDITOR
-	void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.S))
-		{
-			//OnGameFinish();
-		}
-	}
-#endif
 }

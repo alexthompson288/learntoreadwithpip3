@@ -55,4 +55,6 @@ NewSoundButtonToWord,
 NewCompleteTheSentence,
 NewCompleteTheSentence,
 NewDragToContainerLetters,
-NewDragToContainerWords
+NewDragToContainerWords,
+NewVideo,
+NewVideo

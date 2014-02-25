@@ -17,7 +17,12 @@ public class LessonSelectableGame : MonoBehaviour
 			m_gameUserName = m_gameSceneName.Replace("New", "");
 		}
 
-		GetComponentInChildren<UILabel>().text = m_gameUserName;
+		UILabel label = GetComponentInChildren<UILabel>() as UILabel;
+
+		if(label != null)
+		{
+			label.text = m_gameUserName;
+		}
 	}
 
 	void OnClick()

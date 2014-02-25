@@ -11,9 +11,6 @@ public class ScoreScreen : MonoBehaviour {
     [SerializeField]
     private string[] m_videoFilenames;
 
-	[SerializeField]
-	private Transform m_coinTweenFromPos;
-
 	// Use this for initialization
 	IEnumerator Start () 
     {
@@ -49,8 +46,6 @@ public class ScoreScreen : MonoBehaviour {
         //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
 
         yield return new WaitForSeconds(1.0f);
-		
-		TimbleTombleSign.Instance.TweenCoin(m_coinTweenFromPos);
 
         if (SessionInformation.Instance.GetNumPlayers() == 2)
         {
