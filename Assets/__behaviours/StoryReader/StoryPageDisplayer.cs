@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StoryPageDisplayer : MonoBehaviour {
-
+public class StoryPageDisplayer : MonoBehaviour 
+{
     [SerializeField]
     private Renderer m_pageFG;
     [SerializeField]
@@ -12,6 +12,8 @@ public class StoryPageDisplayer : MonoBehaviour {
 	
     public void Show(Texture2D fg, Texture2D bg)
     {
+		//Debug.Log("StoryPageDisplayer.Show()");
+
         m_pageFG.material.mainTexture = fg;
         if (fg != null)
         {
@@ -40,33 +42,38 @@ public class StoryPageDisplayer : MonoBehaviour {
             m_scaleTransform.localScale = Vector3.one;
         }
         m_pageBG.material.mainTexture = bg;
-		Debug.Log("m_pageBG.material.mainTexture: " + m_pageBG.material.mainTexture);
+		//Debug.Log("m_pageBG.material.mainTexture: " + m_pageBG.material.mainTexture);
 
 		//Debug.Log("Finished setting images");
     }
 
     public void Turn(Transform other)
     {
+		Debug.Log("StoryPageDisplay.Turn()");
         StartCoroutine(TurnPage(other));
     }
 
     public void TurnBack(Transform other)
     {
+		Debug.Log("StoryPageDisplay.TurnBack()");
         StartCoroutine(TurnPageBack(other));
     }
 
-    IEnumerator TurnPageBack(Transform other)
+    public IEnumerator TurnPageBack(Transform other)
     {
+		Debug.Log("StoryPageDisplay.TurnBackCo()");
         other.localPosition = new Vector3(-520, 0, 0.2f);
         transform.localPosition = new Vector3(-520, 0, 0.0f);
         transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
         iTween.RotateTo(gameObject, new Vector3(0, 0, 0), 3.0f);
 
-        yield return new WaitForSeconds(3.5f);
+        //yield return new WaitForSeconds(3.5f);
+		yield return new WaitForSeconds(3.0f);
     }
 
-    IEnumerator TurnPage(Transform other)
+    public IEnumerator TurnPage(Transform other)
     {
+		Debug.Log("StoryPageDisplay.TurnCo()");
         //Animation[] anims = GetComponentsInChildren<Animation>();
         //foreach (Animation anim in anims)
         //{
@@ -96,6 +103,6 @@ public class StoryPageDisplayer : MonoBehaviour {
 
         other.localPosition = new Vector3(-520, 0, 0);
 
-        yield break;
+		//yield return new WaitForSeconds(3.0f);
     }
 }

@@ -4,8 +4,8 @@ using Wingrove;
 using System.Collections.Generic;
 using System.IO;
 
-public class StoryReaderLogic : Singleton<StoryReaderLogic> {
-
+public class StoryReaderLogic : Singleton<StoryReaderLogic> 
+{
     [SerializeField]
     private StoryPageDisplayer m_page0;
     [SerializeField]
@@ -21,6 +21,11 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 	[SerializeField]
 	private UILabel m_pageCount;
 
+#if UNITY_EDITOR
+	[SerializeField]
+	private bool m_useDebugStory;
+#endif
+
     int m_currentPage;
     StoryPageDisplayer m_currentDisplayer;
     bool m_canTurn = false;
@@ -32,7 +37,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
 	string m_currentLanguage = "text";
 
-	int m_storyID = 52;
+	int m_storyID = 85;
 
 	// Use this for initialization
     IEnumerator Start() 
@@ -41,6 +46,24 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+#if UNITY_EDITOR
+		if(!m_useDebugStory)
+		{
+			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+			{
+				List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+				
+				if(storyData.Count > 0)
+				{
+					m_storyID = System.Convert.ToInt32(storyData[0]["id"]);
+				}
+			}
+			else
+			{
+				m_storyID = SessionInformation.Instance.GetBookId();
+			}
+		}
+#else
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
 		{
 			List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
@@ -54,6 +77,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 		{
 			m_storyID = SessionInformation.Instance.GetBookId();
 		}
+#endif
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "'");
 		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
@@ -130,8 +154,43 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
         }
     }
 
+	public IEnumerator PrevPage()
+	{
+		Debug.Log("PrevPage()");
+		
+		ClearOld();
+		
+		m_hideWhenTurning.SetActive(false);
+		m_canTurn = false;
+		m_currentPage--;
+		SwapActivePage();
+		
+		DataTable dt = UpdateCurrentDisplayer();
+		
+		StartCoroutine(TurnPrevPage());
+
+		yield return new WaitForSeconds(0.3f);
+		
+		if (dt.Rows.Count > 0)
+		{
+			DataRow row = dt.Rows[0];
+			SetText(row);
+		}
+	}
+
+	IEnumerator TurnPrevPage()
+	{
+		yield return StartCoroutine(m_currentDisplayer.TurnPageBack((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform));
+
+		m_hideWhenTurning.SetActive(true);
+		m_canTurn = true;
+	}
+
+	/*
     public IEnumerator PrevPage()
     {
+		Debug.Log("PrevPage()");
+
         ClearOld();
 
         m_hideWhenTurning.SetActive(false);
@@ -152,11 +211,95 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
         }
 
         yield return new WaitForSeconds(2.6f);
+		//yield return new WaitForSeconds(3.5f);
 
         m_hideWhenTurning.SetActive(true);
         m_canTurn = true;
 
     }
+    */
+
+	IEnumerator TurnNextPage()
+	{
+		yield return StartCoroutine(m_currentDisplayer.TurnPage((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform));
+		
+		m_canTurn = true;
+		m_hideWhenTurning.SetActive(true);
+	}
+	
+	public IEnumerator NextPage(bool isFirstPage)
+	{
+		
+		m_canTurn = false;
+		m_hideWhenTurning.SetActive(false);
+		if (!isFirstPage)
+		{
+			m_currentPage++;
+			StartCoroutine(TurnNextPage());
+			SwapActivePage();
+		}
+		
+		ClearOld();
+		DataTable dt = UpdateCurrentDisplayer();
+		if (dt.Rows.Count == 0)
+		{
+			TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
+		}
+		
+		if (!isFirstPage)
+		{
+			yield return new WaitForSeconds(0.3f);
+		}
+		
+		if (dt.Rows.Count > 0)
+		{
+			DataRow row = dt.Rows[0];
+			SetText(row);
+		}
+		
+		if(isFirstPage)
+		{
+			yield return new WaitForSeconds(1f);
+			m_canTurn = true;
+			m_hideWhenTurning.SetActive(true);
+		}
+	}
+	/*
+    public IEnumerator NextPage(bool isFirstPage)
+    {
+
+        m_canTurn = false;
+        m_hideWhenTurning.SetActive(false);
+        if (!isFirstPage)
+        {
+            m_currentPage++;
+            m_currentDisplayer.Turn((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform);
+            SwapActivePage();
+        }
+
+        ClearOld();
+        DataTable dt = UpdateCurrentDisplayer();
+		if (dt.Rows.Count == 0)
+		{
+			TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
+		}
+
+        if (!isFirstPage)
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        if (dt.Rows.Count > 0)
+        {
+            DataRow row = dt.Rows[0];
+            SetText(row);
+        }
+
+        yield return new WaitForSeconds(1f);
+        m_canTurn = true;
+        m_hideWhenTurning.SetActive(true);
+    }
+    */
 
     void SwapActivePage()
     {
@@ -182,7 +325,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
     DataTable UpdateCurrentDisplayer()
     {
-		Debug.Log("UpdateCurrentDisplayer()");
+		//Debug.Log("UpdateCurrentDisplayer()");
 
         int currentPageOneBased = m_currentPage + 1;
 
@@ -203,8 +346,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
             Texture2D image = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
             Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
-			Debug.Log("bgImageName: " + bgImageName);
-			Debug.Log("bgImage: " + bgImage);
+			//Debug.Log("image: " + image);
+			//Debug.Log("imageName: " + imageName);
+			//Debug.Log("bgImage: " + bgImage);
             m_currentDisplayer.Show(image, bgImage);
 
 
@@ -272,45 +416,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
         m_audioPlayButton.SetActive(false);
     }
 
-    public IEnumerator NextPage(bool isFirstPage)
-    {
-
-        m_canTurn = false;
-        m_hideWhenTurning.SetActive(false);
-        if (!isFirstPage)
-        {
-            m_currentPage++;
-            m_currentDisplayer.Turn((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform);
-            SwapActivePage();
-        }
-
-        ClearOld();
-        DataTable dt = UpdateCurrentDisplayer();
-		if (dt.Rows.Count == 0)
-		{
-			TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
-		}
-
-        if (!isFirstPage)
-        {
-            yield return new WaitForSeconds(0.3f);
-        }
-
-        if (dt.Rows.Count > 0)
-        {
-            DataRow row = dt.Rows[0];
-            SetText(row);
-        }
-
-        yield return new WaitForSeconds(1f);
-        m_canTurn = true;
-        m_hideWhenTurning.SetActive(true);
-    }
-
     void SetText(DataRow row)
     {
         //textposition
-		Debug.Log("row: " + row);
 		string textToDisplay = row[m_currentLanguage].ToString().Replace("\\n", "\n");
 
         string[] lines = textToDisplay.Split('\n');
@@ -349,8 +457,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic> {
 
 					ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
 					bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ","").Replace("?", ""));
-
-					Debug.Log("storyType: " + storyType);
 
 					if(storyType == "Reception" || storyType == "Year 1")
 					{

@@ -23,6 +23,9 @@ public class LessonSelectableGame : MonoBehaviour
 		{
 			label.text = m_gameUserName;
 		}
+
+		float labelScale = m_gameUserName.Length >= 16 ? 0.14f : 0.2f;
+		label.transform.localScale = Vector3.one * labelScale;
 	}
 
 	void OnClick()
