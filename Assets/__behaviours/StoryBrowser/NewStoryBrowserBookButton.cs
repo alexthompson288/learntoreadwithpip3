@@ -219,7 +219,8 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         {
             m_purchaseIsResolved = true;
         }
-        SessionInformation.Instance.SetBookPurchased(bookId); 
+        //SessionInformation.Instance.SetBookPurchased(bookId); 
+		BuyManager.Instance.SetBookPurchased(bookId);
 		InfoPanelBox.Instance.HideBuyButtons(false);
     }
 
