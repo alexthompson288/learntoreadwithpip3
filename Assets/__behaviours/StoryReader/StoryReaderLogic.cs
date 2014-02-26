@@ -20,6 +20,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
     private GameObject m_textPrefab;
 	[SerializeField]
 	private UILabel m_pageCount;
+	[SerializeField]
+	private float m_pageTurnDuration = 3.0f;
 
 #if UNITY_EDITOR
 	[SerializeField]
@@ -524,5 +526,10 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			m_audioPlayButton.SetActive(true);
 			m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + row["audio"].ToString() + modifier);
 		}
+	}
+
+	public float GetPageTurnDuration()
+	{
+		return m_pageTurnDuration;
 	}
 }
