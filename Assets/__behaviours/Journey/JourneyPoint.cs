@@ -6,6 +6,8 @@ using System;
 public class JourneyPoint : MonoBehaviour, IComparable
 {
 	[SerializeField]
+	private float m_dragThreshold = 10;
+	[SerializeField]
 	private UISprite m_starSprite;
 	[SerializeField]
 	private string m_onSpriteName;
@@ -23,6 +25,13 @@ public class JourneyPoint : MonoBehaviour, IComparable
 	private bool m_largeStar;
 	[SerializeField]
 	private float m_shakeDuration = 0.5f;
+
+	bool m_mapIsBought = false;
+
+	
+	private float m_totalDeltaY = 0;
+	
+	private bool m_canDrag = true;
 
 	// Use this for initialization
 	void Awake () 
@@ -75,21 +84,59 @@ public class JourneyPoint : MonoBehaviour, IComparable
 
 	void OnClick ()
 	{
-		Debug.Log("Clicked star " + m_sessionNum);
+		if(m_canDrag)
+		{
+			Debug.Log("Clicked star " + m_sessionNum);
 #if UNITY_EDITOR
-		JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+			if(m_mapIsBought)
+			{
+				JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+			}
+			else
+			{
+				JourneyCoordinator.Instance.OnClickMapCollider();
+			}
 #else
-		if(m_sessionNum <= JourneyInformation.Instance.GetSessionsCompleted() + 1 || JourneyCoordinator.Instance.AreAllUnlocked())
-		{
-			Debug.Log("Session is unlocked");
-			JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
-		}
-		else
-		{
-			Debug.Log("Session is locked");
-			WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
-		}
+			if((m_sessionNum <= JourneyInformation.Instance.GetSessionsCompleted() + 1 && m_mapIsBought) || JourneyCoordinator.Instance.AreAllUnlocked())
+			{
+				Debug.Log("Session is unlocked");
+				JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+			}
+			else
+			{
+				Debug.Log("Session is locked");
+				WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+			}
 #endif
+		}
+	}
+
+	void OnPress (bool pressed) 
+	{
+		if(!pressed)
+		{
+			if(m_canDrag)
+			{
+				JourneyCoordinator.Instance.OnClickMapCollider();
+			}
+			
+			m_canDrag = true;
+			m_totalDeltaY = 0;
+		}
+	}
+	
+	void OnDrag (Vector2 delta)
+	{
+		if(m_canDrag)
+		{
+			m_totalDeltaY += delta.y;
+			
+			if(Mathf.Abs(m_totalDeltaY) > m_dragThreshold)
+			{
+				JourneyCoordinator.Instance.OnMapDrag(m_totalDeltaY);
+				m_canDrag = false;
+			}
+		}
 	}
 
 	void CheckForCompletion()
@@ -150,5 +197,10 @@ public class JourneyPoint : MonoBehaviour, IComparable
 	{
 		Debug.Log("SetSessionNum()");
 		m_sessionNum = sessionNum;
+	}
+
+	public void SetMapBought()
+	{
+		m_mapIsBought = true;
 	}
 }

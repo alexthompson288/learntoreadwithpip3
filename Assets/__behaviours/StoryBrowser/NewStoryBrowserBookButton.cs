@@ -58,29 +58,19 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 
     public void Refresh()
     {
-		// TODO: Hard Coded that all books are unlocked in future versions you must reinstate the commented out code
-		//m_buyButton.SetActive(false);
-		//m_padlockHierarchy.SetActive(false);
-
-		//m_wordsButton.SetActive(true); // TODO: Verify - I believe m_wordsButton has been deprecated
-
 		m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
 
 		m_buyButton.SetActive(false);
 
         int bookId = Convert.ToInt32(m_storyData["id"]);
-        if (SessionInformation.Instance.IsBookBought(bookId) ||
-		    NewStoryBrowserBookPopulator.Instance.IsBookUnlocked(bookId) ||
-		    ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
+        if (BuyManager.Instance.IsBookBought(bookId))
 		{
-            //m_buyButton.SetActive(false);
             m_padlockHierarchy.SetActive(false);
             //m_wordsButton.SetActive(true);
             m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
         }
         else
         {
-            //m_buyButton.SetActive(true);
             m_padlockHierarchy.SetActive(true);
             m_wordsButton.SetActive(false);
             m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 1.0f);
@@ -124,6 +114,29 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         }
     }
 
+	void OnClick()
+	{
+		int bookId = Convert.ToInt32(m_storyData["id"]);
+		Debug.Log("Clicked bookId: " + bookId);
+
+		if (BuyManager.Instance.IsBookBought(bookId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
+		{
+			SessionInformation.Instance.SelectBookId(bookId);
+			TransitionScreen.Instance.ChangeLevel("NewStartStory", false);
+			TransitionScreen.Instance.ChangeLevel("NewStories", false);
+		}
+		else
+		{
+			BuyBooksCoordinator.Instance.Show(this);
+		}
+	}
+
+	public void ShowBuyPanel()
+	{
+		BuyBooksCoordinator.Instance.Show(this);
+	}
+
+	/*
     void OnClick()
     {
         int bookId = Convert.ToInt32(m_storyData["id"]);
@@ -143,6 +156,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 			ShowInfoPanel();
 		}
     }
+    */
 
     public void Purchase()
     {
@@ -183,7 +197,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
             {
 				Debug.LogWarning("PC TIMEOUT. UNLOCKING BY DEFAULT");
                 int bookId = Convert.ToInt32(m_storyData["id"]);
-                SessionInformation.Instance.SetBookPurchased(bookId);     
+				BuyManager.Instance.SetBookPurchased(bookId);   
                 m_purchaseIsResolved = true;
             }
 #endif
@@ -199,6 +213,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         }
 
         Refresh();
+		BuyBooksCoordinator.Instance.RefreshBuyButton();
 
         StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
         StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
@@ -207,6 +222,8 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
+		Debug.Log("BOOK PURCHASE SUCCESS");
+
 		CharacterPopper popper = UnityEngine.Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
 		if(popper != null)
 		{
@@ -219,20 +236,17 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         {
             m_purchaseIsResolved = true;
         }
-        //SessionInformation.Instance.SetBookPurchased(bookId); 
+
 		BuyManager.Instance.SetBookPurchased(bookId);
 		InfoPanelBox.Instance.HideBuyButtons(false);
     }
 
     void StoreKitManager_purchaseCancelledEvent(string obj)
     {
+		Debug.Log("BOOK PURCHASE CANCELLED");
+
         m_purchaseIsResolved = true;
     }
-	
-	public void ShowInfoPanel()
-	{
-		InfoPanelBox.Instance.Show (m_storyData);
-	}
 
 	public DataRow GetData()
 	{

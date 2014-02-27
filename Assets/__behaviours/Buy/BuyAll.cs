@@ -8,33 +8,44 @@ public class BuyAll : MonoBehaviour
 	[SerializeField]
 	private UISprite m_background;
 
-	void Awake()
+	IEnumerator Start()
 	{
-		bool enable = false;
+		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		switch(m_buyType)
-		{
-		case BuyManager.BuyType.Books:
-			enabled = BuyManager.Instance.AreAllBooksBought();
-			break;
-		case BuyManager.BuyType.Maps:
-			enabled = BuyManager.Instance.AreAllMapsBought();
-			break;
-		case BuyManager.BuyType.Games:
-			enabled = BuyManager.Instance.AreAllGamesBought();
-			break;
-		case BuyManager.BuyType.Everything:
-			enabled = BuyManager.Instance.IsEverythingBought();
-			break;
-		}
-
-		collider.enabled = enable;
-
-		m_background.color = enable ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+		Refresh();
 	}
 	
 	void OnClick () 
 	{
 		BuyManager.Instance.BuyAll(m_buyType);
+	}
+
+	public void Refresh()
+	{
+		bool locked = false;
+		
+		switch(m_buyType)
+		{
+		case BuyManager.BuyType.Books:
+			locked = !BuyManager.Instance.AreAllBooksBought();
+			break;
+		case BuyManager.BuyType.Maps:
+			locked = !BuyManager.Instance.AreAllMapsBought();
+			break;
+		case BuyManager.BuyType.Games:
+			locked = !BuyManager.Instance.AreAllGamesBought();
+			break;
+		case BuyManager.BuyType.Everything:
+			locked = !BuyManager.Instance.IsEverythingBought();
+			break;
+		}
+
+		Debug.Log("BuyAll - " + m_buyType + " - unlocked: " + !locked);
+		
+		collider.enabled = locked;
+
+		Debug.Log(m_buyType + " - collider.enabled: " + collider.enabled);
+		
+		m_background.color = locked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
 	}
 }

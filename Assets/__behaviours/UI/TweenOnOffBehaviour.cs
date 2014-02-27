@@ -8,6 +8,8 @@ public class TweenOnOffBehaviour : MonoBehaviour {
     private Transform m_offLocation;
     [SerializeField]
     private bool m_startOn;
+	[SerializeField]
+	private bool m_disableCollidersOnStart = true;
     [SerializeField]
     private float m_delay;
     [SerializeField]
@@ -57,11 +59,14 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 			transform.position = m_offLocation.position;
 			m_initialised = true;
 		}
-		
-		Collider[] collider = GetComponentsInChildren<Collider>();
-		foreach (Collider cl in collider)
+
+		if(m_disableCollidersOnStart)
 		{
-			cl.enabled = false;
+			Collider[] collider = GetComponentsInChildren<Collider>();
+			foreach (Collider cl in collider)
+			{
+				cl.enabled = false;
+			}
 		}
 		
 		if (m_startOn)
@@ -97,7 +102,7 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 	}
 	*/
 
-    public void On()
+    public void On(bool enableColliders = true)
     {
         if (!m_isOn)
         {
@@ -113,11 +118,15 @@ public class TweenOnOffBehaviour : MonoBehaviour {
             gtc.vector3Prop("position", m_onLocation);
             GoTween gt = new GoTween(transform, m_duration, gtc);
             Go.addTween(gt);
-            Collider[] collider = GetComponentsInChildren<Collider>();
-            foreach (Collider cl in collider)
-            {
-                cl.enabled = true;
-            }
+
+			if(enableColliders)
+			{
+	            Collider[] collider = GetComponentsInChildren<Collider>();
+	            foreach (Collider cl in collider)
+	            {
+					cl.enabled = true;
+	            }
+			}
         }
     }
 

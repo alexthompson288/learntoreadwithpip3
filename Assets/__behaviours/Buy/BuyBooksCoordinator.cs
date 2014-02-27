@@ -3,14 +3,10 @@ using System.Collections;
 using Wingrove;
 using System;
 
-public class BuyBooksCoordinator : MonoBehaviour 
+public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator> 
 {
 	[SerializeField]
 	private GameObject m_buyButton;
-	[SerializeField]
-	private GameObject m_buyAllBooksButton;
-	[SerializeField]
-	private GameObject m_buyEverythingButton;
 	[SerializeField]
 	private TweenOnOffBehaviour m_tweenBehaviour;
 	[SerializeField]
@@ -22,14 +18,19 @@ public class BuyBooksCoordinator : MonoBehaviour
 	[SerializeField]
 	private UILabel m_authorLabel;
 	[SerializeField]
-	private UILabel m_levelLabel;
+	private UILabel m_ageGroupLabel;
 	[SerializeField]
 	private UITexture[] m_difficultyStars;
+	[SerializeField]
+	private ClickEvent m_backCollider;
 	
 	NewStoryBrowserBookButton m_currentBook;
 
+
+
 	void Awake()
 	{
+		m_backCollider.OnSingleClick += OnClickBackCollider;
 		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
 	}
 	
@@ -47,20 +48,25 @@ public class BuyBooksCoordinator : MonoBehaviour
 		{
 			Debug.Log("Purchasing book");
 			m_currentBook.Purchase();
-			RefreshBuyButton();
 		}
+
+		EnableUICams();
 	}
 
-	void RefreshBuyButton()
+	public void RefreshBuyButton()
 	{
-		bool bookIsUnlocked = BuyManager.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"])) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
-		m_buyButton.collider.enabled = bookIsUnlocked;
-		m_buyButton.GetComponentInChildren<UISprite>().color = bookIsUnlocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+		bool bookIsLocked = m_currentBook != null && !BuyManager.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"]));
+		m_buyButton.collider.enabled = bookIsLocked;
+		m_buyButton.GetComponentInChildren<UISprite>().color = bookIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
 	}
 
-	public void Show(NewStoryBrowserBookButton currentBook, DataRow bookRow)
+	public void Show(NewStoryBrowserBookButton currentBook)
 	{
+		DisableUICams();
+
 		m_currentBook = currentBook;
+
+		DataRow bookData = m_currentBook.GetData();
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 		
@@ -69,18 +75,19 @@ public class BuyBooksCoordinator : MonoBehaviour
 
 		
 		//m_priceMeshParent.SetActive(true);
-		m_tweenBehaviour.On();
+		m_tweenBehaviour.On(false);
+
 		
-		SetFromText(m_titleLabel, bookRow, "title");
-		SetFromText(m_descriptionLabel, bookRow, "description");
-		SetFromText(m_authorLabel, bookRow, "author", "by ");
-		SetFromText(m_levelLabel, bookRow, "storytype");
-		SetDifficultyStars(bookRow);
+		SetFromText(m_titleLabel, bookData, "title");
+		SetFromText(m_descriptionLabel, bookData, "description");
+		SetFromText(m_authorLabel, bookData, "author", "by ");
+		SetFromText(m_ageGroupLabel, bookData, "storytype");
+		SetDifficultyStars(bookData);
 		
 		string price = "£0.69p";
 		try
 		{
-			int priceTier = Convert.ToInt32(bookRow["readingpadart"].ToString());
+			int priceTier = Convert.ToInt32(bookData["readingpadart"].ToString());
 			
 			switch(priceTier)
 			{
@@ -96,12 +103,18 @@ public class BuyBooksCoordinator : MonoBehaviour
 		}
 		catch
 		{
-			Debug.LogWarning("Could not find price tier for " + bookRow["title"].ToString());
+			Debug.LogWarning("Could not find price tier for " + bookData["title"].ToString());
 		}
 
-		m_priceLabel.text = price;
+		m_priceLabel.text = "Buy Book - " + price;
 
 		//m_priceTextMesh.text = price;
+	}
+
+	public void OnClickBackCollider(ClickEvent click)
+	{
+		m_tweenBehaviour.Off(false);
+		EnableUICams();
 	}
 
 	void SetFromText(UILabel label, DataRow dr, string field, string preface = "")
@@ -128,4 +141,6 @@ public class BuyBooksCoordinator : MonoBehaviour
 			}
 		}
 	}
+
+
 }

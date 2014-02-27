@@ -42,6 +42,7 @@ public class ParentGate : Singleton<ParentGate>
 
 			m_tweenBehaviour.On();
 
+			/*
 			UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
 			foreach(UICamera cam in allCams)
 			{
@@ -50,6 +51,7 @@ public class ParentGate : Singleton<ParentGate>
 					cam.enabled = false;
 				}
 			}
+			*/
 
 			int num1 = UnityEngine.Random.Range(m_minQuestionValue, m_maxQuestionValue + 1);
 			int num2 = UnityEngine.Random.Range(m_minQuestionValue, m_maxQuestionValue + 1);
@@ -100,13 +102,20 @@ public class ParentGate : Singleton<ParentGate>
 			OnParentGateAnswer(CheckAnswer(answerBehaviour));
 		}
 
+		/*
 		UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
 		foreach(UICamera cam in allCams)
 		{
 			cam.enabled = true;
 		}
+		*/
 
 		m_isShowing = false;
 		m_tweenBehaviour.Off();
+	}
+
+	public UICamera GetUICam()
+	{
+		return m_myCam;
 	}
 }

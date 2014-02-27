@@ -111,6 +111,8 @@ public class BuyManager : Singleton<BuyManager>
 			#if UNITY_EDITOR
 			if (pcTimeOut > 3.0f)
 			{
+				Debug.Log("PURCHASE TIMED OUT");
+				UnlockOnTimeOut();
 				m_purchaseIsResolved = true;
 			}
 			#endif
@@ -124,11 +126,40 @@ public class BuyManager : Singleton<BuyManager>
 				cam.enabled = true;
 			}
 		}
+
+		RefreshBuyAllButtons();
+		RefreshBooks();
+		RefreshMaps();
+		RefreshGames();
 		
 		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(purchaseSuccessfulEvent);
 	}
+
+#if UNITY_EDITOR
+	void UnlockOnTimeOut()
+	{
+		Debug.Log("UNLOCKING ON TIMEOUT");
+		switch(m_buyType)
+		{
+		case BuyType.Books:
+			SetAllBooksPurchased();
+			break;
+		case BuyType.Maps:
+			SetAllMapsPurchased();
+			break;
+		case BuyType.Games:
+			SetAllGamesPurchased();
+			break;
+		case BuyType.Everything:
+			SetAllBooksPurchased();
+			SetAllMapsPurchased();
+			SetAllGamesPurchased();
+			break;
+		}
+	}
+#endif
 	
 	void StoreKitManager_everythingPurchaseSuccessfulEvent(StoreKitTransaction obj)
 	{
@@ -142,17 +173,13 @@ public class BuyManager : Singleton<BuyManager>
 		SetAllBooksPurchased();
 		SetAllMapsPurchased();
 		SetAllGamesPurchased();
-
-		RefreshBooks();
-		RefreshMaps();
-		RefreshGames();
 		
 		CelebratePurchase();
 	}
 	
 	void StoreKitManager_gamesPurchaseSuccessfulEvent(StoreKitTransaction obj)
 	{
-		Debug.Log("PURCHASE SUCCESS: ALL MAPS");
+		Debug.Log("PURCHASE SUCCESS: ALL GAMES");
 		
 		if (obj.productIdentifier == m_productIdentifier)
 		{
@@ -160,7 +187,6 @@ public class BuyManager : Singleton<BuyManager>
 		} 
 		
 		SetAllGamesPurchased();
-		RefreshGames();
 		
 		CelebratePurchase();
 	}
@@ -175,7 +201,6 @@ public class BuyManager : Singleton<BuyManager>
 		} 
 		
 		SetAllMapsPurchased();
-		RefreshMaps();
 		
 		CelebratePurchase();
 	}
@@ -190,7 +215,6 @@ public class BuyManager : Singleton<BuyManager>
 		} 
 		
 		SetAllBooksPurchased();
-		RefreshBooks();
 
 		CelebratePurchase();
 	}
@@ -207,7 +231,7 @@ public class BuyManager : Singleton<BuyManager>
 	
 	void StoreKitManager_purchaseCancelledEvent(string obj)
 	{
-		Debug.Log("PURCHASE FAILED - m_buyType: " + m_buyType.ToString());
+		Debug.Log("PURCHASE CANCELLED - m_buyType: " + m_buyType.ToString());
 		m_purchaseIsResolved = true;
 	}
 
@@ -220,20 +244,52 @@ public class BuyManager : Singleton<BuyManager>
 		}
 	}
 
-	void RefreshMaps() // TODO
+	void RefreshMaps()
 	{
+		JourneyMap[] maps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap)) as JourneyMap[];
+		foreach(JourneyMap map in maps)
+		{
+			map.Refresh();
+		}
 	}
 
-	void RefreshGames() // TODO
+	void RefreshGames()
 	{
+		BuyableGame[] games = UnityEngine.Object.FindObjectsOfType(typeof(BuyableGame)) as BuyableGame[];
+		foreach(BuyableGame game in games)
+		{
+			game.Refresh();
+		}
+	}
+
+	void RefreshBuyAllButtons()
+	{
+		BuyAll[] buttons = UnityEngine.Object.FindObjectsOfType(typeof(BuyAll)) as BuyAll[];
+		foreach(BuyAll button in buttons)
+		{
+			button.Refresh();
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////
 
+#if UNITY_EDITOR
+	[SerializeField]
+	private bool m_resetPurchases;
+#endif
 
 	// Data Saving
 	[SerializeField]
 	private int[] m_maps;
+
+	[SerializeField]
+	private int[] m_defaultUnlockedBooks;
+	[SerializeField]
+	private int[] m_defaultUnlockedMaps;
+	[SerializeField]
+	private string[] m_defaultUnlockedGames;
+	//[SerializeField]
+	//private int[] m_defaultUnlockedGames;
 	
 	HashSet<int> m_boughtBooks = new HashSet<int>();
 	HashSet<int> m_boughtMaps = new HashSet<int>();
@@ -241,30 +297,56 @@ public class BuyManager : Singleton<BuyManager>
 
 	void Awake()
 	{
+#if UNITY_EDITOR
+		if(m_resetPurchases)
+		{
+			Save ();
+		}
+#endif
+
+		foreach(int book in m_defaultUnlockedBooks)
+		{
+			m_boughtBooks.Add(book);
+		}
+
+		foreach(int map in m_defaultUnlockedMaps)
+		{
+			m_boughtMaps.Add(map);
+		}
+
 		Load();
 	}
 
 	public bool IsBookBought(int bookId)
 	{
-		return m_boughtBooks.Contains(bookId);
+		return m_boughtBooks.Contains(bookId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public bool AreAllBooksBought()
 	{
-		bool allBooksBought = true;
-
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
-
-		foreach(DataRow story in dt.Rows)
+		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
-			if(story["publishable"] != null && story["publishable"].ToString() == "t" && !m_boughtBooks.Contains(Convert.ToInt32(story["id"])))
-			{
-				allBooksBought = false;
-				break;
-			}
+			return true;
 		}
+		else
+		{
+			bool allBooksBought = true;
 
-		return allBooksBought;
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
+
+			foreach(DataRow story in dt.Rows)
+			{
+				if(story["publishable"] != null && story["publishable"].ToString() == "t" && !m_boughtBooks.Contains(Convert.ToInt32(story["id"])))
+				{
+					allBooksBought = false;
+					break;
+				}
+			}
+
+			Debug.Log("allBooksBought: " + allBooksBought);
+
+			return allBooksBought;
+		}
 	}
 
 	public void SetBookPurchased(int bookId)
@@ -281,8 +363,11 @@ public class BuyManager : Singleton<BuyManager>
 			Debug.Log("Unlocking all stories. Count " + dt.Rows.Count);
 			foreach(DataRow story in dt.Rows)
 			{
-				Debug.Log("Unlocking " + story["id"].ToString() + " - " + story["title"].ToString());
-				m_boughtBooks.Add(Convert.ToInt32(story["id"]));
+				if(story["publishable"] != null && story["publishable"].ToString() == "t")
+				{
+					Debug.Log("Unlocking " + story["id"].ToString() + " - " + story["title"].ToString());
+					m_boughtBooks.Add(Convert.ToInt32(story["id"]));
+				}
 			}
 		}
 		Save ();
@@ -290,23 +375,32 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsMapBought(int mapId)
 	{
-		return m_boughtMaps.Contains(mapId);
+		return m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public bool AreAllMapsBought()
 	{
-		bool allMapsBought = true;
-
-		foreach(int map in m_maps)
+		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
-			if(!m_boughtMaps.Contains(map))
-			{
-				allMapsBought = false;
-				break;
-			}
+			return true;
 		}
+		else
+		{
+			bool allMapsBought = true;
 
-		return allMapsBought;
+			foreach(int map in m_maps)
+			{
+				if(!m_boughtMaps.Contains(map))
+				{
+					allMapsBought = false;
+					break;
+				}
+			}
+
+			Debug.Log("ALL MAPS BOUGHT: " + allMapsBought);
+
+			return allMapsBought;
+		}
 	}
 
 	public void SetMapPurchased(int mapId)
@@ -324,9 +418,14 @@ public class BuyManager : Singleton<BuyManager>
 		Save ();
 	}
 
+	public bool IsGameBought(string gameSceneName)
+	{
+		return m_boughtGames || Array.IndexOf(m_defaultUnlockedGames, gameSceneName) != -1 || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
+	}
+
 	public bool AreAllGamesBought()
 	{
-		return m_boughtGames;
+		return m_boughtGames || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public void SetAllGamesPurchased()
@@ -337,7 +436,14 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsEverythingBought()
 	{
-		return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought();
+		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
+		{
+			return true;
+		}
+		else
+		{
+			return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought();
+		}
 	}
 
 	void Load()

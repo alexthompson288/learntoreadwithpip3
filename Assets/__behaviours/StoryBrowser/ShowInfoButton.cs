@@ -8,7 +8,7 @@ public class ShowInfoButton : MonoBehaviour {
 	
 	void OnClick()
 	{
-		InfoPanelBox.Instance.SetCurrentBook(m_storyBrowserBookbutton);
-		m_storyBrowserBookbutton.ShowInfoPanel();
+		//InfoPanelBox.Instance.SetCurrentBook(m_storyBrowserBookbutton);
+		m_storyBrowserBookbutton.ShowBuyPanel();
 	}
 }

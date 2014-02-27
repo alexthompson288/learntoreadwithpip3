@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LessonSelectableGame : MonoBehaviour 
+public class LessonSelectableGame : BuyableGame 
 {
-	[SerializeField]
-	private UITexture m_texture;
-	[SerializeField]
-	private string m_gameSceneName;
 	[SerializeField]
 	private string m_gameUserName;
 
@@ -30,11 +26,13 @@ public class LessonSelectableGame : MonoBehaviour
 
 	void OnClick()
 	{
-		LessonGameCoordinator.Instance.OnClickSelectable((Texture2D)m_texture.mainTexture, m_gameSceneName);
-	}
-
-	public string GetGameSceneName()
-	{
-		return m_gameSceneName;
+		if(m_isUnlocked)
+		{
+			LessonGameCoordinator.Instance.OnClickSelectable((Texture2D)m_gameIcon.mainTexture, m_gameSceneName);
+		}
+		else
+		{
+			BuyGamesCoordinator.Instance.Show();
+		}
 	}
 }

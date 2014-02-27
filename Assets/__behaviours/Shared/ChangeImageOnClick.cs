@@ -25,7 +25,6 @@ public class ChangeImageOnClick : MonoBehaviour
 
 	void OnClick()
 	{
-		Debug.Log(name + " was clicked");
 		On();
 		StopAllCoroutines();
 		StartCoroutine(OffAfterDelay());
@@ -35,7 +34,7 @@ public class ChangeImageOnClick : MonoBehaviour
 	{
 		if(m_sprite != null)
 		{
-			Debug.Log("Changing spriteName: " + m_spriteOffName);
+			//Debug.Log("Changing spriteName: " + m_spriteOffName);
 			m_sprite.spriteName = m_spriteOffName;
 		}
 		
@@ -47,10 +46,9 @@ public class ChangeImageOnClick : MonoBehaviour
 
 	void On()
 	{
-		Debug.Log("On()");
 		if(m_sprite != null)
 		{
-			Debug.Log("Changing spriteName: " + m_spriteOnName);
+			//Debug.Log("Changing spriteName: " + m_spriteOnName);
 			m_sprite.spriteName = m_spriteOnName;
 		}
 		

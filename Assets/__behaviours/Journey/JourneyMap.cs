@@ -5,6 +5,12 @@ using System;
 public class JourneyMap : MonoBehaviour, IComparable
 {
 	[SerializeField]
+	private int m_mapId;
+	[SerializeField]
+	private GameObject m_lockParent;
+	[SerializeField]
+	private UITexture m_background;
+	[SerializeField]
 	private Transform m_pointParent;
 	[SerializeField]
 	private AudioClip m_audioClip;
@@ -12,6 +18,11 @@ public class JourneyMap : MonoBehaviour, IComparable
 	private int m_lowestSessionNum;
 	[SerializeField]
 	private int m_highestSessionNum;
+
+	void Start()
+	{
+		Refresh();
+	}
 
 	public bool IsParent(Transform point)
 	{
@@ -52,5 +63,38 @@ public class JourneyMap : MonoBehaviour, IComparable
 	public int GetHighestSessionNum()
 	{
 		return m_highestSessionNum;
+	}
+
+	public void Refresh()
+	{
+		bool isUnlocked = BuyManager.Instance.IsMapBought(m_mapId);
+
+		if(m_background != null)
+		{
+			m_background.color = isUnlocked ? Color.white : Color.gray;
+		}
+
+		if(m_lockParent != null)
+		{
+			m_lockParent.SetActive(!isUnlocked);
+		}
+
+		if(isUnlocked)
+		{
+			JourneyPoint[] points = GetComponentsInChildren<JourneyPoint>() as JourneyPoint[];
+
+			foreach(JourneyPoint point in points)
+			{
+				point.SetMapBought();
+			}
+		}
+	}
+	
+	public void OnClickMapCollider()
+	{
+		if(!BuyManager.Instance.IsMapBought(m_mapId))
+		{
+			BuyMapsCoordinator.Instance.Show(m_mapId);
+		}
 	}
 }

@@ -1,15 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ChooseGame : MonoBehaviour 
+public class ChooseGame : BuyableGame 
 {
-	[SerializeField]
-	private string m_gameSceneName;
 	[SerializeField]
 	private bool m_isTwoPlayer = false;
 
 	void OnClick()
 	{
-		GameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
+		if(m_isUnlocked)
+		{
+			GameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
+		}
+		else
+		{
+			BuyGamesCoordinator.Instance.Show();
+		}
 	}
 }

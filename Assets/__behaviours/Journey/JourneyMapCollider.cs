@@ -4,7 +4,7 @@ using System.Collections;
 public class JourneyMapCollider : MonoBehaviour 
 {
 	[SerializeField]
-	private float m_dragThreshold;
+	private float m_dragThreshold = 10;
 
 	private float m_totalDeltaY = 0;
 
@@ -14,6 +14,11 @@ public class JourneyMapCollider : MonoBehaviour
 	{
 		if(!pressed)
 		{
+			if(m_canDrag)
+			{
+				JourneyCoordinator.Instance.OnClickMapCollider();
+			}
+
 			m_canDrag = true;
 			m_totalDeltaY = 0;
 		}
@@ -28,7 +33,6 @@ public class JourneyMapCollider : MonoBehaviour
 			if(Mathf.Abs(m_totalDeltaY) > m_dragThreshold)
 			{
 				JourneyCoordinator.Instance.OnMapDrag(m_totalDeltaY);
-				//JourneyMapCamera.Instance.TweenToPosition(m_totalDeltaY);
 				m_canDrag = false;
 			}
 		}

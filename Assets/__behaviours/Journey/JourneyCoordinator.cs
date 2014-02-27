@@ -42,6 +42,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	bool m_starHasShook = false;
 
+	JourneyMap m_centreMap = null;
+
 	public void SetActionComplete(string action)
 	{
 		m_actionsComplete[action] = true;
@@ -114,6 +116,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_maps[0], m_centreMapPos); // centre map
 			SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_maps[1], m_botMapPos); // bot map
 		}
+
+		m_centreMap = m_centreMapPos.GetChild(0).GetComponent<JourneyMap>() as JourneyMap;
 
 		PlayAmbientAudio();
 
@@ -259,6 +263,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			}
 		}
 
+		m_centreMap = m_centreMapPos.GetChild(0).GetComponent<JourneyMap>() as JourneyMap;
+
 		PlayAmbientAudio();
 	}
 
@@ -329,6 +335,14 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			JourneyInformation.Instance.SetSessionsCompleted(JourneyInformation.Instance.GetSessionsCompleted() + 1);
 		}
 		*/
+	}
+
+	public void OnClickMapCollider()
+	{
+		if(m_centreMap != null)
+		{
+			m_centreMap.OnClickMapCollider();
+		}
 	}
 
 	public void OnClickLetter(DataRow data)

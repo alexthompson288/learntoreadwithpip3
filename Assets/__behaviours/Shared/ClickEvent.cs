@@ -5,7 +5,7 @@ public class ClickEvent : MonoBehaviour
 {
 	public delegate void SingleClick(ClickEvent behaviour); // Pass this script just in case we want to add member variables in the future
 	public event SingleClick OnSingleClick;
-
+	
 	DataRow m_data;
 
 	public DataRow GetData()
