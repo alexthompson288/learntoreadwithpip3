@@ -24,6 +24,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	Dictionary<string, string> m_gameNames = new Dictionary<string, string>();
 
 	// Saved between app close/open
+	Dictionary<string, HashSet<int>> m_sessionsFinished = new Dictionary<string, HashSet<int>>();
 	Dictionary<string, int> m_sessionsCompleted = new Dictionary<string, int>();
 	Dictionary<string, bool> m_recentCompleted = new Dictionary<string, bool>();
 	Dictionary<string, int> m_lastLetterUnlocked = new Dictionary<string, int>();
@@ -51,6 +52,32 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		}
 
 		Load ();
+	}
+
+	public bool IsSessionFinished(int sessionNum)
+	{
+		string user = ChooseUser.Instance.GetCurrentUser();
+
+		if(!m_sessionsFinished.ContainsKey(user))
+		{
+			m_sessionsFinished.Add(user, new HashSet<int>());
+		}
+
+		return m_sessionsFinished[user].Contains(sessionNum);
+	}
+
+	public void SetSessionFinished(int sessionNum)
+	{
+		string user = ChooseUser.Instance.GetCurrentUser();
+
+		if(!m_sessionsFinished.ContainsKey(user))
+		{
+			m_sessionsFinished.Add(user, new HashSet<int>());
+		}
+
+		m_sessionsFinished[user].Add(sessionNum);
+
+		Save ();
 	}
 
 	public int GetSessionsCompleted()
@@ -149,6 +176,20 @@ public class JourneyInformation : Singleton<JourneyInformation>
 
 				m_lastLetterUnlocked[user] = lastLetterUnlocked;
 			}
+
+			int numUsersSessionsFinished = br.ReadInt32();
+			for(int i = 0; i < numUsersSessionsFinished; ++i)
+			{
+				string user = br.ReadString();
+
+				m_sessionsFinished.Add(user, new HashSet<int>());
+
+				int numSessionsFinished = br.ReadInt32();
+				for(int j = 0; j < numSessionsFinished; ++j)
+				{
+					m_sessionsFinished[user].Add(br.ReadInt32());
+				}
+			}
 		}
 		catch{}
 		
@@ -181,6 +222,18 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		{
 			bw.Write(kvp.Key);
 			bw.Write(kvp.Value);
+		}
+
+		bw.Write(m_sessionsFinished.Count);
+		foreach(KeyValuePair<string, HashSet<int>> kvp in m_sessionsFinished)
+		{
+			bw.Write(kvp.Key);
+
+			bw.Write(kvp.Value.Count);
+			foreach(int i in kvp.Value)
+			{
+				bw.Write(i);
+			}
 		}
 		
 		ds.Save(newData);

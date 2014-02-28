@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class CelebrationCoordinator : Singleton<CelebrationCoordinator> 
 {
 	[SerializeField]
+	private GameObject[] m_cameras;
+	[SerializeField]
 	private TweenOnOffBehaviour[] m_trumpets;
 	[SerializeField]
 	private GameObject m_trumpetParent;
@@ -41,6 +43,14 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 	Vector3 m_textDefaultPos;
 
 	List<GameObject> m_spawnedObjects = new List<GameObject>();
+
+	void Awake()
+	{
+		for(int i = 0; i < m_cameras.Length; ++i)
+		{
+			m_cameras[i].SetActive(true);
+		}
+	}
 
 	IEnumerator Start()
 	{

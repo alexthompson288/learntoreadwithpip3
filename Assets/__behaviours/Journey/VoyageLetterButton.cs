@@ -110,6 +110,7 @@ public class VoyageLetterButton : MonoBehaviour
 	void OnDestroy()
 	{
 		Texture2D tex = (Texture2D)m_mnemonicTexture.mainTexture;
+		m_mnemonicTexture.mainTexture = null;
 		Resources.UnloadAsset(tex);
 	}
 }

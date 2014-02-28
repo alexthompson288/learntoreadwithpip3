@@ -32,6 +32,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	private GameObject m_storyPrefab;
 	[SerializeField]
 	private Transform m_storyParent;
+	[SerializeField]
+	private ClickEvent[] m_arrows;
 
 	List<GameObject> m_spawnedMaps = new List<GameObject>();
 	
@@ -58,9 +60,19 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	{
 		Debug.Log("JourneyCoordinator.Awake()");
 
+		foreach(ClickEvent arrow in m_arrows)
+		{
+			arrow.OnSingleClick += OnClickArrow;
+		}
+
 		m_actionsComplete.Add("StarShake", false);
 		m_actionsComplete.Add("BookTween", false);
 		m_actionsComplete.Add("CoinTween", false);
+	}
+
+	void OnClickArrow(ClickEvent click)
+	{
+		OnMapDrag(click.GetInt());
 	}
 
 	IEnumerator Start()
@@ -199,6 +211,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			{
 				Debug.Log("Scrolling");
 
+				StartCoroutine(DisableArrows());
+
 				if(m_topMapPos.childCount > 0)
 				{
 					Destroy(m_topMapPos.GetChild(0).gameObject);
@@ -231,6 +245,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			if(m_topMapPos.childCount > 0)
 			{
 				Debug.Log("Scrolling");
+
+				StartCoroutine(DisableArrows());
 
 				if(m_botMapPos.childCount > 0)
 				{
@@ -266,6 +282,21 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		m_centreMap = m_centreMapPos.GetChild(0).GetComponent<JourneyMap>() as JourneyMap;
 
 		PlayAmbientAudio();
+	}
+
+	IEnumerator DisableArrows()
+	{
+		foreach(ClickEvent arrow in m_arrows)
+		{
+			arrow.gameObject.SetActive(false);
+		}
+
+		yield return new WaitForSeconds(m_mapTweenDuration);
+
+		foreach(ClickEvent arrow in m_arrows)
+		{
+			arrow.gameObject.SetActive(true);
+		}
 	}
 
 	void PlayAmbientAudio()

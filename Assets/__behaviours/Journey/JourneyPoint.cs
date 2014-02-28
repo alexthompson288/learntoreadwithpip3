@@ -8,26 +8,25 @@ public class JourneyPoint : MonoBehaviour, IComparable
 	[SerializeField]
 	private float m_dragThreshold = 10;
 	[SerializeField]
-	private UISprite m_starSprite;
-	[SerializeField]
-	private string m_onSpriteName;
-	[SerializeField]
-	private string m_offSpriteName;
-	[SerializeField]
-	private UITexture m_star;
-	[SerializeField]
-	private Texture2D m_starOn;
-	[SerializeField]
-	private Texture2D m_starOff;
+	private UISprite m_pointBackground;
 	[SerializeField]
 	private int m_sessionNum;
 	[SerializeField]
 	private bool m_largeStar;
 	[SerializeField]
 	private float m_shakeDuration = 0.5f;
+	[SerializeField]
+	private int m_phonemeId = -1;
+	[SerializeField]
+	private UILabel m_graphemeLabel;
+	[SerializeField]
+	private UITexture m_mnemonicTexture;
+	[SerializeField]
+	private string m_mainColorString = "[333333]";
+	[SerializeField]
+	private string m_highlightColorString = "[FF0000]";
 
 	bool m_mapIsBought = false;
-
 	
 	private float m_totalDeltaY = 0;
 	
@@ -41,10 +40,31 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			Debug.LogError(name + "'s session = -1");
 		}
 
-		if(m_largeStar || m_sessionNum % 5 == 0)
+		if(m_pointBackground == null)
+		{
+			m_pointBackground = GetComponentInChildren<UISprite>() as UISprite;
+		}
+		
+		if(m_graphemeLabel == null)
+		{
+			m_graphemeLabel = GetComponentInChildren<UILabel>() as UILabel;
+		}
+		
+		if(m_mnemonicTexture == null)
+		{
+			m_mnemonicTexture = GetComponentInChildren<UITexture>() as UITexture;
+		}
+
+		/*
+		if(m_phonemeId != -1)
+		{
+			m_pointBackground.transform.localScale *= 1.7f;
+		}
+		else if(m_largeStar || m_sessionNum % 5 == 0)
 		{
 			transform.localScale *= 1.7f;
 		}
+		*/
 	}
 
 	IEnumerator Start ()
@@ -87,7 +107,6 @@ public class JourneyPoint : MonoBehaviour, IComparable
 		if(m_canDrag)
 		{
 			Debug.Log("Clicked star " + m_sessionNum);
-#if UNITY_EDITOR
 			if(m_mapIsBought)
 			{
 				JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
@@ -96,18 +115,6 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			{
 				JourneyCoordinator.Instance.OnClickMapCollider();
 			}
-#else
-			if((m_sessionNum <= JourneyInformation.Instance.GetSessionsCompleted() + 1 && m_mapIsBought) || JourneyCoordinator.Instance.AreAllUnlocked())
-			{
-				Debug.Log("Session is unlocked");
-				JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
-			}
-			else
-			{
-				Debug.Log("Session is locked");
-				WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
-			}
-#endif
 		}
 	}
 
@@ -141,19 +148,81 @@ public class JourneyPoint : MonoBehaviour, IComparable
 
 	void CheckForCompletion()
 	{
+		if(m_phonemeId != -1)
+		{
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id=" + m_phonemeId);
+			
+			if(dt.Rows.Count > 0)
+			{
+				DataRow data = dt.Rows[0];
+				
+				string spriteName = AlphabetBookInformation.Instance.GetTexture(System.Convert.ToInt32(data["id"]));
+				if(spriteName != null)
+				{
+					m_pointBackground.spriteName = spriteName;
+				}
+				else
+				{
+					m_mnemonicTexture.color = Color.black;
+					m_graphemeLabel.color = Color.black;
+					m_pointBackground.spriteName = "icon_circle_white";
+				}
+				
+				string graphemeText = data["phoneme"].ToString();
+				m_graphemeLabel.text = graphemeText;
+				
+				if(graphemeText.Length > 2)
+				{
+					m_graphemeLabel.transform.parent.localScale = Vector3.one * 0.35f;
+				}
+				else if(graphemeText.Length > 1)
+				{
+					m_graphemeLabel.transform.parent.localScale = Vector3.one * 0.4f;
+				}
+				
+				string mnemonicText = data["mneumonic"].ToString();
+				
+				string imageFilename =
+					string.Format("Images/mnemonics_images_png_250/{0}_{1}",
+					              graphemeText,
+					              mnemonicText.Replace(" ", "_"));
+
+				Texture2D tex = (Texture2D)Resources.Load(imageFilename);
+				if(tex != null)
+				{
+					m_mnemonicTexture.mainTexture = tex;
+				}
+				else
+				{
+					m_mnemonicTexture.enabled = false;
+				}
+			}
+		}
+		else
+		{
+			m_mnemonicTexture.gameObject.SetActive(false);
+			m_graphemeLabel.gameObject.SetActive(false);
+
+			if(JourneyInformation.Instance.IsSessionFinished(m_sessionNum))
+			{
+				BetterList<string> spriteNames = m_pointBackground.atlas.GetListOfSprites();
+				m_pointBackground.spriteName = spriteNames[UnityEngine.Random.Range(1, spriteNames.size)];
+			}
+		}
+
+		if(m_sessionNum == JourneyInformation.Instance.GetSessionsCompleted() + 1)
+		{
+			JourneyPip.Instance.SetCurrentPoint(transform);
+		}
+	}
+
+	/*
+	void CheckForCompletion()
+	{
 		int sessionsCompleted = JourneyInformation.Instance.GetSessionsCompleted();
 
 		if(m_sessionNum <= sessionsCompleted)
 		{
-			if(m_starSprite != null)
-			{
-				m_starSprite.spriteName = m_onSpriteName;
-			}
-			else
-			{
-				m_star.mainTexture = m_starOn;
-			}
-
 			if(m_sessionNum == sessionsCompleted)
 			{
 				StartCoroutine(Shake());
@@ -164,6 +233,7 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			JourneyPip.Instance.SetCurrentPoint(transform);
 		}
 	}
+	*/
 
 	public int CompareTo(System.Object other)
 	{

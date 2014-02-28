@@ -18,7 +18,8 @@ public class ClickEvent : MonoBehaviour
 		m_data = data;
 	}
 
-	int m_int;
+	[SerializeField]
+	private int m_int;
 
 	public int GetInt()
 	{

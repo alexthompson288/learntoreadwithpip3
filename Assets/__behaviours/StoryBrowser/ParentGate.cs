@@ -28,6 +28,11 @@ public class ParentGate : Singleton<ParentGate>
 
 	void Awake()
 	{
+		if(m_myCam != null)
+		{
+			m_myCam.GetComponent<Camera>().enabled = true;
+		}
+
 		foreach(ClickEvent answerLabel in m_answerButtons)
 		{
 			answerLabel.OnSingleClick += OnAnswerClick;
