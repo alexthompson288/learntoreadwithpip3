@@ -23,6 +23,11 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	private UITexture[] m_difficultyStars;
 	[SerializeField]
 	private ClickEvent m_backCollider;
+	[SerializeField]
+	private UITexture m_background;
+
+	Texture2D m_defaultBackgroundTex;
+	Color m_defaultBackgroundColor;
 	
 	NewStoryBrowserBookButton m_currentBook;
 
@@ -30,6 +35,9 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	void Awake()
 	{
+		m_defaultBackgroundTex = m_background.mainTexture as Texture2D;
+		m_defaultBackgroundColor = m_background.color;
+
 		m_backCollider.OnSingleClick += OnClickBackCollider;
 		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
 	}
@@ -109,6 +117,22 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		m_priceLabel.text = "Buy Book - " + price;
 
 		//m_priceTextMesh.text = price;
+
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + bookData["id"].ToString() + "' and pageorder='" + 1 + "'");
+
+		if (dt.Rows.Count > 0)
+		{
+			DataRow row = dt.Rows[0];
+			
+			//string imageName = row["image"] == null ? "" : row["image"].ToString().Replace(".png", "");
+			string bgImageName = row["backgroundart"] == null ? "" : row["backgroundart"].ToString().Replace(".png", "");
+			
+			//Texture2D image = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
+			Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
+
+			m_background.mainTexture = bgImage != null ? bgImage : m_defaultBackgroundTex;
+			m_background.color = bgImage != null ? Color.white : m_defaultBackgroundColor;
+		}
 	}
 
 	public void OnClickBackCollider(ClickEvent click)
