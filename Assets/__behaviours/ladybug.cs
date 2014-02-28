@@ -7,6 +7,9 @@ public class ladybug : PathFollower {
 	public float TotalTime = 20.0f;
 	private float CurrTime = 0.0f;
 
+	[SerializeField]
+	private Vector3 m_RotationModifier = Vector3.zero;
+
 	// Use this for initialization
 	protected override void Start () 
 	{
@@ -25,6 +28,12 @@ public class ladybug : PathFollower {
 			CurrTime += Time.deltaTime * m_speedModifier;
 			transform.position = Path.GetPositionOnSpline(CurrTime / TotalTime);
 			transform.right = -Path.GetTangentToSpline(CurrTime / TotalTime);
+
+			Vector3 rot = transform.right;
+			rot.x += m_RotationModifier.x;
+			rot.y += m_RotationModifier.y;
+			rot.z += m_RotationModifier.z;
+			transform.right = rot;
 			
 			if(CurrTime > TotalTime)
 				CurrTime = 0.0f;
