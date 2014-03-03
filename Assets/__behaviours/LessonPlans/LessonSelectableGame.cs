@@ -6,7 +6,7 @@ public class LessonSelectableGame : BuyableGame
 	[SerializeField]
 	private string m_gameUserName;
 
-	void Start()
+	protected override void Start()
 	{
 		if(System.String.IsNullOrEmpty(m_gameUserName))
 		{
@@ -18,10 +18,12 @@ public class LessonSelectableGame : BuyableGame
 		if(label != null)
 		{
 			label.text = m_gameUserName;
+
+			float labelScale = m_gameUserName.Length >= 16 ? 0.14f : 0.2f;
+			label.transform.localScale = Vector3.one * labelScale;
 		}
 
-		float labelScale = m_gameUserName.Length >= 16 ? 0.14f : 0.2f;
-		label.transform.localScale = Vector3.one * labelScale;
+		base.Start();
 	}
 
 	void OnClick()

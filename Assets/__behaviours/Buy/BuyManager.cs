@@ -160,6 +160,149 @@ public class BuyManager : Singleton<BuyManager>
 		}
 	}
 #endif
+
+	public IEnumerator RestorePurchases(float restoreTime)
+	{
+		string receiptLocation = StoreKitBinding.getAppStoreReceiptLocation();
+
+		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
+		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+
+		StoreKitManager.restoreTransactionsFailedEvent += new Action<string>(StoreKitManager_restoreTransactionsFailedEvent);
+		StoreKitManager.restoreTransactionsFinishedEvent += new Action(StoreKitManager_restoreTransactionsFinishEvent);
+		
+		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
+		foreach (UICamera cam in uiCameras)
+		{
+			cam.enabled = false;
+		}
+
+		// Restore
+		StoreKitBinding.restoreCompletedTransactions();
+
+		yield return new WaitForSeconds(restoreTime);
+
+		StoreKitManager_restoreTransactionsFinishEvent();
+
+		/*
+		float pcTimeOut = 0;
+		while (!m_purchaseIsResolved)
+		{
+			pcTimeOut += Time.deltaTime;
+			#if UNITY_EDITOR
+			if (pcTimeOut > 3.0f)
+			{
+				Debug.Log("PURCHASE TIMED OUT");
+
+				StoreKitManager_restoreTransactionsFinishEvent();
+			}
+			#endif
+			yield return null;
+		}
+		*/
+	}
+
+	/*
+	int GetNumTransactions()
+	{
+		int numTransactions = -1;
+
+		string path = StoreKitBinding.getAppStoreReceiptLocation();
+
+		StringBuilder sb = new StringBuilder();
+		using (StreamReader sr = new StreamReader(path)) 
+		{
+			String line;
+			// Read and display lines from the file until the end of 
+			// the file is reached.
+			while ((line = sr.ReadLine()) != null) 
+			{
+				sb.AppendLine(line);
+			}
+		}
+		string allLines = sb.ToString();
+
+		ReceiptVerification rv = new ReceiptVerification(false, allLines);
+
+		if(rv.Verify())
+		{
+		}
+
+		return numTransactions;
+	}
+	*/
+
+
+	void StoreKitManager_restoreTransactionsFinishEvent() // TODO: This won't work because this method is called before all of the purchases are processed. You need to find the length of the queue
+	{
+		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
+		foreach (UICamera cam in uiCameras)
+		{
+			if (cam != null)
+			{
+				cam.enabled = true;
+			}
+		}
+		
+		RefreshBuyAllButtons();
+		RefreshBooks();
+		RefreshMaps();
+		RefreshGames();
+
+		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
+		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+	}
+
+	void StoreKitManager_restoreTransactionsFailedEvent(string str)
+	{
+		StoreKitManager_restoreTransactionsFinishEvent();
+	}
+
+	void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
+	{
+		string productId = obj.productIdentifier;
+
+		if(productId.Contains("story")) // Book
+		{
+			// Find the story id
+			string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
+			int bookId = Convert.ToInt32(idNum);
+
+			SetBookPurchased(bookId);
+		}
+		else if(productId.Contains("map")) // Map
+		{
+			// Find the story id
+			string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
+			int mapId = Convert.ToInt32(idNum);
+			
+			SetMapPurchased(mapId);
+		}
+		else if(productId.Contains("stories")) // All Books
+		{
+			SetAllBooksPurchased();
+		}
+		else if(productId.Contains("maps")) // All Maps
+		{
+			SetAllMapsPurchased();
+		}
+		else if(productId.Contains("games")) // All Games
+		{
+			SetAllGamesPurchased();
+		}
+		else if(productId.Contains("everything")) // Everything
+		{
+			SetAllBooksPurchased();
+			SetAllMapsPurchased();
+			SetAllGamesPurchased();
+		}
+		else
+		{
+			Debug.LogError("Product Identifier not recognized: " + productId);
+		}
+	}
 	
 	void StoreKitManager_everythingPurchaseSuccessfulEvent(StoreKitTransaction obj)
 	{

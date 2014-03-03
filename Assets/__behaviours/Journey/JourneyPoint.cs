@@ -109,7 +109,10 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			Debug.Log("Clicked star " + m_sessionNum);
 			if(m_mapIsBought)
 			{
-				JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+				//JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
+				JourneyInformation.Instance.SubscribeOnSessionComplete();
+				SessionManager.Instance.OnChooseSession(m_sessionNum);
 			}
 			else
 			{

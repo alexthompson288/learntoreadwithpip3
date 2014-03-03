@@ -37,6 +37,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	{
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
 
+		NavMenu.Instance.HideCallButton();
+
 		m_levelMenuDefaultPos = m_levelMenu.transform.position;
 
 		foreach(ClickEvent click in m_backButtons)

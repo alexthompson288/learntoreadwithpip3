@@ -14,15 +14,22 @@ public class BuyableGame : MonoBehaviour
 
 	protected bool m_isUnlocked;
 
-	IEnumerator Start()
+	protected virtual void Start()
+	{
+		StartCoroutine(StartCo());
+	}
+
+	IEnumerator StartCo()
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
+		
 		Refresh();
 	}
 
 	public void Refresh()
 	{
+		Debug.Log("BuyableGame.Refresh()");
+
 		m_isUnlocked = BuyManager.Instance.IsGameBought(m_gameSceneName);
 		
 		if(m_background != null)

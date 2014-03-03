@@ -7,6 +7,8 @@ public class JourneyInformation : Singleton<JourneyInformation>
 {
 	void OnSessionComplete()
 	{
+		Debug.Log("JourneyInformation.OnSessionComplete()");
+
 		int sessionNum = SessionManager.Instance.GetSessionNum();
 
 		if(sessionNum > GetSessionsCompleted())
@@ -14,7 +16,11 @@ public class JourneyInformation : Singleton<JourneyInformation>
 			SetSessionsCompleted(sessionNum);
 		}
 
+		SetSessionFinished(sessionNum);
+
 		SetRecentlyCompleted(true);
+
+		SessionManager.Instance.OnSessionComplete -= OnSessionComplete;
 	}
 
 	[SerializeField]
@@ -36,8 +42,6 @@ public class JourneyInformation : Singleton<JourneyInformation>
 
 	void Awake()
 	{
-		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
-
 		string allGameNames = m_gameNameFile.text;
 		string[] separatedGameNames = allGameNames.Split(',');
 
@@ -52,6 +56,11 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		}
 
 		Load ();
+	}
+
+	public void SubscribeOnSessionComplete()
+	{
+		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
 	}
 
 	public bool IsSessionFinished(int sessionNum)

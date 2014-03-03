@@ -326,8 +326,9 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		m_journeyPoints.Add(newPoint);
 	}
 
-	public void OnStarClick (int sessionNum) 
+	public void OnStarClick (int sessionNum) // TODO: Delete this method
 	{
+		JourneyInformation.Instance.SubscribeOnSessionComplete();
 		SessionManager.Instance.OnChooseSession(sessionNum);
 		/*
 		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();

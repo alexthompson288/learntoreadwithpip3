@@ -48,6 +48,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+		NavMenu.Instance.MoveCallButtonToRight();
+
 #if UNITY_EDITOR
 		if(!m_useDebugStory)
 		{

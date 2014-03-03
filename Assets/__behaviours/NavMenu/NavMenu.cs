@@ -13,15 +13,13 @@ public class NavMenu : Singleton<NavMenu>
 	[SerializeField]
 	private GameObject m_callButton;
 	[SerializeField]
-	private GameObject m_navMenuGoParent;
+	private Transform m_callButtonRightPosition;
 	[SerializeField]
-	private bool m_showCallButton = true;
+	private GameObject m_navMenuGoParent;
 
 	void Awake()
 	{
 		m_navMenuGoParent.SetActive(true);
-
-		m_callButton.SetActive(m_showCallButton);
 	}
 
 	void Start()
@@ -30,6 +28,16 @@ public class NavMenu : Singleton<NavMenu>
 		{
 			m_callButton.SetActive(false);
 		}
+	}
+
+	public void HideCallButton()
+	{
+		m_callButton.SetActive(false);
+	}
+
+	public void MoveCallButtonToRight()
+	{
+		m_callButton.transform.position = m_callButtonRightPosition.position;
 	}
 
 	public void Call()

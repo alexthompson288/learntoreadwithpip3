@@ -1,15 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Journey/JourneyPoint.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/NavMenu/NavMenu.cs">
     <Files>
-      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="109" Column="46" />
-      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="109" Column="46" />
-      <File FileName="Assets/__behaviours/Journey/VoyageLetterButton.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="64" Column="4" />
-      <File FileName="Assets/__behaviours/Journey/JourneyMap.cs" Line="97" Column="1" />
-      <File FileName="Assets/__behaviours/Journey/JourneyCoordinator.cs" Line="219" Column="63" />
-      <File FileName="Assets/__behaviours/Celebration/CelebrationCoordinator.cs" Line="51" Column="33" />
-      <File FileName="Assets/__behaviours/StoryBrowser/ParentGate.cs" Line="33" Column="50" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonSelectableGame.cs" Line="26" Column="15" />
+      <File FileName="Assets/__behaviours/Buy/BuyableGame.cs" Line="32" Column="3" />
+      <File FileName="Assets/__behaviours/GameMenu/ChooseGame.cs" Line="7" Column="37" />
+      <File FileName="Assets/__behaviours/NavMenu/NavMenu.cs" Line="18" Column="39" />
+      <File FileName="Assets/__behaviours/GameMenu/GameMenuCoordinator.cs" Line="40" Column="37" />
+      <File FileName="Assets/__behaviours/NavMenu/CallNavMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Sessions/SessionManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="19" Column="34" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
