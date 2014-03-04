@@ -1,15 +1,16 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/NavMenu/NavMenu.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Journey/JourneyAnimationPoint.cs">
     <Files>
-      <File FileName="Assets/__behaviours/LessonPlans/LessonSelectableGame.cs" Line="26" Column="15" />
-      <File FileName="Assets/__behaviours/Buy/BuyableGame.cs" Line="32" Column="3" />
-      <File FileName="Assets/__behaviours/GameMenu/ChooseGame.cs" Line="7" Column="37" />
-      <File FileName="Assets/__behaviours/NavMenu/NavMenu.cs" Line="18" Column="39" />
-      <File FileName="Assets/__behaviours/GameMenu/GameMenuCoordinator.cs" Line="40" Column="37" />
-      <File FileName="Assets/__behaviours/NavMenu/CallNavMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Journey/JourneyCoordinator.cs" Line="182" Column="59" />
+      <File FileName="Assets/__behaviours/Journey/JourneyAnimationPoint.cs" Line="19" Column="2" />
+      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="1" Column="1" />
       <File FileName="Assets/__behaviours/Sessions/SessionManager.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="19" Column="34" />
+      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Journey/JourneyCoordinator.cs" Line="182" Column="59" />
+      <File FileName="Assets/__behaviours/Pippisodes/PippisodeMenuCoordinator.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Celebration/CelebrationCoordinator.cs" Line="93" Column="40" />
+      <File FileName="Assets/__behaviours/Video/VideoCoordinator.cs" Line="31" Column="156" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

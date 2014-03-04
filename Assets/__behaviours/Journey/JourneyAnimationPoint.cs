@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class JourneyAnimationPoint : MonoBehaviour 
 {
+	[SerializeField]
+	private string m_videoName;
 	[SerializeField]
 	private int m_sessionNum;
 	[SerializeField]
@@ -14,6 +17,14 @@ public class JourneyAnimationPoint : MonoBehaviour
 
 	float m_totalDeltaY;
 
+
+#if UNITY_STANDALONE || UNITY_WEBPLAYER
+	void Start ()
+	{
+		gameObject.SetActive(false);
+	}
+#endif
+
 	void OnClick ()
 	{
 		if(m_canDrag)
@@ -21,8 +32,15 @@ public class JourneyAnimationPoint : MonoBehaviour
 			Debug.Log("Clicked star " + m_sessionNum);
 			if(m_mapIsBought)
 			{
-				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
-				SessionManager.Instance.OnChooseSession(m_sessionNum);
+				if(String.IsNullOrEmpty(m_videoName))
+				{
+					SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
+					SessionManager.Instance.OnChooseSession(m_sessionNum);
+				}
+				else
+				{
+					Handheld.PlayFullScreenMovie(m_videoName, Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+				}
 			}
 			else
 			{

@@ -27,6 +27,7 @@ public class TransitionToSceneButton : MonoBehaviour {
         }
         else
         {
+			FlurryBinding.endTimedEvent(Application.loadedLevelName);
             Application.LoadLevel(m_sceneToTransitionTo);
         }
     }

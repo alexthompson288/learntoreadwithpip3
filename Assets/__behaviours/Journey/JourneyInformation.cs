@@ -16,6 +16,14 @@ public class JourneyInformation : Singleton<JourneyInformation>
 			SetSessionsCompleted(sessionNum);
 		}
 
+		FlurryBinding.endTimedEvent("StartVoyageSession_" + sessionNum.ToString());
+
+		Dictionary<string, string> eventParameters = new Dictionary<string, string>();
+		eventParameters.Add("Current", sessionNum.ToString());
+		eventParameters.Add("Highest", GetSessionsCompleted().ToString());
+
+		FlurryBinding.logEventWithParameters("FinishVoyageSession", eventParameters, false);
+
 		SetSessionFinished(sessionNum);
 
 		SetRecentlyCompleted(true);

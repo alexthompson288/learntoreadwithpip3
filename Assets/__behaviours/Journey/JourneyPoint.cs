@@ -109,6 +109,10 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			Debug.Log("Clicked star " + m_sessionNum);
 			if(m_mapIsBought)
 			{
+				//System.Collections.Generic.Dictionary<string, string> eventParameters = new System.Collections.Generic.Dictionary<string, string>();
+				//FlurryBinding.logEventWithParameters("StartVoyageSession", eventParameters, true);
+				FlurryBinding.logEvent("StartVoyageSession_" + m_sessionNum.ToString(), true);
+
 				//JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
 				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
 				JourneyInformation.Instance.SubscribeOnSessionComplete();

@@ -9,6 +9,18 @@ public class SaveCurrentLesson : MonoBehaviour
 		Debug.Log("Saving lesson");
 		LessonNameCoordinator.Instance.OnInputFinish();
 
+		FlurryBinding.logEvent("New Lesson: " + LessonInfo.Instance.GetName(), false);
+
+		Dictionary<string, string> gameNamesDictionary = new Dictionary<string, string>();
+		List<string> gameNamesList = LessonInfo.Instance.GetGames();
+		for(int i = 0; i < gameNamesList.Count - 1; i += 2)
+		{
+			string s1 = gameNamesList[i];
+			string s2 = (i + 1) < gameNamesList.Count ? gameNamesList[i + 1] : "DefaultPastIndex";
+		}
+
+		FlurryBinding.logEventWithParameters("Lesson games", gameNamesDictionary, false);
+
 		AddMissingData(LessonInfo.DataType.Letters, "setphonemes", "phonemes");
 		AddMissingData(LessonInfo.DataType.Words, "setwords", "words");
 		AddMissingData(LessonInfo.DataType.Keywords, "setkeywords", "words");
@@ -21,10 +33,10 @@ public class SaveCurrentLesson : MonoBehaviour
 	{
 		List<DataRow> data = LessonInfo.Instance.GetData(dataType);
 		
-		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
-		
 		if(data.Count == 0)
 		{
+			FlurryBinding.logEvent("No lesson data for " + dataType, false);
+
 			Debug.Log("Adding: " + columnName.Replace("set", ""));
 			
 			int setNum = 1;
@@ -43,6 +55,28 @@ public class SaveCurrentLesson : MonoBehaviour
 
 				LessonInfo.Instance.AddData(System.Convert.ToInt32(datum["id"]), dataType);
 			}
+		}
+		else
+		{
+			string attribute = "word";
+
+			if(dataType == LessonInfo.DataType.Letters)
+			{
+				attribute = "phoneme";
+			}
+			else if(dataType == LessonInfo.DataType.Stories)
+			{
+				attribute = "title";
+			}
+
+			Dictionary<string, string> dataDictionary = new Dictionary<string, string>();
+			for(int i = 0; i < data.Count - 1; i += 2)
+			{
+				string s1 = data[i][attribute].ToString();
+				string s2 = (i + 1) < data.Count ? data[i + 1][attribute].ToString() : "DefaultPastIndex";
+			}
+
+			FlurryBinding.logEventWithParameters("Lesson data for " + dataType, dataDictionary, false);
 		}
 	}
 }

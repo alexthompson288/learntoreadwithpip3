@@ -14,6 +14,8 @@ public class RetryButton : MonoBehaviour
         }
         else
         {
+			FlurryBinding.logEvent("Retry game", false);
+			FlurryBinding.endTimedEvent(Application.loadedLevelName);
             Application.LoadLevel(scene);
         }
     }

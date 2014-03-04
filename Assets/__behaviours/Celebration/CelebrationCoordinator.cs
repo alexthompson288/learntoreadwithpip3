@@ -63,6 +63,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 	public IEnumerator Trumpet()
 	{
+		Debug.Log("Trumpet()");
 		m_trumpetParent.SetActive(true);
 		WingroveAudio.WingroveRoot.Instance.PostEvent("TRUMPET_1_QUIET");
 
@@ -85,11 +86,17 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		}
 	}
 
-	public IEnumerator TrumpetOff()
+	public IEnumerator TrumpetOff(bool waitForOn)
 	{
+		if(waitForOn)
+		{
+			yield return new WaitForSeconds(3f);
+		}
+
+		Debug.Log("TrumpetOff()");
 		foreach(TweenOnOffBehaviour trumpet in m_trumpets)
 		{
-			trumpet.On();
+			trumpet.Off();
 		}
 
 		yield return new WaitForSeconds(m_trumpets[0].GetTotalDurationOff());

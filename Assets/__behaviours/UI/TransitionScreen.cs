@@ -39,6 +39,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Use this for initialization
 	IEnumerator Start () 
     {
+		FlurryBinding.logEvent(Application.loadedLevelName, true);
+
 		//Debug.Log("TransitionScreen.Start()");
 
 		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
@@ -59,12 +61,14 @@ public class TransitionScreen : Singleton<TransitionScreen>
             if (m_loadingToScene == null)
             {
                 Debug.Log("Moving to scene 0");
+				FlurryBinding.endTimedEvent(Application.loadedLevelName);
                 Application.LoadLevel(0);
             }
             //else if(m_loadingToScene != "NewVoyage")
 			else
             {
                 Debug.Log("Moving to scene " + m_loadingToScene);
+				FlurryBinding.endTimedEvent(Application.loadedLevelName);
                 Application.LoadLevel(m_loadingToScene);
 
 				while(Application.isLoadingLevel)
@@ -319,6 +323,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 		GC.Collect();
 
+		FlurryBinding.endTimedEvent(Application.loadedLevelName);
         Application.LoadLevel(m_emptySceneName);
 	}
 
@@ -328,6 +333,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
         //m_loadingToScene = null;
 		//m_loadingToScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
 		m_loadingToScene = "NewVoyage";
+		FlurryBinding.endTimedEvent(Application.loadedLevelName);
         Application.LoadLevel(m_emptySceneName);
     }	
 	

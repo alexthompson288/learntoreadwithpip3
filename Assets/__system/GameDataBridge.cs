@@ -60,6 +60,11 @@ public class GameDataBridge : Singleton<GameDataBridge>
         return m_webStoreURL;
     }
 
+	void Awake()
+	{
+		FlurryBinding.startSession("apiKey");
+	}
+
     private SqliteDatabase m_cmsDb;
     bool m_isReady;
 	// Use this for initialization

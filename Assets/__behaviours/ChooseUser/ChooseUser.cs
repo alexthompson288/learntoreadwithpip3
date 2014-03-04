@@ -46,6 +46,10 @@ public class ChooseUser : Singleton<ChooseUser>
 
 	public void CreateUser(string user, string imageName)
 	{
+		Dictionary<string, string> eventParameters = new Dictionary<string, string>();
+		eventParameters.Add("Name", user);
+		eventParameters.Add("Image", imageName);
+		FlurryBinding.logEventWithParameters("New User", eventParameters, false);
 		m_users[user] = imageName;
 		Save ();
 	}

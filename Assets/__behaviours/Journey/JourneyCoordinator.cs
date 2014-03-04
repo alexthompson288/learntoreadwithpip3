@@ -79,6 +79,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	{
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
 
+
+
 		m_phonemeAudioSource.loop = false;
 		m_ambientAudioSource.loop = true;
 
@@ -156,8 +158,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 			if(sessionsCompleted % 5 == 0) // End of unit
 			{
-				StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-				StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff());
+				//StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+				//StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff(true));
 			}
 		}
 		else
@@ -165,6 +167,9 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			m_actionsComplete["BookTween"] = true;
 			m_actionsComplete["CoinTween"] = true;
 		}
+
+		StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+		StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff(true));
 	}
 
 	IEnumerator TweenStory()
@@ -174,8 +179,9 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		iTween.ScaleFrom(story, Vector3.zero, 0.5f);
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHINGS_APPEARS");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
 
-		yield return new WaitForSeconds(2.2f);
+		yield return new WaitForSeconds(3f);
 
 		iTween.ScaleTo(story, Vector3.zero, 0.5f);
 

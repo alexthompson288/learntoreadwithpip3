@@ -34,6 +34,7 @@ public class TransitionToChallengeMenu : MonoBehaviour
 		}
 		else
 		{
+			FlurryBinding.endTimedEvent(Application.loadedLevelName);
 			Application.LoadLevel("NewVoyage");
 		}
 	}
