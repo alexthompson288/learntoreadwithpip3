@@ -76,6 +76,9 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 		DataRow bookData = m_currentBook.GetData();
 
+		FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
+		FlurryBinding.logEvent("isAlreadyBought: " + BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
+
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 		
 

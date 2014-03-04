@@ -3,13 +3,11 @@ using System.Collections;
 
 public class ChooseGame : BuyableGame 
 {
-	[SerializeField]
-	private bool m_isTwoPlayer = false;
-
 	void OnClick()
 	{
 		if(m_isUnlocked)
 		{
+			FlurryBinding.logEvent("Choose Game: " + m_gameSceneName, false);
 			GameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
 		}
 		else

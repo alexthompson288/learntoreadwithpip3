@@ -22,6 +22,7 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 			LevelMenuCoordinator.Instance.SelectPlayerCount(m_numPlayers);
 		}
 		*/
+		FlurryBinding.logEvent("Choose NumPlayers: " + m_numPlayers.ToString(), false);
 		GameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);
     }
 }

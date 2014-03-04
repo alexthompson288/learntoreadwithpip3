@@ -1,18 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/LessonPlans/SaveCurrentLesson.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Buy/BuyManager.cs">
     <Files>
-      <File FileName="Assets/__behaviours/DummyFlurry/DummyFlurry.cs" Line="3" Column="34" />
-      <File FileName="Assets/__behaviours/UI/TransitionScreen.cs" Line="336" Column="60" />
-      <File FileName="Assets/__system/GameDataBridge.cs" Line="65" Column="38" />
-      <File FileName="Assets/__behaviours/UI/RetryButton.cs" Line="14" Column="10" />
-      <File FileName="Assets/__behaviours/UI/TransitionToSceneButton.cs" Line="30" Column="61" />
-      <File FileName="Assets/__behaviours/ScoreDance/TransitionToChallengeMenu.cs" Line="37" Column="4" />
-      <File FileName="Assets/__behaviours/ChooseUser/CreateUserCoordinator.cs" Line="72" Column="31" />
-      <File FileName="Assets/__behaviours/ChooseUser/ChooseUser.cs" Line="41" Column="43" />
-      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="30" Column="3" />
-      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="114" Column="48" />
-      <File FileName="Assets/__behaviours/LessonPlans/SaveCurrentLesson.cs" Line="76" Column="73" />
+      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="222" Column="1" />
+      <File FileName="Assets/__behaviours/UI/TweenOnOffBehaviour.cs" Line="202" Column="24" />
+      <File FileName="Assets/__behaviours/NavMenu/NavMenu.cs" Line="41" Column="37" />
+      <File FileName="Assets/__behaviours/GameMenu/ChooseGame.cs" Line="5" Column="2" />
+      <File FileName="Assets/__behaviours/Buy/BuyableGame.cs" Line="5" Column="2" />
+      <File FileName="Assets/__behaviours/GameMenu/GameMenuCoordinator.cs" Line="118" Column="4" />
+      <File FileName="Assets/__behaviours/Journey/JourneyAnimationPoint.cs" Line="18" Column="22" />
+      <File FileName="Assets/__behaviours/Journey/JourneyMap.cs" Line="93" Column="17" />
+      <File FileName="Assets/__behaviours/Buy/BuyManager.cs" Line="166" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

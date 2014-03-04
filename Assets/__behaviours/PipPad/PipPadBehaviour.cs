@@ -110,6 +110,8 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 	public void Show(string word)
 	{
+		FlurryBinding.logEvent("PipPad Show: " + word, false);
+
 		// EARLY EXIT
 		if (m_showing)
 		{

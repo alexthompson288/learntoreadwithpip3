@@ -219,6 +219,7 @@ public class JourneyPoint : MonoBehaviour, IComparable
 
 		if(m_sessionNum == JourneyInformation.Instance.GetSessionsCompleted() + 1)
 		{
+			Debug.Log("Current Point: " + m_sessionNum);
 			JourneyPip.Instance.SetCurrentPoint(transform);
 		}
 	}

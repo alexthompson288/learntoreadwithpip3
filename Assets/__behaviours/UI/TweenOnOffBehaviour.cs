@@ -196,4 +196,9 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 	{
 		return m_isOn;
 	}
+
+	public Transform GetOffLocation()
+	{
+		return m_offLocation;
+	}
 }

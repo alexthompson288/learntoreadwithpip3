@@ -25,6 +25,7 @@ public class ChooseLevel : MonoBehaviour
 	{
 		if(m_isUnlocked)
 		{
+			FlurryBinding.logEvent("Choose Level: " + m_setNum.ToString(), false);
 			GameMenuCoordinator.Instance.OnChooseLevel(m_setNum);
 		}
 	}

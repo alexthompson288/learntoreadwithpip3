@@ -42,6 +42,20 @@ public class JourneyPip : Singleton<JourneyPip>
 		{
 			transform.position = m_pipOff.position;
 		}
+
+#if UNITY_EDITOR
+		if(Input.GetKeyDown(KeyCode.V))
+		{
+			if(m_currentPoint != null)
+			{
+				Debug.Log("m_currentPoint: "  + m_currentPoint.name);
+			}
+			else
+			{
+				Debug.Log("m_currentPoint is null");
+			}
+		}
+#endif
 	}
 	
 	int RandomizeAtlas ()
@@ -56,6 +70,7 @@ public class JourneyPip : Singleton<JourneyPip>
 
 	public void SetCurrentPoint(Transform currentPoint)
 	{
+		Debug.Log("JourneyPip.SetCurrentPoint(): " + currentPoint.name);
 		m_currentPoint = currentPoint;
 	}
 }

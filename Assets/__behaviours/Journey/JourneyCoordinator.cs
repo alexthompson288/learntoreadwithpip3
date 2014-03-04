@@ -65,9 +65,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			arrow.OnSingleClick += OnClickArrow;
 		}
 
-		m_actionsComplete.Add("StarShake", false);
 		m_actionsComplete.Add("BookTween", false);
-		m_actionsComplete.Add("CoinTween", false);
 	}
 
 	void OnClickArrow(ClickEvent click)
@@ -78,8 +76,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	IEnumerator Start()
 	{
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
-
-
 
 		m_phonemeAudioSource.loop = false;
 		m_ambientAudioSource.loop = true;
@@ -147,8 +143,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + sessionsCompleted);
 			if(dt.Rows.Count > 0 && dt.Rows[0]["story_id"] != null)
 			{
-				//m_storyTweenReceiver.OnTweenFinish += OnStoryTweenFinish;
-				//m_storyTweenReceiver.TweenObject(m_storyTweenFromPos);
 				StartCoroutine(TweenStory());
 			}
 			else
@@ -158,8 +152,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 			if(sessionsCompleted % 5 == 0) // End of unit
 			{
-				//StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-				//StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff(true));
+				StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+				StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff(true));
 			}
 		}
 		else
@@ -167,9 +161,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 			m_actionsComplete["BookTween"] = true;
 			m_actionsComplete["CoinTween"] = true;
 		}
-
-		StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		StartCoroutine(CelebrationCoordinator.Instance.TrumpetOff(true));
 	}
 
 	IEnumerator TweenStory()
@@ -240,6 +231,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 						break;
 					}
 				}
+
+				WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
 			}
 			else
 			{
@@ -278,6 +271,8 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 						break;
 					}
 				}
+
+				WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
 			}
 			else
 			{

@@ -12,6 +12,7 @@ public class ChooseSkill : MonoBehaviour
 
 	void OnClick()
 	{
+		FlurryBinding.logEvent("Choose Skill: " + m_levelSkill, false);
 		GameMenuCoordinator.Instance.OnChooseSkill(m_gameMenu, m_levelSkill);
 	}
 

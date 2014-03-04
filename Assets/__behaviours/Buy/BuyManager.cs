@@ -163,7 +163,7 @@ public class BuyManager : Singleton<BuyManager>
 
 	public IEnumerator RestorePurchases(float restoreTime)
 	{
-		string receiptLocation = StoreKitBinding.getAppStoreReceiptLocation();
+		//string receiptLocation = StoreKitBinding.getAppStoreReceiptLocation();
 
 		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
@@ -312,6 +312,8 @@ public class BuyManager : Singleton<BuyManager>
 		{
 			m_purchaseIsResolved = true;
 		} 
+
+		FlurryBinding.logEvent("Purchasing Everything", false);
 
 		SetAllBooksPurchased();
 		SetAllMapsPurchased();
@@ -494,12 +496,16 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetBookPurchased(int bookId)
 	{
+		FlurryBinding.logEvent("SetBookPurchased: " + bookId.ToString(), false);
+
 		m_boughtBooks.Add(bookId);
 		Save();
 	}
 
 	public void SetAllBooksPurchased()
 	{
+		FlurryBinding.logEvent("SetAllBooksPurchased", false);
+
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
 		if(dt.Rows.Count > 0)
 		{
@@ -548,12 +554,16 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetMapPurchased(int mapId)
 	{
+		FlurryBinding.logEvent("SetMapPurchased: " + mapId.ToString(), false);
+
 		m_boughtMaps.Add(mapId);
 		Save ();
 	}
 
 	public void SetAllMapsPurchased()
 	{
+		FlurryBinding.logEvent("SetAllMapsPurchased", false);
+
 		foreach(int map in m_maps)
 		{
 			m_boughtMaps.Add(map);
@@ -573,6 +583,8 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetAllGamesPurchased()
 	{
+		FlurryBinding.logEvent("SetAllGamesPurchased", false);
+
 		m_boughtGames = true;
 		Save ();
 	}

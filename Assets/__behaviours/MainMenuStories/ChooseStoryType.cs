@@ -10,6 +10,7 @@ public class ChooseStoryType : MonoBehaviour
 	// Update is called once per frame
 	void OnClick () 
 	{
+		FlurryBinding.logEvent("Choose story type: " + m_storyType, false);
 		SessionInformation.Instance.SetStoryType(m_storyType);
 	}
 }

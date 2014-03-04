@@ -77,6 +77,8 @@ public class AlphabetBookCoordinator : MonoBehaviour
 
 		string spriteName = m_spawnedBackgrounds[clickEvent.gameObject];
 
+		FlurryBinding.logEvent("Alphabet Book choose: " + spriteName, false);
+
 		m_letterButton.SetBackgroundSpriteName(spriteName);
 		AlphabetBookInformation.Instance.AddTexture(m_letterButton.GetData(), spriteName);
 	}

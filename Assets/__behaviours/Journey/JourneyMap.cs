@@ -82,8 +82,13 @@ public class JourneyMap : MonoBehaviour, IComparable
 		if(isUnlocked)
 		{
 			JourneyPoint[] points = GetComponentsInChildren<JourneyPoint>() as JourneyPoint[];
-
 			foreach(JourneyPoint point in points)
+			{
+				point.SetMapBought();
+			}
+
+			JourneyAnimationPoint[] animationPoints = GetComponentsInChildren<JourneyAnimationPoint>() as JourneyAnimationPoint[];
+			foreach(JourneyAnimationPoint point in animationPoints)
 			{
 				point.SetMapBought();
 			}

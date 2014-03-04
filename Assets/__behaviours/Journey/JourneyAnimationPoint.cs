@@ -13,10 +13,9 @@ public class JourneyAnimationPoint : MonoBehaviour
 
 	bool m_mapIsBought;
 
-	bool m_canDrag;
+	bool m_canDrag = true;
 
 	float m_totalDeltaY;
-
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER
 	void Start ()
@@ -27,19 +26,23 @@ public class JourneyAnimationPoint : MonoBehaviour
 
 	void OnClick ()
 	{
+		Debug.Log("OnClick");
 		if(m_canDrag)
 		{
-			Debug.Log("Clicked star " + m_sessionNum);
+			Debug.Log("CanDrag");
 			if(m_mapIsBought)
 			{
+				Debug.Log("MapIsBought");
 				if(String.IsNullOrEmpty(m_videoName))
 				{
+					Debug.Log("Play Session " + m_sessionNum);
 					SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
 					SessionManager.Instance.OnChooseSession(m_sessionNum);
 				}
 				else
 				{
-					Handheld.PlayFullScreenMovie(m_videoName, Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+					Debug.Log("Playing " + m_videoName + ".mp4");
+					Handheld.PlayFullScreenMovie(m_videoName + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
 				}
 			}
 			else

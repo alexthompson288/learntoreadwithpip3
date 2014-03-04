@@ -13,7 +13,7 @@ public class NavMenu : Singleton<NavMenu>
 	[SerializeField]
 	private GameObject m_callButton;
 	[SerializeField]
-	private Transform m_callButtonRightPosition;
+	private GameObject m_callButtonRight;
 	[SerializeField]
 	private GameObject m_navMenuGoParent;
 
@@ -37,7 +37,16 @@ public class NavMenu : Singleton<NavMenu>
 
 	public void MoveCallButtonToRight()
 	{
+		m_callButton.SetActive(false);
+		m_callButtonRight.SetActive(true);
+		/*
 		m_callButton.transform.position = m_callButtonRightPosition.position;
+
+		Transform callButtonOff = m_callButton.GetComponent<TweenOnOffBehaviour>().GetOffLocation();
+		Vector3 newOffPosition = callButtonOff.position;
+		newOffPosition.x = m_callButtonRightPosition.position.x;
+		callButtonOff.position = newOffPosition;
+		*/
 	}
 
 	public void Call()
