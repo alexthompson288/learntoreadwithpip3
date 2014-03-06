@@ -29,6 +29,10 @@ public class StarBar : MonoBehaviour
 		string levelSkill = m_skill.GetLevelSkill();
 		string starSkill = m_skill.GetStarSkill();
 
+		Debug.Log("levelSkill: " + levelSkill);
+		Debug.Log("starSkill: " + starSkill);
+		Debug.Log("StarProgress: " + SkillProgressInformation.Instance.GetProgress(starSkill));
+
 		if(SkillProgressInformation.Instance.GetProgress(starSkill) >= SkillProgressInformation.Instance.GetStarsPerLevel())
 		{
 			SkillProgressInformation.Instance.IncrementProgress(levelSkill);

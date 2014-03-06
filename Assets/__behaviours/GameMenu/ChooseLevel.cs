@@ -25,7 +25,10 @@ public class ChooseLevel : MonoBehaviour
 	{
 		if(m_isUnlocked)
 		{
+#if UNITY_IPHONE
 			FlurryBinding.logEvent("Choose Level: " + m_setNum.ToString(), false);
+#endif
+
 			GameMenuCoordinator.Instance.OnChooseLevel(m_setNum);
 		}
 	}
@@ -36,4 +39,12 @@ public class ChooseLevel : MonoBehaviour
 
 		m_sprite.color = m_isUnlocked ? m_unlockedColor : m_lockedColor;
 	}
+
+	public void CheckUnlocked(int currentLevel)
+	{
+		m_isUnlocked = m_setNum <= currentLevel;
+		m_sprite.color = m_isUnlocked ? m_unlockedColor : m_lockedColor;
+	}
+
+
 }

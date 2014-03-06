@@ -110,7 +110,9 @@ public class LessonInfo : Singleton<LessonInfo>
 		
 		HashSet<int> m_keywords = new HashSet<int>();
 		int m_targetKeyword = -1;
-		
+
+		HashSet<int> m_stories = new HashSet<int>();
+
 		public Lesson()
 		{
 			m_name = "Default Lesson";
@@ -266,9 +268,13 @@ public class LessonInfo : Singleton<LessonInfo>
 			{
 				return m_words.Contains(id);
 			}
-			else
+			else if(dataType == DataType.Keywords)
 			{
 				return m_keywords.Contains(id);
+			}
+			else
+			{
+				return m_stories.Contains(id);
 			}
 		}
 		
@@ -282,9 +288,14 @@ public class LessonInfo : Singleton<LessonInfo>
 			{
 				return m_words;
 			}
-			else
+			else if(dataType == DataType.Keywords)
 			{
 				return m_keywords;
+			}
+			else
+			{
+				Debug.Log("Lesson.GetData() - Stories");
+				return m_stories;
 			}
 		}
 		
@@ -314,9 +325,14 @@ public class LessonInfo : Singleton<LessonInfo>
 			{
 				m_words.Add(id);
 			}
-			else
+			else if(dataType == DataType.Keywords)
 			{
 				m_keywords.Add(id);
+			}
+			else
+			{
+				Debug.Log("Lesson.AddData(" + id + ")");
+				m_stories.Add(id);
 			}
 		}
 		
@@ -340,7 +356,7 @@ public class LessonInfo : Singleton<LessonInfo>
 					m_targetWord = -1;
 				}
 			}
-			else
+			else if(dataType == DataType.Keywords)
 			{
 				m_keywords.Remove(id);
 				
@@ -348,6 +364,10 @@ public class LessonInfo : Singleton<LessonInfo>
 				{
 					m_targetKeyword = -1;
 				}
+			}
+			else
+			{
+				m_stories.Remove(id);
 			}
 		}
 
@@ -361,9 +381,13 @@ public class LessonInfo : Singleton<LessonInfo>
 			{
 				m_words.Clear();
 			}
-			else
+			else if(dataType == DataType.Keywords)
 			{
 				m_keywords.Clear();
+			}
+			else
+			{
+				m_stories.Clear();
 			}
 		}
 	}
@@ -465,9 +489,24 @@ public class LessonInfo : Singleton<LessonInfo>
 
 	public List<DataRow> GetData(DataType dataType)
 	{
+		Debug.Log("LessonInfo.GetData()");
+
 		HashSet<int> ids = m_currentLesson.GetData(dataType);
+
+		Debug.Log("There are " + ids.Count + " " + dataType);
 		
-		string dataName = (dataType == DataType.Letters) ? "phonemes" : "words";
+		//string dataName = (dataType == DataType.Letters) ? "phonemes" : "words";
+
+		string dataName = "words";
+
+		if(dataType == DataType.Letters)
+		{
+			dataName = "phonemes";
+		}
+		else if(dataType == DataType.Stories)
+		{
+			dataName = "stories";
+		}
 		
 		List<DataRow> data = new List<DataRow>();
 		
@@ -482,6 +521,8 @@ public class LessonInfo : Singleton<LessonInfo>
 				data.Add(dt.Rows[0]);
 			}
 		}
+
+		Debug.Log(System.String.Format("Found {0} id matches", data.Count));
 		
 		return data;
 	}

@@ -10,7 +10,10 @@ public class ChooseStoryType : MonoBehaviour
 	// Update is called once per frame
 	void OnClick () 
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("Choose story type: " + m_storyType, false);
+#endif
+
 		SessionInformation.Instance.SetStoryType(m_storyType);
 	}
 }

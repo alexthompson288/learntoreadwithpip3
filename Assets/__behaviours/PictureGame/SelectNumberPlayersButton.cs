@@ -22,7 +22,11 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 			LevelMenuCoordinator.Instance.SelectPlayerCount(m_numPlayers);
 		}
 		*/
+
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("Choose NumPlayers: " + m_numPlayers.ToString(), false);
+#endif
+
 		GameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);
     }
 }

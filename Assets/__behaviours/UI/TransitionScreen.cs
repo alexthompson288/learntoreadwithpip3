@@ -39,7 +39,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Use this for initialization
 	IEnumerator Start () 
     {
+#if UNITY_IPHONE
 		FlurryBinding.logEvent(Application.loadedLevelName, true);
+#endif
 
 		//Debug.Log("TransitionScreen.Start()");
 
@@ -61,14 +63,22 @@ public class TransitionScreen : Singleton<TransitionScreen>
             if (m_loadingToScene == null)
             {
                 Debug.Log("Moving to scene 0");
+
+#if UNITY_IPHONE
 				FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
                 Application.LoadLevel(0);
             }
             //else if(m_loadingToScene != "NewVoyage")
 			else
             {
                 Debug.Log("Moving to scene " + m_loadingToScene);
+
+#if UNITY_IPHONE
 				FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
                 Application.LoadLevel(m_loadingToScene);
 
 				while(Application.isLoadingLevel)
@@ -323,7 +333,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 		GC.Collect();
 
+#if UNITY_IPHONE
 		FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
         Application.LoadLevel(m_emptySceneName);
 	}
 
@@ -333,7 +346,11 @@ public class TransitionScreen : Singleton<TransitionScreen>
         //m_loadingToScene = null;
 		//m_loadingToScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
 		m_loadingToScene = "NewVoyage";
+
+#if UNITY_IPHONE
 		FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
         Application.LoadLevel(m_emptySceneName);
     }	
 	

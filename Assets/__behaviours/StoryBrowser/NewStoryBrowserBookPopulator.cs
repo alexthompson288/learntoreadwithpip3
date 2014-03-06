@@ -2,7 +2,7 @@
 using System.Collections;
 using Wingrove;
 using System.Collections.Generic;
-//using System;
+using System;
 
 public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulator> 
 {
@@ -17,9 +17,15 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 
 	// Use this for initialization
 
+	bool m_productListResolved = false;
+
 	IEnumerator Start () 
     {
+		//Debug.Log("PRODUCTLIST: Waiting for db");
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+		//Debug.Log("PRODUCTLIST: Building");
 
 		m_loadingIcon.SetActive(false);
 
@@ -75,7 +81,7 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 
         int bookIndex = 0;
 
-        List<string> bookProductIds = new List<string>();
+        //List<string> bookProductIds = new List<string>();
 
         foreach (DataRow row in dataTable.Rows)
         {
@@ -85,51 +91,48 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
                 bookInstance.name = bookIndex.ToString() + "_Book";
                 NewStoryBrowserBookButton bookButton = bookInstance.GetComponent<NewStoryBrowserBookButton>();
                 bookButton.SetUpWith(row);
-                bookProductIds.Add(bookButton.BuildProductIdentifier());
+                //bookProductIds.Add(bookButton.BuildProductIdentifier());
                 ++bookIndex;
             }
         }
-		
-		//StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_printProducts);
         
-		bookProductIds.Add(BuyAllButton.Instance.GetProductIdentifier());
+		//bookProductIds.Add(BuyAllButton.Instance.GetProductIdentifier());
 
-		StoreKitBinding.requestProductData(bookProductIds.ToArray());        
+		//StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		//StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
+		
+		//Debug.Log("PRODUCTLIST: Requesting");
+
+		//StoreKitBinding.requestProductData(bookProductIds.ToArray()); 
+
+		//while(!m_productListResolved)
+		//{
+			//yield return null;
+		//}
+		
+		//StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		//StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
+		
+		//Debug.Log("PRODUCTLIST: Finished");
 
         m_grid.Reposition();
-
-		//GetAndPrintProducts();
 	}
 
-	/*
-	void GetAndPrintProducts()
+	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
 	{
-		Debug.Log("GetAndPrintProducts()");
-
-		List<StoreKitProduct> products = StoreKitProduct.productsFromJson();
-
-		Debug.Log("products.Count: " + products.Count);
-
-		foreach(StoreKitProduct product in products)
-		{
-			Debug.Log("Title: " + product.title);
-			Debug.Log("Price: " + product.price);
-		}
+		Debug.Log("PRODUCTLIST: Received " + productList.Count);
+		m_productListResolved = true;
 	}
-	*/
-
-	/*
-	void StoreKitManager_printProducts(List<StoreKitProduct> products)
+	
+	void StoreKitManager_productListFailedEvent(string s)
 	{
-		Debug.Log("PRINTING PRODUCTS");
+		Debug.Log("PRODUCTLIST: Failed");
+		Debug.Log("Failed Message: " + s);
 		
-		foreach(StoreKitProduct product in products)
-		{
-			Debug.Log("Name: " + product.title);
-			Debug.Log("Price: " + product.price);
-		}
+		m_productListResolved = true;
 	}
-	*/
+	
+
 
 	public bool IsBookUnlocked(int bookId)
 	{

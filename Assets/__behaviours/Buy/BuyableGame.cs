@@ -37,11 +37,7 @@ public class BuyableGame : MonoBehaviour
 
 	public void Refresh()
 	{
-		Debug.Log("BuyableGame.Refresh()");
-
 		m_isUnlocked = BuyManager.Instance.IsGameBought(m_gameSceneName);
-
-		Debug.Log("m_isUnlocked");
 		
 		if(m_background != null)
 		{

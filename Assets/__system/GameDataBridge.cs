@@ -62,7 +62,20 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 	void Awake()
 	{
-		FlurryBinding.startSession("apiKey");
+//#if UNITY_EDITOR
+		//FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
+#if UNITY_IPHONE
+
+		Debug.Log("DEVELOPMENT BUILD: " + Debug.isDebugBuild);
+		Debug.Log("UP_TO_DATE_TEST_3");
+
+		string apiKey = Debug.isDebugBuild ?  "FV6X7ZZW2B2YVY6BY9RR" : "6Z5K6YT4JSC6KYMD77XQ";
+		FlurryBinding.startSession(apiKey);
+
+		//FlurryBinding.startSession("6Z5K6YT4JSC6KYMD77XQ");
+//#elif UNITY_ANDROID
+		//FlurryBinding.startSession("8QN3YHQ67VWSRRG53WKX");
+#endif
 	}
 
     private SqliteDatabase m_cmsDb;

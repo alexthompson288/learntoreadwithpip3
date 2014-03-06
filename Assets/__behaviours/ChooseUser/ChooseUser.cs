@@ -49,7 +49,11 @@ public class ChooseUser : Singleton<ChooseUser>
 		Dictionary<string, string> eventParameters = new Dictionary<string, string>();
 		eventParameters.Add("Name", user);
 		eventParameters.Add("Image", imageName);
+
+#if UNITY_IPHONE
 		FlurryBinding.logEventWithParameters("New User", eventParameters, false);
+#endif
+
 		m_users[user] = imageName;
 		Save ();
 	}

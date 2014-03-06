@@ -57,14 +57,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 		m_levelMenuGrid.Reposition();
 	}
 
-	public void OnChooseSkill(GameObject gameMenu, string skillName)
+	public void OnChooseSkill(GameObject gameMenu, string levelSkillName, string starSkillName)
 	{
 		m_currentGameMenu = gameMenu;
 
-		foreach(ChooseLevel level in m_levels)
-		{
-			level.CheckUnlocked(skillName);
-		}
+		SkillProgressInformation.Instance.SetCurrentSkill(levelSkillName);
+		SkillProgressInformation.Instance.SetCurrentStarSkill(starSkillName);
 
 		StartCoroutine(MoveCamera(m_skillMenu, m_currentGameMenu));
 	}
@@ -73,6 +71,13 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	{
 		m_currentGame = game;
 		m_isTwoPlayer = isTwoPlayer;
+
+		//int currentLevel = SkillProgressInformation.Instance.GetProgress(levelSkillName) + 1;
+		int currentLevel = SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1;
+		foreach(ChooseLevel level in m_levels)
+		{
+			level.CheckUnlocked(currentLevel);
+		}
 
 		if(m_isTwoPlayer)
 		{

@@ -58,7 +58,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	void Awake ()
 	{
-		Debug.Log("JourneyCoordinator.Awake()");
+		Debug.Log("JourneyCoordinator.Awake(): UP_TO_DATE_TEST_3");
 
 		foreach(ClickEvent arrow in m_arrows)
 		{
@@ -134,7 +134,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		yield return new WaitForSeconds(2f);
-		Debug.Log("Tweening items");
 
 		if(JourneyInformation.Instance.HasRecentlyCompleted())
 		{
@@ -201,13 +200,11 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	public void OnMapDrag(float deltaY)
 	{
-		Debug.Log("deltaY: " + deltaY);
+		//Debug.Log("deltaY: " + deltaY);
 		if(deltaY > 0)
 		{
 			if(m_botMapPos.childCount > 0)
 			{
-				Debug.Log("Scrolling");
-
 				StartCoroutine(DisableArrows());
 
 				if(m_topMapPos.childCount > 0)
@@ -243,8 +240,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		{
 			if(m_topMapPos.childCount > 0)
 			{
-				Debug.Log("Scrolling");
-
 				StartCoroutine(DisableArrows());
 
 				if(m_botMapPos.childCount > 0)

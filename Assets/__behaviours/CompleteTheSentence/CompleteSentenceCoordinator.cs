@@ -75,6 +75,11 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 			if(storyData.Count > 0)
 			{
 				sectionId = Convert.ToInt32(storyData[0]["section_id"]);
+				Debug.Log("Lesson Story sectionId: " + sectionId);
+			}
+			else
+			{
+				Debug.Log("No Lesson Story Data");
 			}
 		}
 		else
@@ -401,9 +406,12 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 			Debug.Log("Voyage");
 			SessionManager.Instance.OnGameFinish();
 		}
+		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		{
+			LessonInfo.Instance.OnGameFinish();
+		}
 		else
 		{
-			Debug.Log("CompleteSentenceEnd");
 			TransitionScreen.Instance.ChangeLevel("NewCompleteSentenceEnd", false);
 		}
 	}

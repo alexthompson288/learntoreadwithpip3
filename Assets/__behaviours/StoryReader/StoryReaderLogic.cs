@@ -21,7 +21,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 	[SerializeField]
 	private UILabel m_pageCount;
 	[SerializeField]
-	private float m_pageTurnDuration = 3.0f;
+	private float m_pageTurnDuration = 0.8f;
 
 #if UNITY_EDITOR
 	[SerializeField]
@@ -247,7 +247,14 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		DataTable dt = UpdateCurrentDisplayer();
 		if (dt.Rows.Count == 0)
 		{
-			TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
+			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+			{
+				LessonInfo.Instance.OnGameFinish();
+			}
+			else
+			{
+				TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
+			}
 		}
 		
 		if (!isFirstPage)

@@ -14,8 +14,11 @@ public class RetryButton : MonoBehaviour
         }
         else
         {
+#if UNITY_IPHONE
 			FlurryBinding.logEvent("Retry game", false);
 			FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
             Application.LoadLevel(scene);
         }
     }

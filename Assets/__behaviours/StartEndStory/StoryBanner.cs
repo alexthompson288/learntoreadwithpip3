@@ -28,16 +28,23 @@ public class StoryBanner : MonoBehaviour
 
 			if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1400)
 			{
-				m_titleLabel.transform.localScale = Vector3.one * 0.4f;
+				m_titleLabel.transform.localScale = Vector3.one * 0.2f;
 			}
 			else if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1300)
 			{
+				m_titleLabel.transform.localScale = Vector3.one * 0.4f;
+			}
+			else if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1000)
+			{
 				m_titleLabel.transform.localScale = Vector3.one * 0.5f;
 			}
-			else if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1200)
+			else if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 500)
 			{
-				m_titleLabel.transform.localScale = Vector3.one * 0.6f;
+				m_titleLabel.transform.localScale = Vector3.one * 0.75f;
 			}
+
+
+			Debug.Log("Title Scale: " + m_titleLabel.transform.localScale);
 		}
 	}
 }

@@ -9,6 +9,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		Debug.Log("Saving lesson");
 		LessonNameCoordinator.Instance.OnInputFinish();
 
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("New Lesson: " + LessonInfo.Instance.GetName(), false);
 
 		Dictionary<string, string> gameNamesDictionary = new Dictionary<string, string>();
@@ -20,6 +21,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		}
 
 		FlurryBinding.logEventWithParameters("Lesson games", gameNamesDictionary, false);
+#endif
 
 		AddMissingData(LessonInfo.DataType.Letters, "setphonemes", "phonemes");
 		AddMissingData(LessonInfo.DataType.Words, "setwords", "words");
@@ -35,7 +37,9 @@ public class SaveCurrentLesson : MonoBehaviour
 		
 		if(data.Count == 0)
 		{
+#if UNITY_IPHONE
 			FlurryBinding.logEvent("No lesson data for " + dataType, false);
+#endif
 
 			Debug.Log("Adding: " + columnName.Replace("set", ""));
 			
@@ -58,6 +62,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		}
 		else
 		{
+#if UNITY_IPHONE
 			string attribute = "word";
 
 			if(dataType == LessonInfo.DataType.Letters)
@@ -72,11 +77,27 @@ public class SaveCurrentLesson : MonoBehaviour
 			Dictionary<string, string> dataDictionary = new Dictionary<string, string>();
 			for(int i = 0; i < data.Count - 1; i += 2)
 			{
-				string s1 = data[i][attribute].ToString();
+				try
+				{
+					string s1 = data[i][attribute].ToString();
+				}
+				catch
+				{
+					if(data[i][attribute] == null)
+					{
+						Debug.LogError(string.Format("ID {0} has no {1} attribute", data[i]["id"].ToString(), attribute));
+					}
+					else
+					{
+						Debug.LogError("Error logging data for " + dataType);
+					}
+				}
+
 				string s2 = (i + 1) < data.Count ? data[i + 1][attribute].ToString() : "DefaultPastIndex";
 			}
 
 			FlurryBinding.logEventWithParameters("Lesson data for " + dataType, dataDictionary, false);
+#endif
 		}
 	}
 }

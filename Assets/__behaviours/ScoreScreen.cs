@@ -36,7 +36,7 @@ public class ScoreScreen : MonoBehaviour {
 		SessionInformation.Instance.SetHasWonRecently(true);
 		SessionInformation.Instance.SetHasEverWonCoin(true);
 
-		TTInformation.Instance.SetGoldCoins(TTInformation.Instance.GetGoldCoins() + 1);
+		//TTInformation.Instance.SetGoldCoins(TTInformation.Instance.GetGoldCoins() + 1);
 
 		Debug.Log("Just about to increment skill progress");
 		SkillProgressInformation.Instance.IncrementCurrentStarSkillProgress();

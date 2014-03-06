@@ -110,7 +110,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 	public void Show(string word)
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("PipPad Show: " + word, false);
+#endif
 
 		// EARLY EXIT
 		if (m_showing)

@@ -165,6 +165,8 @@ public class BuyManager : Singleton<BuyManager>
 	{
 		//string receiptLocation = StoreKitBinding.getAppStoreReceiptLocation();
 
+		Debug.Log("RestorePurchases - Opening processes");
+
 		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
@@ -179,11 +181,30 @@ public class BuyManager : Singleton<BuyManager>
 		}
 
 		// Restore
+		Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
 		StoreKitBinding.restoreCompletedTransactions();
 
 		yield return new WaitForSeconds(restoreTime);
 
-		StoreKitManager_restoreTransactionsFinishEvent();
+		Debug.Log("RestorePurchases - Closing processes");
+
+		//UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
+		foreach (UICamera cam in uiCameras)
+		{
+			if (cam != null)
+			{
+				cam.enabled = true;
+			}
+		}
+		
+		RefreshBuyAllButtons();
+		RefreshBooks();
+		RefreshMaps();
+		RefreshGames();
+		
+		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
+		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 
 		/*
 		float pcTimeOut = 0;
@@ -236,32 +257,20 @@ public class BuyManager : Singleton<BuyManager>
 
 	void StoreKitManager_restoreTransactionsFinishEvent() // TODO: This won't work because this method is called before all of the purchases are processed. You need to find the length of the queue
 	{
-		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
-		foreach (UICamera cam in uiCameras)
-		{
-			if (cam != null)
-			{
-				cam.enabled = true;
-			}
-		}
-		
-		RefreshBuyAllButtons();
-		RefreshBooks();
-		RefreshMaps();
-		RefreshGames();
-
-		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		Debug.Log("restoreTransactionsFinishEvent");
 	}
 
 	void StoreKitManager_restoreTransactionsFailedEvent(string str)
 	{
+		Debug.Log("restoreTransactionsFailedEvent: " + str);
+
 		StoreKitManager_restoreTransactionsFinishEvent();
 	}
 
 	void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
 	{
+		Debug.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
+
 		string productId = obj.productIdentifier;
 
 		if(productId.Contains("story")) // Book
@@ -313,7 +322,10 @@ public class BuyManager : Singleton<BuyManager>
 			m_purchaseIsResolved = true;
 		} 
 
+
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("Purchasing Everything", false);
+#endif
 
 		SetAllBooksPurchased();
 		SetAllMapsPurchased();
@@ -377,6 +389,7 @@ public class BuyManager : Singleton<BuyManager>
 	void StoreKitManager_purchaseCancelledEvent(string obj)
 	{
 		Debug.Log("PURCHASE CANCELLED - m_buyType: " + m_buyType.ToString());
+		Debug.Log("Cancelled Message: " + obj);
 		m_purchaseIsResolved = true;
 	}
 
@@ -442,6 +455,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	void Awake()
 	{
+		Debug.Log("BuyManager.Awake() - UP_TO_DATE_TEST_3");
+
+
 #if UNITY_EDITOR
 		if(m_resetPurchases)
 		{
@@ -460,6 +476,116 @@ public class BuyManager : Singleton<BuyManager>
 		}
 
 		Load();
+	}
+
+	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
+	{
+		Debug.Log("PRODUCTLIST: Received " + productList.Count);
+		m_productListResolved = true;
+	}
+
+	void StoreKitManager_productListFailedEvent(string s)
+	{
+		Debug.Log("PRODUCTLIST: Failed");
+		Debug.Log("Failed Message: " + s);
+
+		m_productListResolved = true;
+	}
+
+	bool m_productListResolved = false;
+
+	IEnumerator Start()
+	{
+		Debug.Log("PRODUCTLIST: Waiting for db");
+		
+		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+		
+		Debug.Log("PRODUCTLIST: Building");
+		
+		List<string> productIdentifiers = new List<string>();	
+
+		productIdentifiers.Add(m_gamesProductIdentifier);
+		
+		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
+		
+		Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count + " products");
+
+		foreach(string productId in productIdentifiers)
+		{
+			Debug.Log(productId);
+		}
+		
+		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
+		
+		while(!m_productListResolved)
+		{
+			yield return null;
+		}
+		
+		StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
+		
+		Debug.Log("PRODUCTLIST: Finished");
+	}
+
+	/*
+	IEnumerator Start()
+	{
+		Debug.Log("PRODUCTLIST: Waiting for db");
+
+		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+		Debug.Log("PRODUCTLIST: Building");
+
+		List<string> productIdentifiers = new List<string>();
+
+		DataTable storyTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE publishable = 't'");
+		foreach(DataRow story in storyTable.Rows)
+		{
+			productIdentifiers.Add(BuildStoryProductIdentifier(story));
+		}
+
+		foreach(int map in m_maps)
+		{
+			productIdentifiers.Add(BuildMapProductIdentifier(map));
+		}
+
+		productIdentifiers.Add(m_booksProductIdentifier);
+		productIdentifiers.Add(m_mapsProductIdentifier);
+		productIdentifiers.Add(m_gamesProductIdentifier);
+		productIdentifiers.Add(m_everythingProductIdentifier);
+
+		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
+
+		Debug.Log("PRODUCTLIST: Requesting");
+
+		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
+
+		while(!m_productListResolved)
+		{
+			yield return null;
+		}
+
+		StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
+
+		Debug.Log("PRODUCTLIST: Finished");
+	}
+	*/
+
+	public string BuildStoryProductIdentifier(DataRow storyData)
+	{
+		string id = "story_" + storyData["id"].ToString() + "_" +
+			storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").ToLower();
+		
+		return id;
+	}
+	
+	public string BuildMapProductIdentifier(int map) // TODO
+	{
+		return "default map identifier";
 	}
 
 	public bool IsBookBought(int bookId)
@@ -488,7 +614,7 @@ public class BuyManager : Singleton<BuyManager>
 				}
 			}
 
-			Debug.Log("allBooksBought: " + allBooksBought);
+			//Debug.Log("allBooksBought: " + allBooksBought);
 
 			return allBooksBought;
 		}
@@ -496,7 +622,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetBookPurchased(int bookId)
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("SetBookPurchased: " + bookId.ToString(), false);
+#endif
 
 		m_boughtBooks.Add(bookId);
 		Save();
@@ -504,7 +632,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetAllBooksPurchased()
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("SetAllBooksPurchased", false);
+#endif
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
 		if(dt.Rows.Count > 0)
@@ -546,7 +676,7 @@ public class BuyManager : Singleton<BuyManager>
 				}
 			}
 
-			Debug.Log("ALL MAPS BOUGHT: " + allMapsBought);
+			//Debug.Log("ALL MAPS BOUGHT: " + allMapsBought);
 
 			return allMapsBought;
 		}
@@ -554,7 +684,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetMapPurchased(int mapId)
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("SetMapPurchased: " + mapId.ToString(), false);
+#endif
 
 		m_boughtMaps.Add(mapId);
 		Save ();
@@ -562,7 +694,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetAllMapsPurchased()
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("SetAllMapsPurchased", false);
+#endif
 
 		foreach(int map in m_maps)
 		{
@@ -583,7 +717,9 @@ public class BuyManager : Singleton<BuyManager>
 
 	public void SetAllGamesPurchased()
 	{
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("SetAllGamesPurchased", false);
+#endif
 
 		m_boughtGames = true;
 		Save ();
@@ -656,6 +792,4 @@ public class BuyManager : Singleton<BuyManager>
 		bw.Close();
 		newData.Close();
 	}
-
-
 }

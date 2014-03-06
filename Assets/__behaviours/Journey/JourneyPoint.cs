@@ -109,9 +109,9 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			Debug.Log("Clicked star " + m_sessionNum);
 			if(m_mapIsBought)
 			{
-				//System.Collections.Generic.Dictionary<string, string> eventParameters = new System.Collections.Generic.Dictionary<string, string>();
-				//FlurryBinding.logEventWithParameters("StartVoyageSession", eventParameters, true);
+#if UNITY_IPHONE
 				FlurryBinding.logEvent("StartVoyageSession_" + m_sessionNum.ToString(), true);
+#endif
 
 				//JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
 				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
@@ -214,6 +214,10 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			{
 				BetterList<string> spriteNames = m_pointBackground.atlas.GetListOfSprites();
 				m_pointBackground.spriteName = spriteNames[UnityEngine.Random.Range(1, spriteNames.size)];
+			}
+			else
+			{
+				transform.localScale *= 0.8f;
 			}
 		}
 

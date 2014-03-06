@@ -76,8 +76,10 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 		DataRow bookData = m_currentBook.GetData();
 
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
 		FlurryBinding.logEvent("isAlreadyBought: " + BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
+#endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 		

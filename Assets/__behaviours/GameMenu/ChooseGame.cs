@@ -7,7 +7,10 @@ public class ChooseGame : BuyableGame
 	{
 		if(m_isUnlocked)
 		{
+#if UNITY_IPHONE
 			FlurryBinding.logEvent("Choose Game: " + m_gameSceneName, false);
+#endif
+
 			GameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
 		}
 		else

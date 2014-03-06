@@ -222,7 +222,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
-		Debug.Log("BOOK PURCHASE SUCCESS");
+		Debug.Log("BOOK PURCHASE SUCCESS: " + m_storyData["title"].ToString());
 
 		CharacterPopper popper = UnityEngine.Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
 		if(popper != null)
@@ -243,7 +243,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 
     void StoreKitManager_purchaseCancelledEvent(string obj)
     {
-		Debug.Log("BOOK PURCHASE CANCELLED");
+		Debug.Log("BOOK PURCHASE CANCELLED: " + m_storyData["title"].ToString());
 
         m_purchaseIsResolved = true;
     }

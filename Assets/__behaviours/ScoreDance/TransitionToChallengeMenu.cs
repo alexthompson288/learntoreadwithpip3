@@ -34,7 +34,10 @@ public class TransitionToChallengeMenu : MonoBehaviour
 		}
 		else
 		{
+#if UNITY_IPHONE
 			FlurryBinding.endTimedEvent(Application.loadedLevelName);
+#endif
+
 			Application.LoadLevel("NewVoyage");
 		}
 	}

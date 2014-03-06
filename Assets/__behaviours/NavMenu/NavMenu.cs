@@ -51,7 +51,7 @@ public class NavMenu : Singleton<NavMenu>
 
 	public void Call()
 	{
-		Debug.Log("isOn: " + m_mainMoveable.IsOn());
+		Debug.Log("NavMenu.Call() - isOn: " + m_mainMoveable.IsOn());
 		if(m_mainMoveable.IsOn())
 		{
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
@@ -68,11 +68,13 @@ public class NavMenu : Singleton<NavMenu>
 
 	public void CallRoomMoveable()
 	{
+		Debug.Log("CallRoomMoveable(): - isOn: " + m_roomMoveable.IsOn());
 		CallMoveable(m_roomMoveable);
 	}
 
 	public void CallUserMoveable()
 	{
+		Debug.Log("CallUserMoveable(): - isOn: " + m_userMoveable.IsOn());
 		CallMoveable(m_userMoveable);
 	}
 

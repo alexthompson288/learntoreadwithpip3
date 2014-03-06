@@ -256,7 +256,11 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		int storyId = System.Convert.ToInt32(clickBehaviour.GetData()["id"]);
 
+		Debug.Log("Clicked story " + storyId);
+
 		bool addStory = !LessonInfo.Instance.HasData(storyId, LessonInfo.DataType.Stories); // If LessonInfo does not have the story then we will add it
+
+		Debug.Log("addStory: " + addStory);
 
 		// Clear all story data and set the sprites to deselect color. Only one story can be saved at a time
 		LessonInfo.Instance.ClearData(LessonInfo.DataType.Stories); // m_dataType should be stories, but I hard coded the datatype to be safe
@@ -269,9 +273,17 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		if(addStory)
 		{
+			Debug.Log("Adding story");
 			LessonInfo.Instance.AddData(storyId, LessonInfo.DataType.Stories);
 			clickBehaviour.GetComponentInChildren<UISprite>().color = m_selectColor;
 		}
+
+		List<DataRow> stories = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+
+
+
+		string output = stories.Count > 0 ? stories[0]["id"].ToString() : "No lesson story";
+		Debug.Log(output);
 	}
 
 	void OnClickContent(ClickEvent clickBehaviour)

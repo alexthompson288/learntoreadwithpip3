@@ -77,7 +77,9 @@ public class AlphabetBookCoordinator : MonoBehaviour
 
 		string spriteName = m_spawnedBackgrounds[clickEvent.gameObject];
 
+#if UNITY_IPHONE
 		FlurryBinding.logEvent("Alphabet Book choose: " + spriteName, false);
+#endif
 
 		m_letterButton.SetBackgroundSpriteName(spriteName);
 		AlphabetBookInformation.Instance.AddTexture(m_letterButton.GetData(), spriteName);

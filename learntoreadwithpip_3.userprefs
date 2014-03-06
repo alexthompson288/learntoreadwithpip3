@@ -1,16 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Buy/BuyManager.cs">
     <Files>
-      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="222" Column="1" />
-      <File FileName="Assets/__behaviours/UI/TweenOnOffBehaviour.cs" Line="202" Column="24" />
-      <File FileName="Assets/__behaviours/NavMenu/NavMenu.cs" Line="41" Column="37" />
-      <File FileName="Assets/__behaviours/GameMenu/ChooseGame.cs" Line="5" Column="2" />
-      <File FileName="Assets/__behaviours/Buy/BuyableGame.cs" Line="5" Column="2" />
-      <File FileName="Assets/__behaviours/GameMenu/GameMenuCoordinator.cs" Line="118" Column="4" />
-      <File FileName="Assets/__behaviours/Journey/JourneyAnimationPoint.cs" Line="18" Column="22" />
-      <File FileName="Assets/__behaviours/Journey/JourneyMap.cs" Line="93" Column="17" />
-      <File FileName="Assets/__behaviours/Buy/BuyManager.cs" Line="166" Column="5" />
+      <File FileName="Assets/__behaviours/Buy/BuyManager.cs" Line="581" Column="61" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonInfo.cs" Line="525" Column="20" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonContentCoordinator.cs" Line="285" Column="86" />
+      <File FileName="Assets/Plugins/Flurry/demo/FlurryEventListener.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/Flurry/demo/FlurryGUIManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/Flurry/FlurryManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Plugins/Flurry/FlurryBinding.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/StoryBrowser/NewStoryBrowserBookPopulator.cs" Line="116" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
