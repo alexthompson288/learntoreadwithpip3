@@ -70,6 +70,11 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			m_maxSpawn = m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()];
 		}
 
+		if(m_maxSpawn < 2)
+		{
+			m_maxSpawn = 2;
+		}
+
 		Debug.Log("m_maxSpawn: " + m_maxSpawn);
 
 		Debug.Log("m_wordSelect.Count: " + m_wordSelection.Count);
@@ -83,7 +88,9 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		Resources.UnloadUnusedAssets();
 
-		if(m_wordSelection.Count > 0)
+		Debug.Log("m_maxSpawn: " + m_maxSpawn);
+
+		if(m_wordSelection.Count >= m_maxSpawn)
 		{
         	StartCoroutine(ShowNextQuestion());
 		}
@@ -140,6 +147,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
             PipPadBehaviour.Instance.Show(selectedWord);
             //if (m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()] == 2)
+
+		Debug.Log("m_maxSpawn: " + m_maxSpawn);
 			if (m_maxSpawn == 2)
             {
                 if (Random.Range(0, 10) > 5)

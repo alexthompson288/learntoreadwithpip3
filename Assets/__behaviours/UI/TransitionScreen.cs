@@ -40,7 +40,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	IEnumerator Start () 
     {
 #if UNITY_IPHONE
-		FlurryBinding.logEvent(Application.loadedLevelName, true);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("Name", Application.loadedLevelName);
+		FlurryBinding.logEventWithParameters("NewLevel", ep, true);
 #endif
 
 		//Debug.Log("TransitionScreen.Start()");
@@ -65,7 +67,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
                 Debug.Log("Moving to scene 0");
 
 #if UNITY_IPHONE
-				FlurryBinding.endTimedEvent(Application.loadedLevelName);
+				ep = new Dictionary<string, string>();
+				ep.Add("Name", Application.loadedLevelName);
+				FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
                 Application.LoadLevel(0);
@@ -76,7 +80,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
                 Debug.Log("Moving to scene " + m_loadingToScene);
 
 #if UNITY_IPHONE
-				FlurryBinding.endTimedEvent(Application.loadedLevelName);
+				ep = new Dictionary<string, string>();
+				ep.Add("Name", Application.loadedLevelName);
+				FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
                 Application.LoadLevel(m_loadingToScene);
@@ -334,7 +340,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		GC.Collect();
 
 #if UNITY_IPHONE
-		FlurryBinding.endTimedEvent(Application.loadedLevelName);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("Name", Application.loadedLevelName);
+		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
         Application.LoadLevel(m_emptySceneName);
@@ -348,7 +356,9 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		m_loadingToScene = "NewVoyage";
 
 #if UNITY_IPHONE
-		FlurryBinding.endTimedEvent(Application.loadedLevelName);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("Name", Application.loadedLevelName);
+		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
         Application.LoadLevel(m_emptySceneName);

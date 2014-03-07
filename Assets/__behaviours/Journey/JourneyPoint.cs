@@ -110,7 +110,10 @@ public class JourneyPoint : MonoBehaviour, IComparable
 			if(m_mapIsBought)
 			{
 #if UNITY_IPHONE
-				FlurryBinding.logEvent("StartVoyageSession_" + m_sessionNum.ToString(), true);
+				System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+				ep.Add("CurrentSession", m_sessionNum.ToString());
+				ep.Add("HighestSession", JourneyInformation.Instance.GetSessionsCompleted().ToString());
+				FlurryBinding.logEventWithParameters("StartVoyageSession", ep, true);
 #endif
 
 				//JourneyCoordinator.Instance.OnStarClick(m_sessionNum);

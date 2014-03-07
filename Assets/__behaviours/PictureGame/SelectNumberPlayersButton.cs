@@ -24,7 +24,9 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 		*/
 
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("Choose NumPlayers: " + m_numPlayers.ToString(), false);
+		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+		ep.Add("NumPlayers", m_numPlayers.ToString());
+		FlurryBinding.logEventWithParameters("GameMenu - NumPlayers", ep, false);
 #endif
 
 		GameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);

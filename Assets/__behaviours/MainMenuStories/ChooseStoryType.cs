@@ -11,7 +11,9 @@ public class ChooseStoryType : MonoBehaviour
 	void OnClick () 
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("Choose story type: " + m_storyType, false);
+		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+		ep.Add("StoryType", m_storyType);
+		FlurryBinding.logEventWithParameters("ChooseStoryType", ep, false);
 #endif
 
 		SessionInformation.Instance.SetStoryType(m_storyType);

@@ -16,6 +16,8 @@ public class NavMenu : Singleton<NavMenu>
 	private GameObject m_callButtonRight;
 	[SerializeField]
 	private GameObject m_navMenuGoParent;
+	[SerializeField]
+	private UILabel m_buyAllBooksLabel;
 
 	void Awake()
 	{
@@ -75,6 +77,9 @@ public class NavMenu : Singleton<NavMenu>
 	public void CallUserMoveable()
 	{
 		Debug.Log("CallUserMoveable(): - isOn: " + m_userMoveable.IsOn());
+
+		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.GetNumBooks());
+
 		CallMoveable(m_userMoveable);
 	}
 

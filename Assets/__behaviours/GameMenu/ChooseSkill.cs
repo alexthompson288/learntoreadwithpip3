@@ -13,7 +13,9 @@ public class ChooseSkill : MonoBehaviour
 	void OnClick()
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("Choose Skill: " + m_levelSkill, false);
+		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+		ep.Add("SkillName: ", m_levelSkill);
+		FlurryBinding.logEventWithParameters("GameMenu - Skill", ep, false);
 #endif
 
 		GameMenuCoordinator.Instance.OnChooseSkill(m_gameMenu, m_levelSkill, m_starSkill);

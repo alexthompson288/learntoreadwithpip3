@@ -111,7 +111,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	public void Show(string word)
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("PipPad Show: " + word, false);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("Word", word);
+		FlurryBinding.logEventWithParameters("PipPad", ep, false);
 #endif
 
 		// EARLY EXIT
@@ -167,141 +169,165 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 				DataRow row = dt[0];
 				
 				string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
-				
-				List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
-				
-				bool areStarsActive = (((row["tricky"] != null && row["tricky"].ToString() == "t") || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
-				                       && (row["nonsense"] == null || row["nonsense"].ToString() == "f"));
-				
-				if (areStarsActive || m_currentLanguage != "word")
+
+				Debug.Log("ordered_phonemes.Length: " + phonemes.Length);
+				foreach(string phoneme in phonemes)
 				{
-					m_noPhonemeButtons = true;
-					PhonemeBuildInfo pbi = new PhonemeBuildInfo();
+					Debug.Log(phoneme);
+				}
 
-					pbi.m_displayString = row[m_currentLanguage].ToString(); // If the field is null then error thrown, catch executes, shows "Word Not Found" sign
+				bool hasPhonemes = false;
 
-					Debug.Log(m_currentLanguage + ": " + row[m_currentLanguage].ToString());
-					pbi.m_positionIndex = 0;
-					pbi.m_fullPhonemeId = -1;
-					pbiList.Add(pbi);
-					m_trickyStars.SetActive(areStarsActive);
+				foreach(string phoneme in phonemes)
+				{
+					if(!String.IsNullOrEmpty(phoneme))
+					{
+						hasPhonemes = true;
+						break;
+					}
+				}
+
+				if(hasPhonemes)
+				{
+					List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
+					
+					bool areStarsActive = (((row["tricky"] != null && row["tricky"].ToString() == "t") || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
+					                       && (row["nonsense"] == null || row["nonsense"].ToString() == "f"));
+					
+					if (areStarsActive || m_currentLanguage != "word")
+					{
+						m_noPhonemeButtons = true;
+						PhonemeBuildInfo pbi = new PhonemeBuildInfo();
+
+						pbi.m_displayString = row[m_currentLanguage].ToString(); // If the field is null then error thrown, catch executes, shows "Word Not Found" sign
+
+						Debug.Log(m_currentLanguage + ": " + row[m_currentLanguage].ToString());
+						pbi.m_positionIndex = 0;
+						pbi.m_fullPhonemeId = -1;
+						pbiList.Add(pbi);
+						m_trickyStars.SetActive(areStarsActive);
+					}
+					else
+					{
+						m_noPhonemeButtons = false;
+						m_trickyStars.SetActive(false);
+						int index = 0;
+						int splitPhoneme = 0;
+						foreach (string phoneme in phonemes)
+						{
+							if(splitPhoneme == 2)
+							{
+								++index;
+								splitPhoneme = 0;
+							}
+							
+							if(splitPhoneme == 1)
+							{
+								++splitPhoneme;
+							}
+							
+							DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");
+							if (phT.Rows.Count > 0)
+							{
+								DataRow myPh = phT[0];
+								string phonemeData = myPh["phoneme"].ToString();
+								PhonemeBuildInfo pbi = new PhonemeBuildInfo();
+								
+								string audioFilename =
+									string.Format("{0}",
+									              myPh["grapheme"]);
+								
+								string imageFilename =
+									string.Format("Images/mnemonics_images_png_250/{0}_{1}",
+									              myPh["phoneme"],
+									              myPh["mneumonic"].ToString().Replace(" ", "_"));
+								
+								pbi.m_audioFilename = audioFilename;
+								pbi.m_imageFilename = imageFilename;
+								pbi.m_mnemonic = myPh["mneumonic"].ToString();
+								pbi.m_fullPhoneme = myPh["phoneme"].ToString();
+								
+								pbi.m_isSecondInSplitDigraph = false;
+								
+								if (phonemeData.Contains("-"))
+								{
+									splitPhoneme = 1;
+									Debug.Log("INFO - phonemeData: " + phonemeData);
+									pbi.m_displayString = phonemeData[0].ToString();
+									PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
+									pbi2.m_displayString = phonemeData[2].ToString();
+									pbi2.m_positionIndex = index + 2;
+									Debug.Log("INFO - index + 2: " + (index + 2));
+									pbi.m_linkedPhoneme = pbi2;
+									pbi2.m_linkedPhoneme = pbi;
+									pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+									pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
+									pbi2.m_audioFilename = audioFilename;
+									pbi2.m_imageFilename = imageFilename;
+									pbi2.m_mnemonic = myPh["mneumonic"].ToString();
+									pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
+									pbi2.m_isSecondInSplitDigraph = true;
+									pbiList.Add(pbi2);
+								}
+								else
+								{
+									pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+									pbi.m_displayString = phonemeData;
+								}
+
+								pbi.m_positionIndex = index;
+								pbiList.Add(pbi);
+							}
+							index++;
+						}
+					}
+					
+					pbiList.Sort(SortPhonemes);
+					float width = 0;
+					
+					Dictionary<PhonemeBuildInfo, GameObject> createdInfos = new Dictionary<PhonemeBuildInfo, GameObject>();
+					foreach (PhonemeBuildInfo pbi in pbiList)
+					{
+						GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemeButton, m_textPosition);
+
+						m_createdPhonemeButtons.Add(newPhoneme);
+
+						newPhoneme.GetComponent<PipPadPhoneme>().SetUpPhoneme(pbi, m_noPhonemeButtons, pbi.m_isSecondInSplitDigraph);
+
+						width += newPhoneme.GetComponent<PipPadPhoneme>().GetWidth() / 2.0f;
+						newPhoneme.transform.localPosition = new Vector3(width, 0, 0);
+						width += newPhoneme.GetComponent<PipPadPhoneme>().GetWidth() / 2.0f;
+
+						createdInfos[pbi] = newPhoneme;
+					}
+					
+					foreach (PhonemeBuildInfo pbi in pbiList)
+					{
+						if (pbi.m_linkedPhoneme != null)
+						{
+							createdInfos[pbi.m_linkedPhoneme].GetComponent<PipPadPhoneme>().Link(createdInfos[pbi]);
+						}
+					}
+					
+					if (width > 512)
+					{
+						Debug.Log("PipPad word width > 512: " + width);
+						m_textPosition.transform.localScale = new Vector3(0.8f, 1, 1);
+						m_textPosition.transform.localPosition = new Vector3(((-width / 2.0f) * 0.8f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
+					}
+					else
+					{
+						Debug.Log("PipPad word width < 512: " + width);
+						m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
+						m_textPosition.transform.localScale = Vector3.one;
+					}
+
+					m_pipWordNotFound.Off(); // Only executes if word was found, otherwise error thrown and control never reaches here
 				}
 				else
 				{
-					m_noPhonemeButtons = false;
-					m_trickyStars.SetActive(false);
-					int index = 0;
-					int splitPhoneme = 0;
-					foreach (string phoneme in phonemes)
-					{
-						if(splitPhoneme == 2)
-						{
-							++index;
-							splitPhoneme = 0;
-						}
-						
-						if(splitPhoneme == 1)
-						{
-							++splitPhoneme;
-						}
-						
-						DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");
-						if (phT.Rows.Count > 0)
-						{
-							DataRow myPh = phT[0];
-							string phonemeData = myPh["phoneme"].ToString();
-							PhonemeBuildInfo pbi = new PhonemeBuildInfo();
-							
-							string audioFilename =
-								string.Format("{0}",
-								              myPh["grapheme"]);
-							
-							string imageFilename =
-								string.Format("Images/mnemonics_images_png_250/{0}_{1}",
-								              myPh["phoneme"],
-								              myPh["mneumonic"].ToString().Replace(" ", "_"));
-							
-							pbi.m_audioFilename = audioFilename;
-							pbi.m_imageFilename = imageFilename;
-							pbi.m_mnemonic = myPh["mneumonic"].ToString();
-							pbi.m_fullPhoneme = myPh["phoneme"].ToString();
-							
-							pbi.m_isSecondInSplitDigraph = false;
-							
-							if (phonemeData.Contains("-"))
-							{
-								splitPhoneme = 1;
-								Debug.Log("INFO - phonemeData: " + phonemeData);
-								pbi.m_displayString = phonemeData[0].ToString();
-								PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
-								pbi2.m_displayString = phonemeData[2].ToString();
-								pbi2.m_positionIndex = index + 2;
-								Debug.Log("INFO - index + 2: " + (index + 2));
-								pbi.m_linkedPhoneme = pbi2;
-								pbi2.m_linkedPhoneme = pbi;
-								pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-								pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
-								pbi2.m_audioFilename = audioFilename;
-								pbi2.m_imageFilename = imageFilename;
-								pbi2.m_mnemonic = myPh["mneumonic"].ToString();
-								pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
-								pbi2.m_isSecondInSplitDigraph = true;
-								pbiList.Add(pbi2);
-							}
-							else
-							{
-								pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-								pbi.m_displayString = phonemeData;
-							}
-
-							pbi.m_positionIndex = index;
-							pbiList.Add(pbi);
-						}
-						index++;
-					}
+					m_pipWordNotFound.On();
 				}
-				
-				pbiList.Sort(SortPhonemes);
-				float width = 0;
-				
-				Dictionary<PhonemeBuildInfo, GameObject> createdInfos = new Dictionary<PhonemeBuildInfo, GameObject>();
-				foreach (PhonemeBuildInfo pbi in pbiList)
-				{
-					GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemeButton, m_textPosition);
-
-					m_createdPhonemeButtons.Add(newPhoneme);
-
-					newPhoneme.GetComponent<PipPadPhoneme>().SetUpPhoneme(pbi, m_noPhonemeButtons, pbi.m_isSecondInSplitDigraph);
-
-					width += newPhoneme.GetComponent<PipPadPhoneme>().GetWidth() / 2.0f;
-					newPhoneme.transform.localPosition = new Vector3(width, 0, 0);
-					width += newPhoneme.GetComponent<PipPadPhoneme>().GetWidth() / 2.0f;
-
-					createdInfos[pbi] = newPhoneme;
-				}
-				
-				foreach (PhonemeBuildInfo pbi in pbiList)
-				{
-					if (pbi.m_linkedPhoneme != null)
-					{
-						createdInfos[pbi.m_linkedPhoneme].GetComponent<PipPadPhoneme>().Link(createdInfos[pbi]);
-					}
-				}
-				
-				if (width > 512)
-				{
-					Debug.Log("PipPad word width > 512: " + width);
-					m_textPosition.transform.localScale = new Vector3(0.8f, 1, 1);
-					m_textPosition.transform.localPosition = new Vector3(((-width / 2.0f) * 0.8f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
-				}
-				else
-				{
-					Debug.Log("PipPad word width < 512: " + width);
-					m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
-					m_textPosition.transform.localScale = Vector3.one;
-				}
-
-				m_pipWordNotFound.Off(); // Only executes if word was found, otherwise error thrown and control never reaches here 
 			}
 		}
 		catch

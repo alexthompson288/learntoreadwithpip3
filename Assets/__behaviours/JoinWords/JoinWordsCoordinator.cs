@@ -47,6 +47,32 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
         WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_INSTRUCTION");
         yield return new WaitForSeconds(3.0f);
 
+		for(int i = m_wordSelection.Count - 1; i > -1; --i)
+		{
+			Debug.Log(m_wordSelection[i]["word"].ToString());
+			Texture2D tex = null;
+			if(m_wordSelection[i]["image"] != null)
+			{
+				tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_wordSelection[i]["image"].ToString());
+			}
+			if(tex == null)
+			{
+				tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_wordSelection[i]["word"].ToString());
+			}
+			Debug.Log("tex: " + tex);
+			if(tex == null)
+			{
+				m_wordSelection.Remove(m_wordSelection[i]);
+			}
+			
+			Resources.UnloadUnusedAssets();
+		}
+
+		if(m_pairsToShowAtOnce > m_wordSelection.Count)
+		{
+			m_pairsToShowAtOnce = m_wordSelection.Count;
+		}
+
 		if(m_wordSelection.Count > 0)
 		{
         	StartCoroutine(SetUpNext());

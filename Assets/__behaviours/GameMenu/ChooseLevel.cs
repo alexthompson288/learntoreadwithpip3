@@ -23,14 +23,16 @@ public class ChooseLevel : MonoBehaviour
 
 	void OnClick()
 	{
-		if(m_isUnlocked)
-		{
+		//if(m_isUnlocked)
+		//{
 #if UNITY_IPHONE
-			FlurryBinding.logEvent("Choose Level: " + m_setNum.ToString(), false);
+			System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+			ep.Add("SetNum: ", m_setNum.ToString());
+			FlurryBinding.logEventWithParameters("GameMenu - Level", ep, false);
 #endif
 
 			GameMenuCoordinator.Instance.OnChooseLevel(m_setNum);
-		}
+		//}
 	}
 
 	public void CheckUnlocked(string skillName)

@@ -25,13 +25,13 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	private ClickEvent m_backCollider;
 	[SerializeField]
 	private UITexture m_background;
+	[SerializeField]
+	private UILabel m_buyAllBooksLabel;
 
 	Texture2D m_defaultBackgroundTex;
 	Color m_defaultBackgroundColor;
 	
 	NewStoryBrowserBookButton m_currentBook;
-
-
 
 	void Awake()
 	{
@@ -41,7 +41,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		m_backCollider.OnSingleClick += OnClickBackCollider;
 		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
 	}
-	
+
 	public void BuyBook(ClickEvent click)
 	{
 		ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
@@ -70,6 +70,8 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	public void Show(NewStoryBrowserBookButton currentBook)
 	{
+		m_buyAllBooksLabel.text = String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.GetNumBooks());
+
 		DisableUICams();
 
 		m_currentBook = currentBook;
@@ -77,8 +79,12 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		DataRow bookData = m_currentBook.GetData();
 
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
-		FlurryBinding.logEvent("isAlreadyBought: " + BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
+		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+		ep.Add("Title", bookData["title"].ToString());
+		ep.Add("isAlreadyBought", BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
+		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
+		//FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
+		//FlurryBinding.logEvent("isAlreadyBought: " + BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
 #endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");

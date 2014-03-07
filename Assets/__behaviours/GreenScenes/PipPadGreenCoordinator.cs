@@ -48,7 +48,7 @@ public class PipPadGreenCoordinator : MonoBehaviour
 		}
 
 #if UNITY_EDITOR
-		Debug.Log(m_words[m_index]);
+		//Debug.Log(m_words[m_index]);
 #endif
 	}
 

@@ -542,22 +542,29 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			while(keywordData.Count == 0)
 			{
+				Debug.Log("SetNum: " + setNum);
 				if(inclusiveSets)
 				{
-					keywordData.AddRange(GetInclusiveSetData(setNum, "setwords", "words"));
+					keywordData.AddRange(GetInclusiveSetData(setNum, "setkeywords", "words"));
 				}
 				else
 				{
-					keywordData.AddRange(GetSetData(setNum, "setwords", "words"));
+					keywordData.AddRange(GetSetData(setNum, "setkeywords", "words"));
 				}
 
+				/*
 				for(int i = keywordData.Count - 1; i > -1; --i)
 				{
 					if(!WordIsKeyword(keywordData[i]))
 					{
 						keywordData.RemoveAt(i);
 					}
+					else
+					{
+						Debug.Log("Found " + keywordData[i]["word"].ToString());
+					}
 				}
+				*/
 
 				++setNum;
 			}

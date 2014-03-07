@@ -46,13 +46,16 @@ public class SplattableRatLetter : MonoBehaviour
 	{
 		string currentLetter = SplatRatGameCoordinator.Instance.GetCurrentLetter();
 		m_letter = currentLetter;
-		
-		int random = Random.Range(0, 101);
-		if(random > SplatRatGameCoordinator.Instance.GetPercentageProbabilityLetterIsTarget())
+
+		if(m_lettersPool.Count > 1)
 		{
-			while(m_letter == currentLetter)
+			int random = Random.Range(0, 101);
+			if(random > SplatRatGameCoordinator.Instance.GetPercentageProbabilityLetterIsTarget())
 			{
-				m_letter = m_lettersPool[Random.Range(0, m_lettersPool.Count)]["phoneme"].ToString();
+				while(m_letter == currentLetter)
+				{
+					m_letter = m_lettersPool[Random.Range(0, m_lettersPool.Count)]["phoneme"].ToString();
+				}
 			}
 		}
 

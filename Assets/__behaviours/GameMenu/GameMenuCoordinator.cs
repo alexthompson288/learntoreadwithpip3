@@ -79,8 +79,14 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 			level.CheckUnlocked(currentLevel);
 		}
 
+		m_numPlayerMenu.SetActive(m_isTwoPlayer);
+
+		Debug.Log("m_isTwoPlayer: " + m_isTwoPlayer);
+		Debug.Log("m_numPlayerMenu.isActive: " + m_numPlayerMenu.activeInHierarchy);
+
 		if(m_isTwoPlayer)
 		{
+			m_levelMenu.transform.position = m_levelMenuDefaultPos;
 			StartCoroutine(MoveCamera(m_currentGameMenu, m_numPlayerMenu));
 		}
 		else

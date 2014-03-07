@@ -175,6 +175,14 @@ public class SimpleSpriteAnim : MonoBehaviour
 
 	bool m_sentEvent;
 
+	void Awake()
+	{
+		if(m_sprite == null)
+		{
+			m_sprite = GetComponent<UISprite>() as UISprite;
+		}
+	}
+
     public void PlayAnimation(string animName)
     {
 		m_sentEvent = false;

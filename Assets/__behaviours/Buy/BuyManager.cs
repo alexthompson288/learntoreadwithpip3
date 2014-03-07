@@ -11,6 +11,8 @@ public class BuyManager : Singleton<BuyManager>
 	[SerializeField]
 	private Color m_buttonDisabled;
 
+	int m_numBooks = 0;
+
 	public Color GetEnabledColor()
 	{
 		return m_buttonEnabled;
@@ -499,6 +501,16 @@ public class BuyManager : Singleton<BuyManager>
 		Debug.Log("PRODUCTLIST: Waiting for db");
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+		m_numBooks = 0;
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
+		foreach(DataRow book in dt.Rows)
+		{
+			if(book["publishable"] != null && book["publishable"].ToString() == "t")
+			{
+				++m_numBooks;
+			}
+		}
 		
 		Debug.Log("PRODUCTLIST: Building");
 		
@@ -527,6 +539,11 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
 		
 		Debug.Log("PRODUCTLIST: Finished");
+	}
+
+	public int GetNumBooks()
+	{
+		return m_numBooks;
 	}
 
 	/*
@@ -578,7 +595,7 @@ public class BuyManager : Singleton<BuyManager>
 	public string BuildStoryProductIdentifier(DataRow storyData)
 	{
 		string id = "story_" + storyData["id"].ToString() + "_" +
-			storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").ToLower();
+			storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").Replace("'", "").ToLower();
 		
 		return id;
 	}
@@ -623,7 +640,9 @@ public class BuyManager : Singleton<BuyManager>
 	public void SetBookPurchased(int bookId)
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("SetBookPurchased: " + bookId.ToString(), false);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("BookID: ", bookId.ToString());
+		FlurryBinding.logEventWithParameters("BookPurchased", ep, false);
 #endif
 
 		m_boughtBooks.Add(bookId);
@@ -633,7 +652,7 @@ public class BuyManager : Singleton<BuyManager>
 	public void SetAllBooksPurchased()
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("SetAllBooksPurchased", false);
+		FlurryBinding.logEvent("AllBooksPurchased", false);
 #endif
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
@@ -685,7 +704,9 @@ public class BuyManager : Singleton<BuyManager>
 	public void SetMapPurchased(int mapId)
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("SetMapPurchased: " + mapId.ToString(), false);
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("MapID: ", mapId.ToString());
+		FlurryBinding.logEventWithParameters("MapPurchased", ep, false);
 #endif
 
 		m_boughtMaps.Add(mapId);
@@ -695,7 +716,7 @@ public class BuyManager : Singleton<BuyManager>
 	public void SetAllMapsPurchased()
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("SetAllMapsPurchased", false);
+		FlurryBinding.logEvent("AllMapsPurchased", false);
 #endif
 
 		foreach(int map in m_maps)
@@ -718,7 +739,7 @@ public class BuyManager : Singleton<BuyManager>
 	public void SetAllGamesPurchased()
 	{
 #if UNITY_IPHONE
-		FlurryBinding.logEvent("SetAllGamesPurchased", false);
+		FlurryBinding.logEvent("AllGamesPurchased", false);
 #endif
 
 		m_boughtGames = true;

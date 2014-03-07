@@ -237,6 +237,17 @@ public class PictureGamePlayer : GamePlayer {
 			m_maxSpawn = m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()];
 		}
 
+		if(m_maxSpawn > m_allWords.Count)
+		{
+			m_maxSpawn = m_allWords.Count;
+		}
+
+		if(m_allWords.Count == 0)
+		{
+			PipHelpers.SetDefaultPlayerVar();
+			PipHelpers.OnGameFinish();
+		}
+
 		Debug.Log("m_maxSpawn: " + m_maxSpawn);
 
         m_scoreBar.SetStarsTarget(m_targetScore);
@@ -290,12 +301,17 @@ public class PictureGamePlayer : GamePlayer {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SFX_SPARKLE");
 
-            if (m_score != m_targetScore)
+            if (m_score != m_targetScore && m_remainingWords.Count > 0)
             {
                 yield return new WaitForSeconds(1.0f);
 
                 ShowNextQuestion();
             }
+			else if(m_remainingWords.Count == 0)
+			{
+				PipHelpers.SetDefaultPlayerVar();
+				PipHelpers.OnGameFinish();
+			}
         }
         else
         {

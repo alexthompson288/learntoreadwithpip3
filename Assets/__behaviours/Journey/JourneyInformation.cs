@@ -17,13 +17,18 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		}
 
 #if UNITY_IPHONE
-		FlurryBinding.endTimedEvent("StartVoyageSession_" + sessionNum.ToString());
+		//FlurryBinding.endTimedEvent("StartVoyageSession_" + sessionNum.ToString());
 
-		Dictionary<string, string> eventParameters = new Dictionary<string, string>();
-		eventParameters.Add("Current", sessionNum.ToString());
-		eventParameters.Add("Highest", GetSessionsCompleted().ToString());
+		Dictionary<string, string> ep = new Dictionary<string, string>();
+		ep.Add("CurrentSession", sessionNum.ToString());
+		ep.Add("HighestSession", GetSessionsCompleted().ToString());
 
-		FlurryBinding.logEventWithParameters("FinishVoyageSession", eventParameters, false);
+		//Dictionary<string, string> eventParameters = new Dictionary<string, string>();
+		//eventParameters.Add("Current", sessionNum.ToString());
+		//eventParameters.Add("Highest", GetSessionsCompleted().ToString());
+
+		FlurryBinding.endTimedEvent("StartVoyageSession", ep);
+		FlurryBinding.logEventWithParameters("FinishVoyageSession", ep, false);
 #endif
 
 		SetSessionFinished(sessionNum);

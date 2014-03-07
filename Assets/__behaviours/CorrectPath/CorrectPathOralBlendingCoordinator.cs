@@ -43,6 +43,8 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 	CorrectPathSettings m_settings;
 
 	bool m_canClick = true;
+
+	bool m_isPlayingPhoneme = false;
 	
 	IEnumerator Start () 
 	{
@@ -70,7 +72,6 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		List<DataRow> words = GameDataBridge.Instance.GetWords();
-		//List<DataRow> words = GameDataBridge.Instance.GetSectionWords(369).Rows;
 
 		/*
 		List<DataRow> words = new List<DataRow>();
@@ -285,6 +286,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 			StopCoroutine("PlayPhonemeAudio");
 			StopCoroutine("PlayWordAudio");
 			*/
+
 			StopAllCoroutines();
 
 			if(draggable.GetData() == m_currentTargetWord)
@@ -301,7 +303,15 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 
 	IEnumerator OnCorrect()
 	{
-		yield return StartCoroutine(PlayAllAudio());
+		if(m_isPlayingPhoneme)
+		{
+			yield return StartCoroutine(PlayWordAudio());
+		}
+		else
+		{
+			yield return StartCoroutine(PlayAllAudio());
+		}
+
 		yield return new WaitForSeconds(0.2f);
 
 		foreach(DraggableLabel clickable in m_spawnedClickables)
@@ -371,6 +381,8 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 
 	IEnumerator PlayPhonemeAudio(float initialDelay = 0)
 	{
+		m_isPlayingPhoneme = true;
+
 		yield return new WaitForSeconds(initialDelay);
 
 		if(m_phonemeAudio.ContainsKey(m_currentTargetWord))
@@ -387,8 +399,15 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 				}
 			}
 		}
+
+		while(m_audioSource.isPlaying)
+		{
+			yield return null;
+		}
+
+		m_isPlayingPhoneme = false;
 		
-		yield break;
+		//yield break;
 	}
 
 	int ShuffleTransformList(Transform a, Transform b)
