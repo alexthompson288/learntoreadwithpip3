@@ -28,7 +28,7 @@ public class StoryBanner : MonoBehaviour
 
 			if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1400)
 			{
-				m_titleLabel.transform.localScale = Vector3.one * 0.2f;
+				m_titleLabel.transform.localScale = Vector3.one * 0.35f;
 			}
 			else if(m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1300)
 			{

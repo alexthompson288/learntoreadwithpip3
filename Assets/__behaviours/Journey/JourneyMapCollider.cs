@@ -16,6 +16,7 @@ public class JourneyMapCollider : MonoBehaviour
 		{
 			if(m_canDrag)
 			{
+				Debug.Log("Clicked map collider");
 				JourneyCoordinator.Instance.OnClickMapCollider();
 			}
 

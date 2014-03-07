@@ -186,6 +186,7 @@ public class BuyManager : Singleton<BuyManager>
 		Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
 		StoreKitBinding.restoreCompletedTransactions();
 
+		Debug.Log("RestorePurchases - Waiting for " + restoreTime);
 		yield return new WaitForSeconds(restoreTime);
 
 		Debug.Log("RestorePurchases - Closing processes");
@@ -579,8 +580,23 @@ public class BuyManager : Singleton<BuyManager>
 		DataTable storyTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE publishable = 't'");
 		foreach(DataRow story in storyTable.Rows)
 		{
+			/*
+			int storyId = Convert.ToInt32(story["id"]);
+			if(storyId == 32 || storyId == 39)
+			{
+				Debug.Log(storyId + " - " + story["title"].ToString());
+				Debug.Log(BuildStoryProductIdentifier(story));
+				Debug.Log("ASCII");
+				foreach(char c in story["title"].ToString())
+				{
+					Debug.Log(c + " - " + (int)c);
+				}
+			}
+			*/
+
 			productIdentifiers.Add(BuildStoryProductIdentifier(story));
 		}
+
 
 		foreach(string mapIdentifier in m_mapProductIdentifiers)
 		{
@@ -613,8 +629,8 @@ public class BuyManager : Singleton<BuyManager>
 
 	public string BuildStoryProductIdentifier(DataRow storyData)
 	{
-		string id = "story_" + storyData["id"].ToString() + "_" +
-			storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").Replace("'", "").ToLower();
+		string id = "stories_" + storyData["id"].ToString() + "_" +
+			storyData["title"].ToString().TrimEnd(new char[] { ' ' }).Replace(" ", "_").Replace("?", "").Replace("!", "_").Replace("-", "_").Replace("'", "").Replace(".", "").ToLower();
 		
 		return id;
 	}

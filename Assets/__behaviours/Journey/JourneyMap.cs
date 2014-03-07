@@ -97,6 +97,7 @@ public class JourneyMap : MonoBehaviour, IComparable
 	
 	public void OnClickMapCollider()
 	{
+		Debug.Log("Map clicked");
 		if(!BuyManager.Instance.IsMapBought(m_mapId))
 		{
 			BuyMapsCoordinator.Instance.Show(m_mapId);

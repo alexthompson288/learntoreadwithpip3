@@ -8,7 +8,7 @@ public class RestorePurchases : Singleton<RestorePurchases>
 	[SerializeField]
 	private UILabel m_label;
 	[SerializeField]
-	private float m_restoreDuration = 45f;
+	private float m_restoreDuration = 20f;
 
 	void Start()
 	{
@@ -17,7 +17,7 @@ public class RestorePurchases : Singleton<RestorePurchases>
 
 	void OnClick()
 	{
-		BuyManager.Instance.RestorePurchases(m_restoreDuration);
+		StartCoroutine(BuyManager.Instance.RestorePurchases(m_restoreDuration));
 
 		m_restoreDisplayParent.SetActive(true);
 		StartCoroutine(WaitForRestore(m_restoreDuration));
@@ -48,7 +48,6 @@ public class RestorePurchases : Singleton<RestorePurchases>
 
 	public void Off()
 	{
-		StopAllCoroutines();
 		m_restoreDisplayParent.SetActive(false);
 	}
 }

@@ -10,10 +10,6 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	private TweenOnOffBehaviour m_tweenBehaviour;
 	[SerializeField]
 	private ClickEvent m_backCollider;
-	[SerializeField]
-	private UILabel m_mapNameLabel;
-	[SerializeField]
-	private UILabel m_descriptionLabel;
 
 	int m_mapId;
 	
@@ -25,45 +21,8 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	
 	public void Show(int mapId)
 	{
+		Debug.Log("Buy Map Show"); 
 		m_mapId = mapId;
-
-		string mapName = "";
-		string description = "";
-
-		switch(m_mapId)
-		{
-		case 1:
-			name = "Magical Forest A";
-			description = "Dummy description is dummy";
-			break;
-		case 2:
-			name = "Magical Forest B";
-			description = "Dummy description is dummy";
-			break;
-		case 3:
-			name = "Magical Forest C";
-			description = "Dummy description is dummy";
-			break;
-		case 4:
-			name = "Magical Forest D";
-			description = "Dummy description is dummy";
-			break;
-		case 5:
-			name = "Underwater A";
-			description = "Dummy description is dummy";
-			break;
-		case 6:
-			name = "Underwater B";
-			description = "Dummy description is dummy";
-			break;
-		default:
-			name = "Dummy name is dummy";
-			description = "Dummy description is dummy";
-			break;
-		}
-
-		m_mapNameLabel.text = mapName;
-		m_descriptionLabel.text = description;
 
 		DisableUICams();
 		m_tweenBehaviour.On(false);

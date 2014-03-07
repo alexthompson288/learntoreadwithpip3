@@ -165,12 +165,14 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         StartCoroutine(AttemptPurchase());
     }
 
+	/*
     public string BuildProductIdentifier()
     {
         string id = "story_" + m_storyData["id"].ToString() + "_" +
             m_storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").ToLower();
         return id;
     }
+    */
 
     bool m_purchaseIsResolved = false;
     IEnumerator AttemptPurchase()
@@ -178,9 +180,11 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
         StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
         StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-        Debug.Log("Attempting purchase on " + BuildProductIdentifier());
+
 		m_purchaseIsResolved = false;
-        StoreKitBinding.purchaseProduct(BuildProductIdentifier(), 1);
+
+		Debug.Log("Attempting purchase: " + BuyManager.Instance.BuildStoryProductIdentifier(m_storyData));
+		StoreKitBinding.purchaseProduct(BuyManager.Instance.BuildStoryProductIdentifier(m_storyData), 1);
 
         UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
         foreach (UICamera cam in uiCameras)
@@ -232,7 +236,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
 
         int bookId = Convert.ToInt32(m_storyData["id"]);
-        if (obj.productIdentifier == BuildProductIdentifier())
+		if (obj.productIdentifier == BuyManager.Instance.BuildStoryProductIdentifier(m_storyData))
         {
             m_purchaseIsResolved = true;
         }
