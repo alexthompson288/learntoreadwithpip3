@@ -485,6 +485,11 @@ public class BuyManager : Singleton<BuyManager>
 	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
 	{
 		Debug.Log("PRODUCTLIST: Received " + productList.Count);
+		foreach(StoreKitProduct product in productList)
+		{
+			Debug.Log(product.productIdentifier);
+		}
+
 		m_productListResolved = true;
 	}
 
@@ -590,7 +595,7 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
 		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
 
-		Debug.Log("PRODUCTLIST: Requesting");
+		Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count);
 
 		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
 
