@@ -441,6 +441,8 @@ public class BuyManager : Singleton<BuyManager>
 	// Data Saving
 	[SerializeField]
 	private int[] m_maps;
+	[SerializeField]
+	private string[] m_mapProductIdentifiers;
 
 	[SerializeField]
 	private int[] m_defaultUnlockedBooks;
@@ -496,6 +498,7 @@ public class BuyManager : Singleton<BuyManager>
 
 	bool m_productListResolved = false;
 
+	/*
 	IEnumerator Start()
 	{
 		Debug.Log("PRODUCTLIST: Waiting for db");
@@ -540,18 +543,29 @@ public class BuyManager : Singleton<BuyManager>
 		
 		Debug.Log("PRODUCTLIST: Finished");
 	}
+	*/
 
 	public int GetNumBooks()
 	{
 		return m_numBooks;
 	}
 
-	/*
+
 	IEnumerator Start()
 	{
 		Debug.Log("PRODUCTLIST: Waiting for db");
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+		m_numBooks = 0;
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
+		foreach(DataRow book in dt.Rows)
+		{
+			if(book["publishable"] != null && book["publishable"].ToString() == "t")
+			{
+				++m_numBooks;
+			}
+		}
 
 		Debug.Log("PRODUCTLIST: Building");
 
@@ -563,9 +577,9 @@ public class BuyManager : Singleton<BuyManager>
 			productIdentifiers.Add(BuildStoryProductIdentifier(story));
 		}
 
-		foreach(int map in m_maps)
+		foreach(string mapIdentifier in m_mapProductIdentifiers)
 		{
-			productIdentifiers.Add(BuildMapProductIdentifier(map));
+			productIdentifiers.Add(mapIdentifier);
 		}
 
 		productIdentifiers.Add(m_booksProductIdentifier);
@@ -590,7 +604,7 @@ public class BuyManager : Singleton<BuyManager>
 
 		Debug.Log("PRODUCTLIST: Finished");
 	}
-	*/
+
 
 	public string BuildStoryProductIdentifier(DataRow storyData)
 	{
