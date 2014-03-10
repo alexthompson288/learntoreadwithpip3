@@ -21,6 +21,16 @@ public class SplatRatGamePlayer : GamePlayer
 	[SerializeField]
 	private Blackboard m_largeBlackboard;
 
+	[SerializeField]
+	private UITexture m_frontTexture;
+	[SerializeField]
+	private UITexture m_rearTexture;
+
+	public void SetTextures(Texture2D frontTex, Texture2D rearTex)
+	{
+		m_frontTexture.mainTexture = frontTex;
+		m_rearTexture.mainTexture = rearTex;
+	}
 	
 	List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
 	int m_selectedCharacter = -1;

@@ -28,6 +28,17 @@ public class SplatRatKeyPlayer : GamePlayer
 	List<SplattableRatKeyword> m_spawnedSplattables = new List<SplattableRatKeyword>();
 	
 	int m_score;
+
+	[SerializeField]
+	private UITexture m_frontTexture;
+	[SerializeField]
+	private UITexture m_rearTexture;
+	
+	public void SetTextures(Texture2D frontTex, Texture2D rearTex)
+	{
+		m_frontTexture.mainTexture = frontTex;
+		m_rearTexture.mainTexture = rearTex;
+	}
 	
 	public override void RegisterCharacterSelection(CharacterSelection characterSelection)
     {

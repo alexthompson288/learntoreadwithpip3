@@ -48,6 +48,27 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 	// Use this for initialization
 	IEnumerator Start () 
 	{	
+		string enviro = JourneyInformation.Instance.GetEnvironment().ToString();
+		SplatRatEnviro ratEnviro = Resources.Load<SplatRatEnviro>(System.String.Format("SplatRat/{0}_SplatRat", enviro));
+
+		if(ratEnviro != null)
+		{
+			Debug.Log("Found ratEnviro");
+			
+			Texture2D frontTex = ratEnviro.GetFrontTex();
+			Texture2D rearTex = ratEnviro.GetRearTex();
+			
+			foreach(SplatRatGamePlayer player in m_gamePlayers)
+			{
+				player.SetTextures(frontTex, rearTex);
+			}
+		}
+		else
+		{
+			Debug.LogError("ratEnviro is null");
+		}
+				
+
 		yield return new WaitForSeconds(0.5f);
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SELECT_CHARACTER");
 		
