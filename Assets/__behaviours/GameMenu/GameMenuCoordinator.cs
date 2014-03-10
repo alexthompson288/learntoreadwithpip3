@@ -36,6 +36,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	void Start()
 	{
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		JourneyInformation.Instance.SetEnvironment(JourneyInformation.Environment.Forest);
 
 		NavMenu.Instance.HideCallButton();
 

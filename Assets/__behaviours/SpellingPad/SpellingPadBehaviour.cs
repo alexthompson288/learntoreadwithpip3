@@ -18,6 +18,8 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	private PlayWordSpellingButton m_sayWholeWordButton = null;
 	[SerializeField]
 	private GameObject m_trickyStars = null;
+	[SerializeField]
+	private UITexture m_background;
 
 	List<GameObject> m_createdPhonemeButtons = new List<GameObject>();
 
@@ -31,6 +33,22 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		public PhonemeBuildInfo m_linkedPhoneme;
 		public string m_audioFilename;
 		public string m_fullPhoneme;
+	}
+
+	void Start()
+	{
+		JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
+
+		if(enviro != null)
+		{
+			SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
+
+			if(padEnviro != null)
+			{
+				Texture2D tex = padEnviro.GetSpellingPadTexture();
+				m_background.mainTexture = tex;
+			}
+		}
 	}
 
 	int SortPhonemes(PhonemeBuildInfo a, PhonemeBuildInfo b)

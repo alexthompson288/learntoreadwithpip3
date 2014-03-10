@@ -34,14 +34,11 @@ public class AlphabetBookCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//List<DataRow> phonemes = GameDataBridge.Instance.GetSectionLetters(1405);
 		List<DataRow> phonemes = GameDataBridge.Instance.GetSectionLetters();
 
 		if(phonemes.Count > 0)
 		{
 			m_letterButton.SetUp(phonemes[0]);
-
-			JourneyInformation.Instance.SetLastLetterUnlocked(phonemes[0]);
 
 			string spriteName = AlphabetBookInformation.Instance.GetTexture(System.Convert.ToInt32(phonemes[0]["id"]));
 

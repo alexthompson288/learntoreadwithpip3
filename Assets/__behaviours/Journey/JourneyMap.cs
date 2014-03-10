@@ -18,6 +18,8 @@ public class JourneyMap : MonoBehaviour, IComparable
 	private int m_lowestSessionNum;
 	[SerializeField]
 	private int m_highestSessionNum;
+	[SerializeField]
+	private JourneyInformation.Environment m_environment;
 
 	void Start()
 	{
@@ -102,5 +104,10 @@ public class JourneyMap : MonoBehaviour, IComparable
 		{
 			BuyMapsCoordinator.Instance.Show(m_mapId);
 		}
+	}
+
+	public JourneyInformation.Environment GetEnvironment()
+	{
+		return m_environment;
 	}
 }

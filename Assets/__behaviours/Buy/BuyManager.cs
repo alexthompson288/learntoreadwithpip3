@@ -6,6 +6,11 @@ using System.IO;
 
 public class BuyManager : Singleton<BuyManager> 
 {
+#if UNITY_EDITOR
+	[SerializeField]
+	private bool m_unlockInEditor;
+#endif
+
 	[SerializeField]
 	private Color m_buttonEnabled;
 	[SerializeField]
@@ -642,11 +647,25 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsBookBought(int bookId)
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		return m_boughtBooks.Contains(bookId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public bool AreAllBooksBought()
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
 			return true;
@@ -708,11 +727,25 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsMapBought(int mapId)
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		return m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public bool AreAllMapsBought()
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
 			return true;
@@ -763,11 +796,25 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsGameBought(string gameSceneName)
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		return m_boughtGames || Array.IndexOf(m_defaultUnlockedGames, gameSceneName) != -1 || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 
 	public bool AreAllGamesBought()
 	{
+#if UNITY_EDITOR
+		if(m_unlockInEditor)
+		{
+			return true;
+		}
+#endif
+
 		return m_boughtGames || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
 

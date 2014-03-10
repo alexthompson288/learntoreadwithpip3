@@ -116,7 +116,7 @@ public class JourneyPoint : MonoBehaviour, IComparable
 				FlurryBinding.logEventWithParameters("StartVoyageSession", ep, true);
 #endif
 
-				//JourneyCoordinator.Instance.OnStarClick(m_sessionNum);
+				JourneyCoordinator.Instance.SetEnvironment();
 				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
 				JourneyInformation.Instance.SubscribeOnSessionComplete();
 				SessionManager.Instance.OnChooseSession(m_sessionNum);

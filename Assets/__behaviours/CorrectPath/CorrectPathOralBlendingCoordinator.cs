@@ -40,7 +40,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 
 	AudioClip m_currentTargetAudio = null;
 
-	CorrectPathSettings m_settings;
+	CorrectPathEnviro m_settings;
 
 	bool m_canClick = true;
 
@@ -48,8 +48,11 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 	
 	IEnumerator Start () 
 	{
-		GameObject goSettings = (GameObject)Resources.Load("CorrectPath_Forest"); // TODO: Read Castle from a datasaver class
-		m_settings = goSettings.GetComponent<CorrectPathSettings>() as CorrectPathSettings;
+		//GameObject goSettings = (GameObject)Resources.Load("CorrectPath_Forest"); // TODO: Read Castle from a datasaver class
+		//m_settings = goSettings.GetComponent<CorrectPathEnviro>() as CorrectPathEnviro;
+
+		JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
+		m_settings = Resources.Load<CorrectPathEnviro>("CorrectPath/" + enviro + "_CorrectPath");
 
 		m_platform.mainTexture = m_settings.m_platform;
 

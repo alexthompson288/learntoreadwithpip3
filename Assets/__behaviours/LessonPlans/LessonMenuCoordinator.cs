@@ -40,6 +40,7 @@ public class LessonMenuCoordinator : MonoBehaviour
 			lessonIndex = 0;
 		}
 
+		JourneyInformation.Instance.SetEnvironment(JourneyInformation.Environment.Forest);
 		LessonInfo.Instance.SetCurrentLesson(lessonIndex);
 		LessonInfo.Instance.StartGames();
 	}

@@ -326,43 +326,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	{
 		JourneyInformation.Instance.SubscribeOnSessionComplete();
 		SessionManager.Instance.OnChooseSession(sessionNum);
-		/*
-		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
-		
-		DataTable dtSessions = db.ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
-
-		Debug.Log("sessionNum: " + sessionNum);
-		
-		if(dtSessions.Rows.Count > 0)
-		{
-			JourneyInformation.Instance.SetCurrentSessionNum(sessionNum);
-
-			List<DataRow> games = new List<DataRow>();
-			
-			int sessionId = Convert.ToInt32(dtSessions.Rows[0]["id"]);
-			Debug.Log("sessionId: " + sessionId);
-			DataTable dtSections = db.ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId + " ORDER BY number");
-
-			if(dtSections.Rows.Count > 0)
-			{
-				Debug.Log("There are " + dtSections.Rows.Count + " sections");
-
-				List<DataRow> sections = dtSections.Rows;
-				JourneyInformation.Instance.SetSections(sections);
-				JourneyInformation.Instance.SetSectionsComplete(0);
-
-				JourneyInformation.Instance.PlayNextGame();
-			}
-			else
-			{
-				JourneyInformation.Instance.SetSessionsCompleted(JourneyInformation.Instance.GetSessionsCompleted() + 1);
-			}
-		}
-		else
-		{
-			JourneyInformation.Instance.SetSessionsCompleted(JourneyInformation.Instance.GetSessionsCompleted() + 1);
-		}
-		*/
 	}
 
 	public void OnClickMapCollider()
@@ -395,5 +358,10 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 		}
 
 		Resources.UnloadUnusedAssets();
+	}
+
+	public void SetEnvironment()
+	{
+		JourneyInformation.Instance.SetEnvironment(m_centreMap.GetEnvironment());
 	}
 }

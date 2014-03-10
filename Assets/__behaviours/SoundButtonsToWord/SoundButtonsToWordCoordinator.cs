@@ -40,13 +40,12 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		//m_wordPool = GameDataBridge.Instance.GetWords();
+		m_wordPool = GameDataBridge.Instance.GetWords();
 
-		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
-
-		int sectionId = 1392;
-		DataTable dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
-		m_wordPool = dt.Rows; 
+		//SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
+		//int sectionId = 1392;
+		//DataTable dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
+		//m_wordPool = dt.Rows; 
 
 		List<DataRow> phonemes = GameDataBridge.Instance.GetLetters();
 		DataRow targetPhoneme = null;

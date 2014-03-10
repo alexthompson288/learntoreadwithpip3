@@ -75,6 +75,7 @@ public class VoyageLetterButton : MonoBehaviour
 			gameObject.SetActive(false);
 		}
 
+		/*
 		if(JourneyInformation.Instance.GetLastLetterUnlocked() == System.Convert.ToInt32(m_data["id"]))
 		{
 			yield return new WaitForSeconds(1f);
@@ -88,6 +89,7 @@ public class VoyageLetterButton : MonoBehaviour
 
 			JourneyInformation.Instance.SetLastLetterUnlocked(null);
 		}
+		*/
 	}
 
 	void OnClick()

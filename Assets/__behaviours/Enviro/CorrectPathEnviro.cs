@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CorrectPathSettings : MonoBehaviour 
+public class CorrectPathEnviro : MonoBehaviour 
 {
 	public Texture2D[] m_backgrounds;
 	public Texture2D m_finalBackground;
