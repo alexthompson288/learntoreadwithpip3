@@ -63,9 +63,6 @@ public class FlashcardPracticeCoordinator : MonoBehaviour
 
 		yield return new WaitForSeconds(0.5f);
 
-		Debug.Log("UpdatePipPad()");
-
-
 		PipPadBehaviour.Instance.Show(word);
 
 		PipPadBehaviour.Instance.EnableButtons(false);

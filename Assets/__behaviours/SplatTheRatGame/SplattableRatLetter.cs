@@ -102,7 +102,7 @@ public class SplattableRatLetter : MonoBehaviour
     IEnumerator Splat()
     {     
 		yield return new WaitForSeconds(m_splatDuration);
-		WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
 		iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
 		yield return new WaitForSeconds(1.0f);

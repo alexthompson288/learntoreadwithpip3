@@ -176,11 +176,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
                 if (levelName != Application.loadedLevelName)
                 {
                     Debug.Log("Is another scene - let's go!");
-					if (addToStack)
-					{
-						m_backStack.Push(levelName);
-						Debug.Log("Adding " + levelName + " to back stack!");
-					}
                     ChangeLevel(levelName, false);
                     break;
                 }
@@ -243,7 +238,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		GoTween tween=new GoTween(ScreenCover.transform, 0.8f, config);
         if (addToStack)
         {
-            m_backStack.Push(level);
+            //m_backStack.Push(level);
+			m_backStack.Push(Application.loadedLevelName);
             Debug.Log("Adding " + level + " to back stack!");
         }
 

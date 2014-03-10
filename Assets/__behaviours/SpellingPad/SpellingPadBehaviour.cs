@@ -269,8 +269,10 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		}
 	}
 
-	public void MakeAllVisibleExceptTarget(string targetPhoneme)
+	public void MakeAllVisibleExceptTarget(string targetPhoneme, bool singleTarget)
 	{
+		bool foundTarget = false;
+
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
@@ -279,11 +281,21 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			{
 				spellingPadPhoneme.MakeLabelTransparent();
 			}
+			else if(singleTarget && foundTarget)
+			{
+				spellingPadPhoneme.MakeLabelTransparent();
+			}
+			else
+			{
+				foundTarget = true;
+			}
 		}
 	}
 
-	public void DisableAllCollidersExceptTarget(string targetPhoneme)
+	public void DisableAllCollidersExceptTarget(string targetPhoneme, bool singleTarget)
 	{
+		bool foundTarget = false;
+
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
@@ -291,6 +303,14 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			if(targetPhoneme != spellingPadPhoneme.GetPhoneme())
 			{
 				spellingPadPhoneme.collider.enabled = false;
+			}
+			else if(singleTarget && foundTarget)
+			{
+				spellingPadPhoneme.collider.enabled = false;
+			}
+			else
+			{
+				foundTarget = true;
 			}
 		}
 	}

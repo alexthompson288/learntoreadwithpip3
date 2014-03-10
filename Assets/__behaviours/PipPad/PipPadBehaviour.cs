@@ -170,12 +170,6 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 				
 				string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 
-				Debug.Log("ordered_phonemes.Length: " + phonemes.Length);
-				foreach(string phoneme in phonemes)
-				{
-					Debug.Log(phoneme);
-				}
-
 				bool hasPhonemes = false;
 
 				foreach(string phoneme in phonemes)
@@ -515,14 +509,25 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 		return combinedDuration;
 	}
-	
+
+
 	public void SayWholeWord()
 	{
 		m_sayWholeWordButton.Speak();
 	}
+
+
+	bool m_isSayingAll = false;
 	
 	public void SayAll(float delay)
 	{
+		if(m_isSayingAll)
+		{
+			return;
+		}
+
+		m_isSayingAll = true;
+
 		Debug.Log("PPB.SayAll()");
 		StopAllCoroutines();
 		StartCoroutine(SayAllCo(delay));
@@ -548,13 +553,18 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 					yield return new WaitForSeconds(m_postPhonemeSpeakDelay);
 				}
 				yield return new WaitForSeconds(0.5f);
-				SayWholeWord();
+
+				//SayWholeWord();
+				yield return StartCoroutine(m_sayWholeWordButton.PlayWord());
 			}
 		}
 		else
 		{
-			SayWholeWord();
+			//SayWholeWord();
+			yield return StartCoroutine(m_sayWholeWordButton.PlayWord());
 		}
+
+		m_isSayingAll = false;
 	}
 
 	public List<GameObject> GetCreatedPhonemes()

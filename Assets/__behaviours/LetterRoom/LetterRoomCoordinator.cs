@@ -31,6 +31,8 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 	private UITexture m_loadingTexture;
 	[SerializeField]
 	private AudioSource m_audioSource;
+	[SerializeField]
+	private UIDragPanelContents m_backCollider;
 
 	
 	//List<GameObject> m_spawnedObjects = new List<GameObject>();
@@ -99,6 +101,7 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 			m_setDraggablePanel.gameObject.SetActive(false);
 			m_graphemeDraggablePanel.gameObject.SetActive(false);
 			m_phonemeDraggablePanel.gameObject.SetActive(true);
+			m_backCollider.draggablePanel = m_phonemeDraggablePanel;
 			
 			if(m_phonemeGrid.transform.childCount == 0)
 			{
@@ -116,6 +119,7 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 			m_phonemeDraggablePanel.gameObject.SetActive(false);
 			m_setDraggablePanel.gameObject.SetActive(false);
 			m_graphemeDraggablePanel.gameObject.SetActive(true);
+			m_backCollider.draggablePanel = m_graphemeDraggablePanel;
 			
 			if(m_graphemeGrid.transform.childCount == 0)
 			{
@@ -133,6 +137,7 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 			m_phonemeDraggablePanel.gameObject.SetActive(false);
 			m_graphemeDraggablePanel.gameObject.SetActive(false);
 			m_setDraggablePanel.gameObject.SetActive(true);
+			m_backCollider.draggablePanel = m_setDraggablePanel;
 			
 			m_organizationState = OrganizationState.sets;
 			break;
@@ -191,8 +196,7 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 						
 						LetterButton letterBehaviour = newPhoneme.GetComponent<LetterButton>() as LetterButton;
 						letterBehaviour.SetUp(phoneme, true, false);
-						//letterBehaviour.SetMethods(letterBehaviour.PlayPhonemeAudio, new LetterButton.MyMethod[] { letterBehaviour.PlayMnemonicAudio, letterBehaviour.TweenLarge } );
-						letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
+						//letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
 						letterBehaviour.OnSingle += OnLetterSingleClick;
 						letterBehaviour.OnDouble += OnLetterDoubleClick;
 
@@ -248,34 +252,41 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 		
 		if(phonemes.Count > 0)
 		{
-			int objName = 0;
+			string lastGrapheme = phonemes[0]["phoneme"].ToString();
+			int maxPerLine = m_graphemeGrid.maxPerLine;
+			int objectName = 0;
+
 			foreach(DataRow phoneme in phonemes)
 			{
 				if(phoneme["completed"] != null && phoneme["completed"].ToString() == "t")
 				{
+					if(phoneme["phoneme"].ToString() != lastGrapheme && objectName % maxPerLine != 0)
+					{
+						int numEmpty = maxPerLine - (objectName % maxPerLine);
+
+						for(int i = 0; i < numEmpty; ++i)
+						{
+							GameObject newEmpty = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_emptyPrefab, m_graphemeGrid.transform);
+							newEmpty.name = objectName.ToString();
+							++objectName;
+						}
+					}
+
 					GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_letterButtonPrefab, m_graphemeGrid.transform);
 						
-					newPhoneme.name = objName.ToString();
-					++objName;
-						
-					//m_spawnedObjects.Add(newPhoneme);
+					newPhoneme.name = objectName.ToString();
+					++objectName;
 						
 					LetterButton letterBehaviour = newPhoneme.GetComponent<LetterButton>() as LetterButton;
 					letterBehaviour.SetUp(phoneme, true, false);
-					//letterBehaviour.SetMethods(letterBehaviour.PlayPhonemeAudio, new LetterButton.MyMethod[] { letterBehaviour.PlayMnemonicAudio, letterBehaviour.TweenLarge } );
-					letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
+					//letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
 					letterBehaviour.OnSingle += OnLetterSingleClick;
 					letterBehaviour.OnDouble += OnLetterDoubleClick;
 
 					UIDragPanelContents dragBehaviour = newPhoneme.AddComponent<UIDragPanelContents>() as UIDragPanelContents;
 					dragBehaviour.draggablePanel = m_graphemeDraggablePanel;
 
-					/*
-					if(objName % 10 == 0) // yield control every 10 iterations to prevent extremely long frames
-					{
-						yield return null;
-					}
-					*/
+					lastGrapheme = phoneme["phoneme"].ToString();
 				}
 			}
 
@@ -302,34 +313,41 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 		
 		if(phonemes.Count > 0)
 		{
-			int objName = 0;
+			string lastPhoneme = phonemes[0]["grapheme"].ToString();
+			int maxPerLine = m_phonemeGrid.maxPerLine;
+			int objectName = 0;
+
 			foreach(DataRow phoneme in phonemes)
 			{
 				if(phoneme["completed"] != null && phoneme["completed"].ToString() == "t")
 				{
+					if(phoneme["grapheme"].ToString() != lastPhoneme && objectName % maxPerLine != 0)
+					{
+						int numEmpty = maxPerLine - (objectName % maxPerLine);
+						
+						for(int i = 0; i < numEmpty; ++i)
+						{
+							GameObject newEmpty = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_emptyPrefab, m_phonemeGrid.transform);
+							newEmpty.name = objectName.ToString();
+							++objectName;
+						}
+					}
+
 					GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_letterButtonPrefab, m_phonemeGrid.transform);
 					
-					newPhoneme.name = objName.ToString();
-					++objName;
-					
-					//m_spawnedObjects.Add(newPhoneme);
+					newPhoneme.name = objectName.ToString();
+					++objectName;
 					
 					LetterButton letterBehaviour = newPhoneme.GetComponent<LetterButton>() as LetterButton;
 					letterBehaviour.SetUp(phoneme, true, false);
-					//letterBehaviour.SetMethods(letterBehaviour.PlayPhonemeAudio, new LetterButton.MyMethod[] { letterBehaviour.PlayMnemonicAudio, letterBehaviour.TweenLarge } );
-					letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
+					//letterBehaviour.SetDoubleMethod(letterBehaviour.TweenLarge);
 					letterBehaviour.OnSingle += OnLetterSingleClick;
 					letterBehaviour.OnDouble += OnLetterDoubleClick;
 
 					UIDragPanelContents dragBehaviour = newPhoneme.AddComponent<UIDragPanelContents>() as UIDragPanelContents;
 					dragBehaviour.draggablePanel = m_phonemeDraggablePanel;
 
-					/*
-					if(objName % 10 == 0) // yield control every 10 iterations to prevent extremely long frames
-					{
-						yield return null;
-					}
-					*/
+					lastPhoneme = phoneme["grapheme"].ToString();
 				}
 			}
 			

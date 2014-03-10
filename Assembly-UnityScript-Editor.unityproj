@@ -196,8 +196,8 @@
  <Reference Include="Assets\Plugins\Mono.Data.SqliteClient">
  <HintPath>Assets\Plugins\Mono.Data.SqliteClient.dll</HintPath>
  </Reference>
- <Reference Include="Assets\Plugins\Prime31\P31RestKit">
- <HintPath>Assets\Plugins\Prime31\P31RestKit.dll</HintPath>
+ <Reference Include="Assets\Plugins\P31RestKit">
+ <HintPath>Assets\Plugins\P31RestKit.dll</HintPath>
  </Reference>
  <Reference Include="Assets\Plugins\System.Configuration">
  <HintPath>Assets\Plugins\System.Configuration.dll</HintPath>

@@ -17,7 +17,6 @@ public class PlayWordButton : MonoBehaviour {
         AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(audioFilename);
         if (loadedAudio == null)
         {
-			Debug.Log("No audio found for say whole word button");
             m_hideObject.SetActive(false);
         }
         else
@@ -26,7 +25,6 @@ public class PlayWordButton : MonoBehaviour {
             m_spriteAnim.PlayAnimation("ON");
 			m_loadedAudio = loadedAudio;
             collider.enabled = true;
-			Debug.Log("Whole word audio: " + loadedAudio);
         }
     }
 
@@ -45,14 +43,15 @@ public class PlayWordButton : MonoBehaviour {
 		//}
     }
 
+
     public void Speak()
     {
         StartCoroutine(PlayWord());
     }
+    
 
-    IEnumerator PlayWord()
+    public IEnumerator PlayWord()
     {
-		Debug.Log("PWB.PlayWord()");
         PipPadBehaviour.Instance.HighlightWholeWord();
         //PipPadBehaviour.Instance.ReShowWordImage();
         collider.enabled = false;

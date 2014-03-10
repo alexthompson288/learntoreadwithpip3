@@ -52,8 +52,6 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		SessionInformation.Instance.SetPlayerIndex(0, 3);
 		SessionInformation.Instance.SetWinner(0);
 		
-		m_scoreBar.SetStarsTarget(m_targetScore);
-		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		m_wordPool.AddRange(GameDataBridge.Instance.GetWords());
@@ -151,6 +149,13 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 				}
 			}
 		}
+
+		if(m_targetScore > m_wordPool.Count * 2)
+		{
+			m_targetScore = m_wordPool.Count * 2;
+		}
+
+		m_scoreBar.SetStarsTarget(m_targetScore);
 		
 		yield return new WaitForSeconds(0.5f);
 		
@@ -259,8 +264,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			
 		Debug.Log("targetPhoneme: " + targetPhoneme);
 
-		SpellingPadBehaviour.Instance.MakeAllVisibleExceptTarget(targetPhoneme);
-		SpellingPadBehaviour.Instance.DisableAllCollidersExceptTarget(targetPhoneme);
+		SpellingPadBehaviour.Instance.MakeAllVisibleExceptTarget(targetPhoneme, true);
+		SpellingPadBehaviour.Instance.DisableAllCollidersExceptTarget(targetPhoneme, true);
 
 		if(answerPhonemes.Count == 0 || targetPhoneme == null)
 		{

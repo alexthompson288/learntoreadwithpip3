@@ -19,9 +19,7 @@ public static class LoaderHelpers {
 		string audioFilename = string.Format("{0}_{1}",
 		                                     phonemeData["phoneme"],
 		                                     phonemeData["mneumonic"].ToString().Replace(" ", "_"));
-
-		Debug.Log("audioFilename: " + audioFilename);
-
+	
         AudioClip loadedAudio = (AudioClip)Resources.Load("audio/benny_mnemonics_master/" + audioFilename);
         if (loadedAudio == null)
         {

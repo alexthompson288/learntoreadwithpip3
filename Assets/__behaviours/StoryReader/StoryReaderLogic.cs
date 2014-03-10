@@ -429,6 +429,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
     void SetText(DataRow row)
     {
+		Debug.Log("StoryReaderLogic.SetText()");
+
         //textposition
 		string textToDisplay = row[m_currentLanguage].ToString().Replace("\\n", "\n");
 
@@ -478,11 +480,12 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 						showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
 					}
 
-					if(isOnDecodeList)
+					// Highlight if word is on the decode list
+					if(isOnDecodeList) 
 					{
-						showPipPadForWord.SwitchOnSprite(storyType == "Classic");
+						showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
 					}
-                }
+				}
             }
             if (hadValidWord)
             {

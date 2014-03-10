@@ -32,7 +32,7 @@ public class ShowPipPadForWord : MonoBehaviour {
 		m_showPad = showPad;
     }
 
-	public void SwitchOnSprite(bool decodeable)
+	public void Highlight(bool decodeable)
 	{
 		m_sprite.enabled = true;
 
