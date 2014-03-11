@@ -16,3 +16,9 @@ Temp
 *.csproj
 *.pidb
 *.sln
+#New
+*.unityproj
+*.userprefs
+#New OSX only
+*.swp
+*.Trashes
