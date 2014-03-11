@@ -10,6 +10,10 @@ public class GenericEnviro : MonoBehaviour
 	private string[] m_containerOffNames;
 	[SerializeField]
 	private string[] m_containerOnNames;
+	[SerializeField]
+	private AudioClip m_audioClip;
+	[SerializeField]
+	private float m_volume; // 0-1
 
 
 	public Texture2D GetBackground(int index = -1)
@@ -72,5 +76,15 @@ public class GenericEnviro : MonoBehaviour
 		{
 			return GetContainerOnName();
 		}
+	}
+
+	public AudioClip GetAudioClip()
+	{
+		return m_audioClip;
+	}
+
+	public float GetVolume()
+	{
+		return Mathf.Clamp01(m_volume);
 	}
 }

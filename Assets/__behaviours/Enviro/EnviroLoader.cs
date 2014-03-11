@@ -9,6 +9,8 @@ public class EnviroLoader : Singleton<EnviroLoader>
 	GenericEnviro m_genericEnviro;
 	bool m_foundEnviro = false;
 
+	AudioSource m_audioSource;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -22,6 +24,15 @@ public class EnviroLoader : Singleton<EnviroLoader>
 			foreach(UITexture background in m_backgrounds)
 			{
 				background.mainTexture = tex;
+			}
+
+			m_audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+			m_audioSource.loop = true;
+			m_audioSource.volume = m_genericEnviro.GetVolume();
+			m_audioSource.clip = m_genericEnviro.GetAudioClip();
+			if(m_audioSource.clip != null)
+			{
+				m_audioSource.Play();
 			}
 		}
 		else
