@@ -43,8 +43,18 @@ public class EnviroLoader : Singleton<EnviroLoader>
 		return m_genericEnviro.GetContainerOffName(index);
 	}
 
+	public string GetContainerOffName(string onName)
+	{
+		return m_genericEnviro.GetContainerOffName(onName);
+	}
+
 	public string GetContainerOnName(int index = -1)
 	{
 		return m_genericEnviro.GetContainerOnName(index);
+	}
+
+	public string GetContainerOnName(string offName)
+	{
+		return m_genericEnviro.GetContainerOnName(offName);
 	}
 }

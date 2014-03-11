@@ -5,6 +5,11 @@ using System.IO;
 
 public class JourneyInformation : Singleton<JourneyInformation> 
 {
+#if UNITY_EDITOR
+	[SerializeField]
+	private bool m_overwriteProgress;
+#endif
+
 	void OnSessionComplete()
 	{
 		Debug.Log("JourneyInformation.OnSessionComplete()");
@@ -67,6 +72,13 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	void Awake()
 	{
+#if UNITY_EDITOR
+		if(m_overwriteProgress)
+		{
+			Save();
+		}
+#endif
+
 		string allGameNames = m_gameNameFile.text;
 		string[] separatedGameNames = allGameNames.Split(',');
 		

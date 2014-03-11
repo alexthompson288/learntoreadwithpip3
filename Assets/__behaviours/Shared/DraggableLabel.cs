@@ -59,9 +59,16 @@ public class DraggableLabel : MonoBehaviour
 			m_backgroundTexture.mainTexture = m_offTextures[Random.Range(0, m_offTextures.Length)];
 		}
 		
-		if(m_backgroundSprite != null && m_offSpriteNames.Length > 0)
+		if(m_backgroundSprite != null)
 		{
-			m_backgroundSprite.spriteName = m_offSpriteNames[Random.Range(0, m_offSpriteNames.Length)];
+			if(m_offSpriteNames.Length > 0)
+			{
+				m_backgroundSprite.spriteName = m_offSpriteNames[Random.Range(0, m_offSpriteNames.Length)];
+			}
+			else
+			{
+				m_backgroundSprite.spriteName = EnviroLoader.Instance.GetContainerOffName();
+			}
 		}
     }
 
@@ -220,15 +227,29 @@ public class DraggableLabel : MonoBehaviour
 			}
 		}
 
-		if(m_backgroundSprite != null && m_onSpriteNames.Length > 0)
+		if(m_backgroundSprite != null)
 		{
-			if(m_linkOnOffIndex && m_onSpriteNames.Length > m_textureIndex)
+			if(m_onSpriteNames.Length > 0)
 			{
-				m_backgroundSprite.spriteName = m_onSpriteNames[m_textureIndex];
+				if(m_linkOnOffIndex && m_onSpriteNames.Length > m_textureIndex)
+				{
+					m_backgroundSprite.spriteName = m_onSpriteNames[m_textureIndex];
+				}
+				else
+				{
+					m_backgroundSprite.spriteName = m_onSpriteNames[Random.Range(0, m_onSpriteNames.Length)];
+				}
 			}
 			else
 			{
-				m_backgroundSprite.spriteName = m_onSpriteNames[Random.Range(0, m_onSpriteNames.Length)];
+				if(m_linkOnOffIndex)
+				{
+					EnviroLoader.Instance.GetContainerOnName(m_backgroundSprite.spriteName);
+				}
+				else
+				{
+					EnviroLoader.Instance.GetContainerOnName();
+				}
 			}
 		}
 	}
