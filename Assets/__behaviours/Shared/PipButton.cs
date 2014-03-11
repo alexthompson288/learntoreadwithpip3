@@ -22,6 +22,8 @@ public class PipButton : MonoBehaviour
 	[SerializeField]
 	private Vector3 m_offset = new Vector3(0, -15, 0);
 	[SerializeField]
+	private float m_tweenDuration = 0.15f;
+	[SerializeField]
 	private string m_pressedAudio = "BUTTON_PRESS";
 	[SerializeField]
 	private string m_unpressedAudio = "BUTTON_UNPRESS";
@@ -162,7 +164,7 @@ public class PipButton : MonoBehaviour
 			yield return null;
 		}
 		
-		TweenPosition.Begin(gameObject, m_minDuration, pressed ? m_defaultLocalPos + m_offset : m_defaultLocalPos).method = UITweener.Method.EaseInOut;
+		TweenPosition.Begin(gameObject, m_tweenDuration, pressed ? m_defaultLocalPos + m_offset : m_defaultLocalPos).method = UITweener.Method.EaseInOut;
 		
 		if(m_changeColor)
 		{
