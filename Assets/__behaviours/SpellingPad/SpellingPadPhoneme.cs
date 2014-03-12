@@ -201,7 +201,6 @@ public class SpellingPadPhoneme : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		Debug.Log("OnTriggerEnter()");
 		if(m_other == null)
 		{
 			m_other = other;
@@ -211,7 +210,6 @@ public class SpellingPadPhoneme : MonoBehaviour {
 
 	void OnTriggerExit(Collider other)
 	{
-		Debug.Log("OnTriggerExit()");
 		if(other == m_other)
 		{
 			m_other = null;

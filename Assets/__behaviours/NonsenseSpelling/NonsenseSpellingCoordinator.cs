@@ -46,8 +46,6 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		SessionInformation.Instance.SetPlayerIndex(0, 3);
 		SessionInformation.Instance.SetWinner(0);
 		
-
-		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		if(m_nonsenseWords)

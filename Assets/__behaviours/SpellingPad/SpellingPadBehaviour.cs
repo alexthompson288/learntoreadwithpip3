@@ -250,7 +250,10 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		SayAll();
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
-			createdPhoneme.GetComponent<SpellingPadPhoneme>().MakeLabelTransparent();
+			if(!Mathf.Approximately(createdPhoneme.GetComponent<SpellingPadPhoneme>().GetLabelTransparency(), 1))
+			{
+				createdPhoneme.GetComponent<SpellingPadPhoneme>().MakeLabelTransparent();
+			}
 		}
 
 		if(temporary)
@@ -275,6 +278,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	public void SayShowSequential()
 	{
+		Debug.Log("SpellingPadBehaviour.SayShowSequential()");
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme phonemeBehaviour = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
@@ -343,6 +347,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			{
 				return spellingPadPhoneme;
 			}
+			/*
 			else
 			{
 				Debug.Log("SpellingPadPhoneme.CheckLetters()");
@@ -352,6 +357,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 				Debug.Log("padPhoneme: " + spellingPadPhoneme.GetPhoneme());
 				Debug.Log("draggablePhoneme: " + phoneme);
 			}
+			*/
 		}
 
 		return null;

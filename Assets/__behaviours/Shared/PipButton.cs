@@ -20,7 +20,7 @@ public class PipButton : MonoBehaviour
 	[SerializeField]
 	private float m_minDuration = 0.15f;
 	[SerializeField]
-	private Vector3 m_offset = new Vector3(0, -15, 0);
+	private Vector3 m_offset = new Vector3(0, -10, 0);
 	[SerializeField]
 	private float m_tweenDuration = 0.15f;
 	[SerializeField]
