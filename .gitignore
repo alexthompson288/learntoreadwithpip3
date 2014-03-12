@@ -12,6 +12,7 @@ Library/expandedItems
 Library/metadata
 Library/previews
 Library/guidmapper
+Library/BuildSettings.asset
 Temp
 *.csproj
 *.pidb
