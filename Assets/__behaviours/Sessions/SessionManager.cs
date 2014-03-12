@@ -2,11 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class SessionManager : Singleton<SessionManager> 
 {
 	public delegate void SessionComplete();
-	public event SessionComplete OnSessionComplete;
+	private SessionComplete onSessionComplete;
+	public event SessionComplete OnSessionComplete
+	{
+		add
+		{
+			if(onSessionComplete == null || !onSessionComplete.GetInvocationList().Contains(value))
+			{
+				onSessionComplete += value;
+			}
+		}
+		remove
+		{
+			onSessionComplete -= value;
+		}
+	}
 
 	[SerializeField]
 	private TextAsset m_gameNameFile;
@@ -62,21 +77,6 @@ public class SessionManager : Singleton<SessionManager>
 		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
 
 		DataTable dtTest = db.ExecuteQuery("select * from programsessions ORDER BY number DESC");
-		foreach(DataRow row in dtTest.Rows)
-		{
-			/*
-			if(row["number"] != null && Convert.ToInt32(row["number"]) == sessionNum)
-			{
-				Debug.Log("FOUND: " + row["number"].ToString());
-			}
-			else
-			{
-				Debug.Log("test: " + row["number"].ToString());
-			}
-			*/
-
-			Debug.Log("test: " + row["number"].ToString());
-		}
 
 		dtTest = db.ExecuteQuery("select * from programsessions WHERE id=" + 280);
 		if(dtTest.Rows.Count > 0)
@@ -234,13 +234,13 @@ public class SessionManager : Singleton<SessionManager>
 	{
 		Debug.Log("Session Complete");
 		
-		if(OnSessionComplete != null)
+		if(onSessionComplete != null)
 		{
-			OnSessionComplete();
+			onSessionComplete();
 		}
 		
 		string newScene = m_st == ST.Pippisode ? "NewPippisodeMenu" : "NewVoyage";
-		TransitionScreen.Instance.ChangeLevel(newScene, true);
+		TransitionScreen.Instance.ChangeLevel(newScene, false);
 	}
 
 	#if UNITY_EDITOR

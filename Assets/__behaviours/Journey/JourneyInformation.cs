@@ -34,6 +34,16 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		
 		SetRecentlyCompleted(true);
 		
+		UnsubscribeOnSessionComplete();
+	}
+
+	public void SubscribeOnSessionComplete()
+	{
+		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
+	}
+
+	public void UnsubscribeOnSessionComplete()
+	{
 		SessionManager.Instance.OnSessionComplete -= OnSessionComplete;
 	}
 
@@ -93,11 +103,6 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		}
 		
 		Load ();
-	}
-	
-	public void SubscribeOnSessionComplete()
-	{
-		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
 	}
 	
 	public bool IsSessionFinished(int sessionNum)
