@@ -10,12 +10,12 @@ public class SaveCurrentLesson : MonoBehaviour
 	
 	void OnClick()
 	{
-		m_eventParameters.Clear();
-		
 		Debug.Log("Saving lesson");
 		LessonNameCoordinator.Instance.OnInputFinish();
 		
 		#if UNITY_IPHONE
+		m_eventParameters.Clear();
+
 		m_eventParameters.Add("Name", LessonInfo.Instance.GetName());
 
 		List<string> gameNamesList = LessonInfo.Instance.GetGames();
@@ -30,7 +30,9 @@ public class SaveCurrentLesson : MonoBehaviour
 		AddMissingData(LessonInfo.DataType.Keywords, "setkeywords", "words");
 		AddMissingData(LessonInfo.DataType.Stories, "setstories", "stories");
 
+#if UNITY_IPHONE
 		FlurryBinding.logEventWithParameters("SaveLesson", m_eventParameters, false);
+#endif
 		
 		LessonInfo.Instance.SaveLessons();
 	}

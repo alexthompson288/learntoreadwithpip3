@@ -1,14 +1,14 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/Flick/FlickableWidget2D.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/__behaviours/AlphabetBook/AlphabetBookInformation.cs">
     <Files>
-      <File FileName="Assets/__behaviours/Flick/FlickCoordinator.cs" Line="96" Column="83" />
-      <File FileName="Assets/__behaviours/SplatTheRatGame/SplatRatGameCoordinator.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/SplatRatKeywords/SplatRatKeyCoordinator.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/Flick/FlickableWidget.cs" Line="22" Column="2" />
-      <File FileName="Assets/__behaviours/CompleteTheSentence/CompleteSentenceCoordinator.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/SplatTheRatGame/SplattableRatLetter.cs" Line="1" Column="1" />
-      <File FileName="Assets/__behaviours/Flick/FlickableWidget2D.cs" Line="79" Column="4" />
+      <File FileName="Assets/MobileMovieTexture/MobileMovieTexture.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/LessonPlans/SaveCurrentLesson.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Sessions/SessionManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Journey/JourneyInformation.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/LessonPlans/LessonMenuCoordinator.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/Journey/JourneyPoint.cs" Line="1" Column="1" />
+      <File FileName="Assets/__behaviours/AlphabetBook/AlphabetBookInformation.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
