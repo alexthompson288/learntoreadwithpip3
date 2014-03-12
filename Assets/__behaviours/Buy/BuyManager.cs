@@ -585,20 +585,6 @@ public class BuyManager : Singleton<BuyManager>
 		DataTable storyTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE publishable = 't'");
 		foreach(DataRow story in storyTable.Rows)
 		{
-			/*
-			int storyId = Convert.ToInt32(story["id"]);
-			if(storyId == 32 || storyId == 39)
-			{
-				Debug.Log(storyId + " - " + story["title"].ToString());
-				Debug.Log(BuildStoryProductIdentifier(story));
-				Debug.Log("ASCII");
-				foreach(char c in story["title"].ToString())
-				{
-					Debug.Log(c + " - " + (int)c);
-				}
-			}
-			*/
-
 			productIdentifiers.Add(BuildStoryProductIdentifier(story));
 		}
 
@@ -830,18 +816,23 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsEverythingBought()
 	{
+		Debug.Log("BuyManager.IsEverythingBought()");
 		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
+			Debug.Log("Unlocked in settings");
 			return true;
 		}
 		else
 		{
+			Debug.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
 			return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought();
 		}
 	}
 
 	void Load()
 	{
+		Debug.Log("BuyManager.Load()");
+
 		DataSaver ds = new DataSaver("BuyInfo");
 		MemoryStream data = ds.Load();
 		BinaryReader br = new BinaryReader(data);

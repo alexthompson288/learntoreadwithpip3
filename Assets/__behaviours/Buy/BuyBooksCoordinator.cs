@@ -27,6 +27,12 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	private UITexture m_background;
 	[SerializeField]
 	private UILabel m_buyAllBooksLabel;
+	[SerializeField]
+	private Transform m_infoText;
+	[SerializeField]
+	private Transform m_infoNoBuyLocation;
+	[SerializeField]
+	private GameObject m_buyButtonsParent;
 
 	Texture2D m_defaultBackgroundTex;
 	Color m_defaultBackgroundColor;
@@ -40,6 +46,16 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 		m_backCollider.OnSingleClick += OnClickBackCollider;
 		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
+	}
+
+	void Start()
+	{
+		if(BuyManager.Instance.IsEverythingBought())
+		{
+			m_buyButtonsParent.SetActive(false);
+			m_infoText.position = m_infoNoBuyLocation.position;
+			m_background.transform.localScale = Vector3.one * 0.7f;
+		}
 	}
 
 	public void BuyBook(ClickEvent click)
@@ -65,7 +81,12 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	{
 		bool bookIsLocked = m_currentBook != null && !BuyManager.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"]));
 		m_buyButton.collider.enabled = bookIsLocked;
-		m_buyButton.GetComponentInChildren<UISprite>().color = bookIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+
+		UISprite buyButtonSprite = m_buyButton.GetComponentInChildren<UISprite>() as UISprite;
+		if(buyButtonSprite != null)
+		{
+			buyButtonSprite.color = bookIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+		}
 	}
 
 	public void Show(NewStoryBrowserBookButton currentBook)

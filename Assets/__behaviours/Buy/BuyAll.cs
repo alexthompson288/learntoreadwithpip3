@@ -7,6 +7,8 @@ public class BuyAll : MonoBehaviour
 	private BuyManager.BuyType m_buyType;
 	[SerializeField]
 	private UISprite m_background;
+	[SerializeField]
+	private bool m_isClickable = true;
 
 	IEnumerator Start()
 	{
@@ -17,7 +19,10 @@ public class BuyAll : MonoBehaviour
 	
 	void OnClick () 
 	{
-		BuyManager.Instance.BuyAll(m_buyType);
+		if(m_isClickable)
+		{
+			BuyManager.Instance.BuyAll(m_buyType);
+		}
 	}
 
 	public void Refresh()
