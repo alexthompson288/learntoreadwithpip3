@@ -36,6 +36,7 @@ public class PipButton : MonoBehaviour
 	Vector3 m_defaultLocalPos;
 
 	float m_timeElapsed = 0;
+	
 
 	void Awake () 
 	{
