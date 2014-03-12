@@ -82,6 +82,9 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	void Awake()
 	{
+		// This is for testing pulling on Android
+		Debug.Log("JourneyInformation - Pull worked");
+
 #if UNITY_EDITOR
 		if(m_overwriteProgress)
 		{
