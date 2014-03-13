@@ -465,9 +465,6 @@ public class BuyManager : Singleton<BuyManager>
 
 	void Awake()
 	{
-		Debug.Log("BuyManager.Awake() - UP_TO_DATE_TEST_3");
-
-
 #if UNITY_EDITOR
 		if(m_resetPurchases)
 		{
@@ -564,7 +561,7 @@ public class BuyManager : Singleton<BuyManager>
 
 	IEnumerator Start()
 	{
-		Debug.Log("PRODUCTLIST: Waiting for db");
+		//Debug.Log("PRODUCTLIST: Waiting for db");
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -578,7 +575,7 @@ public class BuyManager : Singleton<BuyManager>
 			}
 		}
 
-		Debug.Log("PRODUCTLIST: Building");
+		//Debug.Log("PRODUCTLIST: Building");
 
 		List<string> productIdentifiers = new List<string>();
 
@@ -602,7 +599,7 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
 		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
 
-		Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count);
+		//Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count);
 
 		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
 
@@ -614,7 +611,7 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
 		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
 
-		Debug.Log("PRODUCTLIST: Finished");
+		//Debug.Log("PRODUCTLIST: Finished");
 	}
 
 
@@ -816,22 +813,22 @@ public class BuyManager : Singleton<BuyManager>
 
 	public bool IsEverythingBought()
 	{
-		Debug.Log("BuyManager.IsEverythingBought()");
+		//Debug.Log("BuyManager.IsEverythingBought()");
 		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
-			Debug.Log("Unlocked in settings");
+			//Debug.Log("Unlocked in settings");
 			return true;
 		}
 		else
 		{
-			Debug.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
+			//Debug.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
 			return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought();
 		}
 	}
 
 	void Load()
 	{
-		Debug.Log("BuyManager.Load()");
+		//Debug.Log("BuyManager.Load()");
 
 		DataSaver ds = new DataSaver("BuyInfo");
 		MemoryStream data = ds.Load();

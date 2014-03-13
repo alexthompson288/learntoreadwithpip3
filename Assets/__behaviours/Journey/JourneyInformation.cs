@@ -20,6 +20,8 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		{
 			SetSessionsCompleted(sessionNum);
 		}
+
+		//ServerPost.Instance.PostVoyageSession (sessionNum);
 		
 		#if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
@@ -82,9 +84,6 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	void Awake()
 	{
-		// This is for testing pulling on Android
-		Debug.Log("JourneyInformation - Pull worked");
-
 #if UNITY_EDITOR
 		if(m_overwriteProgress)
 		{

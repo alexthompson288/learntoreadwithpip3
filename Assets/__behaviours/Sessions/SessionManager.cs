@@ -6,6 +6,13 @@ using System.Linq;
 
 public class SessionManager : Singleton<SessionManager> 
 {
+	float m_timeSessionStarted;
+
+	public float GetTimeSessionStarted()
+	{
+		return m_timeSessionStarted;
+	}
+
 	public delegate void SessionComplete();
 	private SessionComplete onSessionComplete;
 	public event SessionComplete OnSessionComplete
@@ -91,6 +98,8 @@ public class SessionManager : Singleton<SessionManager>
 		DataTable dtSessions = db.ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
 		
 		Debug.Log("sessionNum: " + sessionNum);
+
+		m_timeSessionStarted = Time.time;
 		
 		if(dtSessions.Rows.Count > 0)
 		{

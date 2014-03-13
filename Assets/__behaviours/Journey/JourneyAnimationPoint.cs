@@ -41,8 +41,10 @@ public class JourneyAnimationPoint : MonoBehaviour
 				}
 				else
 				{
+#if UNITY_IPHONE || UNITY_ANDROID
 					Debug.Log("Playing " + m_videoName + ".mp4");
 					Handheld.PlayFullScreenMovie(m_videoName + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+#endif
 				}
 			}
 			else

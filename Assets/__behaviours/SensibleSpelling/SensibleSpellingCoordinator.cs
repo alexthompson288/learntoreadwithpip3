@@ -125,8 +125,6 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 		
 		m_targetCorrectLetters = phonemes.Length;
 		
-		Debug.Log("m_currentWord: " + m_currentWord);
-		
 		SpellingPadBehaviour.Instance.DisplayNewWord(m_currentWord);
 		
 		List<Transform> locators = m_locators.ToList();

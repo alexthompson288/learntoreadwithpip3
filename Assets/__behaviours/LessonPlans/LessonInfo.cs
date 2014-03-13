@@ -31,8 +31,6 @@ public class LessonInfo : Singleton<LessonInfo>
 	{
 		Load();
 
-		Debug.Log("LessonInfo has loaded. " + m_lessons.Count + " lessons");
-
 #if UNITY_EDITOR
 		if(m_instantiateDebugLesson)
 		{
@@ -577,8 +575,6 @@ public class LessonInfo : Singleton<LessonInfo>
 		DataSaver ds = new DataSaver("LessonInfo");
 		MemoryStream data = ds.Load();
 		BinaryReader br = new BinaryReader(data);
-
-		Debug.Log("data.Length: " + data.Length);
 
 		if(data.Length != 0)
 		{

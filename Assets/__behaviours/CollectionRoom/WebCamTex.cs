@@ -4,11 +4,13 @@ using System.Collections;
 public class WebCamTex : MonoBehaviour
 {
 
-    WebCamTexture m_wct;
+    //WebCamTexture m_wct;
 
     // Use this for initialization
     void Start()
     {
+
+		/*
         if (SessionInformation.Instance.GetWebCamTexture() == null)
         {
             string frontCamName = null;
@@ -43,8 +45,10 @@ public class WebCamTex : MonoBehaviour
         {
             m_wct.Play();
         }
+        */
     }
 
+	/*
     void OnDestroy()
     {
         if (m_wct != null)
@@ -58,4 +62,5 @@ public class WebCamTex : MonoBehaviour
     {
         GetComponent<UITexture>().mainTexture = m_wct;
     }
+    */
 }

@@ -52,10 +52,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		{
 			Debug.Log("EmptyScene");
 		}
-		Debug.Log("Unloading unused assets");
+
 		Resources.UnloadUnusedAssets();
 		GC.Collect();
-		Debug.Log("Total Memory: " + GC.GetTotalMemory(false));
+
         if (m_isEmptyScene)
         {
 			//Debug.Log("Unloading unused assets");

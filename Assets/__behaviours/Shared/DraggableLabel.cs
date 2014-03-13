@@ -36,6 +36,10 @@ public class DraggableLabel : MonoBehaviour
 	private float m_tweenDuration = 0.5f;
 	[SerializeField]
 	private bool m_canDrag = true;
+	[SerializeField]
+	private string m_pressedAudio = "BUTTON_PRESS";
+	[SerializeField]
+	private string m_unpressedAudio = "BUTTON_UNPRESS";
 
 	int m_textureIndex;
 	
@@ -130,6 +134,8 @@ public class DraggableLabel : MonoBehaviour
 
     void OnPress(bool press)
     {
+		WingroveAudio.WingroveRoot.Instance.PostEvent (press ? m_pressedAudio : m_unpressedAudio);
+
     	if(m_canDrag)
     	{
 	    	if (press)

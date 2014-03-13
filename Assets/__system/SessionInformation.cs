@@ -41,7 +41,8 @@ public class SessionInformation : Singleton<SessionInformation> {
     string m_selectedGame = null;
     bool m_selectedGameSupportsTwoPlayer = false;
 
-    WebCamTexture m_intialisedWebCamTexture;
+
+//    WebCamTexture m_intialisedWebCamTexture;
 
     void Awake()
     {
@@ -122,15 +123,15 @@ public class SessionInformation : Singleton<SessionInformation> {
 		}
 	}
 	
-	public WebCamTexture GetWebCamTexture()
-    {
-        return m_intialisedWebCamTexture;
-    }
-
-    public void SetWebCamTexture(WebCamTexture wct)
-    {
-        m_intialisedWebCamTexture = wct;
-    }
+//	public WebCamTexture GetWebCamTexture()
+//    {
+//        return m_intialisedWebCamTexture;
+//    }
+//
+//    public void SetWebCamTexture(WebCamTexture wct)
+//    {
+//        m_intialisedWebCamTexture = wct;
+//    }
 	
 	public bool GetHasWonRecently()
 	{
