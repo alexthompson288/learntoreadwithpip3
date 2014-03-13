@@ -51,8 +51,10 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		//GameObject goSettings = (GameObject)Resources.Load("CorrectPath_Forest"); // TODO: Read Castle from a datasaver class
 		//m_settings = goSettings.GetComponent<CorrectPathEnviro>() as CorrectPathEnviro;
 
-		JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
-		m_settings = Resources.Load<CorrectPathEnviro>("CorrectPath/" + enviro + "_CorrectPath");
+		//JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
+		//m_settings = Resources.Load<CorrectPathEnviro>("CorrectPath/" + enviro + "_CorrectPath");
+
+		m_settings = Resources.Load<CorrectPathEnviro>("CorrectPath/Castle_CorrectPath");
 
 		m_platform.mainTexture = m_settings.m_platform;
 
