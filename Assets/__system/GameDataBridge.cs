@@ -22,6 +22,26 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		Keywords,
 	}
 
+	Dictionary<DataType, string> m_dataAttributes = new Dictionary<DataType, string> ();
+
+	public string GetAttribute(DataType dataType)
+	{
+		return m_dataAttributes [dataType];
+	}
+
+	private DataType m_dataType;
+	public DataType dataType
+	{
+		get
+		{
+			return m_dataType;
+		}
+		set
+		{
+			m_dataType = value;
+		}
+	}
+	
 	public enum ContentType // TODO: Move this to the Data class
 	{
 		Sets,
@@ -29,7 +49,18 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		Custom,
 	}
 
-	ContentType m_contentType = ContentType.Sets;
+	private ContentType m_contentType = ContentType.Sets;
+	public ContentType contentType
+	{
+		get
+		{
+			return m_contentType;
+		}
+		set
+		{
+			m_contentType = value;
+		}
+	}
 
 	public ContentType GetContentType()
 	{
@@ -62,6 +93,10 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 	void Awake()
 	{
+		m_dataAttributes.Add (DataType.Letters, "phoneme");
+		m_dataAttributes.Add (DataType.Words, "word");
+		m_dataAttributes.Add (DataType.Keywords, "word");
+
 //#if UNITY_EDITOR
 		//FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
 #if UNITY_IPHONE

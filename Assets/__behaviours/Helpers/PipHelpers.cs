@@ -5,6 +5,8 @@ public class PipHelpers : MonoBehaviour
 {
 	public static void OnGameFinish(bool won = true)
 	{
+		UserStats.Game.FinishGame ();
+
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{
 			SessionManager.Instance.OnGameFinish();

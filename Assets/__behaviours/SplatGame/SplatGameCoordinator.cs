@@ -53,6 +53,8 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     // Use this for initialization
     IEnumerator Start()
     {
+		GameDataBridge.Instance.dataType = GameDataBridge.DataType.Letters;
+
 		m_blackBoard.MoveWidgets();
 		//m_bennyTheBook.SetUp("SPLAT_INSTRUCTION", 3.5f);
 		m_bennyTheBook.SetUp(null, 0f);
@@ -160,6 +162,8 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     public void LetterClicked(string letter, GameObject letterOb)
     {
 		WingroveAudio.WingroveRoot.Instance.PostEvent(m_splatSound);
+
+		UserStats.Game.OnAnswer ();
 		
         if (letter == m_currentLetter)
         {
@@ -186,6 +190,11 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
         }
         else
         {
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE phoneme='" + letter + "'");
+			DataRow letterData = dt.Rows.Count > 0 ? dt.Rows[0] : null;
+
+			UserStats.Game.OnIncorrect(letterData, m_currentLetterData);
+
             m_blackBoard.ShowImage(m_phonemeImages[m_currentLetterData],
                 m_currentLetterData["phoneme"].ToString(),
                 m_currentLetter);

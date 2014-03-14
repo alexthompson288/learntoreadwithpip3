@@ -31,10 +31,10 @@ public class SessionManager : Singleton<SessionManager>
 	}
 
 	[SerializeField]
-	private TextAsset m_gameNameFile;
+	private TextAsset m_gameNameFile; // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data
 	
 	// Set from file
-	Dictionary<string, string> m_gameNames = new Dictionary<string, string>();
+	Dictionary<string, string> m_gameNames = new Dictionary<string, string>(); // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data 
 	
 	List<DataRow> m_sections = new List<DataRow>();
 	int m_sectionsComplete;
@@ -57,6 +57,11 @@ public class SessionManager : Singleton<SessionManager>
 	public int GetSessionNum()
 	{
 		return m_sessionNum;
+	}
+
+	public bool IsGame(string sceneName) // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data 
+	{
+		return m_gameNames.ContainsValue (sceneName);
 	}
 
 	void Awake()
