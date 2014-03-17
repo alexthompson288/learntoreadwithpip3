@@ -57,9 +57,9 @@ public class UserStats : Singleton<UserStats>
 		int storyId = StoryReaderLogic.Instance.GetStoryId ();
 		
 		DataTable dt = GameDataBridge.Instance.GetDatabase ().ExecuteQuery ("select * from stories WHERE id=" + storyId);
-		string title = dt.Rows.Count > 0 ? dt.Rows ["title"].ToString () : "MissingTitle";
+		string title = dt.Rows.Count > 0 ? dt.Rows[0]["title"].ToString () : "MissingTitle";
 		
-		new Story (storyId, title);
+		new Story (title, storyId);
 	}
 	
 	public class Story : TimedEvent
@@ -78,7 +78,7 @@ public class UserStats : Singleton<UserStats>
 
 		List<PipPadCall> m_pipPadCalls = new List<PipPadCall> ();
 
-		private Story(string title, int id) : base()
+		public Story(string title, int id) : base()
 		{
 			m_title = title;
 			m_id = id;
