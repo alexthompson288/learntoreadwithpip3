@@ -5,7 +5,7 @@ public class PipHelpers : MonoBehaviour
 {
 	public static void OnGameFinish(bool won = true)
 	{
-		UserStats.Game.FinishGame ();
+		UserStats.Game.Current.FinishGame ();
 
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
 		{

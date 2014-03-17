@@ -244,7 +244,7 @@ public class SessionManager : Singleton<SessionManager>
 		}
 	}
 
-	void CompleteSession()
+	void CompleteSession() // TODO: Unsubscribe onSessionComplete listeners here
 	{
 		Debug.Log("Session Complete");
 		
