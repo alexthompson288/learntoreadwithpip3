@@ -10,26 +10,144 @@ public class UserStats : Singleton<UserStats>
 	static string m_userPrefix = "ParentUser_";
 	
 	Dictionary<GameDataBridge.DataType, string> m_dataAttributes = new Dictionary<GameDataBridge.DataType, string>();
+
+	void Start()
+	{
+		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
+		SessionManager.Instance.OnSessionCancel += OnSessionCancel;
+	}
 	
 	// Called every time a new level is loaded
 	void OnLevelWasLoaded(int level)
 	{
 		Debug.Log ("UserStats.OnLevelWasLoaded()");
 		
-		Game.OnNewScene ();
-		Session.OnNewScene ();
+		Game newGame = Game.OnNewScene();
+		if (newGame != null && Session.Current != null) 
+		{
+			Session.Current.OnNewGame(newGame);
+		}
+
+		if (Application.loadedLevelName == "NewStories") 
+		{
+			StartCoroutine(CreateStory());
+		} 
+		else if (Story.Current != null) 
+		{
+			Story.Current.EndStory(false);
+		}
 	}
 	
-	void AddUserStats(WWWForm form)
+	private class PipPadCall
 	{
-		form.AddField ("test[username]", m_userPrefix + "_" + ChooseUser.Instance.GetCurrentUser ());
-		form.AddField ("test[email]", m_email);
+		string m_word;
+		int m_wordId;
+		
+		public PipPadCall(string word, int wordId)
+		{
+			m_word = word;
+			m_wordId = wordId;
+		}
+	}
+
+	IEnumerator CreateStory()
+	{
+		yield return StartCoroutine (StoryReaderLogic.WaitForStoryData ());
+		
+		int storyId = StoryReaderLogic.Instance.GetStoryId ();
+		
+		DataTable dt = GameDataBridge.Instance.GetDatabase ().ExecuteQuery ("select * from stories WHERE id=" + storyId);
+		string title = dt.Rows.Count > 0 ? dt.Rows ["title"].ToString () : "MissingTitle";
+		
+		new Story (storyId, title);
 	}
 	
-	public class Story : TimedEvent // TODO
+	public class Story : TimedEvent
 	{
-		// Title
-		// Id
+		private static Story m_current;
+		public static Story Current
+		{
+			get 
+			{
+				return m_current;
+			}
+		}
+
+		string m_title;
+		int m_id;
+
+		List<PipPadCall> m_pipPadCalls = new List<PipPadCall> ();
+
+		private Story(string title, int id) : base()
+		{
+			m_title = title;
+			m_id = id;
+			m_current = this;
+		}
+
+		public static void OnNewScene()
+		{
+			if (m_current != null) 
+			{
+				m_current.PostData();
+				m_current = null;
+			}
+		}
+
+		public void OnCallPipPad(string word, int wordId)
+		{
+			m_pipPadCalls.Add (new PipPadCall (word, wordId));
+		}
+
+		public void EndStory(bool completed)
+		{
+			EndEvent ();
+			PostData ();
+
+			if (completed) 
+			{
+				SetHasFinishedTrue();
+			}
+
+			m_current = null;
+		}
+
+		public void PostData()
+		{
+			Debug.Log ("Session.PostData()");
+			
+			WWWForm form = new WWWForm();
+			
+			UserStats.Instance.AddUserStats (form);
+			
+			form.AddField ("test[title]" , m_title);
+			form.AddField ("test[m_id]", m_id);
+			form.AddField ("test[num_pip_pad_calls]", m_pipPadCalls.Count);
+			
+			// TODO: Add PipPadCall data
+			
+			AddBaseStats (form);
+			
+			WWW www = new WWW (m_url, form);
+			
+			UserStats.Instance.WaitForRequest ("Story", www);
+		}
+	}
+
+	void OnSessionComplete()
+	{
+		if (Session.Current != null) 
+		{
+			Session.Current.EndSession(true);
+		}
+	}
+	
+	void OnSessionCancel()
+	{
+		if (Session.Current != null) 
+		{
+			Session.Current.EndSession(false);
+		}
 	}
 	
 	public class Session : TimedEvent
@@ -39,15 +157,7 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				if(m_current != null)
-				{
-					return m_current;
-				}
-				else
-				{
-					Debug.LogError("Session.Current is null");
-					return new Session(-1, SessionManager.ST.Voyage);
-				}
+				return m_current;
 			}
 		}
 
@@ -59,30 +169,26 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_sessionNum = sessionNum;
 			m_sessionType = sessionType;
+			m_current = this;
 		}
 
-		public static void OnNewScene()
+		public void OnNewGame(Game newGame)
 		{
-			if (m_current != null) 
-			{
-				Game game = Game.Current;
-				
-				if (game == null) 
-				{
-					m_current.FinishSession();
-					m_current.PostData();
-				}
-				else
-				{
-					m_current.m_games.Add (game);
-				}
-			}
+			m_games.Add (newGame);
 		}
 
-		public void FinishSession()
+		public void EndSession(bool finished)
 		{
 			EndEvent ();
-			SetHasFinishedTrue();
+
+			if (finished) 
+			{
+				SetHasFinishedTrue ();
+			}
+
+			PostData ();
+
+			m_current = null;
 		}
 		
 		private void PostData()
@@ -102,10 +208,10 @@ public class UserStats : Singleton<UserStats>
 			
 			WWW www = new WWW (m_url, form);
 			
-			UserStats.Instance.WaitForRequest ("Game", www);
+			UserStats.Instance.WaitForRequest ("Session", www);
 		}
 	}
-	
+
 	public class Game : TimedEvent
 	{
 		private class IncorrectAnswer
@@ -131,15 +237,7 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				if(m_current != null)
-				{
-					return m_current;
-				}
-				else // This else statement should never execute, it is a defensive measure to prevent a null reference exception.
-				{
-					Debug.LogError("Game.Current is null");
-					return new Game(); // This game will never be saved by the data saver and will never post data to the server
-				}
+				return m_current;
 			}
 		}
 		
@@ -149,7 +247,7 @@ public class UserStats : Singleton<UserStats>
 		int m_numAnswers = 0;
 		List<IncorrectAnswer> m_incorrectAnswers = new List<IncorrectAnswer>();
 		
-		public static void OnNewScene()
+		public static Game OnNewScene()
 		{
 			Debug.Log ("Game.OnNewScene()");
 
@@ -168,6 +266,8 @@ public class UserStats : Singleton<UserStats>
 			}
 
 			m_current = newCurrent; // m_current is static
+
+			return m_current;
 		}
 		
 		private Game() : base()
@@ -176,6 +276,7 @@ public class UserStats : Singleton<UserStats>
 			
 			m_sceneName = Application.loadedLevelName;
 			m_dataType = GameDataBridge.Instance.dataType;
+			m_current = this;
 		}
 		
 		public void OnAnswer()
@@ -277,6 +378,12 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("Post - " + s.Substring (0, lastDecimalIndex));
 			return s.Substring (0, lastDecimalIndex);
 		}
+	}
+
+	void AddUserStats(WWWForm form)
+	{
+		form.AddField ("test[username]", m_userPrefix + "_" + ChooseUser.Instance.GetCurrentUser ());
+		form.AddField ("test[email]", m_email);
 	}
 	
 	void WaitForRequest(string eventName, WWW www)

@@ -41,6 +41,20 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 	int m_storyID = 85;
 
+	bool m_hasStoryData = false;
+
+	public static IEnumerator WaitForStoryData()
+	{
+		while (StoryReaderLogic.Instance == null) 
+		{
+			yield return null;
+		}
+		while (!StoryReaderLogic.Instance.m_hasStoryData) 
+		{
+			yield return null;
+		}
+	}
+
 	// Use this for initialization
     IEnumerator Start() 
     {
@@ -88,9 +102,16 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		m_numPages = dt.Rows.Count;
 		Debug.Log("There are " + m_numPages + " pages");
 
+		m_hasStoryData = true;
+
         yield return StartCoroutine(LoadAssetBundle());
         m_currentDisplayer = m_page0;
         StartCoroutine(NextPage(true));
+	}
+
+	public int GetStoryId()
+	{
+		return m_storyID;
 	}
 
     IEnumerator LoadAssetBundle()
@@ -253,6 +274,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			}
 			else
 			{
+				UserStats.Story.Current.EndStory(true);
 				TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
 			}
 		}

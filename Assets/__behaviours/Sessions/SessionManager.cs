@@ -34,8 +34,8 @@ public class SessionManager : Singleton<SessionManager>
 		}
 	}
 
-	State m_state;
-
+	private State m_state;
+	
 	float m_timeSessionStarted;
 
 	public float GetTimeSessionStarted()

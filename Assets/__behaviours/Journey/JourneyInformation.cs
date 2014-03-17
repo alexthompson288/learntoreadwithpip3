@@ -10,9 +10,21 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	private bool m_overwriteProgress;
 #endif
 
-	void OnSessionCancel()
+	void Awake()
 	{
-		SessionManager.Instance.OnSessionComplete -= OnSessionComplete;
+		#if UNITY_EDITOR
+		if(m_overwriteProgress)
+		{
+			Save();
+		}
+		#endif
+		
+		Load ();
+	}
+	
+	void Start()
+	{
+		SessionManager.Instance.OnSessionCancel += OnSessionCancel;
 	}
 
 	void OnSessionComplete()
@@ -44,6 +56,11 @@ public class JourneyInformation : Singleton<JourneyInformation>
 		SessionManager.Instance.OnSessionComplete -= OnSessionComplete;
 	}
 
+	void OnSessionCancel()
+	{
+		SessionManager.Instance.OnSessionComplete -= OnSessionComplete;
+	}
+
 	public void SubscribeOnSessionComplete()
 	{
 		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
@@ -54,17 +71,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	Dictionary<string, int> m_sessionsCompleted = new Dictionary<string, int>();
 	Dictionary<string, bool> m_recentCompleted = new Dictionary<string, bool>();
 	
-	void Awake()
-	{
-#if UNITY_EDITOR
-		if(m_overwriteProgress)
-		{
-			Save();
-		}
-#endif
-		
-		Load ();
-	}
+
 	
 	public bool IsSessionFinished(int sessionNum)
 	{
