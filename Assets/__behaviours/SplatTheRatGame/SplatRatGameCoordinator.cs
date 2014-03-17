@@ -48,7 +48,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 	// Use this for initialization
 	IEnumerator Start () 
 	{	
-		string enviro = JourneyInformation.Instance.GetEnvironment().ToString();
+		string enviro = EnviroManager.Instance.GetEnvironment().ToString();
 		SplatRatEnviro ratEnviro = Resources.Load<SplatRatEnviro>(System.String.Format("SplatRat/{0}_SplatRat", enviro));
 
 		if(ratEnviro != null)

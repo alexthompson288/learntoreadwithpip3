@@ -19,7 +19,7 @@ public class JourneyMap : MonoBehaviour, IComparable
 	[SerializeField]
 	private int m_highestSessionNum;
 	[SerializeField]
-	private JourneyInformation.Environment m_environment;
+	private EnviroManager.Environment m_environment;
 
 	void Start()
 	{
@@ -106,7 +106,7 @@ public class JourneyMap : MonoBehaviour, IComparable
 		}
 	}
 
-	public JourneyInformation.Environment GetEnvironment()
+	public EnviroManager.Environment GetEnvironment()
 	{
 		return m_environment;
 	}

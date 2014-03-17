@@ -6,12 +6,46 @@ using System.Linq;
 
 public class SessionManager : Singleton<SessionManager> 
 {
+	enum State 
+	{
+		Sleep,
+		Waiting,
+		StartGame
+	}
+
+	void OnLevelWasLoaded(int level)
+	{
+		switch (m_state) 
+		{
+		case State.Sleep:
+			break;
+
+		case State.Waiting:
+			m_state = State.Sleep;
+			if(OnSessionCancel != null)
+			{
+				OnSessionCancel();
+			}
+			break;
+
+		case State.StartGame:
+			m_state = State.Waiting;
+			break;
+		}
+	}
+
+	State m_state;
+
 	float m_timeSessionStarted;
 
 	public float GetTimeSessionStarted()
 	{
 		return m_timeSessionStarted;
 	}
+
+	// TODO: Need OnSessionCancel
+	public delegate void SessionCancel();
+	public event SessionCancel OnSessionCancel;
 
 	public delegate void SessionComplete();
 	private SessionComplete onSessionComplete;
@@ -30,11 +64,7 @@ public class SessionManager : Singleton<SessionManager>
 		}
 	}
 
-	[SerializeField]
-	private TextAsset m_gameNameFile; // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data
-	
-	// Set from file
-	Dictionary<string, string> m_gameNames = new Dictionary<string, string>(); // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data 
+
 	
 	List<DataRow> m_sections = new List<DataRow>();
 	int m_sectionsComplete;
@@ -59,27 +89,6 @@ public class SessionManager : Singleton<SessionManager>
 		return m_sessionNum;
 	}
 
-	public bool IsGame(string sceneName) // TODO: Move this to a more sensible class. Other classes need to reference this, SessionManager is a random place to keep this data 
-	{
-		return m_gameNames.ContainsValue (sceneName);
-	}
-
-	void Awake()
-	{
-		string allGameNames = m_gameNameFile.text;
-		string[] separatedGameNames = allGameNames.Split(',');
-		
-		for(int i = 0; i < separatedGameNames.Length; ++i)
-		{
-			separatedGameNames[i] = StringHelpers.Edit(separatedGameNames[i], new string[] { "_" } );
-		}
-		
-		for(int i = 0; i < separatedGameNames.Length - 1; i += 2)
-		{
-			m_gameNames[separatedGameNames[i]] = separatedGameNames[i + 1];
-		}
-	}
-	
 	public void OnChooseSession(int sessionNum)
 	{
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
@@ -213,9 +222,9 @@ public class SessionManager : Singleton<SessionManager>
 				
 				Debug.Log("Found dbGame: " + dbGameName);
 				
-				if(m_gameNames.ContainsKey(dbGameName))
+				if(GameLinker.Instance.IsDBGame(dbGameName))
 				{
-					gameName = m_gameNames[dbGameName];
+					gameName = GameLinker.Instance.GetSceneName(dbGameName);
 					
 					Debug.Log("Linked to scene game: " + gameName);
 					
@@ -236,6 +245,7 @@ public class SessionManager : Singleton<SessionManager>
 		if(gameName != null)
 		{
 			Debug.Log("Next Game: " + gameName);
+			m_state = State.StartGame;
 			TransitionScreen.Instance.ChangeLevel(gameName, false);
 		}
 		else
@@ -244,7 +254,7 @@ public class SessionManager : Singleton<SessionManager>
 		}
 	}
 
-	void CompleteSession() // TODO: Unsubscribe onSessionComplete listeners here
+	void CompleteSession()
 	{
 		Debug.Log("Session Complete");
 		
@@ -252,6 +262,8 @@ public class SessionManager : Singleton<SessionManager>
 		{
 			onSessionComplete();
 		}
+
+		m_state = State.Sleep;
 		
 		string newScene = m_st == ST.Pippisode ? "NewPippisodeMenu" : "NewVoyage";
 		TransitionScreen.Instance.ChangeLevel(newScene, false);

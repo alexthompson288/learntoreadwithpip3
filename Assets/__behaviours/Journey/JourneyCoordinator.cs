@@ -362,6 +362,6 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	public void SetEnvironment()
 	{
-		JourneyInformation.Instance.SetEnvironment(m_centreMap.GetEnvironment());
+		EnviroManager.Instance.SetEnvironment(m_centreMap.GetEnvironment());
 	}
 }

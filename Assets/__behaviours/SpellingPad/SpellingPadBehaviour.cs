@@ -37,7 +37,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	void Start()
 	{
-		//JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
+		//EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
 		//SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
 
 		SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>("SpellingPad/Space_SpellingPad");

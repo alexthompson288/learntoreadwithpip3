@@ -14,7 +14,7 @@ public class EnviroLoader : Singleton<EnviroLoader>
 	// Use this for initialization
 	void Start () 
 	{
-		JourneyInformation.Environment enviro = JourneyInformation.Instance.GetEnvironment();
+		EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
 		m_genericEnviro = Resources.Load<GenericEnviro>("Generic/" + enviro + "_Generic");
 
 		if(m_genericEnviro != null)

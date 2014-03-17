@@ -17,9 +17,14 @@ public class UserStats : Singleton<UserStats>
 		Debug.Log ("UserStats.OnLevelWasLoaded()");
 		
 		Game.OnNewScene ();
+		Session.OnNewScene ();
 	}
 	
-
+	void AddUserStats(WWWForm form)
+	{
+		form.AddField ("test[username]", m_userPrefix + "_" + ChooseUser.Instance.GetCurrentUser ());
+		form.AddField ("test[email]", m_email);
+	}
 	
 	public class Story : TimedEvent // TODO
 	{
@@ -29,9 +34,76 @@ public class UserStats : Singleton<UserStats>
 	
 	public class Session : TimedEvent
 	{
-		static Session m_current;
-		
+		private static Session m_current;
+		public static Session Current
+		{
+			get
+			{
+				if(m_current != null)
+				{
+					return m_current;
+				}
+				else
+				{
+					Debug.LogError("Session.Current is null");
+					return new Session(-1, SessionManager.ST.Voyage);
+				}
+			}
+		}
+
+		int m_sessionNum;
+		SessionManager.ST m_sessionType;
 		List<Game> m_games = new List<Game> ();
+
+		public Session(int sessionNum, SessionManager.ST sessionType) : base()
+		{
+			m_sessionNum = sessionNum;
+			m_sessionType = sessionType;
+		}
+
+		public static void OnNewScene()
+		{
+			if (m_current != null) 
+			{
+				Game game = Game.Current;
+				
+				if (game == null) 
+				{
+					m_current.FinishSession();
+					m_current.PostData();
+				}
+				else
+				{
+					m_current.m_games.Add (game);
+				}
+			}
+		}
+
+		public void FinishSession()
+		{
+			EndEvent ();
+			SetHasFinishedTrue();
+		}
+		
+		private void PostData()
+		{
+			Debug.Log ("Session.PostData()");
+			
+			WWWForm form = new WWWForm();
+			
+			UserStats.Instance.AddUserStats (form);
+			
+			form.AddField ("test[session_num]" , m_sessionNum);
+			form.AddField ("test[m_session_type]", m_sessionType.ToString ());
+
+			// TODO: Add game data
+			
+			AddBaseStats (form);
+			
+			WWW www = new WWW (m_url, form);
+			
+			UserStats.Instance.WaitForRequest ("Game", www);
+		}
 	}
 	
 	public class Game : TimedEvent
@@ -90,7 +162,7 @@ public class UserStats : Singleton<UserStats>
 			// If we are in a game then create a new current game
 			Game newCurrent = null;
 			
-			if(SessionManager.Instance.IsGame(Application.loadedLevelName))
+			if(GameLinker.Instance.IsSceneGame(Application.loadedLevelName))
 			{
 				newCurrent = new Game();
 			}
@@ -141,15 +213,15 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("Game.PostData()");
 			
 			WWWForm form = new WWWForm();
-			form.AddField ("test[username]", m_userPrefix + "_" + ChooseUser.Instance.GetCurrentUser ());
-			form.AddField ("test[email]", m_email);
+
+			UserStats.Instance.AddUserStats (form);
+
 			form.AddField ("test[scene_name]" , m_sceneName);
 			form.AddField ("test[data_type]", m_dataType.ToString ());
 			form.AddField ("test[num_of_answers]", m_numAnswers);
 			form.AddField ("test[num_of_incorrect_answers]", m_incorrectAnswers.Count);
-			form.AddField ("test[has_finished]", Convert.ToInt32(m_hasFinished));
-			form.AddField ("test[created_at]", GetTrimmedStartTime()); // TODO: Request rename: time_start
-			form.AddField ("test[updated_at]", GetTrimmedEndTime()); // TODO: Request rename: time_end
+
+			AddBaseStats (form);
 			
 			WWW www = new WWW (m_url, form);
 			
@@ -168,6 +240,13 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_start = DateTime.Now;
 		}
+
+		protected void AddBaseStats(WWWForm form)
+		{
+			form.AddField ("test[has_finished]", Convert.ToInt32(m_hasFinished));
+			form.AddField ("test[created_at]", GetTrimmedStartTime()); // TODO: Request rename: time_start
+			form.AddField ("test[updated_at]", GetTrimmedEndTime()); // TODO: Request rename: time_end
+		}
 		
 		protected void EndEvent()
 		{
@@ -181,7 +260,7 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_hasFinished = true;
 		}
-		
+
 		protected string GetTrimmedStartTime()
 		{
 			return Trim (String.Format ("start: {0:d} - {1:g}", m_start.Date, m_start.TimeOfDay));
