@@ -72,6 +72,7 @@ public class UserStats : Singleton<UserStats>
 
 		public Activity() : base()
 		{
+			Debug.Log("new Activity()");
 			m_scene = Application.loadedLevelName;
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
 
@@ -144,6 +145,30 @@ public class UserStats : Singleton<UserStats>
 			++m_numAnswers;
 		}
 
+		public void AddData(int dataId, GameDataBridge.DataType dataType)
+		{
+			if (dataType == GameDataBridge.DataType.Letters)
+			{
+				AddPhoneme(dataId);
+			} 
+			else
+			{
+				AddWord(dataId);		
+			}
+		}
+
+		public void AddIncorrectData(int dataId, GameDataBridge.DataType dataType)
+		{
+			if (dataType == GameDataBridge.DataType.Letters)
+			{
+				AddIncorrectPhoneme(dataId);
+			} 
+			else
+			{
+				AddIncorrectWord(dataId);		
+			}
+		}
+
 		public void AddPhoneme(int phonemeId)
 		{
 			m_phonemeIds.Add (phonemeId);
@@ -159,7 +184,7 @@ public class UserStats : Singleton<UserStats>
 			m_wordIds.Add (wordId);
 		}
 
-		public void AddIncorrectWordId(int wordId)
+		public void AddIncorrectWord(int wordId)
 		{
 			m_wordIds.Add (wordId);
 		}
@@ -214,11 +239,17 @@ public class UserStats : Singleton<UserStats>
 			BuildSessionIdentifier(); 
 
 			m_current = this;
+
+#if UNITY_EDITOR
+			DebugLog();
+#endif
 		}
 
 		// Lesson Constructor
 		public Session(SessionManager.ST sessionType, string sessionName) : base()
 		{
+			Debug.Log("new Session()");
+
 			m_sessionType = sessionType;
 			m_sessionName = sessionName;
 
@@ -234,11 +265,27 @@ public class UserStats : Singleton<UserStats>
 			m_targetKeyword = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Keywords);
 
 			m_current = this;
+
+#if UNITY_EDITOR
+			DebugLog();
+#endif
 		}
+
+#if UNITY_EDITOR
+		void DebugLog()
+		{
+			Debug.Log ("sessionIdentifier: " + m_sessionIdentifier);
+			Debug.Log ("sessionType: " + m_sessionType);
+			Debug.Log ("sessionName: " + m_sessionName);
+			Debug.Log ("sessionId: " + m_sessionId);
+			Debug.Log ("sessionId: " + m_sessionId);
+		}
+#endif
 
 		void BuildSessionIdentifier()
 		{
 			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { m_accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
+			Debug.Log ("m_sessionIdentifier: " + m_sessionIdentifier);
 		}
 
 		public static string OnNewGame(string scene)
@@ -247,6 +294,7 @@ public class UserStats : Singleton<UserStats>
 
 			if (m_current != null) 
 			{
+				Debug.Log("Linking activity to session: " + m_current.m_sessionIdentifier);
 				sessionIdentifier = m_current.m_sessionIdentifier;
 				m_current.m_scenes.Add(scene);
 			}

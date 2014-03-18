@@ -195,6 +195,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 
 			//UserStats.Game.Current.OnIncorrect(letterData, m_currentLetterData);
 
+
             m_blackBoard.ShowImage(m_phonemeImages[m_currentLetterData],
                 m_currentLetterData["phoneme"].ToString(),
                 m_currentLetter);

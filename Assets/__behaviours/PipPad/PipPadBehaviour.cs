@@ -108,7 +108,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 		return m_showing;
 	}
 
-	public void Show(string word)
+	public void Show(string word, bool postEvent = false)
 	{
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
@@ -132,13 +132,13 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 		UserStoriesStats.Instance.OnPipPadCall(editedWord);
 
-		DisplayWord(editedWord);
+		DisplayWord(editedWord, postEvent);
 
 		m_mainHierarchyTransform.gameObject.SetActive(true);
 		iTween.MoveTo(m_mainHierarchyTransform.gameObject, m_padPopUpTargetOn.position, 1.0f);
 	}
 
-	public void DisplayWord(string word)
+	public void DisplayWord(string word, bool postEvent = false)
 	{
 		foreach (GameObject go in m_createdPhonemeButtons)
 		{
@@ -167,6 +167,11 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			if (dt.Rows.Count > 0)
 			{
 				DataRow row = dt[0];
+
+				if(postEvent)
+				{
+					UserStats.Activity.Current.AddPipPadCall(Convert.ToInt32(row["id"]));
+				}
 				
 				string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 
