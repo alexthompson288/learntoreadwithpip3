@@ -157,6 +157,18 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
+		public void AddData(DataRow data, GameDataBridge.DataType dataType)
+		{
+			if (dataType == GameDataBridge.DataType.Letters)
+			{
+				AddPhoneme(data);
+			} 
+			else
+			{
+				AddWord(data);		
+			}
+		}
+
 		public void AddIncorrectData(int dataId, GameDataBridge.DataType dataType)
 		{
 			if (dataType == GameDataBridge.DataType.Letters)
@@ -169,9 +181,26 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
+		public void AddIncorrectData(DataRow data, GameDataBridge.DataType dataType)
+		{
+			if (dataType == GameDataBridge.DataType.Letters)
+			{
+				AddIncorrectPhoneme(data);
+			} 
+			else
+			{
+				AddIncorrectWord(data);		
+			}
+		}
+
 		public void AddPhoneme(int phonemeId)
 		{
 			m_phonemeIds.Add (phonemeId);
+		}
+
+		public void AddPhoneme(DataRow phoneme)
+		{
+			m_phonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
 		}
 
 		public void AddIncorrectPhoneme(int phonemeId)
@@ -179,14 +208,29 @@ public class UserStats : Singleton<UserStats>
 			m_incorrectPhonemeIds.Add (phonemeId);
 		}
 
+		public void AddIncorrectPhoneme(DataRow phoneme)
+		{
+			m_incorrectPhonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
+		}
+
 		public void AddWord(int wordId)
 		{
 			m_wordIds.Add (wordId);
 		}
 
+		public void AddWord(DataRow word)
+		{
+			m_wordIds.Add (Convert.ToInt32 (word ["id"]));
+		}
+
 		public void AddIncorrectWord(int wordId)
 		{
-			m_wordIds.Add (wordId);
+			m_incorrectWordIds.Add (wordId);
+		}
+
+		public void AddIncorrectWord(DataRow word)
+		{
+			m_incorrectWordIds.Add (Convert.ToInt32 (word ["id"]));
 		}
 
 		public void SetStoryId(int storyId)
@@ -348,124 +392,6 @@ public class UserStats : Singleton<UserStats>
 		}
 	}
 
-	/*
-	public class Game : TimedEvent
-	{
-		private class IncorrectAnswer
-		{
-			string m_answer;
-			int m_answerId;
-			
-			string m_correct;
-			int m_correctId;
-			
-			public IncorrectAnswer(string answer, int answerId, string correct, int correctId)
-			{
-				m_answer = answer;
-				m_answerId = answerId;
-				
-				m_correct = correct;
-				m_correctId = correctId;
-			}
-		}
-		
-		private static Game m_current = null;
-		public static Game Current
-		{
-			get
-			{
-				return m_current;
-			}
-		}
-		
-		string m_sceneName;
-		GameDataBridge.DataType m_dataType;
-		
-		int m_numAnswers = 0;
-		List<IncorrectAnswer> m_incorrectAnswers = new List<IncorrectAnswer>();
-		
-		public static Game OnNewScene()
-		{
-			Debug.Log ("Game.OnNewScene()");
-			
-			if (m_current != null) 
-			{
-				m_current.EndEvent ();
-				m_current.PostData ();
-			}
-			
-			// If we are in a game then create a new current game
-			Game newCurrent = null;
-			
-			if(GameLinker.Instance.IsSceneGame(Application.loadedLevelName))
-			{
-				newCurrent = new Game();
-			}
-			
-			m_current = newCurrent; // m_current is static
-			
-			return m_current;
-		}
-		
-		private Game() : base()
-		{
-			Debug.Log ("new Game()");
-			
-			m_sceneName = Application.loadedLevelName;
-			m_dataType = GameDataBridge.Instance.dataType;
-			m_current = this;
-		}
-		
-		public void OnAnswer()
-		{
-			Debug.Log ("Game.OnAnswer()");
-			
-			++m_numAnswers;
-		}
-		
-		public void OnIncorrect(DataRow answer, DataRow correct)
-		{
-			Debug.Log ("Game.OnIncorrect()");
-			
-			string attribute = GameDataBridge.Instance.GetAttribute (m_dataType);
-			
-			m_incorrectAnswers.Add(new IncorrectAnswer(answer[attribute].ToString(),
-			                                           Convert.ToInt32(answer["id"]),
-			                                           correct[attribute].ToString(),
-			                                           Convert.ToInt32(correct["id"])));
-		}
-		
-		public void OnIncorrect(string answer, int answerId, string correct, int correctId)
-		{
-			m_incorrectAnswers.Add (new IncorrectAnswer (answer, answerId, correct, correctId));
-		}
-		
-		public void FinishGame()
-		{
-			EndEvent ();
-			CompleteEvent();
-		}
-		
-		private void PostData()
-		{
-			Debug.Log ("Game.PostData()");
-			
-			WWWForm form = new WWWForm();
-			
-			form.AddField ("test[scene_name]" , m_sceneName);
-			form.AddField ("test[data_type]", m_dataType.ToString ());
-			form.AddField ("test[num_of_answers]", m_numAnswers);
-			form.AddField ("test[num_of_incorrect_answers]", m_incorrectAnswers.Count);
-			
-			AddBaseStats (form);
-			
-			WWW www = new WWW (m_url, form);
-			
-			UserStats.Instance.WaitForRequest ("Game", www);
-		}
-	}
-	*/
-	
 	public abstract class TimedEvent
 	{
 		protected DateTime m_start;
