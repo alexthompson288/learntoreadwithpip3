@@ -97,6 +97,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		}
 #endif
 
+		UserStats.Activity.Current.SetStoryId (m_storyID);
+
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "'");
 		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
 		m_numPages = dt.Rows.Count;

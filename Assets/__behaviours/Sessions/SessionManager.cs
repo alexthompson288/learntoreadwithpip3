@@ -24,12 +24,16 @@ public class SessionManager : Singleton<SessionManager>
 			m_state = State.Sleep;
 			if(OnSessionCancel != null)
 			{
+				Debug.Log("Session Cancelled");
 				OnSessionCancel();
 			}
 			break;
 
 		case State.StartGame:
-			m_state = State.Waiting;
+			if(Application.loadedLevelName != "DeliberatelyEmptyScene")
+			{
+				m_state = State.Waiting;
+			}
 			break;
 		}
 	}

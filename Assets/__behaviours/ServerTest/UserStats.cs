@@ -104,6 +104,8 @@ public class UserStats : Singleton<UserStats>
 
 		public override void EndEvent(bool completed)
 		{
+			Debug.Log (String.Format ("Activity.EndEvent({0})", completed));
+
 			base.EndEvent (completed);
 			
 			m_current = null;
@@ -126,22 +128,27 @@ public class UserStats : Singleton<UserStats>
 			form.AddField ("test[story_id]", m_storyId);
 			form.AddField ("test[pip_pad_calls]", ConcatList (m_pipPadCalls));
 
+#if UNITY_EDITOR
+			Debug.Log("Activity.PostData()");
+			Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
+			Debug.Log("scene: " + m_scene);
+			Debug.Log("setNum: " + m_setNum);
+			Debug.Log("sectionId: " + m_sectionId);
+			Debug.Log("numAnswers: " + m_numAnswers);
+			Debug.Log("numIncorrectPhonemes: " + m_incorrectPhonemeIds.Count);
+			Debug.Log("incorrectPhonemes: " + ConcatList(m_incorrectPhonemeIds));
+			Debug.Log("storyId: " + m_storyId);
+			Debug.Log("numPipPadCalls: " + m_pipPadCalls.Count);
+			Debug.Log("pipPadCalls: " + ConcatList(m_pipPadCalls));
+#endif
+
 			base.PostData ("Activity", m_url, form);
 		}
 
 		// Setters
-		public void SetSetNum(int setNum)
-		{
-			m_setNum = setNum;
-		}
-
-		public void SetSectionId(int sectionId)
-		{
-			m_sectionId = sectionId;
-		}
-
 		public void IncrementNumAnswers()
 		{
+			Debug.Log ("Activity.IncrementNumAnswers()");
 			++m_numAnswers;
 		}
 
@@ -200,6 +207,7 @@ public class UserStats : Singleton<UserStats>
 
 		public void AddPhoneme(DataRow phoneme)
 		{
+			Debug.Log (String.Format ("Activity.AddPhoneme({0})", phoneme ["phoneme"]));
 			m_phonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
 		}
 
@@ -210,6 +218,7 @@ public class UserStats : Singleton<UserStats>
 
 		public void AddIncorrectPhoneme(DataRow phoneme)
 		{
+			Debug.Log (String.Format ("Activity.AddIncorrectPhoneme({0})", phoneme ["phoneme"]));
 			m_incorrectPhonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
 		}
 
@@ -235,11 +244,13 @@ public class UserStats : Singleton<UserStats>
 
 		public void SetStoryId(int storyId)
 		{
+			Debug.Log(String.Format("Activity.SetStoryId({0})", storyId));
 			m_storyId = storyId;
 		}
 
 		public void AddPipPadCall(int wordId)
 		{
+			Debug.Log(String.Format("Activity.AddPipPadCall({0})", wordId));
 			m_pipPadCalls.Add (wordId);
 		}
 	}
@@ -285,6 +296,7 @@ public class UserStats : Singleton<UserStats>
 			m_current = this;
 
 #if UNITY_EDITOR
+			Debug.Log("new Session(): Voyage/Pippisode");
 			DebugLog();
 #endif
 		}
@@ -292,8 +304,6 @@ public class UserStats : Singleton<UserStats>
 		// Lesson Constructor
 		public Session(SessionManager.ST sessionType, string sessionName) : base()
 		{
-			Debug.Log("new Session()");
-
 			m_sessionType = sessionType;
 			m_sessionName = sessionName;
 
@@ -311,6 +321,7 @@ public class UserStats : Singleton<UserStats>
 			m_current = this;
 
 #if UNITY_EDITOR
+			Debug.Log("new Session(): Lesson");
 			DebugLog();
 #endif
 		}
@@ -329,18 +340,23 @@ public class UserStats : Singleton<UserStats>
 		void BuildSessionIdentifier()
 		{
 			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { m_accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
-			Debug.Log ("m_sessionIdentifier: " + m_sessionIdentifier);
 		}
 
 		public static string OnNewGame(string scene)
 		{
+			Debug.Log ("Session.OnNewGame()");
+
 			string sessionIdentifier = "";
 
 			if (m_current != null) 
 			{
-				Debug.Log("Linking activity to session: " + m_current.m_sessionIdentifier);
+				Debug.Log ("Linking activity to session: " + m_current.m_sessionIdentifier);
 				sessionIdentifier = m_current.m_sessionIdentifier;
-				m_current.m_scenes.Add(scene);
+				m_current.m_scenes.Add (scene);
+			} 
+			else 
+			{
+				Debug.Log("No session to link activity");	
 			}
 
 			return sessionIdentifier;
@@ -348,6 +364,7 @@ public class UserStats : Singleton<UserStats>
 
 		public override void EndEvent(bool completed)
 		{
+			Debug.Log(String.Format("Session.EndEvent({0})", completed));
 			base.EndEvent (completed);
 			
 			m_current = null;
@@ -355,8 +372,6 @@ public class UserStats : Singleton<UserStats>
 		
 		public override void PostData()
 		{
-			Debug.Log ("Session.PostData()");
-			
 			WWWForm form = new WWWForm();
 
 			form.AddField ("test[session_identifier]", m_sessionIdentifier);
@@ -366,11 +381,22 @@ public class UserStats : Singleton<UserStats>
 			form.AddField ("test[session_type]", m_sessionType.ToString ());
 			form.AddField ("test[scenes]", ConcatList (m_scenes));
 
-			form.AddField ("test[phonemes]", ConcatList (m_letters));
-			form.AddField ("test[target_phoneme]", m_targetLetter);
-			form.AddField ("test[words]", ConcatList (m_words));
-			form.AddField ("test[target_word]", m_targetWord);
-			form.AddField ("test[keywords]", ConcatList (m_keywords));
+			form.AddField ("test[phoneme_ids]", ConcatList (m_letters));
+			form.AddField ("test[target_phoneme_id]", m_targetLetter);
+			form.AddField ("test[word_ids]", ConcatList (m_words));
+			form.AddField ("test[target_word_id]", m_targetWord);
+			form.AddField ("test[keyword_ids]", ConcatList (m_keywords));
+			form.AddField ("test[target_keyword_id]", m_targetKeyword);
+
+#if UNITY_EDITOR
+			Debug.Log ("Session.PostData()");
+			Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
+			Debug.Log("sessionName: " + m_sessionName);
+			Debug.Log("sessionId: " + m_sessionId);
+			Debug.Log("sessionNum: " + m_sessionNum);
+			Debug.Log("sessionType: " + m_sessionType);
+			Debug.Log("scenes: " + m_scenes);
+#endif
 			
 			base.PostData ("Session", m_url, form);
 		}
@@ -442,9 +468,17 @@ public class UserStats : Singleton<UserStats>
 		{
 			form.AddField ("test[account_username]", m_accountUsername);
 			form.AddField ("test[child_name]", ChooseUser.Instance.GetCurrentUser ());
-			form.AddField ("test[has_finished]", Convert.ToInt32(m_hasCompleted));
-			form.AddField ("test[created_at]", GetTrimmedStartTime());
-			form.AddField ("test[updated_at]", GetTrimmedEndTime());
+			form.AddField ("test[has_completed]", Convert.ToInt32(m_hasCompleted));
+			form.AddField ("test[start]", GetTrimmedStartTime());
+			form.AddField ("test[end]", GetTrimmedEndTime());
+
+#if UNITY_EDITOR
+			Debug.Log("accountUsername: " + m_accountUsername);
+			Debug.Log("childName: " + ChooseUser.Instance.GetCurrentUser());
+			Debug.Log("hasCompleted: " + m_hasCompleted);
+			Debug.Log("start: " + GetTrimmedStartTime());
+			Debug.Log("end: " + GetTrimmedEndTime());
+#endif
 
 			WWW www = new WWW (url, form);
 
