@@ -25,17 +25,17 @@ public class UserStats : Singleton<UserStats>
 		Activity.OnNewScene ();
 	}
 
-	static string ConcatList(List<int> list)
+	static string ConcatList<T>(List<T> list)
 	{
 		string concat = "";
-
-		foreach (int i in list) 
+		
+		foreach (T t in list) 
 		{
-			concat += String.Format("{0}_", i);
+			concat += String.Format("{0}_", t);
 		}
-
+		
 		concat = concat.TrimEnd (new char[] { '_' });
-
+		
 		return concat;
 	}
 
@@ -74,6 +74,16 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_scene = Application.loadedLevelName;
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
+
+			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
+			{
+				// TODO: Get m_setNum
+			}
+			else
+			{
+				// TODO: Get m_sectionId
+			}
+
 			m_current = this;
 		}
 
@@ -256,15 +266,19 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("Session.PostData()");
 			
 			WWWForm form = new WWWForm();
-			
+
+			form.AddField ("test[session_identifier]", m_sessionIdentifier);
+			form.AddField ("test[session_name]", m_sessionName);
+			form.AddField ("test[session_id]" , m_sessionId);
 			form.AddField ("test[session_num]" , m_sessionNum);
-			form.AddField ("test[m_session_type]", m_sessionType.ToString ());
-			
-			// TODO: Add game data
-			
+			form.AddField ("test[session_type]", m_sessionType.ToString ());
+			form.AddField ("test[scenes]", ConcatList (m_scenes));
 
-			
-
+			form.AddField ("test[phonemes]", ConcatList (m_letters));
+			form.AddField ("test[target_phoneme]", m_targetLetter);
+			form.AddField ("test[words]", ConcatList (m_words));
+			form.AddField ("test[target_word]", m_targetWord);
+			form.AddField ("test[keywords]", ConcatList (m_keywords));
 			
 			base.PostData ("Session", m_url, form);
 		}
