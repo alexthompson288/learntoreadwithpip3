@@ -52,8 +52,8 @@ public class PippisodeMenuCoordinator : MonoBehaviour
 		Debug.Log("OnClickPlayButton()");
 		if(PippisodeInfo.Instance.IsUnlocked(m_currentPippisodeId))
 		{
-			SessionManager.Instance.SetSessionType(SessionManager.ST.Pippisode);
-			SessionManager.Instance.OnChooseSession(m_currentPippisodeId);
+			//SessionManager.Instance.SetSessionType(SessionManager.ST.Pippisode);
+			SessionManager.Instance.OnChooseSession(SessionManager.ST.Voyage, m_currentPippisodeId);
 		}
 	}
 

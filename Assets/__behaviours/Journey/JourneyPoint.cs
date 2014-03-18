@@ -117,9 +117,9 @@ public class JourneyPoint : MonoBehaviour, IComparable
 #endif
 
 				JourneyCoordinator.Instance.SetEnvironment();
-				SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
+				//SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
 				JourneyInformation.Instance.SubscribeOnSessionComplete();
-				SessionManager.Instance.OnChooseSession(m_sessionNum);
+				SessionManager.Instance.OnChooseSession(SessionManager.ST.Voyage, m_sessionNum);
 			}
 			else
 			{

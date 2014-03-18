@@ -26,7 +26,12 @@ public class LessonInfo : Singleton<LessonInfo>
 	[SerializeField]
 	private bool m_overwriteLessons;
 #endif
-	
+
+	public string GetSceneName(int index)
+	{
+		return index < m_currentLesson.GetNumGames () ? m_currentLesson.GetGame (index) : "";
+	}
+
 	void Awake()
 	{
 		Load();
@@ -418,56 +423,6 @@ public class LessonInfo : Singleton<LessonInfo>
 	public void RemoveGame(int index)
 	{
 		m_currentLesson.RemoveGame(index);
-	}
-
-	public void StartGames()
-	{
-		Debug.Log("Starting lesson");
-		Debug.Log(m_currentLesson.GetNumGames() + " games");
-
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Custom);
-
-		m_currentGame = 0;
-
-		List<string> gameNames = m_currentLesson.GetGames();
-		foreach(string game in gameNames)
-		{
-			Debug.Log(game);
-		}
-
-		PlayNextGame();
-	}
-
-	public void OnGameFinish()
-	{
-		Debug.Log("OnGameFinish");
-
-		++m_currentGame;
-
-		if(m_currentGame < m_currentLesson.GetNumGames())
-		{
-			PlayNextGame();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewLessonMenu", false);
-		}
-	}
-	
-	public void PlayNextGame()
-	{
-		Debug.Log("game index: " + m_currentGame);
-		Debug.Log("game name: " + m_currentLesson.GetGame(m_currentGame));
-
-		try
-		{
-			TransitionScreen.Instance.ChangeLevel(m_currentLesson.GetGame(m_currentGame), false);
-		}
-		catch
-		{
-			Debug.Log("Failed to load game. Calling OnGameFinish()");
-			OnGameFinish(); // Mutually recursive error handling...like a B0$$
-		}
 	}
 
 	public string ToggleData(int id, DataType dataType)

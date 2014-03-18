@@ -325,7 +325,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	public void OnStarClick (int sessionNum) // TODO: Delete this method
 	{
 		JourneyInformation.Instance.SubscribeOnSessionComplete();
-		SessionManager.Instance.OnChooseSession(sessionNum);
+		SessionManager.Instance.OnChooseSession(SessionManager.ST.Voyage, sessionNum);
 	}
 
 	public void OnClickMapCollider()

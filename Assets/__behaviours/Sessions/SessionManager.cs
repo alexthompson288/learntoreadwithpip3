@@ -42,8 +42,7 @@ public class SessionManager : Singleton<SessionManager>
 	{
 		return m_timeSessionStarted;
 	}
-
-	// TODO: Need OnSessionCancel
+	
 	public delegate void SessionCancel();
 	public event SessionCancel OnSessionCancel;
 
@@ -63,11 +62,9 @@ public class SessionManager : Singleton<SessionManager>
 			onSessionComplete -= value;
 		}
 	}
-
-
 	
 	List<DataRow> m_sections = new List<DataRow>();
-	int m_sectionsComplete;
+	int m_activitiesComplete;
 
 	int m_sessionNum;
 
@@ -76,12 +73,8 @@ public class SessionManager : Singleton<SessionManager>
 	public enum ST //SessionType
 	{
 		Voyage,
-		Pippisode
-	}
-
-	public void SetSessionType(ST type)
-	{
-		m_st = type;
+		Pippisode,
+		Lesson
 	}
 
 	public int GetSessionNum()
@@ -89,8 +82,24 @@ public class SessionManager : Singleton<SessionManager>
 		return m_sessionNum;
 	}
 
-	public void OnChooseSession(int sessionNum)
+	public void OnChooseSession(ST sessionType)
 	{
+		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Custom);
+
+		m_st = sessionType;
+		m_sessionNum = 0;
+		m_activitiesComplete = 0;
+		m_timeSessionStarted = Time.time;
+
+		new UserStats.Session(m_st, LessonInfo.Instance.GetName());
+
+		PlayNextActivity(LessonInfo.Instance.GetSceneName (m_activitiesComplete));
+	}
+
+	public void OnChooseSession(ST sessionType, int sessionNum)
+	{
+		m_st = sessionType;
+
 		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
 
 		m_sections.Clear();
@@ -145,9 +154,11 @@ public class SessionManager : Singleton<SessionManager>
 					}
 				}
 
-				m_sectionsComplete = 0;
+				m_activitiesComplete = 0;
 
-				PlayNextGame();
+				new UserStats.Session(m_st, sessionId, m_sessionNum);
+
+				FindNextActivity();
 			}
 			else // Session empty
 			{
@@ -161,56 +172,24 @@ public class SessionManager : Singleton<SessionManager>
 			CompleteSession();
 		}
 	}
-
-	public DataRow GetCurrentSection()
-	{
-		Debug.Log("m_sectionsComplete: " + m_sectionsComplete);
-		
-		if(m_sectionsComplete < m_sections.Count)
-		{
-			Debug.Log("Current Section: " + m_sections[m_sectionsComplete]["id"].ToString());
-			
-			return m_sections[m_sectionsComplete];
-		}
-		else
-		{
-			Debug.LogError("There are not enough sections in m_sections");
-			return null;
-		}
-	}
-
-	public int GetCurrentSectionId()
-	{
-		Debug.Log("m_sectionsComplete: " + m_sectionsComplete);
-		if(m_sectionsComplete < m_sections.Count)
-		{
-			Debug.Log("current sectionId: " + m_sections[m_sectionsComplete]["id"].ToString());
-			return System.Convert.ToInt32(m_sections[m_sectionsComplete]["id"]);
-		}
-		else
-		{
-			Debug.LogError("There are not enough sections in m_sections");
-			return -1;
-		}
-	}
 	
 	public void OnGameFinish(bool wonGame = true)
 	{
 		Debug.Log("OnGameFinish()");
 		if(wonGame)
 		{
-			++m_sectionsComplete;
+			++m_activitiesComplete;
 		}
-		
-		PlayNextGame();
+
+		PlayNextActivity( m_st == ST.Lesson ? LessonInfo.Instance.GetSceneName (m_activitiesComplete) : FindNextActivity() );
 	}
-	
-	void PlayNextGame()
+
+	string FindNextActivity()
 	{
-		string gameName = null;
+		string sceneName = "";
 		
-		Debug.Log("Sections Complete: " + m_sectionsComplete);
-		for(int i = m_sectionsComplete; i < m_sections.Count; ++i)
+		Debug.Log("Sections Complete: " + m_activitiesComplete);
+		for(int i = m_activitiesComplete; i < m_sections.Count; ++i)
 		{
 			Debug.Log("Finding game for sectionId: " + m_sections[i]["id"].ToString());
 			
@@ -224,33 +203,37 @@ public class SessionManager : Singleton<SessionManager>
 				
 				if(GameLinker.Instance.IsDBGame(dbGameName))
 				{
-					gameName = GameLinker.Instance.GetSceneName(dbGameName);
+					sceneName = GameLinker.Instance.GetSceneName(dbGameName);
 					
-					Debug.Log("Linked to scene game: " + gameName);
+					Debug.Log("Linked to scene game: " + sceneName);
 					
 					break;
 				}
 				else
 				{
 					Debug.Log(dbGameName + " is not linked");
-					++m_sectionsComplete;
+					++m_activitiesComplete;
 				}
 			}
 			else
 			{
-				++m_sectionsComplete;
+				++m_activitiesComplete;
 			}
 		}
-		
-		if(gameName != null)
+
+		return sceneName;
+	}
+
+	void PlayNextActivity(string sceneName)
+	{
+		if (!String.IsNullOrEmpty (sceneName)) 
 		{
-			Debug.Log("Next Game: " + gameName);
 			m_state = State.StartGame;
-			TransitionScreen.Instance.ChangeLevel(gameName, false);
-		}
-		else
+			TransitionScreen.Instance.ChangeLevel (sceneName, false);
+		} 
+		else 
 		{
-			CompleteSession();
+			CompleteSession();	
 		}
 	}
 
@@ -264,9 +247,51 @@ public class SessionManager : Singleton<SessionManager>
 		}
 
 		m_state = State.Sleep;
-		
-		string newScene = m_st == ST.Pippisode ? "NewPippisodeMenu" : "NewVoyage";
+
+		string newScene = "NewVoyage";
+
+		if (m_st == ST.Pippisode) 
+		{
+			newScene = "NewPippisodeMenu";
+		} 
+		else if (m_st == ST.Lesson) 
+		{
+			newScene = "NewLessonMenu";
+		}
+
 		TransitionScreen.Instance.ChangeLevel(newScene, false);
+	}
+
+	public DataRow GetCurrentSection()
+	{
+		Debug.Log("m_activitiesComplete: " + m_activitiesComplete);
+		
+		if(m_activitiesComplete < m_sections.Count)
+		{
+			Debug.Log("Current Section: " + m_sections[m_activitiesComplete]["id"].ToString());
+			
+			return m_sections[m_activitiesComplete];
+		}
+		else
+		{
+			Debug.LogError("There are not enough sections in m_sections");
+			return null;
+		}
+	}
+	
+	public int GetCurrentSectionId()
+	{
+		Debug.Log("m_activitiesComplete: " + m_activitiesComplete);
+		if(m_activitiesComplete < m_sections.Count)
+		{
+			Debug.Log("current sectionId: " + m_sections[m_activitiesComplete]["id"].ToString());
+			return System.Convert.ToInt32(m_sections[m_activitiesComplete]["id"]);
+		}
+		else
+		{
+			Debug.LogError("There are not enough sections in m_sections");
+			return -1;
+		}
 	}
 
 	#if UNITY_EDITOR

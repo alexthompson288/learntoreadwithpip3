@@ -268,15 +268,17 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		DataTable dt = UpdateCurrentDisplayer();
 		if (dt.Rows.Count == 0)
 		{
+			/*
 			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
 			{
 				LessonInfo.Instance.OnGameFinish();
 			}
 			else
 			{
-				UserStats.Story.Current.EndStory(true);
 				TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
 			}
+			*/
+			PipHelpers.OnGameFinish(true, "NewEndStory");
 		}
 		
 		if (!isFirstPage)

@@ -36,8 +36,8 @@ public class JourneyAnimationPoint : MonoBehaviour
 				if(String.IsNullOrEmpty(m_videoName))
 				{
 					Debug.Log("Play Session " + m_sessionNum);
-					SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
-					SessionManager.Instance.OnChooseSession(m_sessionNum);
+					//SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
+					SessionManager.Instance.OnChooseSession(SessionManager.ST.Voyage, m_sessionNum);
 				}
 				else
 				{

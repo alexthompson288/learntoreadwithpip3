@@ -42,6 +42,6 @@ public class LessonMenuCoordinator : MonoBehaviour
 
 		EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
 		LessonInfo.Instance.SetCurrentLesson(lessonIndex);
-		LessonInfo.Instance.StartGames();
+		SessionManager.Instance.OnChooseSession (SessionManager.ST.Lesson);
 	}
 }

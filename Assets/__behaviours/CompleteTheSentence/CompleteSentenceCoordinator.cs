@@ -401,19 +401,19 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	void OnGameFinish()
 	{
 		Debug.Log("CompleteSentenceCoordinator.OnGameFinish()");
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+
+		PipHelpers.OnGameFinish (true, "NewCompleteSentenceEnd");
+
+		/*
+		if (GameDataBridge.Instance.GetContentType () == GameDataBridge.ContentType.Sets) 
 		{
-			Debug.Log("Voyage");
+			TransitionScreen.Instance.ChangeLevel("NewCompleteSentenceEnd", false);	
+		} 
+		else 
+		{
 			SessionManager.Instance.OnGameFinish();
 		}
-		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
-		{
-			LessonInfo.Instance.OnGameFinish();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewCompleteSentenceEnd", false);
-		}
+		*/
 	}
 	
 	string RemoveTargetFromSentence(string sentence, string target)

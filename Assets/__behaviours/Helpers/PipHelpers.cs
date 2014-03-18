@@ -3,21 +3,17 @@ using System.Collections;
 
 public class PipHelpers : MonoBehaviour 
 {
-	public static void OnGameFinish(bool won = true)
+	public static void OnGameFinish(bool won = true, string setsScene = "NewScoreDanceScene")
 	{
-		UserStats.Game.Current.FinishGame ();
+		UserStats.Activity.Current.EndEvent (true);
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 		{
-			SessionManager.Instance.OnGameFinish();
-		}
-		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
-		{
-			LessonInfo.Instance.OnGameFinish();
+			TransitionScreen.Instance.ChangeLevel(setsScene, false);
 		}
 		else
 		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
+			SessionManager.Instance.OnGameFinish();
 		}
 	}
 

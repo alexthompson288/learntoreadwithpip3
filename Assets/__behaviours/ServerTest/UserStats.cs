@@ -7,10 +7,10 @@ public class UserStats : Singleton<UserStats>
 {
 	static string m_url = "http://pipperformance.herokuapp.com/tests";
 	static string m_email = "bonobo@pip.com";
-	static string m_userPrefix = "ParentUser_";
+	static string m_accountUsername = "ParentUser";
 	
 	Dictionary<GameDataBridge.DataType, string> m_dataAttributes = new Dictionary<GameDataBridge.DataType, string>();
-
+	
 	void Start()
 	{
 		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
@@ -22,66 +22,58 @@ public class UserStats : Singleton<UserStats>
 	{
 		Debug.Log ("UserStats.OnLevelWasLoaded()");
 		
-		Game newGame = Game.OnNewScene();
-		if (newGame != null && Session.Current != null) 
-		{
-			Session.Current.OnNewGame(newGame);
-		}
-
-		if (Application.loadedLevelName == "NewStories") 
-		{
-			StartCoroutine(CreateStory());
-		} 
-		else if (Story.Current != null) 
-		{
-			Story.Current.EndStory(false);
-		}
-	}
-	
-	private class PipPadCall
-	{
-		string m_word;
-		int m_wordId;
-		
-		public PipPadCall(string word, int wordId)
-		{
-			m_word = word;
-			m_wordId = wordId;
-		}
+		Activity.OnNewScene ();
 	}
 
-	IEnumerator CreateStory()
+	static string ConcatList(List<int> list)
 	{
-		yield return StartCoroutine (StoryReaderLogic.WaitForStoryData ());
-		
-		int storyId = StoryReaderLogic.Instance.GetStoryId ();
-		
-		DataTable dt = GameDataBridge.Instance.GetDatabase ().ExecuteQuery ("select * from stories WHERE id=" + storyId);
-		string title = dt.Rows.Count > 0 ? dt.Rows[0]["title"].ToString () : "MissingTitle";
-		
-		new Story (title, storyId);
-	}
-	
-	public class Story : TimedEvent
-	{
-		private static Story m_current;
-		public static Story Current
+		string concat = "";
+
+		foreach (int i in list) 
 		{
-			get 
+			concat += String.Format("{0}_", i);
+		}
+
+		concat = concat.TrimEnd (new char[] { '_' });
+
+		return concat;
+	}
+
+	public class Activity : TimedEvent
+	{
+		private static Activity m_current;
+		public static Activity Current
+		{
+			get
 			{
 				return m_current;
 			}
 		}
 
-		string m_title;
-		int m_id;
+		string m_coreSkill = "Reading";
 
-		List<PipPadCall> m_pipPadCalls = new List<PipPadCall> ();
+		string m_sessionIdentifier;
 
-		public Story(string title, int id) : base()
+		string m_scene;
+
+		int m_setNum = 0;
+		int m_sectionId = 0;
+
+		int m_numAnswers = 0;
+
+		List<int> m_phonemeIds = new List<int> ();
+		List<int> m_incorrectPhonemeIds = new List<int> ();
+
+		List<int> m_wordIds = new List<int> ();
+		List<int> m_incorrectWordIds = new List<int>();
+
+		int m_storyId = 0;
+		List<int> m_pipPadCalls = new List<int> ();
+
+		public Activity() : base()
 		{
-			m_title = title;
-			m_id = id;
+			m_scene = Application.loadedLevelName;
+			m_sessionIdentifier = Session.OnNewGame(m_scene);
 			m_current = this;
 		}
 
@@ -89,67 +81,90 @@ public class UserStats : Singleton<UserStats>
 		{
 			if (m_current != null) 
 			{
-				m_current.PostData();
-				m_current = null;
+				m_current.EndEvent(false);
 			}
-		}
 
-		public void OnCallPipPad(string word, int wordId)
-		{
-			m_pipPadCalls.Add (new PipPadCall (word, wordId));
-		}
-
-		public void EndStory(bool completed)
-		{
-			EndEvent ();
-			PostData ();
-
-			if (completed) 
+			if(GameLinker.Instance.IsSceneGame(Application.loadedLevelName))
 			{
-				SetHasFinishedTrue();
+				Debug.Log("new Activity: " + Application.loadedLevelName);
+				new Activity();
 			}
+		}
 
+		public override void EndEvent(bool completed)
+		{
+			base.EndEvent (completed);
+			
 			m_current = null;
 		}
 
-		public void PostData()
+		public override void PostData()
 		{
-			Debug.Log ("Session.PostData()");
-			
-			WWWForm form = new WWWForm();
-			
-			UserStats.Instance.AddUserStats (form);
-			
-			form.AddField ("test[title]" , m_title);
-			form.AddField ("test[m_id]", m_id);
-			form.AddField ("test[num_pip_pad_calls]", m_pipPadCalls.Count);
-			
-			// TODO: Add PipPadCall data
-			
-			AddBaseStats (form);
-			
-			WWW www = new WWW (m_url, form);
-			
-			UserStats.Instance.WaitForRequest ("Story", www);
+			WWWForm form = new WWWForm ();
+
+			form.AddField ("test[core_skill]", m_coreSkill);
+			form.AddField ("test[session_identifier]", m_sessionIdentifier);
+			form.AddField ("test[scene]", m_scene);
+			form.AddField ("test[set_num]", m_setNum);
+			form.AddField ("test[section_id]", m_sectionId);
+			form.AddField ("test[num_answers]", m_numAnswers);
+			form.AddField ("test[phoneme_ids]", ConcatList (m_phonemeIds));
+			form.AddField ("test[incorrect_phoneme_ids]", ConcatList (m_incorrectPhonemeIds));
+			form.AddField ("test[word_ids]", ConcatList (m_wordIds));
+			form.AddField ("test[incorrect_word_ids]", ConcatList (m_incorrectWordIds));
+			form.AddField ("test[story_id]", m_storyId);
+			form.AddField ("test[pip_pad_calls]", ConcatList (m_pipPadCalls));
+
+			base.PostData ("Activity", m_url, form);
+		}
+
+		// Setters
+		public void SetSetNum(int setNum)
+		{
+			m_setNum = setNum;
+		}
+
+		public void SetSectionId(int sectionId)
+		{
+			m_sectionId = sectionId;
+		}
+
+		public void IncrementNumAnswers()
+		{
+			++m_numAnswers;
+		}
+
+		public void AddPhoneme(int phonemeId)
+		{
+			m_phonemeIds.Add (phonemeId);
+		}
+
+		public void AddIncorrectPhoneme(int phonemeId)
+		{
+			m_incorrectPhonemeIds.Add (phonemeId);
+		}
+
+		public void AddWord(int wordId)
+		{
+			m_wordIds.Add (wordId);
+		}
+
+		public void AddIncorrectWordId(int wordId)
+		{
+			m_wordIds.Add (wordId);
+		}
+
+		public void SetStoryId(int storyId)
+		{
+			m_storyId = storyId;
+		}
+
+		public void AddPipPadCall(int wordId)
+		{
+			m_pipPadCalls.Add (wordId);
 		}
 	}
 
-	void OnSessionComplete()
-	{
-		if (Session.Current != null) 
-		{
-			Session.Current.EndSession(true);
-		}
-	}
-	
-	void OnSessionCancel()
-	{
-		if (Session.Current != null) 
-		{
-			Session.Current.EndSession(false);
-		}
-	}
-	
 	public class Session : TimedEvent
 	{
 		private static Session m_current;
@@ -161,57 +176,117 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		int m_sessionNum;
-		SessionManager.ST m_sessionType;
-		List<Game> m_games = new List<Game> ();
+		string m_sessionIdentifier;
+		string m_sessionName = "";
+		int m_sessionId = 0;
+		int m_sessionNum = 0;
 
-		public Session(int sessionNum, SessionManager.ST sessionType) : base()
+		SessionManager.ST m_sessionType;
+
+		List<string> m_scenes = new List<string> ();
+
+		List<int> m_letters = new List<int> ();
+		int m_targetLetter = 0;
+
+		List<int> m_words = new List<int> ();
+		int m_targetWord = 0;
+
+		List<int> m_keywords = new List<int>();
+		int m_targetKeyword = 0;
+
+		// Voyage/Pippisode Constructor
+		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
 		{
-			m_sessionNum = sessionNum;
 			m_sessionType = sessionType;
+			m_sessionId = sessionId;
+			m_sessionNum = sessionNum;
+
+			BuildSessionIdentifier(); 
+
 			m_current = this;
 		}
 
-		public void OnNewGame(Game newGame)
+		// Lesson Constructor
+		public Session(SessionManager.ST sessionType, string sessionName) : base()
 		{
-			m_games.Add (newGame);
+			m_sessionType = sessionType;
+			m_sessionName = sessionName;
+
+			BuildSessionIdentifier();
+
+			m_letters = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Letters);
+			m_targetLetter = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Letters);
+			
+			m_words = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Words);
+			m_targetWord = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Words);
+			
+			m_keywords = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Keywords);
+			m_targetKeyword = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Keywords);
+
+			m_current = this;
 		}
 
-		public void EndSession(bool finished)
+		void BuildSessionIdentifier()
 		{
-			EndEvent ();
+			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { m_accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
+		}
 
-			if (finished) 
+		public static string OnNewGame(string scene)
+		{
+			string sessionIdentifier = "";
+
+			if (m_current != null) 
 			{
-				SetHasFinishedTrue ();
+				sessionIdentifier = m_current.m_sessionIdentifier;
+				m_current.m_scenes.Add(scene);
 			}
 
-			PostData ();
+			return sessionIdentifier;
+		}
 
+		public override void EndEvent(bool completed)
+		{
+			base.EndEvent (completed);
+			
 			m_current = null;
 		}
 		
-		private void PostData()
+		public override void PostData()
 		{
 			Debug.Log ("Session.PostData()");
 			
 			WWWForm form = new WWWForm();
 			
-			UserStats.Instance.AddUserStats (form);
-			
 			form.AddField ("test[session_num]" , m_sessionNum);
 			form.AddField ("test[m_session_type]", m_sessionType.ToString ());
-
+			
 			// TODO: Add game data
 			
-			AddBaseStats (form);
+
 			
-			WWW www = new WWW (m_url, form);
+
 			
-			UserStats.Instance.WaitForRequest ("Session", www);
+			base.PostData ("Session", m_url, form);
 		}
 	}
 
+	void OnSessionComplete()
+	{
+		if (Session.Current != null) 
+		{
+			Session.Current.EndEvent(true);
+		}
+	}
+	
+	void OnSessionCancel()
+	{
+		if (Session.Current != null) 
+		{
+			Session.Current.EndEvent(false);
+		}
+	}
+
+	/*
 	public class Game : TimedEvent
 	{
 		private class IncorrectAnswer
@@ -231,7 +306,7 @@ public class UserStats : Singleton<UserStats>
 				m_correctId = correctId;
 			}
 		}
-
+		
 		private static Game m_current = null;
 		public static Game Current
 		{
@@ -250,13 +325,13 @@ public class UserStats : Singleton<UserStats>
 		public static Game OnNewScene()
 		{
 			Debug.Log ("Game.OnNewScene()");
-
+			
 			if (m_current != null) 
 			{
 				m_current.EndEvent ();
 				m_current.PostData ();
 			}
-
+			
 			// If we are in a game then create a new current game
 			Game newCurrent = null;
 			
@@ -264,9 +339,9 @@ public class UserStats : Singleton<UserStats>
 			{
 				newCurrent = new Game();
 			}
-
+			
 			m_current = newCurrent; // m_current is static
-
+			
 			return m_current;
 		}
 		
@@ -282,20 +357,20 @@ public class UserStats : Singleton<UserStats>
 		public void OnAnswer()
 		{
 			Debug.Log ("Game.OnAnswer()");
-
+			
 			++m_numAnswers;
 		}
 		
 		public void OnIncorrect(DataRow answer, DataRow correct)
 		{
 			Debug.Log ("Game.OnIncorrect()");
-
+			
 			string attribute = GameDataBridge.Instance.GetAttribute (m_dataType);
-				
+			
 			m_incorrectAnswers.Add(new IncorrectAnswer(answer[attribute].ToString(),
-				                                       Convert.ToInt32(answer["id"]),
-				                                       correct[attribute].ToString(),
-				                                       Convert.ToInt32(correct["id"])));
+			                                           Convert.ToInt32(answer["id"]),
+			                                           correct[attribute].ToString(),
+			                                           Convert.ToInt32(correct["id"])));
 		}
 		
 		public void OnIncorrect(string answer, int answerId, string correct, int correctId)
@@ -306,7 +381,7 @@ public class UserStats : Singleton<UserStats>
 		public void FinishGame()
 		{
 			EndEvent ();
-			SetHasFinishedTrue();
+			CompleteEvent();
 		}
 		
 		private void PostData()
@@ -314,14 +389,12 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("Game.PostData()");
 			
 			WWWForm form = new WWWForm();
-
-			UserStats.Instance.AddUserStats (form);
-
+			
 			form.AddField ("test[scene_name]" , m_sceneName);
 			form.AddField ("test[data_type]", m_dataType.ToString ());
 			form.AddField ("test[num_of_answers]", m_numAnswers);
 			form.AddField ("test[num_of_incorrect_answers]", m_incorrectAnswers.Count);
-
+			
 			AddBaseStats (form);
 			
 			WWW www = new WWW (m_url, form);
@@ -329,39 +402,35 @@ public class UserStats : Singleton<UserStats>
 			UserStats.Instance.WaitForRequest ("Game", www);
 		}
 	}
-
+	*/
+	
 	public abstract class TimedEvent
 	{
 		protected DateTime m_start;
 		protected DateTime m_end = new DateTime(0);
 		
-		protected bool m_hasFinished = false;
+		protected bool m_hasCompleted = false;
 		
 		protected TimedEvent()
 		{
 			m_start = DateTime.Now;
 		}
-
-		protected void AddBaseStats(WWWForm form)
-		{
-			form.AddField ("test[has_finished]", Convert.ToInt32(m_hasFinished));
-			form.AddField ("test[created_at]", GetTrimmedStartTime()); // TODO: Request rename: time_start
-			form.AddField ("test[updated_at]", GetTrimmedEndTime()); // TODO: Request rename: time_end
-		}
 		
-		protected void EndEvent()
+		public virtual void EndEvent(bool completed)
 		{
 			if (m_end.Ticks == 0) // m_end can only be set once after initialization
 			{
 				m_end = DateTime.Now;
 			}
+
+			if(completed)
+			{
+				m_hasCompleted = true;
+			}
+
+			PostData ();
 		}
 		
-		protected void SetHasFinishedTrue()
-		{
-			m_hasFinished = true;
-		}
-
 		protected string GetTrimmedStartTime()
 		{
 			return Trim (String.Format ("start: {0:d} - {1:g}", m_start.Date, m_start.TimeOfDay));
@@ -378,12 +447,21 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("Post - " + s.Substring (0, lastDecimalIndex));
 			return s.Substring (0, lastDecimalIndex);
 		}
-	}
 
-	void AddUserStats(WWWForm form)
-	{
-		form.AddField ("test[username]", m_userPrefix + "_" + ChooseUser.Instance.GetCurrentUser ());
-		form.AddField ("test[email]", m_email);
+		public abstract void PostData ();
+
+		public virtual void PostData (string eventName, string url, WWWForm form)
+		{
+			form.AddField ("test[account_username]", m_accountUsername);
+			form.AddField ("test[child_name]", ChooseUser.Instance.GetCurrentUser ());
+			form.AddField ("test[has_finished]", Convert.ToInt32(m_hasCompleted));
+			form.AddField ("test[created_at]", GetTrimmedStartTime());
+			form.AddField ("test[updated_at]", GetTrimmedEndTime());
+
+			WWW www = new WWW (url, form);
+
+			UserStats.Instance.WaitForRequest (eventName, www);
+		}
 	}
 	
 	void WaitForRequest(string eventName, WWW www)
