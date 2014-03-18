@@ -77,11 +77,11 @@ public class UserStats : Singleton<UserStats>
 
 			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 			{
-				// TODO: Get m_setNum
+				m_setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			}
 			else
 			{
-				// TODO: Get m_sectionId
+				m_sectionId = SessionManager.Instance.GetCurrentSectionId();
 			}
 
 			m_current = this;

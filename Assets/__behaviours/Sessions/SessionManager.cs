@@ -90,6 +90,7 @@ public class SessionManager : Singleton<SessionManager>
 		m_sessionNum = 0;
 		m_activitiesComplete = 0;
 		m_timeSessionStarted = Time.time;
+		m_sections.Clear ();
 
 		new UserStats.Session(m_st, LessonInfo.Instance.GetName());
 
@@ -282,7 +283,7 @@ public class SessionManager : Singleton<SessionManager>
 	public int GetCurrentSectionId()
 	{
 		Debug.Log("m_activitiesComplete: " + m_activitiesComplete);
-		if(m_activitiesComplete < m_sections.Count)
+		if(m_sections.Count > 0 && m_activitiesComplete < m_sections.Count)
 		{
 			Debug.Log("current sectionId: " + m_sections[m_activitiesComplete]["id"].ToString());
 			return System.Convert.ToInt32(m_sections[m_activitiesComplete]["id"]);
@@ -290,7 +291,7 @@ public class SessionManager : Singleton<SessionManager>
 		else
 		{
 			Debug.LogError("There are not enough sections in m_sections");
-			return -1;
+			return 0;
 		}
 	}
 
