@@ -49,34 +49,28 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 		return m_pullRange.x;
 	}
 
-	public void OnBallRelease(Rigidbody rb)
+	public void OnBallRelease(CannonBall ball)
 	{
-		if ((m_ballCentre.position - rb.transform.position).magnitude < m_pullRange.x) 
+		if ((m_ballCentre.position - ball.rigidbody.transform.position).magnitude < m_pullRange.x) 
 		{
-			iTween.MoveTo (rb.gameObject, m_ballCentre.position, 0.3f);
+			iTween.MoveTo (ball.rigidbody.gameObject, m_ballCentre.position, 0.3f);
 		} 
 		else 
 		{
-			Launch(rb);
+            Vector3 delta = m_ballCentre.position - ball.rigidbody.transform.position;
+            
+            float distance = delta.magnitude;
+            float proportionalDistance = (distance - m_pullRange.x) / (m_pullRange.y - m_pullRange.x);
+            Debug.Log ("proportionalDistance: " + proportionalDistance);
+            
+            Vector3 direction = delta.normalized;
+            Debug.Log ("direction: " + direction);
+            
+            Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
+            Debug.Log ("force: " + force);
+
+            ball.On();
+            ball.rigidbody.AddForce (force, ForceMode.Acceleration); // ForceMode.Acceleration makes the application of force independent of object mass
 		}
-	}
-
-	void Launch(Rigidbody rb)
-	{
-		Debug.Log ("CannonBehaviour.Launch()");
-
-		Vector3 delta = m_ballCentre.position - rb.transform.position;
-
-		float distance = delta.magnitude;
-		float proportionalDistance = (distance - m_pullRange.x) / (m_pullRange.y - m_pullRange.x);
-		Debug.Log ("proportionalDistance: " + proportionalDistance);
-
-		Vector3 direction = delta.normalized;
-		Debug.Log ("direction: " + direction);
-
-		Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
-		Debug.Log ("force: " + force);
-
-		rb.AddForce (force, ForceMode.Acceleration); // ForceMode.Acceleration makes the application of force independent of object mass
 	}
 }

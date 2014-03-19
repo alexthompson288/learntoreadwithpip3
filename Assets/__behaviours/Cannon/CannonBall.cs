@@ -64,10 +64,12 @@ public class CannonBall : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (m_useGravity) 
-		{
-			rigidbody.AddForce(m_gravity);
-		}
+		//if (m_useGravity) 
+		//{
+			//rigidbody.AddForce(m_gravity);
+		//}
+
+        rigidbody.AddForce(m_gravity);
 
 		if(m_limitSpeed)
 		{
@@ -102,7 +104,7 @@ public class CannonBall : MonoBehaviour
 			}
 			else
 			{
-				CannonBehaviour.Instance.OnBallRelease(rigidbody);
+				CannonBehaviour.Instance.OnBallRelease(this);
 			}
 		}
 	}
@@ -123,4 +125,9 @@ public class CannonBall : MonoBehaviour
 			}
 		}
 	}
+
+    public void On()
+    {
+        rigidbody.isKinematic = false;
+    }
 }
