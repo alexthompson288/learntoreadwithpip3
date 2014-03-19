@@ -38,6 +38,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	List<DataRow> m_dummyLetterPool = new List<DataRow>();
 
 	DataRow m_currentWordData;
+    DataRow m_currentPhonemeData;
 	
 	List<DraggableLabel> m_draggables = new List<DraggableLabel>();
 	
@@ -181,6 +182,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		m_currentWordData = m_wordPool[Random.Range(0, m_wordPool.Count)];
 		string currentWord = m_currentWordData["word"].ToString();
 
+        UserStats.Activity.Current.AddWord(m_currentWordData);
+
 		//string[] phonemeIds = m_currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 		
 		Debug.Log("currentWord: " + currentWord);
@@ -263,6 +266,13 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 			
 		Debug.Log("targetPhoneme: " + targetPhoneme);
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE phoneme ='" + targetPhoneme + "'");
+        if (dt.Rows.Count > 0)
+        {
+            m_currentPhonemeData = dt.Rows[0];
+            UserStats.Activity.Current.AddPhoneme(m_currentPhonemeData);
+        }
 
 		SpellingPadBehaviour.Instance.MakeAllVisibleExceptTarget(targetPhoneme, true);
 		SpellingPadBehaviour.Instance.DisableAllCollidersExceptTarget(targetPhoneme, true);
@@ -416,6 +426,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	
 	void OnRelease(DraggableLabel currentDraggable)
 	{
+        UserStats.Activity.Current.IncrementNumAnswers();
+
 		SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.GetText(), currentDraggable.collider);
 		
 		if(spellingPadPhoneme != null)
@@ -437,6 +449,9 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		}
 		else
 		{
+            UserStats.Activity.Current.AddIncorrectPhoneme(m_currentPhonemeData);
+            UserStats.Activity.Current.AddIncorrectWord(m_currentWordData);
+
 			currentDraggable.TweenToStartPos();
 			
 			++m_wrongAnswers;
