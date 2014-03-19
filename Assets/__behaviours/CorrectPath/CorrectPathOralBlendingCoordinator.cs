@@ -184,6 +184,8 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		m_currentTargetWord = m_targetWords[Random.Range(0, m_targetWords.Count)];
 		m_targetWords.Remove(m_currentTargetWord);
 
+        UserStats.Activity.Current.AddWord(m_currentTargetWord);
+
 		m_currentTargetAudio = LoaderHelpers.LoadAudioForWord(m_currentTargetWord["word"].ToString());
 
 		List<DataRow> answers = new List<DataRow>();
@@ -256,8 +258,6 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		m_canClick = true;
 	}
 
-
-
 	IEnumerator TweenBGs()
 	{
 		for(int i = 0; i < m_bgs.Count; ++i)
@@ -292,6 +292,8 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 			StopCoroutine("PlayWordAudio");
 			*/
 
+            UserStats.Activity.Current.IncrementNumAnswers();
+
 			StopAllCoroutines();
 
 			if(draggable.GetData() == m_currentTargetWord)
@@ -301,6 +303,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 			}
 			else
 			{
+                UserStats.Activity.Current.AddIncorrectWord(m_currentTargetWord);
 				StartCoroutine(PlayAllAudio());
 			}
 		}

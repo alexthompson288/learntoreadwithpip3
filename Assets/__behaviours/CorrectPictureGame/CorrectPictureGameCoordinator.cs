@@ -28,6 +28,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 	int m_maxSpawn = 0;
 
+    DataRow m_currentWordData = null;
+
     // Use this for initialization
     IEnumerator Start()
     {
@@ -118,6 +120,13 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 				Debug.Log("selectedWord: " + selectedWord);
 				targetTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedWord);
 			}
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + selectedWord + "'");
+        if (dt.Rows.Count > 0)
+        {
+            m_currentWordData = dt.Rows[0];
+            UserStats.Activity.Current.AddWord(m_currentWordData);
+        }
 
 			Debug.Log("Found target text");
 
@@ -221,6 +230,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)
     {
+        UserStats.Activity.Current.IncrementNumAnswers();
+
         if (index == m_correctIndex)
         {
             StopAllCoroutines();
@@ -228,6 +239,11 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
         }
         else
         {
+            if(m_currentWordData != null)
+            {
+                UserStats.Activity.Current.AddIncorrectWord(m_currentWordData);
+            }
+
             m_gotIncorrect = true;
             m_characterToPopTroll.PopCharacter();
             clickedBlackboard.ShakeFade();

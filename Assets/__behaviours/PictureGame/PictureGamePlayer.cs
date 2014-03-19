@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class PictureGamePlayer : GamePlayer {
-
-
+public class PictureGamePlayer : GamePlayer 
+{
     [SerializeField]
     private ProgressScoreBar m_scoreBar;
     [SerializeField]
@@ -41,6 +40,7 @@ public class PictureGamePlayer : GamePlayer {
 
     AudioClip m_wordAudio;
 
+    DataRow m_currentWordData = null;
     string m_currentWord;
 
 	int m_maxSpawn = 0;
@@ -104,6 +104,10 @@ public class PictureGamePlayer : GamePlayer {
 			selectedQuestion = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
 			selectedTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
 		}
+
+        m_currentWordData = selectedQuestion;
+
+        UserStats.Activity.Current.AddWord(m_currentWordData);
 
         Resources.UnloadUnusedAssets();
         AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(selectedQuestion["word"].ToString());
@@ -269,6 +273,8 @@ public class PictureGamePlayer : GamePlayer {
 
     IEnumerator WordClickedCoroutine(bool correct, WordSelectionButton incoming)
     {
+        UserStats.Activity.Current.IncrementNumAnswers();
+
         if (correct)
         {
             m_score++;
@@ -315,6 +321,8 @@ public class PictureGamePlayer : GamePlayer {
         }
         else
         {
+            UserStats.Activity.Current.AddIncorrectWord(m_currentWordData);
+
             // remove lives
             m_numLives--;
             m_livesDisplay.SetLives(m_numLives);
