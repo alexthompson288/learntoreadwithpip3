@@ -628,7 +628,7 @@ public class BuyManager : Singleton<BuyManager>
 	public string BuildStoryProductIdentifier(DataRow storyData)
 	{
 		string id = "stories_" + storyData["id"].ToString() + "_" +
-			storyData["title"].ToString().TrimEnd(new char[] { ' ' }).Replace(" ", "_").Replace("?", "").Replace("!", "_").Replace("-", "_").Replace("'", "").Replace(".", "").ToLower();
+			storyData["title"].ToString().TrimEnd(new char[] { ' ' }).Replace(" ", "_").Replace("?", "").Replace("!", "").Replace("-", "_").Replace("'", "").Replace(".", "").ToLower();
 		
 		return id;
 	}
