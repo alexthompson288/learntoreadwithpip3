@@ -47,17 +47,6 @@ public class ParentGate : Singleton<ParentGate>
 
 			m_tweenBehaviour.On();
 
-			/*
-			UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
-			foreach(UICamera cam in allCams)
-			{
-				if(cam != m_myCam)
-				{
-					cam.enabled = false;
-				}
-			}
-			*/
-
 			int num1 = UnityEngine.Random.Range(m_minQuestionValue, m_maxQuestionValue + 1);
 			int num2 = UnityEngine.Random.Range(m_minQuestionValue, m_maxQuestionValue + 1);
 
@@ -83,6 +72,17 @@ public class ParentGate : Singleton<ParentGate>
 				}
 				++index;
 			}
+
+            /*
+            UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
+            foreach(UICamera cam in allCams)
+            {
+                if(cam != m_myCam)
+                {
+                    cam.enabled = false;
+                }
+            }
+            */
 		}
 	}
 
@@ -100,20 +100,20 @@ public class ParentGate : Singleton<ParentGate>
 
 	void OnAnswerClick(ClickEvent answerBehaviour)
 	{
-		Debug.Log("Answer: " + CheckAnswer(answerBehaviour));
+        /*
+        UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
+        foreach(UICamera cam in allCams)
+        {
+            cam.enabled = true;
+        }
+        */
+
+        Debug.Log("Answer: " + CheckAnswer(answerBehaviour));
 
 		if(OnParentGateAnswer != null)
 		{
 			OnParentGateAnswer(CheckAnswer(answerBehaviour));
 		}
-
-		/*
-		UICamera[] allCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
-		foreach(UICamera cam in allCams)
-		{
-			cam.enabled = true;
-		}
-		*/
 
 		m_isShowing = false;
 		m_tweenBehaviour.Off();
