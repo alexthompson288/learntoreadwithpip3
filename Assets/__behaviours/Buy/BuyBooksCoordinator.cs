@@ -124,7 +124,8 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		SetFromText(m_ageGroupLabel, bookData, "storytype");
 		SetDifficultyStars(bookData);
 		
-		string price = "£0.69p";
+		string price = "£0.69";
+        /*
 		try
 		{
 			int priceTier = Convert.ToInt32(bookData["readingpadart"].ToString());
@@ -145,7 +146,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		{
 			Debug.LogWarning("Could not find price tier for " + bookData["title"].ToString());
 		}
-
+        */
 		m_priceLabel.text = "Buy Book - " + price;
 
 		//m_priceTextMesh.text = price;
