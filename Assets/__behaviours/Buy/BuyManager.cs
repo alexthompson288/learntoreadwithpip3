@@ -11,6 +11,7 @@ public class BuyManager : Singleton<BuyManager>
 	private bool m_unlockInEditor;
 #endif
 
+    [SerializeField]
 	private bool m_logProductRequests = false;
 
 	[SerializeField]
