@@ -84,7 +84,7 @@ public class UserStats : Singleton<UserStats>
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
 
 			m_modelName = "activity";
-			m_url = "http://pipperformance.herokuapp.com/activities";
+			m_url = "www.learntoreadwithpip.com/activities";
 
 			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 			{
@@ -340,7 +340,7 @@ public class UserStats : Singleton<UserStats>
 			m_sessionType = sessionType;
 
 			m_modelName = "session";
-			m_url = "http://pipperformance.herokuapp.com/sessions";
+			m_url = "www.learntoreadwithpip.com/sessions";
 			BuildSessionIdentifier();
 
             m_current = this;
