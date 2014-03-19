@@ -67,9 +67,9 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
 
-		if(createUser && !ChooseUser.Instance.HasUser(m_inputLabel.text))
+		if(createUser && !UserInfo.Instance.HasUser(m_inputLabel.text))
 		{
-			ChooseUser.Instance.CreateUser(m_inputLabel.text, m_imageName);
+			UserInfo.Instance.CreateUser(m_inputLabel.text, m_imageName);
 			ChooseUserCoordinator.Instance.CreateUser(m_inputLabel.text, m_imageName);
 		}
 

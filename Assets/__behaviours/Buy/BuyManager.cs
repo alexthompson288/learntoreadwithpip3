@@ -561,7 +561,7 @@ public class BuyManager : Singleton<BuyManager>
 
 	IEnumerator Start()
 	{
-		//Debug.Log("PRODUCTLIST: Waiting for db");
+		Debug.Log("PRODUCTLIST: Waiting for db");
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -575,7 +575,7 @@ public class BuyManager : Singleton<BuyManager>
 			}
 		}
 
-		//Debug.Log("PRODUCTLIST: Building");
+		Debug.Log("PRODUCTLIST: Building");
 
 		List<string> productIdentifiers = new List<string>();
 
@@ -599,7 +599,7 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
 		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
 
-		//Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count);
+		Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count);
 
 		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
 
@@ -611,7 +611,7 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
 		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
 
-		//Debug.Log("PRODUCTLIST: Finished");
+		Debug.Log("PRODUCTLIST: Finished");
 	}
 
 

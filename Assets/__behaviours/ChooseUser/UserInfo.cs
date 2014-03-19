@@ -3,15 +3,52 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class ChooseUser : Singleton<ChooseUser> 
+public class UserInfo : Singleton<UserInfo> 
 {
-	string m_currentUser; 
+	private string m_accountUsername = "";
+	public string accountUsername
+	{
+		get
+		{
+			return m_accountUsername;
+		}
+	}
+
+	string m_currentUser = "";
+	public string childName
+	{
+		get
+		{
+			return m_currentUser;
+		}
+	}
 
 	Dictionary<string, string> m_users = new Dictionary<string, string>();
 
+#if UNITY_EDITOR
+	[SerializeField]
+	private bool m_overwrite;
+#endif
+
 	void Awake()
-	{		 
+	{	
+#if UNITY_EDITOR
+		if(m_overwrite)
+		{
+			Save ();
+		}
+#endif
+
 		Load();
+
+		if (System.String.IsNullOrEmpty(m_accountUsername)) 
+		{
+			string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
+			string rand = Random.Range(100000, 1000000).ToString();
+			m_accountUsername = dateTimeString + rand;
+			
+			Save ();
+		}
 
 		if(m_users.Count == 0)
 		{
@@ -77,6 +114,8 @@ public class ChooseUser : Singleton<ChooseUser>
 		
 		if (data.Length != 0)
 		{
+			m_accountUsername = br.ReadString();
+
 			int numUsers = br.ReadInt32();
 			for(int i = 0; i < numUsers; ++i)
 			{
@@ -96,6 +135,8 @@ public class ChooseUser : Singleton<ChooseUser>
 		DataSaver ds = new DataSaver("UserInformation");
 		MemoryStream newData = new MemoryStream();
 		BinaryWriter bw = new BinaryWriter(newData);
+
+		bw.Write (m_accountUsername);
 		
 		bw.Write(m_users.Count);
 		foreach (KeyValuePair<string, string> kvp in m_users)

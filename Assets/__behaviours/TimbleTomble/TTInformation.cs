@@ -129,7 +129,7 @@ public class TTInformation : Singleton<TTInformation>
 
 	public int GetGoldCoins()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_goldCoins.ContainsKey(user))
 		{
@@ -141,13 +141,13 @@ public class TTInformation : Singleton<TTInformation>
 
 	public void SetGoldCoins(int numCoins)
 	{
-		m_goldCoins[ChooseUser.Instance.GetCurrentUser()] = numCoins;
+		m_goldCoins[UserInfo.Instance.GetCurrentUser()] = numCoins;
 		Save();
 	}
 
 	public float GetMagic()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_magic.ContainsKey(user))
 		{
@@ -160,7 +160,7 @@ public class TTInformation : Singleton<TTInformation>
 	public void SetMagic(float level)
 	{
 		level = Mathf.Clamp(level, m_minMagic, m_maxMagic);
-		m_magic[ChooseUser.Instance.GetCurrentUser()] = level;
+		m_magic[UserInfo.Instance.GetCurrentUser()] = level;
 		Save();
 
 		if(OnMagicChange != null)
@@ -183,7 +183,7 @@ public class TTInformation : Singleton<TTInformation>
 
 	public void UnlockItem(string item)
 	{
-		m_unlockableItems[item].AddUser(ChooseUser.Instance.GetCurrentUser());
+		m_unlockableItems[item].AddUser(UserInfo.Instance.GetCurrentUser());
 		Save();
 	}
 

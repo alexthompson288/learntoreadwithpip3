@@ -13,7 +13,7 @@ public class ChooseUserButton : MonoBehaviour
 	{
 		m_label.text = userName;
 
-		if(ChooseUser.Instance.GetCurrentUser() == userName)
+		if(UserInfo.Instance.GetCurrentUser() == userName)
 		{
 			StartCoroutine(StartOn());
 		}
@@ -36,7 +36,7 @@ public class ChooseUserButton : MonoBehaviour
 
 	void OnClick()
 	{
-		ChooseUser.Instance.SetCurrentUser(m_label.text);
+		UserInfo.Instance.SetCurrentUser(m_label.text);
 		ChooseUserCoordinator.Instance.SelectButton(gameObject);
 	}
 }

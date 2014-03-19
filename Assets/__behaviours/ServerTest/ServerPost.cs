@@ -11,7 +11,7 @@ public class ServerPost : Singleton<ServerPost>
 	{
 		WWWForm form = new WWWForm ();
 
-		form.AddField ("test[username]", userPrefix + ChooseUser.Instance.GetCurrentUser ());
+		form.AddField ("test[username]", userPrefix + UserInfo.Instance.GetCurrentUser ());
 
 		form.AddField ("test[session_num]", sessionNum);
 		Debug.Log ("sessionNum: " + sessionNum);

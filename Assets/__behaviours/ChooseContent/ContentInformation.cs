@@ -136,7 +136,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public List<DataRow> GetLetters()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		if(m_letters.ContainsKey(user))
 		{
 			return m_letters[user].GetDataList();
@@ -150,7 +150,7 @@ public class ContentInformation : Singleton<ContentInformation>
 	public void AddLetter(DataRow letterData, bool save = false)
 	{
 		Debug.Log("AddLetter: " + letterData["phoneme"].ToString());
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_letters.ContainsKey(currentUser))
 		{
@@ -168,7 +168,7 @@ public class ContentInformation : Singleton<ContentInformation>
 	public void RemoveLetter(DataRow letterData, bool save = false)
 	{
 		Debug.Log("RemoveLetter: " + letterData["phoneme"].ToString());
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_letters.ContainsKey(currentUser))
 		{
@@ -185,7 +185,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public bool HasLetter(DataRow letterData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 
 		if(m_letters.ContainsKey(currentUser))
 		{
@@ -200,7 +200,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public DataRow GetTargetLetter()
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(m_targetLetters.ContainsKey(currentUser))
 		{
@@ -222,13 +222,13 @@ public class ContentInformation : Singleton<ContentInformation>
 		{
 			Debug.Log("Setting targetLetter null");
 		}
-		m_targetLetters[ChooseUser.Instance.GetCurrentUser()] = letterData;
+		m_targetLetters[UserInfo.Instance.GetCurrentUser()] = letterData;
 		Save ();
 	}
 	
 	public bool IsTargetLetter(DataRow letterData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_targetLetters.ContainsKey(currentUser) || m_targetLetters[currentUser] == null)
 		{
@@ -243,7 +243,7 @@ public class ContentInformation : Singleton<ContentInformation>
 	public List<DataRow> GetWords()
 	{
 		Debug.Log("ContentInformation.Instance.GetWords()");
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		Debug.Log("user: " + user);
 		if(m_words.ContainsKey(user))
 		{
@@ -258,7 +258,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public void AddWord(DataRow wordData, bool save = false)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_words.ContainsKey(currentUser))
 		{
@@ -275,7 +275,7 @@ public class ContentInformation : Singleton<ContentInformation>
 	
 	public void RemoveWord(DataRow wordData, bool save = false)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_words.ContainsKey(currentUser))
 		{
@@ -292,7 +292,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public bool HasWord(DataRow wordData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(m_words.ContainsKey(currentUser))
 		{
@@ -306,7 +306,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public DataRow GetTargetWord()
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(m_targetWords.ContainsKey(currentUser))
 		{
@@ -320,13 +320,13 @@ public class ContentInformation : Singleton<ContentInformation>
 	
 	public void SetTargetWord(DataRow letterData)
 	{
-		m_targetWords[ChooseUser.Instance.GetCurrentUser()] = letterData;
+		m_targetWords[UserInfo.Instance.GetCurrentUser()] = letterData;
 		Save ();
 	}
 
 	public bool IsTargetWord(DataRow wordData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_targetWords.ContainsKey(currentUser) || m_targetWords[currentUser] == null)
 		{
@@ -340,7 +340,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public List<DataRow> GetKeywords()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		if(m_keywords.ContainsKey(user))
 		{
 			return m_keywords[user].GetDataList();
@@ -353,7 +353,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public void AddKeyword(DataRow keywordData, bool save = false)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_keywords.ContainsKey(currentUser))
 		{
@@ -370,7 +370,7 @@ public class ContentInformation : Singleton<ContentInformation>
 	
 	public void RemoveKeyword(DataRow keywordData, bool save = false)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_keywords.ContainsKey(currentUser))
 		{
@@ -387,7 +387,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public bool HasKeyword(DataRow keywordData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(m_keywords.ContainsKey(currentUser))
 		{
@@ -401,7 +401,7 @@ public class ContentInformation : Singleton<ContentInformation>
 
 	public DataRow GetTargetKeyword()
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(m_targetKeywords.ContainsKey(currentUser))
 		{
@@ -415,13 +415,13 @@ public class ContentInformation : Singleton<ContentInformation>
 	
 	public void SetTargetKeyword(DataRow keywordData)
 	{
-		m_targetKeywords[ChooseUser.Instance.GetCurrentUser()] = keywordData;
+		m_targetKeywords[UserInfo.Instance.GetCurrentUser()] = keywordData;
 		Save ();
 	}
 
 	public bool IsTargetKeyword(DataRow keywordData)
 	{
-		string currentUser = ChooseUser.Instance.GetCurrentUser();
+		string currentUser = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_targetKeywords.ContainsKey(currentUser) || m_targetKeywords[currentUser] == null)
 		{

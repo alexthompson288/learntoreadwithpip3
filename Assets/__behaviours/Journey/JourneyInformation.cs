@@ -75,7 +75,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	public bool IsSessionFinished(int sessionNum)
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_sessionsFinished.ContainsKey(user))
 		{
@@ -87,7 +87,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	public void SetSessionFinished(int sessionNum)
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_sessionsFinished.ContainsKey(user))
 		{
@@ -101,7 +101,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	public int GetSessionsCompleted()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_sessionsCompleted.ContainsKey(user))
 		{
@@ -113,13 +113,13 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	public void SetSessionsCompleted(int session)
 	{
-		m_sessionsCompleted[ChooseUser.Instance.GetCurrentUser()] = session;
+		m_sessionsCompleted[UserInfo.Instance.GetCurrentUser()] = session;
 		Save ();
 	}
 	
 	public bool HasRecentlyCompleted()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_recentCompleted.ContainsKey(user))
 		{
@@ -131,7 +131,7 @@ public class JourneyInformation : Singleton<JourneyInformation>
 	
 	public void SetRecentlyCompleted(bool sessionRecentlyCompleted)
 	{
-		m_recentCompleted[ChooseUser.Instance.GetCurrentUser()] = sessionRecentlyCompleted;
+		m_recentCompleted[UserInfo.Instance.GetCurrentUser()] = sessionRecentlyCompleted;
 		Save ();
 	}
 	

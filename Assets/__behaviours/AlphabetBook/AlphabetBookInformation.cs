@@ -55,7 +55,7 @@ public class AlphabetBookInformation : Singleton<AlphabetBookInformation>
 
 	public void AddTexture(DataRow phoneme, string textureName)
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_phonemeTextures.ContainsKey(user))
 		{
@@ -70,7 +70,7 @@ public class AlphabetBookInformation : Singleton<AlphabetBookInformation>
 
 	public string GetTexture(int phonemeId)
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(m_phonemeTextures.ContainsKey(user))
 		{
@@ -84,7 +84,7 @@ public class AlphabetBookInformation : Singleton<AlphabetBookInformation>
 
 	public Dictionary<int, string> GetAllTextures()
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(m_phonemeTextures.ContainsKey(user))
 		{

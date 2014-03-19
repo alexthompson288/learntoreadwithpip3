@@ -76,7 +76,7 @@ public class TTItemLoader : Singleton<TTItemLoader>
 	{
 		foreach(TTDraggable item in m_spawnedItems)
 		{
-			if(!TTInformation.Instance.IsItemUnlocked(ChooseUser.Instance.GetCurrentUser(), item.GetTextureName()))
+			if(!TTInformation.Instance.IsItemUnlocked(UserInfo.Instance.GetCurrentUser(), item.GetTextureName()))
 			{
 				item.Lock();
 			}	
@@ -112,7 +112,7 @@ public class TTItemLoader : Singleton<TTItemLoader>
 		{
 			item.MakeBackground();
 			
-			if(!TTInformation.Instance.IsItemUnlocked(ChooseUser.Instance.GetCurrentUser(), item.GetTextureName()))
+			if(!TTInformation.Instance.IsItemUnlocked(UserInfo.Instance.GetCurrentUser(), item.GetTextureName()))
 			{
 				item.Lock();
 			}	

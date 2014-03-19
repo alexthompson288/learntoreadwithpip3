@@ -7,7 +7,6 @@ public class UserStats : Singleton<UserStats>
 {
 	static string m_url = "http://pipperformance.herokuapp.com/tests";
 	static string m_email = "bonobo@pip.com";
-	static string m_accountUsername = "ParentUser";
 	
 	Dictionary<GameDataBridge.DataType, string> m_dataAttributes = new Dictionary<GameDataBridge.DataType, string>();
 	
@@ -76,6 +75,9 @@ public class UserStats : Singleton<UserStats>
 			m_scene = Application.loadedLevelName;
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
 
+			m_tableName = "session";
+			m_url = "http://pipperformance.herokuapp.com/tests";
+
 			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 			{
 				m_setNum = SkillProgressInformation.Instance.GetCurrentLevel();
@@ -115,18 +117,18 @@ public class UserStats : Singleton<UserStats>
 		{
 			WWWForm form = new WWWForm ();
 
-			form.AddField ("test[core_skill]", m_coreSkill);
-			form.AddField ("test[session_identifier]", m_sessionIdentifier);
-			form.AddField ("test[scene]", m_scene);
-			form.AddField ("test[set_num]", m_setNum);
-			form.AddField ("test[section_id]", m_sectionId);
-			form.AddField ("test[num_answers]", m_numAnswers);
-			form.AddField ("test[phoneme_ids]", ConcatList (m_phonemeIds));
-			form.AddField ("test[incorrect_phoneme_ids]", ConcatList (m_incorrectPhonemeIds));
-			form.AddField ("test[word_ids]", ConcatList (m_wordIds));
-			form.AddField ("test[incorrect_word_ids]", ConcatList (m_incorrectWordIds));
-			form.AddField ("test[story_id]", m_storyId);
-			form.AddField ("test[pip_pad_calls]", ConcatList (m_pipPadCalls));
+			form.AddField (m_tableName + "[core_skill]", m_coreSkill);
+			form.AddField (m_tableName + "[session_identifier]", m_sessionIdentifier);
+			form.AddField (m_tableName + "[scene]", m_scene);
+			form.AddField (m_tableName + "[set_num]", m_setNum);
+			form.AddField (m_tableName + "[section_id]", m_sectionId);
+			form.AddField (m_tableName + "[num_answers]", m_numAnswers);
+			form.AddField (m_tableName + "[phoneme_ids]", ConcatList (m_phonemeIds));
+			form.AddField (m_tableName + "[incorrect_phoneme_ids]", ConcatList (m_incorrectPhonemeIds));
+			form.AddField (m_tableName + "[word_ids]", ConcatList (m_wordIds));
+			form.AddField (m_tableName + "[incorrect_word_ids]", ConcatList (m_incorrectWordIds));
+			form.AddField (m_tableName + "[story_id]", m_storyId);
+			form.AddField (m_tableName + "[pip_pad_calls]", ConcatList (m_pipPadCalls));
 
 #if UNITY_EDITOR
 			Debug.Log("Activity.PostData()");
@@ -142,7 +144,7 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log("pipPadCalls: " + ConcatList(m_pipPadCalls));
 #endif
 
-			base.PostData ("Activity", m_url, form);
+			base.PostData ("Activity", form);
 		}
 
 		// Setters
@@ -287,13 +289,10 @@ public class UserStats : Singleton<UserStats>
 		// Voyage/Pippisode Constructor
 		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
 		{
-			m_sessionType = sessionType;
 			m_sessionId = sessionId;
 			m_sessionNum = sessionNum;
 
-			BuildSessionIdentifier(); 
-
-			m_current = this;
+			JointConstructor(sessionType);
 
 #if UNITY_EDITOR
 			Debug.Log("new Session(): Voyage/Pippisode");
@@ -304,10 +303,7 @@ public class UserStats : Singleton<UserStats>
 		// Lesson Constructor
 		public Session(SessionManager.ST sessionType, string sessionName) : base()
 		{
-			m_sessionType = sessionType;
 			m_sessionName = sessionName;
-
-			BuildSessionIdentifier();
 
 			m_letters = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Letters);
 			m_targetLetter = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Letters);
@@ -318,12 +314,24 @@ public class UserStats : Singleton<UserStats>
 			m_keywords = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Keywords);
 			m_targetKeyword = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Keywords);
 
-			m_current = this;
+			JointConstructor(sessionType);
 
 #if UNITY_EDITOR
 			Debug.Log("new Session(): Lesson");
 			DebugLog();
 #endif
+		}
+
+		// Set anything here that needs to be set in both constructors
+		void JointConstructor(SessionManager.ST sessionType) 
+		{
+			m_sessionType = sessionType;
+
+			m_tableName = "session";
+			m_url = "http://pipperformance.herokuapp.com/tests";
+			BuildSessionIdentifier();
+
+			m_current = this;
 		}
 
 #if UNITY_EDITOR
@@ -339,7 +347,7 @@ public class UserStats : Singleton<UserStats>
 
 		void BuildSessionIdentifier()
 		{
-			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { m_accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
+			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
 		}
 
 		public static string OnNewGame(string scene)
@@ -374,19 +382,19 @@ public class UserStats : Singleton<UserStats>
 		{
 			WWWForm form = new WWWForm();
 
-			form.AddField ("test[session_identifier]", m_sessionIdentifier);
-			form.AddField ("test[session_name]", m_sessionName);
-			form.AddField ("test[session_id]" , m_sessionId);
-			form.AddField ("test[session_num]" , m_sessionNum);
-			form.AddField ("test[session_type]", m_sessionType.ToString ());
-			form.AddField ("test[scenes]", ConcatList (m_scenes));
+			form.AddField (m_tableName + "[session_identifier]", m_sessionIdentifier);
+			form.AddField (m_tableName + "[session_name]", m_sessionName);
+			form.AddField (m_tableName + "[session_id]" , m_sessionId);
+			form.AddField (m_tableName + "[session_num]" , m_sessionNum);
+			form.AddField (m_tableName + "[session_type]", m_sessionType.ToString ());
+			form.AddField (m_tableName + "[scenes]", ConcatList (m_scenes));
 
-			form.AddField ("test[phoneme_ids]", ConcatList (m_letters));
-			form.AddField ("test[target_phoneme_id]", m_targetLetter);
-			form.AddField ("test[word_ids]", ConcatList (m_words));
-			form.AddField ("test[target_word_id]", m_targetWord);
-			form.AddField ("test[keyword_ids]", ConcatList (m_keywords));
-			form.AddField ("test[target_keyword_id]", m_targetKeyword);
+			form.AddField (m_tableName + "[phoneme_ids]", ConcatList (m_letters));
+			form.AddField (m_tableName + "[target_phoneme_id]", m_targetLetter);
+			form.AddField (m_tableName + "[word_ids]", ConcatList (m_words));
+			form.AddField (m_tableName + "[target_word_id]", m_targetWord);
+			form.AddField (m_tableName + "[keyword_ids]", ConcatList (m_keywords));
+			form.AddField (m_tableName + "[target_keyword_id]", m_targetKeyword);
 
 #if UNITY_EDITOR
 			Debug.Log ("Session.PostData()");
@@ -398,7 +406,7 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log("scenes: " + m_scenes);
 #endif
 			
-			base.PostData ("Session", m_url, form);
+			base.PostData ("Session", form);
 		}
 	}
 
@@ -424,6 +432,9 @@ public class UserStats : Singleton<UserStats>
 		protected DateTime m_end = new DateTime(0);
 		
 		protected bool m_hasCompleted = false;
+
+		protected string m_url;
+		protected string m_tableName;
 		
 		protected TimedEvent()
 		{
@@ -464,23 +475,25 @@ public class UserStats : Singleton<UserStats>
 
 		public abstract void PostData ();
 
-		public virtual void PostData (string eventName, string url, WWWForm form)
+		public virtual void PostData (string eventName, WWWForm form)
 		{
-			form.AddField ("test[account_username]", m_accountUsername);
-			form.AddField ("test[child_name]", ChooseUser.Instance.GetCurrentUser ());
-			form.AddField ("test[has_completed]", Convert.ToInt32(m_hasCompleted));
-			form.AddField ("test[start]", GetTrimmedStartTime());
-			form.AddField ("test[end]", GetTrimmedEndTime());
+			Debug.Log ("base.PostData(): " + m_tableName);
+
+			form.AddField (m_tableName + "[account_username]", UserInfo.Instance.accountUsername);
+			form.AddField (m_tableName + "[child_name]", UserInfo.Instance.childName);
+			form.AddField (m_tableName + "[has_completed]", Convert.ToInt32(m_hasCompleted));
+			form.AddField (m_tableName + "[start]", GetTrimmedStartTime());
+			form.AddField (m_tableName + "[end]", GetTrimmedEndTime());
 
 #if UNITY_EDITOR
-			Debug.Log("accountUsername: " + m_accountUsername);
-			Debug.Log("childName: " + ChooseUser.Instance.GetCurrentUser());
+			Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
+			Debug.Log("childName: " + UserInfo.Instance.childName);
 			Debug.Log("hasCompleted: " + m_hasCompleted);
 			Debug.Log("start: " + GetTrimmedStartTime());
 			Debug.Log("end: " + GetTrimmedEndTime());
 #endif
 
-			WWW www = new WWW (url, form);
+			WWW www = new WWW (m_url, form);
 
 			UserStats.Instance.WaitForRequest (eventName, www);
 		}

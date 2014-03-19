@@ -105,7 +105,7 @@ public class SkillProgressInformation : Singleton<SkillProgressInformation>
 
 	public int GetProgress (string progressName) 
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_userProgress.ContainsKey(user))
 		{
@@ -117,7 +117,7 @@ public class SkillProgressInformation : Singleton<SkillProgressInformation>
 
 	public void SetProgress (string progressName, int progressAmount)
 	{
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 		
 		if(!m_userProgress.ContainsKey(user))
 		{
@@ -133,7 +133,7 @@ public class SkillProgressInformation : Singleton<SkillProgressInformation>
 	{
 		Debug.Log("Incrementing progress for " + progressName);
 
-		string user = ChooseUser.Instance.GetCurrentUser();
+		string user = UserInfo.Instance.GetCurrentUser();
 
 		if(!m_userProgress.ContainsKey(user))
 		{
