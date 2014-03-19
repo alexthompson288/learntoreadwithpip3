@@ -287,6 +287,9 @@ public class SessionManager : Singleton<SessionManager>
 	public int GetCurrentSectionId()
 	{
 		Debug.Log("m_activitiesComplete: " + m_activitiesComplete);
+        return (m_sections.Count > 0 && m_activitiesComplete < m_sections.Count) ? System.Convert.ToInt32(m_sections [m_activitiesComplete] ["id"]) : 0;
+
+        /*
 		if(m_sections.Count > 0 && m_activitiesComplete < m_sections.Count)
 		{
 			Debug.Log("current sectionId: " + m_sections[m_activitiesComplete]["id"].ToString());
@@ -294,9 +297,9 @@ public class SessionManager : Singleton<SessionManager>
 		}
 		else
 		{
-			Debug.LogError("There are not enough sections in m_sections");
 			return 0;
 		}
+        */
 	}
 
 	#if UNITY_EDITOR

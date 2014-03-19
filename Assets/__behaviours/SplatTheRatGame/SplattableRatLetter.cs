@@ -65,6 +65,8 @@ public class SplattableRatLetter : MonoBehaviour
 	void OnClick()
     {
 		StartCoroutine(HitEffect());
+
+        UserStats.Activity.Current.IncrementNumAnswers();
 		
         bool isCorrect = m_gamePlayer.LetterClicked(m_letter, m_locator);
 		
@@ -74,6 +76,7 @@ public class SplattableRatLetter : MonoBehaviour
 		}
 		else
 		{
+            SplatRatGameCoordinator.Instance.PostOnIncorrect();
 			WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
 		}
     }

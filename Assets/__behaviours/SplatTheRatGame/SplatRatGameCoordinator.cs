@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
-	
+public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> 
+{	
 	[SerializeField]
 	SplatRatGamePlayer[] m_gamePlayers;
 	[SerializeField]
@@ -170,6 +170,8 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 				m_currentLetterData = lettersPool[selectedIndex];
 			}
 
+            UserStats.Activity.Current.AddPhoneme(m_currentLetterData);
+
 			m_currentLetter = m_currentLetterData["phoneme"].ToString();
 			
 			AudioClip bennyChangeableAudio;
@@ -334,6 +336,11 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator> {
 	{
 		return m_currentLetter;
 	}
+
+    public void PostOnIncorrect()
+    {
+        UserStats.Activity.Current.AddIncorrectPhoneme(m_currentLetterData);
+    }
 	
 	public int GetPercentageProbabilityLetterIsTarget()
 	{
