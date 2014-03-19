@@ -14,6 +14,15 @@ public class UserInfo : Singleton<UserInfo>
 		}
 	}
 
+    private string m_userEmail = "";
+    public string userEmail
+    {
+        get
+        {
+            return m_userEmail;
+        }
+    }
+
 	string m_currentUser = "";
 	public string childName
 	{
@@ -115,6 +124,7 @@ public class UserInfo : Singleton<UserInfo>
 		if (data.Length != 0)
 		{
 			m_accountUsername = br.ReadString();
+            m_userEmail = br.ReadString();
 
 			int numUsers = br.ReadInt32();
 			for(int i = 0; i < numUsers; ++i)
@@ -137,6 +147,7 @@ public class UserInfo : Singleton<UserInfo>
 		BinaryWriter bw = new BinaryWriter(newData);
 
 		bw.Write (m_accountUsername);
+        bw.Write(m_userEmail);
 		
 		bw.Write(m_users.Count);
 		foreach (KeyValuePair<string, string> kvp in m_users)

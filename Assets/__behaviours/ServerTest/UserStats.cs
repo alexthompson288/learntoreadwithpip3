@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System;
 
 public class UserStats : Singleton<UserStats> 
-{
-	static string m_url = "http://pipperformance.herokuapp.com/tests";
-	static string m_email = "bonobo@pip.com";
-	
+{	
 	Dictionary<GameDataBridge.DataType, string> m_dataAttributes = new Dictionary<GameDataBridge.DataType, string>();
 	
 	void Start()
@@ -76,7 +73,7 @@ public class UserStats : Singleton<UserStats>
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
 
 			m_tableName = "session";
-			m_url = "http://pipperformance.herokuapp.com/tests";
+			m_url = "http://pipperformance.herokuapp.com/activities";
 
 			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 			{
@@ -328,7 +325,7 @@ public class UserStats : Singleton<UserStats>
 			m_sessionType = sessionType;
 
 			m_tableName = "session";
-			m_url = "http://pipperformance.herokuapp.com/tests";
+			m_url = "http://pipperformance.herokuapp.com/sessions";
 			BuildSessionIdentifier();
 
 			m_current = this;
