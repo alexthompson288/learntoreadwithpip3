@@ -163,7 +163,7 @@ public class SessionManager : Singleton<SessionManager>
 
 				new UserStats.Session(m_st, sessionId, m_sessionNum);
 
-				FindNextActivity();
+				PlayNextActivity(FindNextActivity());
 			}
 			else // Session empty
 			{
@@ -186,7 +186,8 @@ public class SessionManager : Singleton<SessionManager>
 			++m_activitiesComplete;
 		}
 
-		PlayNextActivity( m_st == ST.Lesson ? LessonInfo.Instance.GetSceneName (m_activitiesComplete) : FindNextActivity() );
+        string sceneName = m_st == ST.Lesson ? LessonInfo.Instance.GetSceneName(m_activitiesComplete) : FindNextActivity();
+        PlayNextActivity(sceneName);
 	}
 
 	string FindNextActivity()
@@ -226,11 +227,14 @@ public class SessionManager : Singleton<SessionManager>
 			}
 		}
 
+        Debug.Log("returning sceneName: " + sceneName);
+
 		return sceneName;
 	}
 
 	void PlayNextActivity(string sceneName)
 	{
+        Debug.Log(String.Format("SessionManager.PlayNextActivity({0})", sceneName));
 		if (!String.IsNullOrEmpty (sceneName)) 
 		{
 			m_state = State.StartGame;

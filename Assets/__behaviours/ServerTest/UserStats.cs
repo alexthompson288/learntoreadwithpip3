@@ -42,7 +42,7 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				return m_current;
+				return m_current != null ? m_current : new Activity(false);
 			}
 		}
 
@@ -66,7 +66,7 @@ public class UserStats : Singleton<UserStats>
 		int m_storyId = 0;
 		List<int> m_pipPadCalls = new List<int> ();
 
-		public Activity() : base()
+		public Activity(bool makeCurrent = true) : base()
 		{
 			Debug.Log("new Activity()");
 			m_scene = Application.loadedLevelName;
@@ -84,7 +84,10 @@ public class UserStats : Singleton<UserStats>
 				m_sectionId = SessionManager.Instance.GetCurrentSectionId();
 			}
 
-			m_current = this;
+            if(makeCurrent)
+            {
+			    m_current = this;
+            }
 		}
 
 		public static void OnNewScene()
@@ -262,7 +265,7 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				return m_current;
+				return m_current != null ? m_current : new Session(false);
 			}
 		}
 
@@ -283,6 +286,10 @@ public class UserStats : Singleton<UserStats>
 
 		List<int> m_keywords = new List<int>();
 		int m_targetKeyword = 0;
+
+        public Session(bool makeCurrent)
+        {
+        }
 
 		// Voyage/Pippisode Constructor
 		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
@@ -329,7 +336,7 @@ public class UserStats : Singleton<UserStats>
 			m_url = "http://pipperformance.herokuapp.com/sessions";
 			BuildSessionIdentifier();
 
-			m_current = this;
+            m_current = this;
 		}
 
 #if UNITY_EDITOR
@@ -339,7 +346,7 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log ("sessionType: " + m_sessionType);
 			Debug.Log ("sessionName: " + m_sessionName);
 			Debug.Log ("sessionId: " + m_sessionId);
-			Debug.Log ("sessionId: " + m_sessionId);
+			Debug.Log ("sessionNum: " + m_sessionNum);
 		}
 #endif
 

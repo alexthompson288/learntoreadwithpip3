@@ -37,10 +37,10 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	void Start()
 	{
-		//EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
-		//SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
+		EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
+		SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
 
-		SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>("SpellingPad/Space_SpellingPad");
+		//SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>("SpellingPad/Space_SpellingPad");
 
 		if(padEnviro != null)
 		{
