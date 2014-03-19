@@ -56,7 +56,6 @@ public class EyeSpyWord : MonoBehaviour
 	
 	void OnClick()
 	{
-		Debug.Log("OnClick: " + m_wordData["word"].ToString());
 		if(OnWordClick != null)
 		{
 			OnWordClick(this);

@@ -42,7 +42,18 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				return m_current != null ? m_current : new Activity(false);
+#if UNITY_EDITOR
+                if(m_current != null)
+                {
+                    return m_current;
+                }
+                else // In the editor we might need to spawn a dummy Activity because sometimes run directly from a game scene
+                {
+                    return new Activity(false);
+                }
+#else
+                return m_current;
+#endif
 			}
 		}
 
@@ -265,11 +276,11 @@ public class UserStats : Singleton<UserStats>
 		{
 			get
 			{
-				return m_current != null ? m_current : new Session(false);
+                return m_current;
 			}
 		}
 
-		string m_sessionIdentifier;
+		string m_sessionIdentifier = "";
 		string m_sessionName = "";
 		int m_sessionId = 0;
 		int m_sessionNum = 0;
@@ -286,10 +297,6 @@ public class UserStats : Singleton<UserStats>
 
 		List<int> m_keywords = new List<int>();
 		int m_targetKeyword = 0;
-
-        public Session(bool makeCurrent)
-        {
-        }
 
 		// Voyage/Pippisode Constructor
 		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
@@ -408,7 +415,7 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log("sessionId: " + m_sessionId);
 			Debug.Log("sessionNum: " + m_sessionNum);
 			Debug.Log("sessionType: " + m_sessionType);
-			Debug.Log("scenes: " + m_scenes);
+			Debug.Log("scenes: " + ConcatList(m_scenes));
 #endif
 			
 			base.PostData ("Session", form);
@@ -495,7 +502,7 @@ public class UserStats : Singleton<UserStats>
 			Debug.Log("childName: " + UserInfo.Instance.childName);
 			Debug.Log("hasCompleted: " + m_hasCompleted);
 			Debug.Log("start: " + GetTrimmedStartTime());
-			//Debug.Log("end: " + GetTrimmedEndTime());
+			Debug.Log("end: " + GetTrimmedEndTime());
 
             Debug.Log("url: " + m_url);
             Debug.Log("tableName: " + m_modelName);
