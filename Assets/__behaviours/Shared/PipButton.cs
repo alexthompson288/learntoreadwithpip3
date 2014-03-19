@@ -63,8 +63,8 @@ public class PipButton : MonoBehaviour
 			{
 				m_pressedSpriteName = m_unpressedSpriteName.Substring(0, m_unpressedSpriteName.Length - 1) + "b";
 
-				Debug.Log("m_pressedSpriteName: " + m_pressedSpriteName);
-				Debug.Log("m_unpressedSpriteName: " + m_unpressedSpriteName);
+				//Debug.Log("m_pressedSpriteName: " + m_pressedSpriteName);
+				//Debug.Log("m_unpressedSpriteName: " + m_unpressedSpriteName);
 			}
 		}
 	}

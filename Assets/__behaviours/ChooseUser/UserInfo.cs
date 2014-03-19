@@ -53,11 +53,17 @@ public class UserInfo : Singleton<UserInfo>
 		if (System.String.IsNullOrEmpty(m_accountUsername)) 
 		{
 			string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
+            dateTimeString = dateTimeString.Replace("/", "_");
+            dateTimeString = dateTimeString.Replace(":", "_");
+
 			string rand = Random.Range(100000, 1000000).ToString();
+
 			m_accountUsername = dateTimeString + rand;
 			
 			Save ();
 		}
+
+        Debug.Log("accountUsername: " + m_accountUsername);
 
 		if(m_users.Count == 0)
 		{
