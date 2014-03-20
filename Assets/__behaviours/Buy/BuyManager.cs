@@ -263,7 +263,7 @@ public class BuyManager : Singleton<BuyManager>
         {
             SetAllGamesPurchased();
         } 
-        else if (productId = m_everythingProductIdentifier)
+        else if (productId == m_everythingProductIdentifier)
         {
             SetAllBooksPurchased();
             SetAllMapsPurchased();

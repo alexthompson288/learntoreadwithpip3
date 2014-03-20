@@ -364,32 +364,4 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 	{
 		EnviroManager.Instance.SetEnvironment(m_centreMap.GetEnvironment());
 	}
-
-    void OnGUI()
-    {
-        GUILayout.Label("Top");
-        GUILayout.Label("childCount: " + m_topMapPos.childCount);
-        foreach (Transform child in m_topMapPos)
-        {
-            GUILayout.Label(child.name);
-        }
-
-        GUILayout.Label("");
-
-        GUILayout.Label("Centre");
-        GUILayout.Label("childCount: " + m_centreMapPos.childCount);
-        foreach (Transform child in m_centreMapPos)
-        {
-            GUILayout.Label(child.name);
-        }
-
-        GUILayout.Label("");
-
-        GUILayout.Label("Bot");
-        GUILayout.Label("childCount: " + m_botMapPos.childCount);
-        foreach (Transform child in m_botMapPos)
-        {
-            GUILayout.Label(child.name);
-        }
-    }
 }
