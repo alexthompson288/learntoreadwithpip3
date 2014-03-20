@@ -769,6 +769,7 @@ public class BuyManager : Singleton<BuyManager>
 		FlurryBinding.logEventWithParameters("MapPurchased", ep, false);
 #endif
 
+        Debug.Log(String.Format("SetMapPurchased({0})", mapId));
 		m_boughtMaps.Add(mapId);
 		Save ();
 	}
