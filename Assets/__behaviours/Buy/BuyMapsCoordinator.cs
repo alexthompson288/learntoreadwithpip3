@@ -39,25 +39,15 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		StartCoroutine(AttemptPurchase());
 	}
 
-	public string BuildProductIdentifier()
-	{
-		string id = "dummy_product_identifier";
-
-		//string id = "story_" + m_storyData["id"].ToString() + "_" +
-			//m_storyData["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!", "_").Replace("-", "_").ToLower();
-
-		return id;
-	}
-
 	bool m_purchaseIsResolved = false;
 	IEnumerator AttemptPurchase()
 	{
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-		Debug.Log("Attempting purchase on " + BuildProductIdentifier());
+        Debug.Log("Attempting purchase on " + BuyManager.Instance.BuildMapProductIdentifier(m_mapId));
 		m_purchaseIsResolved = false;
-		StoreKitBinding.purchaseProduct(BuildProductIdentifier(), 1);
+		StoreKitBinding.purchaseProduct(BuyManager.Instance.BuildMapProductIdentifier(m_mapId), 1);
 		
 		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
 		foreach (UICamera cam in uiCameras)
@@ -106,7 +96,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		}
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
 
-		if (obj.productIdentifier == BuildProductIdentifier())
+        if (obj.productIdentifier == BuyManager.Instance.BuildMapProductIdentifier(m_mapId))
 		{
 			m_purchaseIsResolved = true;
 		}

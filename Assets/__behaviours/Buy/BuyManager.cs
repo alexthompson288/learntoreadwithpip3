@@ -619,10 +619,6 @@ public class BuyManager : Singleton<BuyManager>
 
 		if(m_logProductRequests)
 			Debug.Log("PRODUCTLIST: Finished");
-
-
-        
-
 	}
 
 	public string BuildStoryProductIdentifier(DataRow storyData)
@@ -633,9 +629,9 @@ public class BuyManager : Singleton<BuyManager>
 		return id;
 	}
 	
-	public string BuildMapProductIdentifier(int map) // TODO
+	public string BuildMapProductIdentifier(int map)
 	{
-		return "default map identifier";
+		return m_mapProductIdentifiers[0];
 	}
 
 	public bool IsBookBought(int bookId)

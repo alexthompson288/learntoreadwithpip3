@@ -138,9 +138,17 @@ public class UserStats : Singleton<UserStats>
                 Debug.Log("Using Debug Activity Data");
 
                 form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
-                form.AddField(m_modelName + "[child_name]", UserInfo.Instance.childName);
+                form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
+                form.AddField (m_modelName + "[set_num]", m_setNum);
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
-                form.AddField (m_modelName + "[set_num]", 8);
+                form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());
+
+
+                Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
+                Debug.Log("childName: " + UserInfo.Instance.childName);
+                Debug.Log("createdAt: " + GetTrimmedStartTime());
+                Debug.Log("updatedAt: " + GetTrimmedEndTime());
+                Debug.Log("setNum: " + m_setNum);
                 
                 WWW www = new WWW(m_url, form);
                 
