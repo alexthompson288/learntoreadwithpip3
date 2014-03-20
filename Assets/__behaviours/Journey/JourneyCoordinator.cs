@@ -58,7 +58,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	void Awake ()
 	{
-		Debug.Log("JourneyCoordinator.Awake(): UP_TO_DATE_TEST_3");
+		Debug.Log("JourneyCoordinator.Awake(): UP_TO_DATE_TEST_4");
 
 		foreach(ClickEvent arrow in m_arrows)
 		{
