@@ -198,7 +198,6 @@ public class BuyManager : Singleton<BuyManager>
 
 		Debug.Log("RestorePurchases - Closing processes");
 
-		//UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
 		foreach (UICamera cam in uiCameras)
 		{
 			if (cam != null)
@@ -233,37 +232,6 @@ public class BuyManager : Singleton<BuyManager>
 		}
 		*/
 	}
-
-	/*
-	int GetNumTransactions()
-	{
-		int numTransactions = -1;
-
-		string path = StoreKitBinding.getAppStoreReceiptLocation();
-
-		StringBuilder sb = new StringBuilder();
-		using (StreamReader sr = new StreamReader(path)) 
-		{
-			String line;
-			// Read and display lines from the file until the end of 
-			// the file is reached.
-			while ((line = sr.ReadLine()) != null) 
-			{
-				sb.AppendLine(line);
-			}
-		}
-		string allLines = sb.ToString();
-
-		ReceiptVerification rv = new ReceiptVerification(false, allLines);
-
-		if(rv.Verify())
-		{
-		}
-
-		return numTransactions;
-	}
-	*/
-
 
 	void StoreKitManager_restoreTransactionsFinishEvent() // TODO: This won't work because this method is called before all of the purchases are processed. You need to find the length of the queue
 	{
@@ -450,8 +418,6 @@ public class BuyManager : Singleton<BuyManager>
 
 	// Data Saving
 	[SerializeField]
-	private int[] m_maps;
-	[SerializeField]
 	private string[] m_mapProductIdentifiers;
 
 	[SerializeField]
@@ -460,8 +426,6 @@ public class BuyManager : Singleton<BuyManager>
 	private int[] m_defaultUnlockedMaps;
 	[SerializeField]
 	private string[] m_defaultUnlockedGames;
-	//[SerializeField]
-	//private int[] m_defaultUnlockedGames;
 	
 	HashSet<int> m_boughtBooks = new HashSet<int>();
 	HashSet<int> m_boughtMaps = new HashSet<int>();
@@ -510,53 +474,6 @@ public class BuyManager : Singleton<BuyManager>
 
 	bool m_productListResolved = false;
 
-	/*
-	IEnumerator Start()
-	{
-		Debug.Log("PRODUCTLIST: Waiting for db");
-		
-		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-		m_numBooks = 0;
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
-		foreach(DataRow book in dt.Rows)
-		{
-			if(book["publishable"] != null && book["publishable"].ToString() == "t")
-			{
-				++m_numBooks;
-			}
-		}
-		
-		Debug.Log("PRODUCTLIST: Building");
-		
-		List<string> productIdentifiers = new List<string>();	
-
-		productIdentifiers.Add(m_gamesProductIdentifier);
-		
-		StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-		StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
-		
-		Debug.Log("PRODUCTLIST: Requesting " + productIdentifiers.Count + " products");
-
-		foreach(string productId in productIdentifiers)
-		{
-			Debug.Log(productId);
-		}
-		
-		StoreKitBinding.requestProductData(productIdentifiers.ToArray());
-		
-		while(!m_productListResolved)
-		{
-			yield return null;
-		}
-		
-		StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-		StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
-		
-		Debug.Log("PRODUCTLIST: Finished");
-	}
-	*/
-
 	public int GetNumBooks()
 	{
 		return m_numBooks;
@@ -590,7 +507,6 @@ public class BuyManager : Singleton<BuyManager>
 		{
 			productIdentifiers.Add(BuildStoryProductIdentifier(story));
 		}
-
 
 		foreach(string mapIdentifier in m_mapProductIdentifiers)
 		{
@@ -632,7 +548,7 @@ public class BuyManager : Singleton<BuyManager>
 	
 	public string BuildMapProductIdentifier(int map)
 	{
-		return m_mapProductIdentifiers[0];
+		return m_mapProductIdentifiers[map - 1];
 	}
 
 	public bool IsBookBought(int bookId)
@@ -746,14 +662,15 @@ public class BuyManager : Singleton<BuyManager>
 		{
 			bool allMapsBought = true;
 
-			foreach(int map in m_maps)
-			{
-				if(!m_boughtMaps.Contains(map))
-				{
-					allMapsBought = false;
-					break;
-				}
-			}
+            for(int i = 0; i < m_mapProductIdentifiers.Length; ++i)
+            {
+                if(!m_boughtMaps.Contains(i))
+                {
+                    allMapsBought = false;
+                    break;
+                }
+            }
+
 
 			//Debug.Log("ALL MAPS BOUGHT: " + allMapsBought);
 
@@ -780,9 +697,9 @@ public class BuyManager : Singleton<BuyManager>
 		FlurryBinding.logEvent("AllMapsPurchased", false);
 #endif
 
-		foreach(int map in m_maps)
-		{
-			m_boughtMaps.Add(map);
+        for(int i = 0; i < m_mapProductIdentifiers.Length; ++i)
+        {
+			m_boughtMaps.Add(i);
 		}
 		Save ();
 	}
