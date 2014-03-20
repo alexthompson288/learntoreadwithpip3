@@ -16,7 +16,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	void Awake()
 	{
 		m_backCollider.OnSingleClick += OnClickBackCollider;
-		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += OnClickBuy;
+		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyMap;
 	}
 	
 	public void Show(int mapId)
@@ -34,10 +34,26 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		EnableUICams();
 	}
 
-	void OnClickBuy(ClickEvent click)
+	void BuyMap(ClickEvent click)
 	{
+        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        ParentGate.Instance.On();
+
 		StartCoroutine(AttemptPurchase());
 	}
+    
+    void OnParentGateAnswer(bool isCorrect)
+    {
+        ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
+        
+        if(isCorrect)
+        {
+            Debug.Log("Purchasing book");
+            BuyMap();
+        }
+        
+        EnableUICams();
+    }
 
 	bool m_purchaseIsResolved = false;
 	IEnumerator AttemptPurchase()
@@ -113,7 +129,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 
 	public void RefreshBuyButton()
 	{
-		bool mapIsLocked = !BuyManager.Instance.IsBookBought(m_mapId);
+		bool mapIsLocked = !BuyManager.Instance.IsMapBought(m_mapId);
 		m_buyButton.collider.enabled = mapIsLocked;
 		m_buyButton.GetComponentInChildren<UISprite>().color = mapIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
 	}
