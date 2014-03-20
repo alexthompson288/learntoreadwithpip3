@@ -96,7 +96,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		
 		RefreshBuyButton();
 
-        JourneyMap[] spawnedMaps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap));
+        JourneyMap[] spawnedMaps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap)) as JourneyMap[];
         foreach (JourneyMap map in spawnedMaps)
         {
             map.Refresh();
