@@ -1,223 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BBC188CB-1605-FC04-5A82-8FA9087E58DF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-UnityScript-firstpass</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <BaseDirectory>Assets</BaseDirectory>
-    <UsePartialTypes>False</UsePartialTypes>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{BBC188CB-1605-FC04-5A82-8FA9087E58DF}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-UnityScript-firstpass</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_4;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_MONO;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_GENERICS;ENABLE_SUBSTANCE;INCLUDE_WP8SUPPORT;ENABLE_MOVIES;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_DUCK_TYPING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;UNITY_4_3_4;UNITY_4_3;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="HOTween">
-      <HintPath>Assets\HOTween\Plugins\HOTween.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data">
-      <HintPath>Assets\Plugins\Mono.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>Assets\Plugins\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.SqliteClient">
-      <HintPath>Assets\Plugins\Mono.Data.SqliteClient.dll</HintPath>
-    </Reference>
-    <Reference Include="P31RestKit">
-      <HintPath>Assets\Plugins\P31RestKit.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration">
-      <HintPath>Assets\Plugins\System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data">
-      <HintPath>Assets\Plugins\System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.EnterpriseServices">
-      <HintPath>Assets\Plugins\System.EnterpriseServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security">
-      <HintPath>Assets\Plugins\System.Security.dll</HintPath>
-    </Reference>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Depth Cutout.shader" />
-    <None Include="Assets\_textures\font\pipfont-56pt.txt" />
-    <None Include="Assets\_textures\font\pipfont-20pt.txt" />
-    <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBChromaKey.shader" />
-    <None Include="Assets\_textures\font\pipfont_108pt.txt" />
-    <None Include="Assets\__newScenes\NewJourney\GameNames.txt" />
-    <None Include="Assets\ResourcesBase\TimbleTomble\Resources\BackgroundPrices.txt" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Masked Colored.shader" />
-    <None Include="Assets\_textures\font\pipfont-44pt.txt" />
-    <None Include="Assets\HOTween\readme.txt" />
-    <None Include="Assets\MobileMovieTexture\Instructions.txt" />
-    <None Include="Assets\ResourcesBase\TimbleTomble\Resources\StickerPrices.txt" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored Desat.shader" />
-    <None Include="Assets\_textures\font\pipfont-72pt.txt" />
-    <None Include="Assets\_textures\font\pipfont_112pt.txt" />
-    <None Include="Assets\Plugins\GoKit\easing\easeEquationsLicense.txt" />
-    <None Include="Assets\_textures\Stories\StoryBrowser\spider\-orthello-config.xml" />
-    <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBTrans.shader" />
-    <None Include="Assets\_textures\font\pipfont-122pt.txt" />
-    <None Include="Assets\_textures\font\pipfont-38pt.txt" />
-    <None Include="Assets\___ToUpload\AssetVersions.txt" />
-    <None Include="Assets\_textures\font\OpenSans_Regular_64.txt" />
-    <None Include="Assets\_textures\Animations\growing_elements\flower\frames.txt" />
-    <None Include="Assets\_textures\Stories\StoryBrowser\ladybug\-orthello-config.xml" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font.shader" />
-    <None Include="Assets\NGUI\ReadMe - 3.0.2.txt" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
-    <None Include="Assets\_services\XML-JSON Serialization\Readme.txt" />
-    <None Include="Assets\SuperSplinesPro\ReadMe.txt" />
-    <None Include="Assets\_textures\font\pipfont-white.txt" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Additive Colored.shader" />
-    <None Include="Assets\_textures\font\pipfont-84pt.txt" />
-    <None Include="Assets\_textures\font\pipfont_96pt.txt" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Depth.shader" />
-    <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGB.shader" />
-    <None Include="Assets\Editor\Flurry\SDK\Flurry-LICENSE.txt" />
-    <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBSplitAlpha.shader" />
-    <None Include="Assets\_textures\font\pipfont.txt" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\AmbientObscurance.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\AntialiasingAsPostEffect.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Bloom.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\BloomAndLensFlares.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Blur.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\CameraMotionBlur.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\ColorCorrectionCurves.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\ColorCorrectionLut.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\ContrastEnhance.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Crease.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\DepthOfField34.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\DepthOfFieldScatter.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\EdgeDetectEffectNormals.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\FastBloom.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Fisheye.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\GlobalFog.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\NoiseAndGrain.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\PostEffectsBase.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\PostEffectsHelper.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Quads.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\ScreenOverlay.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\SunShafts.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\TiltShiftHdr.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Tonemapping.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Triangles.js" />
-    <Compile Include="Assets\Standard Assets\Image Effects %28Pro Only%29\Vignetting.js" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\BlendOneOne.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\NoiseEffectShaderRGB.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\SeparableWeightedBlurDof34.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ShowAlphaChannel.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\GlowConeTap.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\SunShaftsComposite.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader %28SoftClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ColorCorrectionCurves.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ScreenSpaceAmbientObscurance.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\NFAA.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font %28AlphaClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\TiltShiftHdrLensBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\VignetteShader.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\MotionBlur.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored %28Packed%29 %28AlphaClip%29 .shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\MobileBloom.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\GlowCompose.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\Contrast Stretch\MinMaxReduction.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\SSAA.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\RadialBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored %28AlphaClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ContrastComposite.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\FXAAPreset3.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\FisheyeShader.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\Contrast Stretch\Apply.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\frag_ao.cginc" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored %28AlphaClip%29.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader %28AlphaClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font %28SoftClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\MobileBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\SSAOShader.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ConvertDepth.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ColorCorrectionCurvesSimple.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\NoiseEffectShaderYUV.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\GlowEffectDownsample.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\CreaseApply.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored %28Packed%29 %28SoftClip%29.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored %28SoftClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ChromaticAberrationShader.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\GlobalFog.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\Contrast Stretch\Luminance.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ColorCorrectionSelective.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\Bokeh34.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\CameraMotionBlurDX11.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\MultiPassHollywoodFlares.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\BlurEffectConeTaps.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\CameraMotionBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\DLAA.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored %28Packed%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\NoiseAndGrainDX11.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\BrightPassFilter2.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_DepthOfField\SeparableBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\MotionBlurClear.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ColorCorrectionEffect.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\GrayscaleEffect.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\SepiaToneEffect.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\TwirlEffect.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\VortexEffect.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\Contrast Stretch\Adaptation.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\NoiseAndGrain.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\VignettingShader.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\Tonemapper.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\BrightPassFilter.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\FXAA2.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\ColorCorrection3DLut.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\LensFlareCreate.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\EdgeDetectNormals.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\PrepareSunShaftsBlur.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\Blend.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\BlendModesOverlay.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\SimpleClear.shader" />
-    <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored %28SoftClip%29.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
-    <None Include="Assets\Standard Assets\Image Effects %28Pro Only%29\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\AmbientObscurance.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\AntialiasingAsPostEffect.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Bloom.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\BloomAndLensFlares.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Blur.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\CameraMotionBlur.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\ColorCorrectionCurves.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\ColorCorrectionLut.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\ContrastEnhance.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Crease.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\DepthOfField34.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\DepthOfFieldScatter.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\EdgeDetectEffectNormals.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\FastBloom.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Fisheye.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\GlobalFog.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\NoiseAndGrain.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\PostEffectsBase.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\PostEffectsHelper.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Quads.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\ScreenOverlay.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\SunShafts.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\TiltShiftHdr.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Tonemapping.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Triangles.js" />
+     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\Vignetting.js" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Depth Cutout.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendOneOne.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderRGB.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableWeightedBlurDof34.shader" />
+     <None Include="Assets\_textures\font\pipfont-56pt.txt" />
+     <None Include="Assets\_textures\font\pipfont-20pt.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ShowAlphaChannel.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowConeTap.shader" />
+     <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBChromaKey.shader" />
+     <None Include="Assets\_textures\font\pipfont_108pt.txt" />
+     <None Include="Assets\__newScenes\NewJourney\GameNames.txt" />
+     <None Include="Assets\ResourcesBase\TimbleTomble\Resources\BackgroundPrices.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader (SoftClip).shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ScreenSpaceAmbientObscurance.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\NFAA.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font (AlphaClip).shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Masked Colored.shader" />
+     <None Include="Assets\_textures\font\pipfont-44pt.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\TiltShiftHdrLensBlur.shader" />
+     <None Include="Assets\HOTween\readme.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\VignetteShader.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlur.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed) (AlphaClip) .shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBloom.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowCompose.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\MinMaxReduction.shader" />
+     <None Include="Assets\MobileMovieTexture\Instructions.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\SSAA.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\RadialBlur.shader" />
+     <None Include="Assets\ResourcesBase\TimbleTomble\Resources\StickerPrices.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (AlphaClip).shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored Desat.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ContrastComposite.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset3.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\FisheyeShader.shader" />
+     <None Include="Assets\_textures\font\pipfont-72pt.txt" />
+     <None Include="Assets\_textures\font\pipfont_112pt.txt" />
+     <None Include="Assets\Plugins\GoKit\easing\easeEquationsLicense.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Apply.shader" />
+     <None Include="Assets\_textures\Stories\StoryBrowser\spider\-orthello-config.xml" />
+     <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBTrans.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\frag_ao.cginc" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (AlphaClip).shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader (AlphaClip).shader" />
+     <None Include="Assets\_textures\font\pipfont-122pt.txt" />
+     <None Include="Assets\_textures\font\pipfont-38pt.txt" />
+     <None Include="Assets\___ToUpload\AssetVersions.txt" />
+     <None Include="Assets\_textures\font\OpenSans_Regular_64.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font (SoftClip).shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBlur.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SSAOShader.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ConvertDepth.shader" />
+     <None Include="Assets\_textures\Animations\growing_elements\flower\frames.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurvesSimple.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseEffectShaderYUV.shader" />
+     <None Include="Assets\_textures\Stories\StoryBrowser\ladybug\-orthello-config.xml" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowEffectDownsample.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CreaseApply.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed) (SoftClip).shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (SoftClip).shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ChromaticAberrationShader.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlobalFog.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Dynamic Font.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Luminance.shader" />
+     <None Include="Assets\NGUI\ReadMe - 3.0.2.txt" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionSelective.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\Bokeh34.shader" />
+     <None Include="Assets\_services\XML-JSON Serialization\Readme.txt" />
+     <None Include="Assets\SuperSplinesPro\ReadMe.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CameraMotionBlurDX11.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MultiPassHollywoodFlares.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlurEffectConeTaps.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\CameraMotionBlur.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\DLAA.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed).shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseAndGrainDX11.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter2.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\SeparableBlur.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlurClear.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionEffect.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GrayscaleEffect.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SepiaToneEffect.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\TwirlEffect.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VortexEffect.shader" />
+     <None Include="Assets\_textures\font\pipfont-white.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Adaptation.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\NoiseAndGrain.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\VignettingShader.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Tonemapper.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BrightPassFilter.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Additive Colored.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA2.shader" />
+     <None Include="Assets\_textures\font\pipfont-84pt.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrection3DLut.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\LensFlareCreate.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\EdgeDetectNormals.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\PrepareSunShaftsBlur.shader" />
+     <None Include="Assets\_textures\font\pipfont_96pt.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\Blend.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\BlendModesOverlay.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Depth.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
+     <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGB.shader" />
+     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (SoftClip).shader" />
+     <None Include="Assets\Editor\Flurry\SDK\Flurry-LICENSE.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
+     <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBSplitAlpha.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlurAndFlares.shader" />
+     <None Include="Assets\_textures\font\pipfont.txt" />
+     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\BlendForBloom.shader" />
+ <Reference Include="Assets\HOTween\Plugins\HOTween">
+ <HintPath>Assets\HOTween\Plugins\HOTween.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\Mono.Data">
+ <HintPath>Assets\Plugins\Mono.Data.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\Mono.Data.Sqlite">
+ <HintPath>Assets\Plugins\Mono.Data.Sqlite.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\Mono.Data.SqliteClient">
+ <HintPath>Assets\Plugins\Mono.Data.SqliteClient.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\P31RestKit">
+ <HintPath>Assets\Plugins\P31RestKit.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\System.Configuration">
+ <HintPath>Assets\Plugins\System.Configuration.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\System.Data">
+ <HintPath>Assets\Plugins\System.Data.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\System.EnterpriseServices">
+ <HintPath>Assets\Plugins\System.EnterpriseServices.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\Plugins\System.Security">
+ <HintPath>Assets\Plugins\System.Security.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -227,4 +227,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>
