@@ -24,6 +24,8 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		Debug.Log("Buy Map Show"); 
 		m_mapId = mapId;
 
+        RefreshBuyButton();
+
 		DisableUICams();
 		m_tweenBehaviour.On(false);
 	}
@@ -38,21 +40,19 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	{
         ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
         ParentGate.Instance.On();
-
-		StartCoroutine(AttemptPurchase());
 	}
     
     void OnParentGateAnswer(bool isCorrect)
     {
         ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
+
+        EnableUICams();
         
         if(isCorrect)
         {
-            Debug.Log("Purchasing book");
-            BuyMap();
+            Debug.Log("Purchasing map");
+            StartCoroutine(AttemptPurchase());
         }
-        
-        EnableUICams();
     }
 
 	bool m_purchaseIsResolved = false;
@@ -95,6 +95,12 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 		}
 		
 		RefreshBuyButton();
+
+        JourneyMap[] spawnedMaps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap));
+        foreach (JourneyMap map in spawnedMaps)
+        {
+            map.Refresh();
+        }
 		
 		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);

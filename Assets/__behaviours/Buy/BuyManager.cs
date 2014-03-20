@@ -79,7 +79,6 @@ public class BuyManager : Singleton<BuyManager>
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		
-
 		Action<StoreKitTransaction> purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_booksPurchaseSuccessfulEvent);
 
 		switch(m_buyType)
@@ -722,6 +721,8 @@ public class BuyManager : Singleton<BuyManager>
 			return true;
 		}
 #endif
+
+        Debug.Log(String.Format("IsMapBought({0}) - {1}", mapId, (m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)));
 
 		return m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
 	}
