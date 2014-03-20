@@ -251,7 +251,25 @@ public class BuyManager : Singleton<BuyManager>
 
 		string productId = obj.productIdentifier;
 
-		if(productId.Contains("story")) // Book
+        if (productId == m_booksProductIdentifier)
+        {
+            SetAllBooksPurchased();
+        } 
+        else if (productId == m_mapsProductIdentifier)
+        {
+            SetAllMapsPurchased();
+        } 
+        else if (productId == m_gamesProductIdentifier)
+        {
+            SetAllGamesPurchased();
+        } 
+        else if (productId = m_everythingProductIdentifier)
+        {
+            SetAllBooksPurchased();
+            SetAllMapsPurchased();
+            SetAllGamesPurchased();
+        }
+		else if(productId.Contains("stories")) // Book
 		{
 			// Find the story id
 			string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
@@ -268,24 +286,6 @@ public class BuyManager : Singleton<BuyManager>
             Debug.Log("mapId: " + mapId);
 			
 			SetMapPurchased(mapId);
-		}
-		else if(productId.Contains("stories")) // All Books
-		{
-			SetAllBooksPurchased();
-		}
-		else if(productId.Contains("maps")) // All Maps
-		{
-			SetAllMapsPurchased();
-		}
-		else if(productId.Contains("games")) // All Games
-		{
-			SetAllGamesPurchased();
-		}
-		else if(productId.Contains("everything")) // Everything
-		{
-			SetAllBooksPurchased();
-			SetAllMapsPurchased();
-			SetAllGamesPurchased();
 		}
 		else
 		{
