@@ -293,9 +293,11 @@ public class BuyManager : Singleton<BuyManager>
 		}
 		else if(productId.Contains("map")) // Map
 		{
-			// Find the story id
-			string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
-			int mapId = Convert.ToInt32(idNum);
+			// Find the map id
+			//string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
+			int mapId = Array.IndexOf(m_mapProductIdentifiers, productId);
+
+            Debug.Log("mapId: " + mapId);
 			
 			SetMapPurchased(mapId);
 		}
