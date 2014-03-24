@@ -9,15 +9,12 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 	private GameObject m_cannonBallPrefab;
 	[SerializeField]
 	private Transform m_ballCentre;
+    [SerializeField]
+    private Transform m_ballDestroyLocation;
 	[SerializeField]
 	private Vector2 m_pullRange;
 	[SerializeField]
 	private Vector2 m_forceRange;
-
-#if UNITY_EDITOR
-	[SerializeField]
-	private bool m_instantiateDebugBall;
-#endif
 
 	List<CannonBall> m_spawnedBalls = new List<CannonBall>();
 
@@ -26,12 +23,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 		m_pullRange.x = Mathf.Clamp (m_pullRange.x, 0, m_pullRange.x);
 		m_forceRange.x = Mathf.Clamp (m_forceRange.x, 0, m_forceRange.x);
 
-#if UNITY_EDITOR
-		if(m_instantiateDebugBall)
-		{
-			SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
-		}
-#endif
+        StartCoroutine(SpawnBall(0));
 	}
 
 	public Vector3 GetBallCentrePos()
@@ -70,7 +62,32 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
             Debug.Log ("force: " + force);
 
             ball.On();
-            ball.rigidbody.AddForce (force, ForceMode.Acceleration); // ForceMode.Acceleration makes the application of force independent of object mass
+            ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
+            //ball.rigidbody.AddForce (force, ForceMode.Acceleration); // ForceMode.Acceleration makes the application of force independent of object mass
+
+            StartCoroutine(SpawnBall());
 		}
 	}
+
+    IEnumerator SpawnBall(float delay = 1)
+    {
+        yield return new WaitForSeconds(delay);
+        GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
+        m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);
+    }
+
+    void Update()
+    {
+        List<CannonBall> ballsToDestroy = m_spawnedBalls.FindAll(IsBallBelowThreshold);
+        foreach (CannonBall ball in ballsToDestroy)
+        {
+            m_spawnedBalls.Remove(ball);
+            Destroy(ball.gameObject);
+        }
+    }
+
+    bool IsBallBelowThreshold(CannonBall ball)
+    {
+        return ball.transform.position.y < m_ballDestroyLocation.position.y;
+    }
 }

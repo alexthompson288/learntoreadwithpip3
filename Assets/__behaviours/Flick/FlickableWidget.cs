@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FlickableWidget : MonoBehaviour 
 {
@@ -8,25 +9,31 @@ public class FlickableWidget : MonoBehaviour
 	[SerializeField]
 	private Vector3 m_gravity = new Vector3(0, -0.5f, 0);
 	[SerializeField]
-	private Vector3 m_maxSpeed = new Vector3 (2, 2, 0);
+    private Vector3 m_maxSpeed = Vector3.one * -1;
+    [SerializeField]
+    private int m_maxDeltaCount = 4;
+    [SerializeField]
+    private float m_flickForceModifier = 1;
 
 	Vector3 m_dragOffset;
 
 	bool m_pressed = false;
 
-	Vector3 m_lastPos;
-
 	bool m_applyFlick = false;
 
-	DataRow m_data = null;
+	private DataRow m_data = null;
+    public DataRow data
+    {
+        get
+        {
+            return m_data;
+        }
+    }
 
-	[SerializeField]
-	private bool m_limitSpeed;
+    List<Vector2> m_deltas = new List<Vector2>();
 
 	void Awake()
 	{
-		m_maxSpeed.x = Mathf.Abs (m_maxSpeed.x);
-		m_maxSpeed.y = Mathf.Abs (m_maxSpeed.y);
 		m_maxSpeed.z = 0;
 		m_gravity.z = 0;
 	}
@@ -47,25 +54,27 @@ public class FlickableWidget : MonoBehaviour
 
 			if(m_applyFlick)
 			{
-				Vector3 flickVelocity = (transform.position - m_lastPos) / Time.deltaTime;
+                Vector3 flickVelocity = Vector3.zero;
+                foreach(Vector2 delta in m_deltas)
+                {
+                    flickVelocity += new Vector3(delta.x, delta.y, 0);
+                }
+
+                flickVelocity /= m_deltas.Count;
+                flickVelocity *= m_flickForceModifier;
+                flickVelocity *= Time.deltaTime;
+
 				Debug.Log("Apply: " + flickVelocity);
 				rigidbody.velocity = flickVelocity;
 				m_applyFlick = false;
 			}
 
-			if(m_limitSpeed)
+			if(!Mathf.Approximately(m_maxSpeed.x, -1))
 			{
 				Vector3 velocity = rigidbody.velocity;
 				
-				if(Mathf.Abs(velocity.y) > m_maxSpeed.y)
-				{
-					velocity.y = velocity.y / Mathf.Abs(velocity.y) * m_maxSpeed.y; // Set velocity.y to equal m_maxSpeed.y but keep its sign
-				}
-				
-				if(Mathf.Abs(velocity.x) > m_maxSpeed.x)
-				{
-					velocity.x = velocity.x / Mathf.Abs(velocity.x) * m_maxSpeed.x; // Set velocity.x to equal m_maxSpeed.x but keep its sign
-				}
+                velocity.x = Mathf.Clamp(velocity.x, -m_maxSpeed.x, m_maxSpeed.x);
+                velocity.y = Mathf.Clamp(velocity.y, -m_maxSpeed.y, m_maxSpeed.y);           
 				
 				rigidbody.velocity = velocity;
 			}
@@ -74,8 +83,6 @@ public class FlickableWidget : MonoBehaviour
 		{
 			rigidbody.velocity = Vector3.zero;
 		}
-
-		m_lastPos = transform.position;
 	}
 
 	void OnPress(bool pressed)
@@ -84,6 +91,8 @@ public class FlickableWidget : MonoBehaviour
 
 		if (m_pressed)
 		{
+            m_deltas.Clear();
+
 			rigidbody.velocity = Vector3.zero;
 
 			iTween.Stop(gameObject);
@@ -104,11 +113,19 @@ public class FlickableWidget : MonoBehaviour
 		transform.position = new Vector3(camPos.origin.x, camPos.origin.y, 0) - m_dragOffset;
 			
 		m_dragOffset = m_dragOffset - (Time.deltaTime * m_dragOffset);
+
+        m_deltas.Add(dragAmount);
+        while (m_deltas.Count > m_maxDeltaCount)
+        {
+            m_deltas.RemoveAt(0);
+        }
 	}
 
+    /*
 	void OnGUI()
 	{
 		GUILayout.Label("Velocity: " + rigidbody.velocity);
 		GUILayout.Label("Speed: " + rigidbody.velocity.magnitude);
 	}
+    */   
 }

@@ -14,6 +14,13 @@ public static class LoaderHelpers {
         return loadedAudio;
     }
 
+
+    public static AudioClip LoadAudioForWord(DataRow wordData)
+    {
+        return LoadAudioForWord(wordData["word"].ToString());
+    }
+
+
     public static AudioClip LoadMnemonic(DataRow phonemeData)
     {
 		string audioFilename = string.Format("{0}_{1}",

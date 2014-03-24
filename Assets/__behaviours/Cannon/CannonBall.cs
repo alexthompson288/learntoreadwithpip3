@@ -30,7 +30,7 @@ public class CannonBall : MonoBehaviour
 
 	void Start()
 	{
-		//iTween.ScaleFrom (gameObject, Vector3.zero, 0.5f); // This may or may not interfere with rigidbody motion, test it out first
+		iTween.ScaleFrom (gameObject, Vector3.zero, 0.5f); // This may or may not interfere with rigidbody motion, test it out first
 	}
 
 #if UNITY_EDITOR
@@ -64,26 +64,14 @@ public class CannonBall : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		//if (m_useGravity) 
-		//{
-			//rigidbody.AddForce(m_gravity);
-		//}
-
-        rigidbody.AddForce(m_gravity);
+        rigidbody.AddForce(m_gravity, ForceMode.Acceleration);
 
 		if(m_limitSpeed)
 		{
 			Vector3 velocity = rigidbody.velocity;
-			
-			if(Mathf.Abs(velocity.y) > m_maxSpeed.y)
-			{
-				velocity.y = velocity.y / Mathf.Abs(velocity.y) * m_maxSpeed.y; // Set velocity.y to equal m_maxSpeed.y but keep its sign
-			}
-			
-			if(Mathf.Abs(velocity.x) > m_maxSpeed.x)
-			{
-				velocity.x = velocity.x / Mathf.Abs(velocity.x) * m_maxSpeed.x; // Set velocity.x to equal m_maxSpeed.x but keep its sign
-			}
+
+            velocity.x = Mathf.Clamp(velocity.x, -m_maxSpeed.x, m_maxSpeed.x);
+            velocity.y = Mathf.Clamp(velocity.y, -m_maxSpeed.y, m_maxSpeed.y);
 			
 			rigidbody.velocity = velocity;
 		}
@@ -129,5 +117,6 @@ public class CannonBall : MonoBehaviour
     public void On()
     {
         rigidbody.isKinematic = false;
+        m_canDrag = false;
     }
 }
