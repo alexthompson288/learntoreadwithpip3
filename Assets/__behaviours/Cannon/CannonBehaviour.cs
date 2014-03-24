@@ -90,4 +90,9 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     {
         return ball.transform.position.y < m_ballDestroyLocation.position.y;
     }
+
+    public void OnBallDestroy(CannonBall ball)
+    {
+        m_spawnedBalls.Remove(ball);
+    }
 }

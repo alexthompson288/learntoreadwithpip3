@@ -28,7 +28,14 @@ public class CannonBall : MonoBehaviour
 
 	Vector3 m_dragOffset;
 
-	bool m_canDrag = true;
+	private bool m_canDrag = true;
+    public bool canDrag
+    {
+        get
+        {
+            return m_canDrag;
+        }
+    }
 
 	void Start()
 	{
@@ -121,5 +128,11 @@ public class CannonBall : MonoBehaviour
     {
         rigidbody.isKinematic = false;
         m_canDrag = false;
+    }
+
+    public void Explode()
+    {
+        m_cannon.OnBallDestroy(this);
+        Destroy(gameObject);
     }
 }

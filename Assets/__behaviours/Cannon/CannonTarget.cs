@@ -45,7 +45,7 @@ public class CannonTarget : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "CannonBall" && OnTargetHit != null)
+        if(other.tag == "CannonBall" && !other.GetComponent<CannonBall>().canDrag && OnTargetHit != null)
         {
             OnTargetHit(this, other);
         }

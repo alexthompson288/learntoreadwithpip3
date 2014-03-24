@@ -20,7 +20,9 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
     [SerializeField]
     private float m_probabilityTargetIsCurrent = 0.5f;
     [SerializeField]
-    private Transform m_targetDestroyLocation;
+    private Transform m_minTargetDestroyLocation;
+    [SerializeField]
+    private Transform m_maxTargetDestroyLocation;
     [SerializeField]
     private int m_targetScore = 5;
     [SerializeField]
@@ -83,6 +85,8 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
                 bool makeRecursive = (i == 0);
                 StartCoroutine(SpawnTarget(makeRecursive));
             }
+
+            StartCoroutine(DestroyTargets());
         } 
         else
         {
@@ -90,7 +94,7 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
         }
     }
 
-    void Update()
+    IEnumerator DestroyTargets()
     {
         List<Transform> targetsToDestroy = m_spawnedTargets.FindAll(ShouldDestroyTarget);
         foreach (Transform target in targetsToDestroy)
@@ -98,11 +102,15 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
             m_spawnedTargets.Remove(target);
             Destroy(target.gameObject);
         }
+
+        yield return new WaitForSeconds(3f);
+        StartCoroutine(DestroyTargets());
     }
 
     bool ShouldDestroyTarget(Transform target)
     {
-        return (target.position.x > m_targetDestroyLocation.position.x || target.position.y < m_targetDestroyLocation.position.y);
+        return (target.position.x > m_maxTargetDestroyLocation.position.x ||  target.position.y > m_maxTargetDestroyLocation.position.y 
+                || target.position.y < m_minTargetDestroyLocation.position.y || target.position.y < m_minTargetDestroyLocation.position.y);
     }
 
     IEnumerator SpawnTarget(bool makeRecursive)
@@ -165,6 +173,8 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
         {
             target.ApplyHitForce(ball.transform);
         }
+
+        ball.GetComponent<CannonBall>().Explode();
     }
 
     void PlayLongAudio()
