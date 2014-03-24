@@ -197,7 +197,11 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
 
     IEnumerator OnGameCompleteCo()
     {
-        m_castleBehaviour.On();
-        yield break;
+        yield return null;
+
+        if (m_castleBehaviour.gameObject.activeInHierarchy)
+        {
+            m_castleBehaviour.On();
+        }
     }
 }

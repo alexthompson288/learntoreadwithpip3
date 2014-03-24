@@ -15,6 +15,8 @@ public class CannonBall : MonoBehaviour
 	[SerializeField]
 	private Vector3 m_maxSpeed = new Vector3 (2, 2, 0);
 
+    CannonBehaviour m_cannon = null;
+
 #if UNITY_EDITOR
 	[SerializeField]
 	UISprite m_sprite;
@@ -36,12 +38,12 @@ public class CannonBall : MonoBehaviour
 #if UNITY_EDITOR
 	void Update()
 	{
-		Vector3 cannonDelta = transform.position - CannonBehaviour.Instance.GetBallCentrePos();
-		if (cannonDelta.magnitude > CannonBehaviour.Instance.GetMaxPull ()) 
+		Vector3 cannonDelta = transform.position - m_cannon.GetBallCentrePos();
+		if (cannonDelta.magnitude > m_cannon.GetMaxPull ()) 
 		{
 			m_sprite.color = Color.red;
 		} 
-		else if (cannonDelta.magnitude < CannonBehaviour.Instance.GetMinPull ()) 
+		else if (cannonDelta.magnitude < m_cannon.GetMinPull ()) 
 		{
 			m_sprite.color = Color.black;
 		} 
@@ -52,8 +54,9 @@ public class CannonBall : MonoBehaviour
 	}
 #endif
 
-	public void SetUp(DataRow data)
+	public void SetUp(CannonBehaviour cannon, DataRow data = null)
 	{
+        m_cannon = cannon;
 		m_data = data;
 	}
 
@@ -92,7 +95,7 @@ public class CannonBall : MonoBehaviour
 			}
 			else
 			{
-				CannonBehaviour.Instance.OnBallRelease(this);
+				m_cannon.OnBallRelease(this);
 			}
 		}
 	}
@@ -106,10 +109,10 @@ public class CannonBall : MonoBehaviour
 			
 			m_dragOffset = m_dragOffset - (Time.deltaTime * m_dragOffset);
 
-			Vector3 cannonDelta = transform.position - CannonBehaviour.Instance.GetBallCentrePos();
-			if(cannonDelta.magnitude > CannonBehaviour.Instance.GetMaxPull())
+			Vector3 cannonDelta = transform.position - m_cannon.GetBallCentrePos();
+			if(cannonDelta.magnitude > m_cannon.GetMaxPull())
 			{
-				transform.position = CannonBehaviour.Instance.GetBallCentrePos() + (cannonDelta.normalized * CannonBehaviour.Instance.GetMaxPull());
+				transform.position = m_cannon.GetBallCentrePos() + (cannonDelta.normalized * m_cannon.GetMaxPull());
 			}
 		}
 	}

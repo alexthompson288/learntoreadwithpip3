@@ -53,17 +53,16 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
             
             float distance = delta.magnitude;
             float proportionalDistance = (distance - m_pullRange.x) / (m_pullRange.y - m_pullRange.x);
-            Debug.Log ("proportionalDistance: " + proportionalDistance);
+            //Debug.Log ("proportionalDistance: " + proportionalDistance);
             
             Vector3 direction = delta.normalized;
-            Debug.Log ("direction: " + direction);
+            //Debug.Log ("direction: " + direction);
             
             Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
-            Debug.Log ("force: " + force);
+            //Debug.Log ("force: " + force);
 
             ball.On();
             ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
-            //ball.rigidbody.AddForce (force, ForceMode.Acceleration); // ForceMode.Acceleration makes the application of force independent of object mass
 
             StartCoroutine(SpawnBall());
 		}
@@ -73,6 +72,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     {
         yield return new WaitForSeconds(delay);
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
+        newBall.GetComponent<CannonBall>().SetUp(this);
         m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);
     }
 
