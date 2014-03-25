@@ -61,7 +61,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
             Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
             //Debug.Log ("force: " + force);
 
-            ball.On();
+            ball.OnLaunch();
             ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
 
             StartCoroutine(SpawnBall());

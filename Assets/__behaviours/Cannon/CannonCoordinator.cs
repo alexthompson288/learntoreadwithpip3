@@ -44,7 +44,7 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
     {
         m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
 
-        m_scoreBar.SetStarsTarget(m_targetScore);
+        //m_scoreBar.SetStarsTarget(m_targetScore);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -161,8 +161,8 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
             PlayShortAudio();
 
             m_score++;
-            m_scoreBar.SetStarsCompleted(m_score);
-            m_scoreBar.SetScore(m_score);
+            //m_scoreBar.SetStarsCompleted(m_score);
+            //m_scoreBar.SetScore(m_score);
 
             if(m_score >= m_targetScore)
             {
@@ -213,5 +213,10 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
         {
             m_castleBehaviour.On();
         }
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("Score: " + m_score);
     }
 }

@@ -106,7 +106,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 		m_hasStoryData = true;
 
-        yield return StartCoroutine(LoadAssetBundle());
+        //yield return StartCoroutine(LoadAssetBundle());
         m_currentDisplayer = m_page0;
         StartCoroutine(NextPage(true));
 	}
