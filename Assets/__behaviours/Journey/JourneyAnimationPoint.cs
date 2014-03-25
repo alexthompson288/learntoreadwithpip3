@@ -17,12 +17,14 @@ public class JourneyAnimationPoint : MonoBehaviour
 
 	float m_totalDeltaY;
 
+/*
 #if UNITY_STANDALONE || UNITY_WEBPLAYER
 	void Start ()
 	{
 		gameObject.SetActive(false);
 	}
 #endif
+*/
 
 	void OnClick ()
 	{
@@ -36,7 +38,6 @@ public class JourneyAnimationPoint : MonoBehaviour
 				if(String.IsNullOrEmpty(m_videoName))
 				{
 					Debug.Log("Play Session " + m_sessionNum);
-					//SessionManager.Instance.SetSessionType(SessionManager.ST.Voyage);
 					SessionManager.Instance.OnChooseSession(SessionManager.ST.Voyage, m_sessionNum);
 				}
 				else
@@ -44,6 +45,10 @@ public class JourneyAnimationPoint : MonoBehaviour
 #if UNITY_IPHONE || UNITY_ANDROID
 					Debug.Log("Playing " + m_videoName + ".mp4");
 					Handheld.PlayFullScreenMovie(m_videoName + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+#else
+                    VideoCoordinator.SetVideoName(m_videoName);
+                    GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+                    TransitionScreen.Instance.ChangeLevel("NewVideo", true);
 #endif
 				}
 			}

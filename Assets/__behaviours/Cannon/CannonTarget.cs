@@ -10,6 +10,12 @@ public class CannonTarget : MonoBehaviour
     [SerializeField]
     private Vector2 m_localMovementVariance = Vector2.zero;
 
+    enum MovementType
+    {
+        Pop,
+        Continuous,
+    }
+
     public delegate void TargetHit(CannonTarget target, Collider ball);
     public event TargetHit OnTargetHit;
 

@@ -6,7 +6,7 @@ using System.Linq;
 
 public class LessonInfo : Singleton<LessonInfo> 
 {
-	public enum DataType // TODO: There should only be one place to reference data types in the whole project. Make a class called Data, give it an enum called Type
+	public enum DataType // TODO: There should only be one place to reference data types in the whole project. Make a class called Data, give it an enum
 	{
 		Letters,
 		Words,

@@ -9,10 +9,12 @@ public class VideoCoordinator : MonoBehaviour
 	[SerializeField]
 	private AudioSource m_audioSource;
 
-	//string m_videoFilename = "Videos/ogg_1024_2_blending.ogg";
-	//string m_videoFilename = "Videos/BunnyDance.ogg";
+    static string m_videoName;
 
-	//string m_audioFilename = "blending_audio";
+    public static void SetVideoName(string videoName)
+    {
+        m_videoName = videoName;
+    }
 
 	// Use this for initialization
 	IEnumerator Start () 
@@ -33,17 +35,25 @@ public class VideoCoordinator : MonoBehaviour
 			}
 		}
 #else
-		foreach(DataRow sentence in sentences)
-		{
-			if(sentence["is_target_sentence"].ToString() == "t")
-			{
-				PlayVideo(sentence["text"].ToString());
-			}
-			else if(sentence["is_dummy_sentence"].ToString() == "t")
-			{
-				PlayAudio(sentence["text"].ToString());
-			}
-		}
+        if(GameDataBridge.Instance.contentType == GameDataBridge.ContentType.Sets)
+        {
+            PlayVideo(m_videoName);
+            PlayAudio(m_videoName + "_audio");
+        }
+        else
+        {
+    		foreach(DataRow sentence in sentences)
+    		{
+    			if(sentence["is_target_sentence"].ToString() == "t")
+    			{
+    				PlayVideo(sentence["text"].ToString());
+    			}
+    			else if(sentence["is_dummy_sentence"].ToString() == "t")
+    			{
+    				PlayAudio(sentence["text"].ToString());
+    			}
+    		}
+        }
 		
 		while(m_movieTexture.isPlaying)
 		{
@@ -51,7 +61,8 @@ public class VideoCoordinator : MonoBehaviour
 		}
 #endif
 
-		SessionManager.Instance.OnGameFinish();
+		//SessionManager.Instance.OnGameFinish();
+        PipHelpers.OnGameFinish(true, "NewVoyage");
 	}
 
 	void PlayAudio (string filename)

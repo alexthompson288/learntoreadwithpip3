@@ -132,7 +132,17 @@ public class CannonBall : MonoBehaviour
     
     public void Explode()
     {
+        StartCoroutine(ExplodeCo());
+    }
+
+    IEnumerator ExplodeCo()
+    {
         m_cannon.OnBallDestroy(this);
+
+        iTween.PunchScale(gameObject, Vector3.one * 1.2f, 0.2f);
+
+        yield return new WaitForSeconds(0.2f);
+
         Destroy(gameObject);
     }
 }

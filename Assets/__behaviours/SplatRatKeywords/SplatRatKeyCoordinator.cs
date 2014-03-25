@@ -92,7 +92,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);
 		
-
         foreach (DataRow myPh in lettersPool)
         {
 			Debug.Log("word: " + myPh["word"].ToString());
