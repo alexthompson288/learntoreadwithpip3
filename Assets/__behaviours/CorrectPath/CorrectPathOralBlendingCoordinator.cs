@@ -184,7 +184,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		m_currentTargetWord = m_targetWords[Random.Range(0, m_targetWords.Count)];
 		m_targetWords.Remove(m_currentTargetWord);
 
-        UserStats.Activity.Current.AddWord(m_currentTargetWord);
+        UserStats.Activity.AddWord(m_currentTargetWord);
 
 		m_currentTargetAudio = LoaderHelpers.LoadAudioForWord(m_currentTargetWord["word"].ToString());
 
@@ -292,7 +292,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 			StopCoroutine("PlayWordAudio");
 			*/
 
-            UserStats.Activity.Current.IncrementNumAnswers();
+            UserStats.Activity.IncrementNumAnswers();
 
 			StopAllCoroutines();
 
@@ -303,7 +303,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 			}
 			else
 			{
-                UserStats.Activity.Current.AddIncorrectWord(m_currentTargetWord);
+                UserStats.Activity.AddIncorrectWord(m_currentTargetWord);
 				StartCoroutine(PlayAllAudio());
 			}
 		}

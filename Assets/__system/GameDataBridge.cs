@@ -247,6 +247,10 @@ public class GameDataBridge : Singleton<GameDataBridge>
         return m_cmsDb;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
+    // TODO: Move all below methods to DataHelpers
+
     public DataTable GetSectionWords(int sectionId)
     {
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId.ToString() + " GROUP BY words.id");

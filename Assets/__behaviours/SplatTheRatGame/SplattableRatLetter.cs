@@ -66,7 +66,7 @@ public class SplattableRatLetter : MonoBehaviour
     {
 		StartCoroutine(HitEffect());
 
-        UserStats.Activity.Current.IncrementNumAnswers();
+        UserStats.Activity.IncrementNumAnswers();
 		
         bool isCorrect = m_gamePlayer.LetterClicked(m_letter, m_locator);
 		

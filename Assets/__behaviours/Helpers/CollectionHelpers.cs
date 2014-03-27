@@ -20,7 +20,7 @@ public class CollectionHelpers
 		}
 	}
 
-    public static string ConcatList<T>(IList<T> list) // TODO: Make this method take IList parameter
+    public static string ConcatList<T>(IList<T> list)
     {
         string concat = "";
 
@@ -33,6 +33,14 @@ public class CollectionHelpers
         
         return concat;
     }
+
+    public static bool IsSubset<T>(IList<T> subset, IList<T> superset)
+    {
+        return !subset.Except(superset).Any();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Comparisons for sorting Collections
 
 	public static int ComparePosX(MonoBehaviour a, MonoBehaviour b)
 	{
@@ -72,6 +80,7 @@ public class CollectionHelpers
 		}
 	}
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
 	public static bool AreEqual<T>(IList<T> list1, IList<T> list2)
@@ -104,9 +113,4 @@ public class CollectionHelpers
 		return areEqual;
 	}
 	*/
-
-	public static bool IsSubset<T>(IList<T> subset, IList<T> superset)
-	{
-		return !subset.Except(superset).Any();
-	}
 }

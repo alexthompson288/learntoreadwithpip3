@@ -163,7 +163,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     {
 		WingroveAudio.WingroveRoot.Instance.PostEvent(m_splatSound);
 
-		UserStats.Activity.Current.IncrementNumAnswers ();
+		UserStats.Activity.IncrementNumAnswers ();
 		
         if (letter == m_currentLetter)
         {
@@ -193,7 +193,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE phoneme='" + letter + "'");
 			DataRow letterData = dt.Rows.Count > 0 ? dt.Rows[0] : null;
 
-			UserStats.Activity.Current.AddIncorrectPhoneme(m_currentLetterData);
+			UserStats.Activity.AddIncorrectPhoneme(m_currentLetterData);
 
             m_blackBoard.ShowImage(m_phonemeImages[m_currentLetterData],
                 m_currentLetterData["phoneme"].ToString(),
@@ -241,7 +241,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
         m_currentLetterData = m_lettersPool[selectedIndex];
         m_currentLetter = m_currentLetterData["phoneme"].ToString();
 
-		UserStats.Activity.Current.AddPhoneme (m_currentLetterData);
+		UserStats.Activity.AddPhoneme (m_currentLetterData);
 
         int letters = 5;
         for (int index = 0; index < 5; ++index)

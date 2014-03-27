@@ -125,7 +125,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			Debug.Log("Random target: " + m_currentLetterData["word"].ToString());
 		}
 
-        UserStats.Activity.Current.AddWord(m_currentLetterData);
+        UserStats.Activity.AddWord(m_currentLetterData);
 
 		m_currentLetter = m_currentLetterData["word"].ToString();
 		
@@ -285,6 +285,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 
     public void PostOnIncorrectAnswer()
     {
-        UserStats.Activity.Current.AddIncorrectWord(m_currentLetterData);
+        UserStats.Activity.AddIncorrectWord(m_currentLetterData);
     }
 }

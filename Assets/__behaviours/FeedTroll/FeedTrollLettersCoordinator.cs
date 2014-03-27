@@ -127,7 +127,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 	{
 		m_currentLetterData = m_lettersPool[Random.Range(0, m_lettersPool.Count)];
 
-        UserStats.Activity.Current.AddPhoneme(m_currentLetterData);
+        UserStats.Activity.AddPhoneme(m_currentLetterData);
 		
 		m_bennyTheBook.SetChangeableInstruction(m_graphemeAudio[m_currentLetterData]);
 		
@@ -169,7 +169,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 	{
 		if(draggable.transform.position.x < m_trollBoundary.position.x)
 		{
-            UserStats.Activity.Current.IncrementNumAnswers();
+            UserStats.Activity.IncrementNumAnswers();
 
 			Debug.Log("draggableText: " + draggable.GetText());
 			Debug.Log("currentLetter: " + m_currentLetterData["phoneme"].ToString());
@@ -179,7 +179,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 			}
 			else
 			{
-                UserStats.Activity.Current.AddIncorrectPhoneme(m_currentLetterData);
+                UserStats.Activity.AddIncorrectPhoneme(m_currentLetterData);
 
 				PlayLetterSound(m_currentLetterData);
 				

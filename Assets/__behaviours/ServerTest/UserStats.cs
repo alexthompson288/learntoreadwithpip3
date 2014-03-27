@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-//using System.Runtime.Serialization.Json; // Need System.Runtime.Serialization.dll
+
+// TODO: The subclasses NEED static (not instance) methods. External classes should never directly access the Current instances because they could be null
 
 public class UserStats : Singleton<UserStats> 
 {	
@@ -24,36 +25,11 @@ public class UserStats : Singleton<UserStats>
 		Debug.Log ("UserStats.OnLevelWasLoaded()");
 		
 		Activity.OnNewScene ();
-	}
-
-	static string ConcatList<T>(List<T> list)
-	{
-		string concat = "";
-		
-		foreach (T t in list) 
-		{
-			concat += String.Format("{0}_", t);
-		}
-		
-		concat = concat.TrimEnd (new char[] { '_' });
-		
-		return concat;
-	}
+	}   
 
 	public class Activity : TimedEvent
 	{
 		private static Activity m_current;
-		public static Activity Current
-		{
-			get
-			{
-#if UNITY_EDITOR
-                return m_current;
-#else
-                return m_current;
-#endif
-			}
-		}
 
 		string m_coreSkill = "Reading";
 
@@ -75,7 +51,7 @@ public class UserStats : Singleton<UserStats>
 		int m_storyId = 0;
 		List<int> m_pipPadCalls = new List<int> ();
 
-		public Activity(bool makeCurrent = true) : base()
+		public Activity() : base()
 		{
 			Debug.Log("new Activity() - " + Application.loadedLevelName);
 
@@ -94,10 +70,7 @@ public class UserStats : Singleton<UserStats>
 				m_sectionId = SessionManager.Instance.GetCurrentSectionId();
 			}
 
-            if(makeCurrent)
-            {
-			    m_current = this;
-            }
+			m_current = this;
 		}
 
 		public static void OnNewScene()
@@ -115,6 +88,14 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
+        public static void End(bool completed)
+        {
+            if (m_current != null)
+            {
+                m_current.EndEvent(completed);
+            }
+        }
+
 		public override void EndEvent(bool completed)
 		{
 			Debug.Log (String.Format ("Activity.EndEvent({0})", completed));
@@ -123,6 +104,14 @@ public class UserStats : Singleton<UserStats>
 			
 			m_current = null;
 		}
+
+        public static void Post()
+        {
+            if (m_current != null)
+            {
+                m_current.PostData();
+            }
+        }
 
 		public override void PostData()
 		{
@@ -160,10 +149,10 @@ public class UserStats : Singleton<UserStats>
                 Debug.Log("sectionId: " + m_sectionId);
                 Debug.Log("numAnswers: " + m_numAnswers);
                 Debug.Log("numIncorrectPhonemes: " + m_incorrectPhonemeIds.Count);
-                Debug.Log("incorrectPhonemes: " + ConcatList(m_incorrectPhonemeIds));
+                Debug.Log("incorrectPhonemes: " + CollectionHelpers.ConcatList(m_incorrectPhonemeIds));
                 Debug.Log("storyId: " + m_storyId);
                 Debug.Log("numPipPadCalls: " + m_pipPadCalls.Count);
-                Debug.Log("pipPadCalls: " + ConcatList(m_pipPadCalls));
+                Debug.Log("pipPadCalls: " + CollectionHelpers.ConcatList(m_pipPadCalls));
 #endif
 
                 form.AddField (m_modelName + "[core_skill]", m_coreSkill);
@@ -172,25 +161,28 @@ public class UserStats : Singleton<UserStats>
                 form.AddField (m_modelName + "[set_num]", m_setNum);
                 form.AddField (m_modelName + "[section_id]", m_sectionId);
                 form.AddField (m_modelName + "[num_answers]", m_numAnswers);
-                form.AddField (m_modelName + "[phoneme_ids]", ConcatList (m_phonemeIds));
-                form.AddField (m_modelName + "[incorrect_phoneme_ids]", ConcatList (m_incorrectPhonemeIds));
-                form.AddField (m_modelName + "[word_ids]", ConcatList (m_wordIds));
-                form.AddField (m_modelName + "[incorrect_word_ids]", ConcatList (m_incorrectWordIds));
+                form.AddField (m_modelName + "[phoneme_ids]", CollectionHelpers.ConcatList (m_phonemeIds));
+                form.AddField (m_modelName + "[incorrect_phoneme_ids]", CollectionHelpers.ConcatList (m_incorrectPhonemeIds));
+                form.AddField (m_modelName + "[word_ids]", CollectionHelpers.ConcatList (m_wordIds));
+                form.AddField (m_modelName + "[incorrect_word_ids]", CollectionHelpers.ConcatList (m_incorrectWordIds));
                 form.AddField (m_modelName + "[story_id]", m_storyId);
-                form.AddField (m_modelName + "[pip_pad_calls]", ConcatList (m_pipPadCalls));
+                form.AddField (m_modelName + "[pip_pad_calls]", CollectionHelpers.ConcatList (m_pipPadCalls));
                 
                 base.PostData ("Activity", form);
             }
 		}
 
 		// Setters
-		public void IncrementNumAnswers()
+		public static void IncrementNumAnswers()
 		{
 			//Debug.Log ("Activity.IncrementNumAnswers()");
-			++m_numAnswers;
+            if (m_current != null)
+            {
+                ++m_current.m_numAnswers;
+            }
 		}
 
-		public void AddData(int dataId, Game.Data dataType)
+		public static void AddData(int dataId, Game.Data dataType)
 		{
 			if (dataType == Game.Data.Phonemes)
 			{
@@ -202,7 +194,7 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddData(DataRow data, Game.Data dataType)
+		public static void AddData(DataRow data, Game.Data dataType)
 		{
 			if (dataType == Game.Data.Phonemes)
 			{
@@ -214,7 +206,7 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddIncorrectData(int dataId, Game.Data dataType)
+		public static void AddIncorrectData(int dataId, Game.Data dataType)
 		{
 			if (dataType == Game.Data.Phonemes)
 			{
@@ -226,7 +218,7 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddIncorrectData(DataRow data, Game.Data dataType)
+		public static void AddIncorrectData(DataRow data, Game.Data dataType)
 		{
 			if (dataType == Game.Data.Phonemes)
 			{
@@ -238,71 +230,103 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddPhoneme(int phonemeId)
+        // TODO: Create AddData and AddIncorrectData methods that infer dataType from Game.data
+
+		public static void AddPhoneme(int phonemeId)
 		{
-			m_phonemeIds.Add (phonemeId);
+            if (m_current != null)
+            {
+                m_current.m_phonemeIds.Add(phonemeId);
+            }
 		}
 
-		public void AddPhoneme(DataRow phoneme)
+		public static void AddPhoneme(DataRow phoneme)
 		{
 			//Debug.Log (String.Format ("Activity.AddPhoneme({0})", phoneme ["phoneme"]));
-			m_phonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
+            if (m_current != null)
+            {
+                m_current.m_phonemeIds.Add(Convert.ToInt32(phoneme ["id"]));
+            }
 		}
 
-		public void AddIncorrectPhoneme(int phonemeId)
+		public static void AddIncorrectPhoneme(int phonemeId)
 		{
-			m_incorrectPhonemeIds.Add (phonemeId);
+            if (m_current != null)
+            {
+                m_current.m_incorrectPhonemeIds.Add(phonemeId);
+            }
 		}
 
-		public void AddIncorrectPhoneme(DataRow phoneme)
+		public static void AddIncorrectPhoneme(DataRow phoneme)
 		{
 			//Debug.Log (String.Format ("Activity.AddIncorrectPhoneme({0})", phoneme ["phoneme"]));
-			m_incorrectPhonemeIds.Add (Convert.ToInt32(phoneme ["id"]));
+            if (m_current != null)
+            {
+                m_current.m_incorrectPhonemeIds.Add(Convert.ToInt32(phoneme ["id"]));
+            }
 		}
 
-		public void AddWord(int wordId)
+		public static void AddWord(int wordId)
 		{
-			m_wordIds.Add (wordId);
+            if (m_current != null)
+            {
+                m_current.m_wordIds.Add(wordId);
+            }
 		}
 
-		public void AddWord(DataRow word)
+		public static void AddWord(DataRow word)
 		{
-			m_wordIds.Add (Convert.ToInt32 (word ["id"]));
+            if (m_current != null)
+            {
+                m_current.m_wordIds.Add(Convert.ToInt32(word ["id"]));
+            }
 		}
 
-		public void AddIncorrectWord(int wordId)
+		public static void AddIncorrectWord(int wordId)
 		{
-			m_incorrectWordIds.Add (wordId);
+            if (m_current != null)
+            {
+                m_current.m_incorrectWordIds.Add(wordId);
+            }
 		}
 
-		public void AddIncorrectWord(DataRow word)
+		public static void AddIncorrectWord(DataRow word)
 		{
-			m_incorrectWordIds.Add (Convert.ToInt32 (word ["id"]));
+            if (m_current != null)
+            {
+                m_current.m_incorrectWordIds.Add(Convert.ToInt32(word ["id"]));
+            }
 		}
 
-		public void SetStoryId(int storyId)
+		public static void SetStoryId(int storyId)
 		{
-			//Debug.Log(String.Format("Activity.SetStoryId({0})", storyId));
-			m_storyId = storyId;
-		}
+            //Debug.Log(String.Format("Activity.SetStoryId({0})", storyId));
+            if (m_current != null)
+            {
+                m_current.m_storyId = storyId;
+            }
+        }
 
-		public void AddPipPadCall(int wordId)
+		public static void AddPipPadCall(int wordId)
 		{
 			//Debug.Log(String.Format("Activity.AddPipPadCall({0})", wordId));
-			m_pipPadCalls.Add (wordId);
+            if (m_current != null)
+            {
+                m_current.m_pipPadCalls.Add(wordId);
+            }
 		}
 	}
 
 	public class Session : TimedEvent
 	{
 		private static Session m_current;
-		public static Session Current
-		{
-			get
-			{
+        public static Session Current
+        {
+            get
+            {
                 return m_current;
-			}
-		}
+            }
+        }
 
 		string m_sessionIdentifier = "";
 		string m_sessionName = "";
@@ -406,6 +430,14 @@ public class UserStats : Singleton<UserStats>
 			return sessionIdentifier;
 		}
 
+        public static void End(bool completed)
+        {
+            if (m_current != null)
+            {
+                m_current.EndEvent(completed);
+            }
+        }
+
 		public override void EndEvent(bool completed)
 		{
 			Debug.Log(String.Format("Session.EndEvent({0})", completed));
@@ -413,6 +445,14 @@ public class UserStats : Singleton<UserStats>
 			
 			m_current = null;
 		}
+
+        public static void Post()
+        {
+            if (m_current != null)
+            {
+                m_current.PostData();
+            }
+        }
 		
 		public override void PostData()
 		{
@@ -439,7 +479,7 @@ public class UserStats : Singleton<UserStats>
                 Debug.Log("sessionId: " + m_sessionId);
                 Debug.Log("sessionNum: " + m_sessionNum);
                 Debug.Log("sessionType: " + m_sessionType);
-                Debug.Log("scenes: " + ConcatList(m_scenes));
+                Debug.Log("scenes: " + CollectionHelpers.ConcatList(m_scenes));
 #endif
 
                 form.AddField (m_modelName + "[session_identifier]", m_sessionIdentifier);
@@ -447,13 +487,13 @@ public class UserStats : Singleton<UserStats>
                 form.AddField (m_modelName + "[session_id]" , m_sessionId);
                 form.AddField (m_modelName + "[session_num]" , m_sessionNum);
                 form.AddField (m_modelName + "[session_type]", m_sessionType.ToString ());
-                form.AddField (m_modelName + "[scenes]", ConcatList (m_scenes));
+                form.AddField (m_modelName + "[scenes]", CollectionHelpers.ConcatList (m_scenes));
                 
-                form.AddField (m_modelName + "[phoneme_ids]", ConcatList (m_letters));
+                form.AddField (m_modelName + "[phoneme_ids]", CollectionHelpers.ConcatList (m_letters));
                 form.AddField (m_modelName + "[target_phoneme_id]", m_targetLetter);
-                form.AddField (m_modelName + "[word_ids]", ConcatList (m_words));
+                form.AddField (m_modelName + "[word_ids]", CollectionHelpers.ConcatList (m_words));
                 form.AddField (m_modelName + "[target_word_id]", m_targetWord);
-                form.AddField (m_modelName + "[keyword_ids]", ConcatList (m_keywords));
+                form.AddField (m_modelName + "[keyword_ids]", CollectionHelpers.ConcatList (m_keywords));
                 form.AddField (m_modelName + "[target_keyword_id]", m_targetKeyword);
                 
                 base.PostData ("Session", form);

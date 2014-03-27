@@ -170,7 +170,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 				if(postEvent)
 				{
-					UserStats.Activity.Current.AddPipPadCall(Convert.ToInt32(row["id"]));
+					UserStats.Activity.AddPipPadCall(Convert.ToInt32(row["id"]));
 				}
 				
 				string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');

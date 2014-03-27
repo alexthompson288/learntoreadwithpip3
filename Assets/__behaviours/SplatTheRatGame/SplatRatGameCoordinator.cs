@@ -170,7 +170,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 				m_currentLetterData = lettersPool[selectedIndex];
 			}
 
-            UserStats.Activity.Current.AddPhoneme(m_currentLetterData);
+            UserStats.Activity.AddPhoneme(m_currentLetterData);
 
 			m_currentLetter = m_currentLetterData["phoneme"].ToString();
 			
@@ -339,7 +339,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
     public void PostOnIncorrect()
     {
-        UserStats.Activity.Current.AddIncorrectPhoneme(m_currentLetterData);
+        UserStats.Activity.AddIncorrectPhoneme(m_currentLetterData);
     }
 	
 	public int GetPercentageProbabilityLetterIsTarget()

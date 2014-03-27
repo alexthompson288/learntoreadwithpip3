@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class VideoCoordinator : MonoBehaviour 
 {
@@ -34,8 +35,10 @@ public class VideoCoordinator : MonoBehaviour
 		{
 			if(sentence["is_target_sentence"].ToString() == "t")
 			{
-				Handheld.PlayFullScreenMovie(sentence["text"].ToString() + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
-				break;
+				//Handheld.PlayFullScreenMovie(m_mp4Subdirectory + "/" + sentence["text"].ToString() + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+                Handheld.PlayFullScreenMovie(String.Format("{0}/{1}.mp4", m_mp4Subdirectory, sentence["text"]),
+                                             Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+                break;
 			}
 		}
 #else
@@ -65,7 +68,6 @@ public class VideoCoordinator : MonoBehaviour
 		}
 #endif
 
-		//SessionManager.Instance.OnGameFinish();
         PipHelpers.OnGameFinish(true, "NewVoyage");
 	}
 
@@ -86,12 +88,12 @@ public class VideoCoordinator : MonoBehaviour
 		{
             Debug.Log("Execute try");
 
-            Debug.Log("Looking for: " + Application.dataPath + "/StreamingAssets/StandaloneOggs/" + filename + ".ogg");
+            string streamingRelativePath = String.Format("StandaloneOggs/{0}.ogg", filename);
 
-            if(System.IO.File.Exists(Application.dataPath + "/StreamingAssets/StandaloneOggs/" + filename + ".ogg"))
+            if(System.IO.File.Exists(String.Format("{0}/StreamingAssets/{1}", Application.dataPath, streamingRelativePath)))
             {
                 Debug.Log("File exists");
-                m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
+                m_movieTexture.SetFilename(streamingRelativePath);
                 Debug.Log("Found file");
                 m_movieTexture.Play();
                 Debug.Log("Played");

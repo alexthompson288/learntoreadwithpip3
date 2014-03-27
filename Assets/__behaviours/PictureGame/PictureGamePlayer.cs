@@ -107,7 +107,7 @@ public class PictureGamePlayer : GamePlayer
 
         m_currentWordData = selectedQuestion;
 
-        UserStats.Activity.Current.AddWord(m_currentWordData);
+        UserStats.Activity.AddWord(m_currentWordData);
 
         Resources.UnloadUnusedAssets();
         AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(selectedQuestion["word"].ToString());
@@ -273,7 +273,7 @@ public class PictureGamePlayer : GamePlayer
 
     IEnumerator WordClickedCoroutine(bool correct, WordSelectionButton incoming)
     {
-        UserStats.Activity.Current.IncrementNumAnswers();
+        UserStats.Activity.IncrementNumAnswers();
 
         if (correct)
         {
@@ -321,7 +321,7 @@ public class PictureGamePlayer : GamePlayer
         }
         else
         {
-            UserStats.Activity.Current.AddIncorrectWord(m_currentWordData);
+            UserStats.Activity.AddIncorrectWord(m_currentWordData);
 
             // remove lives
             m_numLives--;

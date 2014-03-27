@@ -63,7 +63,7 @@ public class SplattableRatKeyword : MonoBehaviour {
 	
 	void OnClick()
     {
-        UserStats.Activity.Current.IncrementNumAnswers();
+        UserStats.Activity.IncrementNumAnswers();
 
 		StartCoroutine(HitEffect());
 		
