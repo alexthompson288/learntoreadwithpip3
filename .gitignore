@@ -3,6 +3,7 @@
 .DS_Store
 Library
 Temp
+StandaloneOgg
 *.csproj
 *.pidb
 *.sln
@@ -11,4 +12,3 @@ Temp
 # OSX only
 *.swp
 *.Trashes
-StreamingAssets/StandaloneOgg
