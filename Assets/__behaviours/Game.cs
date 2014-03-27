@@ -19,7 +19,7 @@ public static class Game
         }
     }
 
-    public void SetSession(Session newSession)
+    public static void SetSession(Session newSession)
     {
         m_session = newSession;
     }
@@ -41,7 +41,7 @@ public static class Game
         }
     }
 
-    public void SetData(Data newData)
+    public static void SetData(Data newData)
     {
         m_data = newData;
     }
