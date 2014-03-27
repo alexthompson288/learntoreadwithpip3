@@ -127,12 +127,11 @@ public class UserStats : Singleton<UserStats>
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
                 form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());
 
-
                 Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
                 Debug.Log("childName: " + UserInfo.Instance.childName);
+                Debug.Log("setNum: " + m_setNum);
                 Debug.Log("createdAt: " + GetTrimmedStartTime());
                 Debug.Log("updatedAt: " + GetTrimmedEndTime());
-                Debug.Log("setNum: " + m_setNum);
                 
                 WWW www = new WWW(m_url, form);
                 

@@ -10,9 +10,9 @@ public class VideoCoordinator : MonoBehaviour
 	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
-    private string m_oggSubdirectory = "StandaloneOggs";
+    private string m_oggSubdirectory = "StandaloneOgg";
     [SerializeField]
-    private string m_mp4Subdirectory = "mp4s";
+    private string m_mp4Subdirectory = "mp4";
 
     static string m_videoName;
 

@@ -54,9 +54,6 @@ public class UserInfo : Singleton<UserInfo>
 
         Debug.Log("Posting data: " + m_accountUsername);
 
-        //form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
-        //form.AddField(modelName + "[email]", "test@unity7.com");
-
         form.AddField(modelName + "[account_username]", m_accountUsername);
         form.AddField(modelName + "[email]", m_userEmail);
         form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
@@ -93,22 +90,42 @@ public class UserInfo : Singleton<UserInfo>
     {
         m_waitForIpAddress = true;
 
-        WWW myExtIPWWW = new WWW("http://checkip.dyndns.org");
-        
-        while (!myExtIPWWW.isDone)
-        {
-            yield return null;
-        }
-        
-        string myExtIP = myExtIPWWW.data;
-        
-        myExtIP = myExtIP.Substring(myExtIP.IndexOf(":")+1);
-        
-        myExtIP = myExtIP.Substring(0,myExtIP.IndexOf("<"));
-        
-        Debug.Log("ip address: " + myExtIP);
+        WWW myExtIPWWW = null;
 
-        m_ipAddress = myExtIP;
+        try
+        {
+            myExtIPWWW = new WWW("http://checkip.dyndns.org");
+        }
+        catch
+        {
+            Debug.Log("FindIpAddress - catch");
+            myExtIPWWW = null;
+        }
+
+        if (myExtIPWWW != null)
+        {
+            while (!myExtIPWWW.isDone)
+            {
+                yield return null;
+            }
+             
+            try
+            {
+                string myExtIP = myExtIPWWW.data;
+                    
+                myExtIP = myExtIP.Substring(myExtIP.IndexOf(":") + 1);
+                    
+                myExtIP = myExtIP.Substring(0, myExtIP.IndexOf("<"));
+                    
+                Debug.Log("ip address: " + myExtIP);
+
+                m_ipAddress = myExtIP;
+            }
+            catch
+            {
+                m_ipAddress = "";
+            }
+        }
 
         m_waitForIpAddress = false;
     }
@@ -130,7 +147,7 @@ public class UserInfo : Singleton<UserInfo>
         catch
         {
             m_waitForIpAddress = false;
-            Debug.LogError("Could not find IP Address");
+            Debug.LogError("UserInfo.FindIpAddress - caller catch");
         }
 #endif
 
