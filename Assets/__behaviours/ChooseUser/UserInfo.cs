@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Linq;
 
 public class UserInfo : Singleton<UserInfo> 
 {
@@ -34,13 +36,104 @@ public class UserInfo : Singleton<UserInfo>
 
 	Dictionary<string, string> m_users = new Dictionary<string, string>();
 
+    string m_ipAddress = "";
+    string m_platform = "";
+
+
 #if UNITY_EDITOR
 	[SerializeField]
 	private bool m_overwrite;
 #endif
 
+    void PostData()
+    {
+        string url = "www.learntoreadwithpip.com/users";
+        string modelName = "user";
+
+        WWWForm form = new WWWForm();
+
+        Debug.Log("Posting data: " + m_accountUsername);
+
+        //form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
+        //form.AddField(modelName + "[email]", "test@unity7.com");
+
+        form.AddField(modelName + "[account_username]", m_accountUsername);
+        form.AddField(modelName + "[email]", m_userEmail);
+        form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
+        form.AddField(modelName + "[child_usernames]", CollectionHelpers.ConcatList(m_users.Keys.ToList()));
+        form.AddField(modelName + "[platform]", m_platform);
+        form.AddField(modelName + "[ip_address]", m_ipAddress);
+
+        Debug.Log(form.data.ToString());
+
+        WWW www = new WWW(url, form);
+
+        UserStats.Instance.WaitForRequest("User", www);
+    }
+
+    /*
+    void FindIp()
+    {
+        string hostName = Dns.GetHostName();
+        Debug.Log("HostName: " + hostName);
+        IPAddress[] ipAddresses = Dns.GetHostAddresses(hostName);
+        foreach (IPAddress address in ipAddresses)
+        {
+            Debug.Log("ip: " + address.ToString());
+        }
+    }
+
+    void FindIp2()
+    {
+        Debug.Log("ip2: " + Network.player.ipAddress);
+    }
+    */
+
+    IEnumerator FindIpAddress()
+    {
+        m_waitForIpAddress = true;
+
+        WWW myExtIPWWW = new WWW("http://checkip.dyndns.org");
+        
+        while (!myExtIPWWW.isDone)
+        {
+            yield return null;
+        }
+        
+        string myExtIP = myExtIPWWW.data;
+        
+        myExtIP = myExtIP.Substring(myExtIP.IndexOf(":")+1);
+        
+        myExtIP = myExtIP.Substring(0,myExtIP.IndexOf("<"));
+        
+        Debug.Log("ip address: " + myExtIP);
+
+        m_ipAddress = myExtIP;
+
+        m_waitForIpAddress = false;
+    }
+
+    bool m_waitForIpAddress = false;
+
 	void Awake()
 	{	
+        Debug.Log("UserInfo.Awake()");
+
+        m_platform = Application.platform.ToString();
+
+#if UNITY_STANDALONE || UNITY_ANDROID
+        try
+        {
+            StartCoroutine(FindIpAddress());
+            Debug.Log("Found ip address: " + m_ipAddress);
+        }
+        catch
+        {
+            m_waitForIpAddress = false;
+            Debug.LogError("Could not find IP Address");
+        }
+#endif
+
 #if UNITY_EDITOR
 		if(m_overwrite)
 		{
@@ -48,31 +141,47 @@ public class UserInfo : Singleton<UserInfo>
 		}
 #endif
 
+        Debug.Log("UserInfo loading");
+
 		Load();
 
-		if (System.String.IsNullOrEmpty(m_accountUsername)) 
-		{
-			string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
+        Debug.Log("UserInfo loaded");
+
+		if (System.String.IsNullOrEmpty(m_accountUsername))
+        {
+            Debug.Log("Creating account user");
+
+            string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
             dateTimeString = dateTimeString.Replace("/", "_");
             dateTimeString = dateTimeString.Replace(":", "_");
 
-			string rand = Random.Range(100000, 1000000).ToString();
+            string rand = Random.Range(100000, 1000000).ToString();
 
-			m_accountUsername = dateTimeString + rand;
+            m_accountUsername = dateTimeString + rand;
+
+            Debug.Log("accountUsername: " + m_accountUsername);
+
+            string newUser = "Pip";
+            m_currentUser = newUser;
+            CreateUser(newUser, "pip_state_b");
 			
-			Save ();
-		}
-
-        Debug.Log("accountUsername: " + m_accountUsername);
-
-		if(m_users.Count == 0)
-		{
-			string newUser = "Pip";
-			m_currentUser = newUser;
-			CreateUser(newUser, "pip_state_b");
-			Save ();
-		}
+            Save();
+        }
+        else
+        {
+            Debug.Log("Already has account_username: " + m_accountUsername);
+        }
 	}
+
+    IEnumerator Start()
+    {
+        while (m_waitForIpAddress)
+        {
+            yield return null;
+        }
+
+        PostData();
+    }
 
 	public string GetCurrentUser ()
 	{
@@ -123,13 +232,16 @@ public class UserInfo : Singleton<UserInfo>
 
 	void Load()
 	{
-		DataSaver ds = new DataSaver("UserInformation");
+		DataSaver ds = new DataSaver("MyUserInfo");
 		MemoryStream data = ds.Load();
 		BinaryReader br = new BinaryReader(data);
+
+        Debug.Log("UserInfo.Load()");
+        Debug.Log("data.Length: " + data.Length);
 		
 		if (data.Length != 0)
 		{
-			m_accountUsername = br.ReadString();
+            m_accountUsername = br.ReadString();
             m_userEmail = br.ReadString();
 
 			int numUsers = br.ReadInt32();
@@ -148,7 +260,7 @@ public class UserInfo : Singleton<UserInfo>
 	
 	void Save()
 	{
-		DataSaver ds = new DataSaver("UserInformation");
+        DataSaver ds = new DataSaver("MyUserInfo");
 		MemoryStream newData = new MemoryStream();
 		BinaryWriter bw = new BinaryWriter(newData);
 

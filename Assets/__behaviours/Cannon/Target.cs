@@ -6,7 +6,9 @@ public class Target : MonoBehaviour
     [SerializeField]
     private UILabel m_label;
     [SerializeField]
-    private Transform m_startLocation;
+    protected Transform m_parent;
+    [SerializeField]
+    protected Transform m_startLocation;
 
     public delegate void TargetHit(Target target, Collider ball);
     public event TargetHit OnTargetHit;
@@ -61,6 +63,7 @@ public class Target : MonoBehaviour
     public virtual void ApplyHitForce(Transform ball)
     {
         StopAllCoroutines();
+
         
         rigidbody.isKinematic = false;
         
@@ -84,6 +87,7 @@ public class Target : MonoBehaviour
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
     }
 
-    public virtual IEnumerator On() { yield break; }
+    public virtual IEnumerator On(float initialDelay) { yield break; }
     public virtual void Off() {}
+    public virtual void SetOffPosition(Vector3 direction, float distance) {}
 }

@@ -5,7 +5,10 @@ public class PipHelpers : MonoBehaviour
 {
 	public static void OnGameFinish(bool won = true, string setsScene = "NewScoreDanceScene")
 	{
-		UserStats.Activity.Current.EndEvent (true);
+        if (UserStats.Activity.Current != null)
+        {
+            UserStats.Activity.Current.EndEvent(true);
+        }
 
 		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
 		{

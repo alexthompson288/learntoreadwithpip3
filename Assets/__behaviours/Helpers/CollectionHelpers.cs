@@ -20,6 +20,20 @@ public class CollectionHelpers
 		}
 	}
 
+    public static string ConcatList<T>(IList<T> list) // TODO: Make this method take IList parameter
+    {
+        string concat = "";
+
+        foreach (T t in list) 
+        {
+            concat += String.Format("{0}_", t);
+        }
+        
+        concat = concat.TrimEnd (new char[] { '_' });
+        
+        return concat;
+    }
+
 	public static int ComparePosX(MonoBehaviour a, MonoBehaviour b)
 	{
 		float posA = a.transform.position.x;

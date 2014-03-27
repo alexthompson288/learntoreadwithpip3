@@ -18,6 +18,13 @@ public class BuyableGame : MonoBehaviour
 
 	protected bool m_isUnlocked;
 
+#if UNITY_STANDALONE
+    void Awake()
+    {
+        m_isTwoPlayer = false;
+    }
+#endif
+
 	protected virtual void Start()
 	{
 		if(!m_isTwoPlayer && m_multiIcon != null)

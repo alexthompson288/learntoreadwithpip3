@@ -15,6 +15,8 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 	private Vector2 m_pullRange;
 	[SerializeField]
 	private Vector2 m_forceRange;
+    [SerializeField]
+    private Transform[] m_multiplayerLocations;
 
 	List<CannonBall> m_spawnedBalls = new List<CannonBall>();
 
@@ -25,6 +27,14 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 
         StartCoroutine(SpawnBall(0));
 	}
+
+    public void MoveToMultiplayerLocation(int index)
+    {
+        if (index < m_multiplayerLocations.Length)
+        {
+            m_ballCentre.transform.localPosition = m_multiplayerLocations [index].transform.localPosition;
+        }
+    }
 
 	public Vector3 GetBallCentrePos()
 	{

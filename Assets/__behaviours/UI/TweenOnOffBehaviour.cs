@@ -48,10 +48,7 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		if(Mathf.Approximately(m_duration, 0))
-		{
-			m_duration = 0.1f;
-		}
+        m_duration = Mathf.Clamp(m_duration, 0.1f, m_duration);
 		
 		if (!m_initialised)
 		{
@@ -128,6 +125,12 @@ public class TweenOnOffBehaviour : MonoBehaviour {
 	            }
 			}
         }
+    }
+
+    public void Stop()
+    {
+        iTween.Stop(gameObject);
+        m_isOn = false;
     }
 
     void DestroyObject()

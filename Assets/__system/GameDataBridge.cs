@@ -20,6 +20,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		Letters,
 		Words,
 		Keywords,
+        // TODO: Add Stories
 	}
 
 	Dictionary<DataType, string> m_dataAttributes = new Dictionary<DataType, string> ();

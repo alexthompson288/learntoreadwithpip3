@@ -26,11 +26,15 @@ public class PipGameBuildSettings : ScriptableObject
 	[SerializeField]
 	public bool m_isEverythingUnlocked;
 
+    [SerializeField]
+    public string m_userType;
+
 	[SerializeField]
 	public bool m_disableNavMenu;
 
 	[SerializeField]
 	public string m_startingSceneName;
+
 
 	public string GetConvertedName()
 	{

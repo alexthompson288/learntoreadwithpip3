@@ -78,15 +78,31 @@ public class VideoCoordinator : MonoBehaviour
 
 	void PlayVideo (string filename)
 	{
-		m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
-		
 		try
 		{
-			m_movieTexture.Play();
+            Debug.Log("Execute try");
+
+            Debug.Log("Looking for: " + Application.dataPath + "/StreamingAssets/Videos/" + filename + ".ogg");
+
+            if(System.IO.File.Exists(Application.dataPath + "/StreamingAssets/Videos/" + filename + ".ogg"))
+            {
+                Debug.Log("File exists");
+                m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
+                Debug.Log("Found file");
+                m_movieTexture.Play();
+                Debug.Log("Played");
+            }
+            else
+            {
+                Debug.Log("File not found");
+                PipHelpers.OnGameFinish(true, "NewVoyage");
+            }
 		}
 		catch
 		{
-			SessionManager.Instance.OnGameFinish();
+            Debug.Log("Execute catch");
+			//SessionManager.Instance.OnGameFinish();
+            PipHelpers.OnGameFinish(true, "NewVoyage");
 		}
 	}
 }

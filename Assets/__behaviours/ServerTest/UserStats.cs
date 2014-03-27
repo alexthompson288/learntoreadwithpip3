@@ -48,14 +48,7 @@ public class UserStats : Singleton<UserStats>
 			get
 			{
 #if UNITY_EDITOR
-                if(m_current != null)
-                {
-                    return m_current;
-                }
-                else // In the editor we might need to spawn a dummy Activity because sometimes run directly from a game scene
-                {
-                    return new Activity(false);
-                }
+                return m_current;
 #else
                 return m_current;
 #endif
@@ -84,7 +77,8 @@ public class UserStats : Singleton<UserStats>
 
 		public Activity(bool makeCurrent = true) : base()
 		{
-			Debug.Log("new Activity()");
+			Debug.Log("new Activity() - " + Application.loadedLevelName);
+
 			m_scene = Application.loadedLevelName;
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
 
@@ -108,6 +102,8 @@ public class UserStats : Singleton<UserStats>
 
 		public static void OnNewScene()
 		{
+            Debug.Log("Activity.OnNewScene()");
+
 			if (m_current != null) 
 			{
 				m_current.EndEvent(false);
@@ -115,7 +111,6 @@ public class UserStats : Singleton<UserStats>
 
 			if(GameLinker.Instance.IsSceneGame(Application.loadedLevelName))
 			{
-				Debug.Log("new Activity: " + Application.loadedLevelName);
 				new Activity();
 			}
 		}
@@ -368,8 +363,8 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_sessionType = sessionType;
 
-			m_modelName = "session";
-			m_url = "www.learntoreadwithpip.com/sessions";
+			m_modelName = "learningsession";
+			m_url = "www.learntoreadwithpip.com/learningsessions";
 			BuildSessionIdentifier();
 
             m_current = this;
@@ -558,7 +553,7 @@ public class UserStats : Singleton<UserStats>
 		}
 	}
 	
-	void WaitForRequest(string eventName, WWW www)
+	public void WaitForRequest(string eventName, WWW www)
 	{
 		StartCoroutine (WaitForRequestCo (eventName, www));
 	}
