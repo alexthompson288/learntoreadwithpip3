@@ -98,7 +98,7 @@ public class UserInfo : Singleton<UserInfo>
         }
         catch
         {
-            Debug.Log("FindIpAddress - catch");
+            Debug.Log("FindIpAddress - catch - after finding");
             myExtIPWWW = null;
         }
 
@@ -123,6 +123,7 @@ public class UserInfo : Singleton<UserInfo>
             }
             catch
             {
+                Debug.Log("FindIpAddress - catch - after parsing address");
                 m_ipAddress = "";
             }
         }
