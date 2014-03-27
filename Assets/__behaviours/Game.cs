@@ -47,4 +47,36 @@ public static class Game
     {
         m_data = newData;
     }
+
+    // This property cannot be set 
+    // It returns a string dependent on the value of m_data
+    // It returns the most frequently used attribute name for each data type
+    public static string attribute
+    {
+        get
+        {
+            string attributeName = "";
+
+            switch(m_data)
+            {
+                case Data.Keywords:
+                case Data.Words:
+                    attributeName = "word";
+                    break;
+                case Data.Phonemes:
+                    attributeName = "phoneme";
+                    break;
+                case Data.Stories:
+                    attributeName = "title";
+                    break;
+            }
+
+            if(System.String.IsNullOrEmpty(attributeName))
+            {
+                Debug.LogError("Game.dataText is empty");
+            }
+
+            return attributeName;
+        }
+    }
 }
