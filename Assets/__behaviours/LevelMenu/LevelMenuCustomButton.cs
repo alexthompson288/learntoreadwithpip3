@@ -5,7 +5,7 @@ public class LevelMenuCustomButton : MonoBehaviour
 {
 	void OnClick () 
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Custom);
+		Game.SetSession(Game.Session.Custom);
 		LevelMenuCoordinator.Instance.SelectCustom();
 	}
 }

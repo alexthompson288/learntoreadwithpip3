@@ -31,11 +31,11 @@ public class FlickableWidget2D : MonoBehaviour
 		m_maxSpeed.y = Mathf.Abs (m_maxSpeed.y);
 	}
 	
-	public void SetUp(DataRow data, GameDataBridge.DataType dataType)
+	public void SetUp(DataRow data, Game.Data dataType)
 	{
 		m_data = data;
 		
-		string attribute = dataType == GameDataBridge.DataType.Letters ? "phoneme" : "word";
+		string attribute = dataType == Game.Data.Phonemes ? "phoneme" : "word";
 		m_label.text = m_data[attribute].ToString();
 	}
 	

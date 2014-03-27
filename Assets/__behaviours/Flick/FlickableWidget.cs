@@ -38,11 +38,11 @@ public class FlickableWidget : MonoBehaviour
 		m_gravity.z = 0;
 	}
 
-	public void SetUp(DataRow data, GameDataBridge.DataType dataType)
+	public void SetUp(DataRow data, Game.Data dataType)
 	{
 		m_data = data;
 
-		string attribute = dataType == GameDataBridge.DataType.Letters ? "phoneme" : "word";
+		string attribute = dataType == Game.Data.Phonemes ? "phoneme" : "word";
 		m_label.text = m_data[attribute].ToString();
 	}
 

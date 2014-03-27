@@ -88,7 +88,7 @@ public class SessionManager : Singleton<SessionManager>
 
 	public void OnChooseSession(ST sessionType)
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Custom);
+		Game.SetSession(Game.Session.Custom);
 
 		m_st = sessionType;
 		m_sessionNum = 0;
@@ -105,7 +105,7 @@ public class SessionManager : Singleton<SessionManager>
 	{
 		m_st = sessionType;
 
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
+		Game.SetSession(Game.Session.Premade);
 
 		m_sections.Clear();
 
@@ -309,7 +309,7 @@ public class SessionManager : Singleton<SessionManager>
 	#if UNITY_EDITOR
 	void Update()
 	{
-		if(Input.GetKeyDown(KeyCode.S) && GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Input.GetKeyDown(KeyCode.S) && Game.session == Game.Session.Premade)
 		{
 			OnGameFinish();
 		}

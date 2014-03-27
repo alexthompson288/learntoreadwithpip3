@@ -75,7 +75,7 @@ public class JourneyCoordinator : Singleton<JourneyCoordinator>
 
 	IEnumerator Start()
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Session);
+		Game.SetSession(Game.Session.Premade);
 
 		m_phonemeAudioSource.loop = false;
 		m_ambientAudioSource.loop = true;

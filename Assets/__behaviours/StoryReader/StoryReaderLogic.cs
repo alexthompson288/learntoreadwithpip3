@@ -67,9 +67,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 #if UNITY_EDITOR
 		if(!m_useDebugStory)
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+			if(Game.session == Game.Session.Custom)
 			{
-				List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+				List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
 				
 				if(storyData.Count > 0)
 				{
@@ -82,9 +82,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			}
 		}
 #else
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		if(Game.session == Game.Session.Custom)
 		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+			List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
 
 			if(storyData.Count > 0)
 			{

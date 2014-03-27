@@ -15,64 +15,6 @@ public class GameDataBridge : Singleton<GameDataBridge>
     [SerializeField]
     private TextAsset m_localDatabase;
 
-	public enum DataType // TODO: There should only be one place to reference data types in the whole project. Make a class called Data, give it an enum
-	{
-		Letters,
-		Words,
-		Keywords,
-        // TODO: Add Stories
-	}
-
-	Dictionary<DataType, string> m_dataAttributes = new Dictionary<DataType, string> ();
-
-	public string GetAttribute(DataType dataType)
-	{
-		return m_dataAttributes [dataType];
-	}
-
-	private DataType m_dataType;
-	public DataType dataType
-	{
-		get
-		{
-			return m_dataType;
-		}
-		set
-		{
-			m_dataType = value;
-		}
-	}
-	
-	public enum ContentType // TODO: Move this to the Data class
-	{
-		Sets,
-		Session,
-		Custom,
-	}
-
-	private ContentType m_contentType = ContentType.Sets;
-	public ContentType contentType
-	{
-		get
-		{
-			return m_contentType;
-		}
-		set
-		{
-			m_contentType = value;
-		}
-	}
-
-	public ContentType GetContentType()
-	{
-		return m_contentType;
-	}
-
-	public void SetContentType(ContentType contentType)
-	{
-		m_contentType = contentType;
-	}
-
     public static IEnumerator WaitForDatabase()
     {
         while (GameDataBridge.Instance == null)
@@ -94,9 +36,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 	void Awake()
 	{
-		m_dataAttributes.Add (DataType.Letters, "phoneme");
-		m_dataAttributes.Add (DataType.Words, "word");
-		m_dataAttributes.Add (DataType.Keywords, "word");
+		//m_dataAttributes.Add (DataType.Letters, "phoneme");
+		//m_dataAttributes.Add (DataType.Words, "word");
+		//m_dataAttributes.Add (DataType.Keywords, "word");
 
 //#if UNITY_EDITOR
 		//FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
@@ -446,9 +388,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	{
 		List<DataRow> letterData = new List<DataRow>();
 
-		switch(m_contentType)
+		switch(Game.session)
 		{
-		case ContentType.Session:
+		case Game.Session.Premade:
 			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
@@ -462,11 +404,11 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			}
 			break;
 
-		case ContentType.Custom:
-			letterData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Letters));
+		case Game.Session.Custom:
+			letterData.AddRange(LessonInfo.Instance.GetData(Game.Data.Phonemes));
 			break;
 
-		case ContentType.Sets:
+		case Game.Session.Single:
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			//Debug.Log("setNum: " + setNum);
 			if(inclusiveSets)
@@ -497,9 +439,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	{
 		List<DataRow> wordData = new List<DataRow>();
 		
-		switch(m_contentType)
+		switch(Game.session)
 		{
-		case ContentType.Session:
+		case Game.Session.Premade:
 			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
@@ -509,12 +451,12 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			}
 			break;
 			
-		case ContentType.Custom:
+		case Game.Session.Custom:
 			//Debug.Log("ContentInformation.Instance: " + ContentInformation.Instance);
-			wordData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Words));
+			wordData.AddRange(LessonInfo.Instance.GetData(Game.Data.Words));
 			break;
 			
-		case ContentType.Sets:
+		case Game.Session.Single:
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			if(inclusiveSets)
 			{
@@ -547,9 +489,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	{
 		List<DataRow> keywordData = new List<DataRow>();
 		
-		switch(m_contentType)
+		switch(Game.session)
 		{
-		case ContentType.Session:
+		case Game.Session.Premade:
 			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
@@ -570,11 +512,11 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			}
 			break;
 			
-		case ContentType.Custom:
-			keywordData.AddRange(LessonInfo.Instance.GetData(LessonInfo.DataType.Keywords));
+		case Game.Session.Custom:
+			keywordData.AddRange(LessonInfo.Instance.GetData(Game.Data.Keywords));
 			break;
 			
-		case ContentType.Sets:
+		case Game.Session.Single:
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			while(keywordData.Count == 0)
 			{
@@ -628,9 +570,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
 
 		List<DataRow> nonsenseData = new List<DataRow>();
 		
-		switch(m_contentType)
+		switch(Game.session)
 		{
-		case ContentType.Session:
+		case Game.Session.Premade:
 			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			Debug.Log("sectionId: " + sectionId);
 			DataTable dt = m_cmsDb.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
@@ -640,7 +582,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			}
 			break;
 			
-		case ContentType.Custom:
+		case Game.Session.Custom:
 			List<DataRow> realWords = ContentInformation.Instance.GetWords();
 
 			Debug.Log("realWords.Count: " + realWords.Count);
@@ -698,7 +640,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 			}
 			break;
 			
-		case ContentType.Sets:
+		case Game.Session.Single:
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			Debug.Log("setNum: " + setNum);
 			nonsenseData = GetSetData(setNum, "setsillywords", "words");

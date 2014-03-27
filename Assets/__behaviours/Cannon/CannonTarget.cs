@@ -41,11 +41,11 @@ public class CannonTarget : MonoBehaviour
         transform.localPosition += m_localMovement;
     }
 
-    public void SetUp(DataRow newData, GameDataBridge.DataType dataType)
+    public void SetUp(DataRow newData, Game.Data dataType)
     {
         m_data = newData;
 
-        string attributeName = dataType == GameDataBridge.DataType.Letters ? "phoneme" : "word";
+        string attributeName = dataType == Game.Data.Phonemes ? "phoneme" : "word";
         m_label.text = m_data [attributeName].ToString();
     }
 

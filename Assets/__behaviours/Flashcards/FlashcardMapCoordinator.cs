@@ -28,7 +28,7 @@ public class FlashcardMapCoordinator : MonoBehaviour
 	
 	IEnumerator Start () 
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		Game.SetSession(Game.Session.Single);
 		SkillProgressInformation.Instance.SetCurrentSkill("Flashcard");
 
 		if(System.String.IsNullOrEmpty(m_flashcardGame))

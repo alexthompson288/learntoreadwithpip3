@@ -53,7 +53,7 @@ public class BubbleMapCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase()); // Not strictly necessary to wait for database, 
 		                                                               // but we do need to make sure that GameDataBridge.Instance is not null
 
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		Game.SetSession(Game.Session.Single);
 
 		m_isStandalone = true;
 

@@ -53,7 +53,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     // Use this for initialization
     IEnumerator Start()
     {
-		GameDataBridge.Instance.dataType = GameDataBridge.DataType.Letters;
+		Game.SetData(Game.Data.Phonemes);
 
 		m_blackBoard.MoveWidgets();
 		//m_bennyTheBook.SetUp("SPLAT_INSTRUCTION", 3.5f);

@@ -10,7 +10,7 @@ public class PipHelpers : MonoBehaviour
             UserStats.Activity.Current.EndEvent(true);
         }
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
+		if(Game.session == Game.Session.Single)
 		{
 			TransitionScreen.Instance.ChangeLevel(setsScene, false);
 		}

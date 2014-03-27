@@ -36,11 +36,11 @@ public class Target : MonoBehaviour
         }
     }
 
-    public void SetData(DataRow data, GameDataBridge.DataType dataType)
+    public void SetData(DataRow data, Game.Data dataType)
     {
         m_data = data;
 
-        string attributeName = dataType == GameDataBridge.DataType.Letters ? "phoneme" : "word";
+        string attributeName = dataType == Game.Data.Phonemes ? "phoneme" : "word";
         m_label.text = m_data [attributeName].ToString();
     }
     

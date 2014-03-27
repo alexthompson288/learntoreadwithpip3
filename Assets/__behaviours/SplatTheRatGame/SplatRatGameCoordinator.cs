@@ -106,7 +106,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		/*
 		List<DataRow> lettersPool = new List<DataRow>();
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			int sectionId = SessionManager.Instance.GetCurrentSectionId();
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
@@ -147,7 +147,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		if(lettersPool.Count > 0)
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+			if(Game.session == Game.Session.Premade)
 			{
 				foreach(DataRow letter in lettersPool)
 				{
@@ -158,9 +158,9 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 					}
 				}
 			}
-			else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+			else if(Game.session == Game.Session.Custom)
 			{
-				m_currentLetterData = LessonInfo.Instance.GetTargetData(LessonInfo.DataType.Letters);
+				m_currentLetterData = LessonInfo.Instance.GetTargetData(Game.Data.Phonemes);
 			}
 
 			if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme

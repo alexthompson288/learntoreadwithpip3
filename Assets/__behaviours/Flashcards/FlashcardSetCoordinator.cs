@@ -28,7 +28,7 @@ public class FlashcardSetCoordinator : MonoBehaviour
 		m_backButton.OnSingleClick += OnClickBack;
 
 		NavMenu.Instance.HideCallButton();
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		Game.SetSession(Game.Session.Single);
 		
 		for(int i = 0; i < m_numSets; ++i)
 		{

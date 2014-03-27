@@ -184,7 +184,7 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 		}
 		else
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+			if(Game.session == Game.Session.Premade)
 			{
 				SessionManager.Instance.OnGameFinish(false);
 			}

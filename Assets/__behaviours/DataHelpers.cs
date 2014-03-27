@@ -53,32 +53,34 @@ public static class DataHelpers
 		return dt.Rows;
 	}
 
-    public static DataRow FindTargetData(List<DataRow> dataPool, GameDataBridge.DataType dataType)
+    /*
+    public static DataRow FindTargetData(List<DataRow> dataPool, Game.Data dataType)
     {
-        LessonInfo.DataType lessonDataType = LessonInfo.DataType.Letters;
+        Game.Data lessonDataType = Game.Data.Phonemes;
 
-        if (dataType == GameDataBridge.DataType.Words)
+        if (dataType == Game.Data.Words)
         {
-            lessonDataType = LessonInfo.DataType.Words;
+            lessonDataType = Game.Data.Words;
         } 
-        else if (dataType == GameDataBridge.DataType.Keywords)
+        else if (dataType == Game.Data.Keywords)
         {
-            lessonDataType = LessonInfo.DataType.Keywords;
+            lessonDataType = Game.Data.Keywords;
         }
 
         return FindTargetData(dataPool, lessonDataType);
     }
+    */
 
-    public static DataRow FindTargetData(List<DataRow> dataPool, LessonInfo.DataType dataType)
+    public static DataRow FindTargetData(List<DataRow> dataPool, Game.Data dataType)
     {
         DataRow currentData = null;
 
-        bool isLetterData = (dataType == LessonInfo.DataType.Letters);
+        bool isLetterData = (dataType == Game.Data.Phonemes);
 
         string attribute = isLetterData ? "phoneme" : "word";
 
 
-        if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+        if(Game.session == Game.Session.Premade)
         {
             string sessionTargetAttribute = isLetterData ? "is_target_phoneme" : "is_target_word";
 
@@ -92,7 +94,7 @@ public static class DataHelpers
                 }
             }
         }
-        else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+        else if(Game.session == Game.Session.Custom)
         {
             currentData = LessonInfo.Instance.GetTargetData(dataType);
         }

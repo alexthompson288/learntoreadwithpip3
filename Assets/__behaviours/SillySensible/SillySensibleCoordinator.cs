@@ -64,7 +64,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Custom);
+		//Game.SetSession(Game.Session.Custom);
 
         SessionInformation.Instance.SetNumPlayers(1);
         SessionInformation.Instance.SetPlayerIndex(0, 3);
@@ -289,7 +289,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 
 	void FinishGame()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			SessionManager.Instance.OnGameFinish();
 		}

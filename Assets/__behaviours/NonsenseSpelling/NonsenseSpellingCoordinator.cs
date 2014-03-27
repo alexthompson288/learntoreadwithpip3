@@ -147,7 +147,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 	{
 		yield return new WaitForSeconds(1.5f);
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			SessionManager.Instance.OnGameFinish();
 		}

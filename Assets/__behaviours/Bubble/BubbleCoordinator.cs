@@ -22,7 +22,7 @@ public class BubbleCoordinator : MonoBehaviour
 	[SerializeField]
 	private float m_timeRemaining = -1f;
 	[SerializeField]
-	private GameDataBridge.DataType m_dataType;
+	private Game.Data m_dataType;
 	[SerializeField]
 	private int m_expToLevelUp;
 	[SerializeField]
@@ -82,7 +82,7 @@ public class BubbleCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		AddToDataPool(true);
 
-		if(m_dataType == GameDataBridge.DataType.Words || m_dataType == GameDataBridge.DataType.Keywords)
+		if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
 		{
 			PipPadBehaviour.Instance.OnPadHide += OnPipPadHide;
 		}
@@ -266,7 +266,7 @@ public class BubbleCoordinator : MonoBehaviour
 			
 			bool isCorrect = (System.Convert.ToInt32(data["id"]) == System.Convert.ToInt32(m_targetData["id"]));
 
-			if(m_dataType == GameDataBridge.DataType.Letters)
+			if(m_dataType == Game.Data.Phonemes)
 			{
 				isCorrect = (m_targetData["grapheme"].ToString() == data["grapheme"].ToString());
 			}
@@ -299,7 +299,7 @@ public class BubbleCoordinator : MonoBehaviour
 					WingroveAudio.WingroveRoot.Instance.PostEvent(burp);
 				}
 
-				if(m_dataType == GameDataBridge.DataType.Words || m_dataType == GameDataBridge.DataType.Keywords)
+				if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
 				{
 					PipPadBehaviour.Instance.Show(m_targetData["word"].ToString());
 					foreach(Transform bubbleParent in m_bubbleParents)
@@ -337,7 +337,7 @@ public class BubbleCoordinator : MonoBehaviour
 
 		++m_currentLevel;
 		
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
+		if(Game.session == Game.Session.Single)
 		{
 			Debug.Log("New Level: " + m_currentLevel);
 			SkillProgressInformation.Instance.SetCurrentLevel(m_currentLevel);
@@ -351,10 +351,10 @@ public class BubbleCoordinator : MonoBehaviour
 	{
 		switch(m_dataType)
 		{
-		case GameDataBridge.DataType.Keywords:
+		case Game.Data.Keywords:
 			m_dataPool.AddRange(GameDataBridge.Instance.GetKeywords(inclusive));
 			break;
-		case GameDataBridge.DataType.Letters:
+		case Game.Data.Phonemes:
 			m_dataPool.AddRange(GameDataBridge.Instance.GetLetters(inclusive));
 			break;
 		default:
@@ -388,7 +388,7 @@ public class BubbleCoordinator : MonoBehaviour
 	
 	IEnumerator OnGameFinish()
 	{
-		if(m_dataType == GameDataBridge.DataType.Words || m_dataType == GameDataBridge.DataType.Keywords)
+		if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
 		{
 			while(PipPadBehaviour.Instance.IsShowing())
 			{
@@ -433,7 +433,7 @@ public class BubbleCoordinator : MonoBehaviour
 		}
 		else
 		{
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+			if(Game.session == Game.Session.Premade)
 			{
 				SessionManager.Instance.OnGameFinish();
 			}
@@ -450,7 +450,7 @@ public class BubbleCoordinator : MonoBehaviour
 	
 	void SayLongAudio()
 	{
-		if(m_dataType == GameDataBridge.DataType.Letters)
+		if(m_dataType == Game.Data.Phonemes)
 		{
 			AudioClip clip = LoaderHelpers.LoadMnemonic(m_targetData);
 
@@ -470,7 +470,7 @@ public class BubbleCoordinator : MonoBehaviour
 	{
 		AudioClip clip = null;
 		
-		if(m_dataType == GameDataBridge.DataType.Letters)
+		if(m_dataType == Game.Data.Phonemes)
 		{
 			clip = AudioBankManager.Instance.GetAudioClip(m_targetData["grapheme"].ToString());
 		}

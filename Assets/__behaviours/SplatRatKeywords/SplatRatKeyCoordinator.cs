@@ -101,7 +101,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			m_keywordAudio[myPh] = LoaderHelpers.LoadAudioForWord(audioFilename);
         }
 		
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			foreach(DataRow letter in lettersPool)
 			{
@@ -113,9 +113,9 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 				}
 			}
 		}
-		else if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		else if(Game.session == Game.Session.Custom)
 		{
-			m_currentLetterData = LessonInfo.Instance.GetTargetData(LessonInfo.DataType.Keywords);
+			m_currentLetterData = LessonInfo.Instance.GetTargetData(Game.Data.Keywords);
 		}
 		
 		if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme

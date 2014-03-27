@@ -9,7 +9,7 @@ public class UserStats : Singleton<UserStats>
     [SerializeField]
     private bool m_debugActivityData;
 
-	Dictionary<GameDataBridge.DataType, string> m_dataAttributes = new Dictionary<GameDataBridge.DataType, string>();
+	Dictionary<Game.Data, string> m_dataAttributes = new Dictionary<Game.Data, string>();
 	
 	void Start()
 	{
@@ -85,7 +85,7 @@ public class UserStats : Singleton<UserStats>
 			m_modelName = "activity";
 			m_url = "www.learntoreadwithpip.com/activities";
 
-			if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Sets)
+			if(Game.session == Game.Session.Single)
 			{
 				m_setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 			}
@@ -190,9 +190,9 @@ public class UserStats : Singleton<UserStats>
 			++m_numAnswers;
 		}
 
-		public void AddData(int dataId, GameDataBridge.DataType dataType)
+		public void AddData(int dataId, Game.Data dataType)
 		{
-			if (dataType == GameDataBridge.DataType.Letters)
+			if (dataType == Game.Data.Phonemes)
 			{
 				AddPhoneme(dataId);
 			} 
@@ -202,9 +202,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddData(DataRow data, GameDataBridge.DataType dataType)
+		public void AddData(DataRow data, Game.Data dataType)
 		{
-			if (dataType == GameDataBridge.DataType.Letters)
+			if (dataType == Game.Data.Phonemes)
 			{
 				AddPhoneme(data);
 			} 
@@ -214,9 +214,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddIncorrectData(int dataId, GameDataBridge.DataType dataType)
+		public void AddIncorrectData(int dataId, Game.Data dataType)
 		{
-			if (dataType == GameDataBridge.DataType.Letters)
+			if (dataType == Game.Data.Phonemes)
 			{
 				AddIncorrectPhoneme(dataId);
 			} 
@@ -226,9 +226,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public void AddIncorrectData(DataRow data, GameDataBridge.DataType dataType)
+		public void AddIncorrectData(DataRow data, Game.Data dataType)
 		{
-			if (dataType == GameDataBridge.DataType.Letters)
+			if (dataType == Game.Data.Phonemes)
 			{
 				AddIncorrectPhoneme(data);
 			} 
@@ -341,14 +341,14 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_sessionName = sessionName;
 
-			m_letters = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Letters);
-			m_targetLetter = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Letters);
+			m_letters = LessonInfo.Instance.GetDataIds (Game.Data.Phonemes);
+			m_targetLetter = LessonInfo.Instance.GetTargetId (Game.Data.Phonemes);
 			
-			m_words = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Words);
-			m_targetWord = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Words);
+			m_words = LessonInfo.Instance.GetDataIds (Game.Data.Words);
+			m_targetWord = LessonInfo.Instance.GetTargetId (Game.Data.Words);
 			
-			m_keywords = LessonInfo.Instance.GetDataIds (LessonInfo.DataType.Keywords);
-			m_targetKeyword = LessonInfo.Instance.GetTargetId (LessonInfo.DataType.Keywords);
+			m_keywords = LessonInfo.Instance.GetDataIds (Game.Data.Keywords);
+			m_targetKeyword = LessonInfo.Instance.GetTargetId (Game.Data.Keywords);
 
 			JointConstructor(sessionType);
 

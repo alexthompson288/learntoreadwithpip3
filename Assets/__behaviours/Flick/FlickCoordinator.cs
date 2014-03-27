@@ -6,7 +6,7 @@ using Wingrove;
 public class FlickCoordinator : MonoBehaviour 
 {
 	[SerializeField]
-	private GameDataBridge.DataType m_dataType;
+	private Game.Data m_dataType;
 	[SerializeField]
 	private GameObject m_flickablePrefab;
 	[SerializeField]
@@ -51,13 +51,13 @@ public class FlickCoordinator : MonoBehaviour
 		
 		switch (m_dataType)
 		{
-		case GameDataBridge.DataType.Letters:
+		case Game.Data.Phonemes:
 			m_dataPool = GameDataBridge.Instance.GetLetters();
 			break;
-		case GameDataBridge.DataType.Keywords:
+		case Game.Data.Keywords:
 			m_dataPool = GameDataBridge.Instance.GetKeywords();
 			break;
-		case GameDataBridge.DataType.Words:
+		case Game.Data.Words:
 			m_dataPool = GameDataBridge.Instance.GetWords();
 			break;
 		}
@@ -141,7 +141,7 @@ public class FlickCoordinator : MonoBehaviour
 	
 	void SayTarget()
 	{
-		AudioClip clip = m_dataType == GameDataBridge.DataType.Letters ? AudioBankManager.Instance.GetAudioClip(m_targetData["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData["word"].ToString());
+		AudioClip clip = m_dataType == Game.Data.Phonemes ? AudioBankManager.Instance.GetAudioClip(m_targetData["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData["word"].ToString());
 		
 		if(clip != null)
 		{

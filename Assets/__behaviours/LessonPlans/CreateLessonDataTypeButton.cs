@@ -4,13 +4,13 @@ using System.Collections;
 public class CreateLessonDataTypeButton : MonoBehaviour 
 {
 	[SerializeField]
-	private LessonInfo.DataType m_dataType;
+	private Game.Data m_dataType;
 
 	static UISprite m_currentButton; // I keep track of current button and color changing here instead of in content coordinator because the code was already done and this didn't need as much refactoring
 
 	void Awake()
 	{
-		if(m_dataType == LessonInfo.DataType.Letters)
+		if(m_dataType == Game.Data.Phonemes)
 		{
 			MakeThisCurrentButton();
 		}

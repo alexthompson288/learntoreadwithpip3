@@ -161,7 +161,7 @@ public class JoinLettersCoordinator : Singleton<JoinLettersCoordinator>
 
 	void FinishGame()
 	{
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			SessionManager.Instance.OnGameFinish();
 		}

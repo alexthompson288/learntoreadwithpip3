@@ -46,7 +46,7 @@ public class LevelMenuSetButton : MonoBehaviour
 
 	void OnClick()
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		Game.SetSession(Game.Session.Single);
 		LevelMenuCoordinator.Instance.SelectSet(m_setNum);
 	}
 

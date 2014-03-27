@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// This class is static instead of a Singleton. This is because it is only used for other classes to reference and making it static will make
+// the code shorter and more readable every place it is referenced
 public static class Game 
 {
     public enum Session
     {
         Premade,
         Custom,
-        Individual
+        Single
     }
 
     private static Session m_session;

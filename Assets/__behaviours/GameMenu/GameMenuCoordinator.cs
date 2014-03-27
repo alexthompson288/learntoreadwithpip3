@@ -35,7 +35,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
 	void Start()
 	{
-		GameDataBridge.Instance.SetContentType(GameDataBridge.ContentType.Sets);
+		Game.SetSession(Game.Session.Single);
 		EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
 
 		NavMenu.Instance.HideCallButton();

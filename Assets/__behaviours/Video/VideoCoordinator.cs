@@ -35,7 +35,7 @@ public class VideoCoordinator : MonoBehaviour
 			}
 		}
 #else
-        if(GameDataBridge.Instance.contentType == GameDataBridge.ContentType.Sets)
+        if(Game.session == Game.Session.Single)
         {
             PlayVideo(m_videoName);
             PlayAudio(m_videoName + "_audio");

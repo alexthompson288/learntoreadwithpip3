@@ -64,13 +64,13 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
 		int sectionId = 1420;
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			sectionId = SessionManager.Instance.GetCurrentSectionId();
 		}
-		else if (GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Custom)
+		else if (Game.session == Game.Session.Custom)
 		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData(LessonInfo.DataType.Stories);
+			List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
 
 			if(storyData.Count > 0)
 			{
@@ -106,7 +106,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 		Debug.Log("There are " + dt.Rows.Count + " sentences");
 
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			foreach(DataRow row in rows)
 			{
@@ -161,7 +161,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
 		Debug.Log("There are " + dt.Rows.Count + " words");
 
-		if(GameDataBridge.Instance.GetContentType() == GameDataBridge.ContentType.Session)
+		if(Game.session == Game.Session.Premade)
 		{
 			m_words[0] = new List<DataRow>();
 			foreach(DataRow row in rows)
@@ -405,7 +405,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 		PipHelpers.OnGameFinish (true, "NewCompleteSentenceEnd");
 
 		/*
-		if (GameDataBridge.Instance.GetContentType () == GameDataBridge.ContentType.Sets) 
+		if (GameDataBridge.Instance.GetContentType () == Game.Session.Single) 
 		{
 			TransitionScreen.Instance.ChangeLevel("NewCompleteSentenceEnd", false);	
 		} 

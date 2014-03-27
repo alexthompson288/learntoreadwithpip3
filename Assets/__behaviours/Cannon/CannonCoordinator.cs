@@ -6,7 +6,7 @@ using Wingrove;
 public class CannonCoordinator : Singleton<CannonCoordinator> 
 {
     [SerializeField]
-    private GameDataBridge.DataType m_dataType;
+    private Game.Data m_dataType;
     [SerializeField]
     private Transform[] m_locators;
     [SerializeField]
@@ -48,13 +48,13 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
 
         switch (m_dataType)
         {
-            case GameDataBridge.DataType.Letters:
+            case Game.Data.Phonemes:
                 m_dataPool = GameDataBridge.Instance.GetLetters();
                 break;
-            case GameDataBridge.DataType.Words:
+            case Game.Data.Words:
                 m_dataPool = GameDataBridge.Instance.GetWords();
                 break;
-            case GameDataBridge.DataType.Keywords:
+            case Game.Data.Keywords:
                 m_dataPool = GameDataBridge.Instance.GetKeywords();
                 break;
         }
@@ -63,7 +63,7 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
         {
             foreach (DataRow data in m_dataPool)
             {
-                if (m_dataType == GameDataBridge.DataType.Letters)
+                if (m_dataType == Game.Data.Phonemes)
                 {
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data ["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
