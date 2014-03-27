@@ -107,6 +107,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	public void OnChooseLevel(int setNum)
 	{
 		SkillProgressInformation.Instance.SetCurrentLevel(setNum);
+        SessionInformation.Instance.SetRetryScene(m_currentGame);
 
 		TransitionScreen.Instance.ChangeLevel(m_currentGame, false);
 	}

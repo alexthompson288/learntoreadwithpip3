@@ -8,6 +8,10 @@ public class VideoCoordinator : MonoBehaviour
 	private MobileMovieTexture m_movieTexture;
 	[SerializeField]
 	private AudioSource m_audioSource;
+    [SerializeField]
+    private string m_oggSubdirectory = "StandaloneOggs";
+    [SerializeField]
+    private string m_mp4Subdirectory = "mp4s";
 
     static string m_videoName;
 
@@ -82,9 +86,9 @@ public class VideoCoordinator : MonoBehaviour
 		{
             Debug.Log("Execute try");
 
-            Debug.Log("Looking for: " + Application.dataPath + "/StreamingAssets/Videos/" + filename + ".ogg");
+            Debug.Log("Looking for: " + Application.dataPath + "/StreamingAssets/StandaloneOggs/" + filename + ".ogg");
 
-            if(System.IO.File.Exists(Application.dataPath + "/StreamingAssets/Videos/" + filename + ".ogg"))
+            if(System.IO.File.Exists(Application.dataPath + "/StreamingAssets/StandaloneOggs/" + filename + ".ogg"))
             {
                 Debug.Log("File exists");
                 m_movieTexture.SetFilename("Videos/" + filename + ".ogg");
@@ -101,7 +105,7 @@ public class VideoCoordinator : MonoBehaviour
 		catch
 		{
             Debug.Log("Execute catch");
-			//SessionManager.Instance.OnGameFinish();
+
             PipHelpers.OnGameFinish(true, "NewVoyage");
 		}
 	}

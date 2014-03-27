@@ -46,7 +46,7 @@ public class SessionInformation : Singleton<SessionInformation> {
 
     void Awake()
     {
-        m_retryScene = "NewTempStartupMenu";
+        m_retryScene = "NewGameMenu";
 		
         Load();
 
