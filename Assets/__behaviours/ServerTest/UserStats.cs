@@ -123,7 +123,7 @@ public class UserStats : Singleton<UserStats>
 
                 form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
                 form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
-                form.AddField (m_modelName + "[set_num]", m_setNum);
+                form.AddField (m_modelName + "[scene]", Application.loadedLevelName);
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
                 form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());
 
