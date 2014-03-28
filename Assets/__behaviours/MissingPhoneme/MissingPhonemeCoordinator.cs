@@ -379,8 +379,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	
 	void EndGame ()
 	{
-		PipHelpers.SetDefaultPlayerVar();
-		PipHelpers.OnGameFinish();
+		GameHelpers.SetDefaultPlayerVar();
+		GameHelpers.OnGameFinish();
 	}
 
 	void DestroyDraggables ()

@@ -168,8 +168,8 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 
 	void FinishGame()
 	{
-		PipHelpers.SetDefaultPlayerVar();
-		PipHelpers.OnGameFinish();
+		GameHelpers.SetDefaultPlayerVar();
+		GameHelpers.OnGameFinish();
 	}
 
     public void SpeakWord(string word)

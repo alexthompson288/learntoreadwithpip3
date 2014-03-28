@@ -402,7 +402,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	{
 		Debug.Log("CompleteSentenceCoordinator.OnGameFinish()");
 
-		PipHelpers.OnGameFinish (true, "NewCompleteSentenceEnd");
+		GameHelpers.OnGameFinish (true, "NewCompleteSentenceEnd");
 
 		/*
 		if (GameDataBridge.Instance.GetContentType () == Game.Session.Single) 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PipHelpers : MonoBehaviour 
+public class GameHelpers : MonoBehaviour 
 {
 	public static void OnGameFinish(bool won = true, string setsScene = "NewScoreDanceScene")
 	{

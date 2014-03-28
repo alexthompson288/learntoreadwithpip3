@@ -173,6 +173,6 @@ public class FlickCoordinator : MonoBehaviour
     {
         yield return null;
 
-        PipHelpers.OnGameFinish();
+        GameHelpers.OnGameFinish();
     }
 }

@@ -179,8 +179,8 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 		if (winningIndex != -1)
 		{
-			PipHelpers.SetDefaultPlayerVar();
-			PipHelpers.OnGameFinish();
+			GameHelpers.SetDefaultPlayerVar();
+			GameHelpers.OnGameFinish();
 		}
 		else
 		{

@@ -224,8 +224,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 	void FinishGame()
 	{
-		PipHelpers.SetDefaultPlayerVar();
-		PipHelpers.OnGameFinish();
+		GameHelpers.SetDefaultPlayerVar();
+		GameHelpers.OnGameFinish();
 	}
 
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)

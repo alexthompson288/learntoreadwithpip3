@@ -248,7 +248,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 	{
 		SessionInformation.Instance.SetWinner(winningIndex);
 
-		PipHelpers.OnGameFinish();
+		GameHelpers.OnGameFinish();
 	}
 	
 	void StopPlayer(int index)

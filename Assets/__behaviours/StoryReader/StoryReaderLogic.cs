@@ -270,7 +270,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		DataTable dt = UpdateCurrentDisplayer();
 		if (dt.Rows.Count == 0)
 		{
-			PipHelpers.OnGameFinish(true, "NewEndStory");
+			GameHelpers.OnGameFinish(true, "NewEndStory");
 		}
 		
 		if (!isFirstPage)

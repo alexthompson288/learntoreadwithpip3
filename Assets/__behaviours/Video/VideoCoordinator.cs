@@ -68,7 +68,7 @@ public class VideoCoordinator : MonoBehaviour
 		}
 #endif
 
-        PipHelpers.OnGameFinish(true, "NewVoyage");
+        GameHelpers.OnGameFinish(true, "NewVoyage");
 	}
 
 	void PlayAudio (string filename)
@@ -101,14 +101,14 @@ public class VideoCoordinator : MonoBehaviour
             else
             {
                 Debug.Log("File not found");
-                PipHelpers.OnGameFinish(true, "NewVoyage");
+                GameHelpers.OnGameFinish(true, "NewVoyage");
             }
 		}
 		catch
 		{
             Debug.Log("Execute catch");
 
-            PipHelpers.OnGameFinish(true, "NewVoyage");
+            GameHelpers.OnGameFinish(true, "NewVoyage");
 		}
 	}
 }

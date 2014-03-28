@@ -211,7 +211,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 	{
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
 
-		PipHelpers.OnGameFinish();
+		GameHelpers.OnGameFinish();
 	}
 	
 	AudioClip GetCurrentAudio()

@@ -248,8 +248,8 @@ public class PictureGamePlayer : GamePlayer
 
 		if(m_allWords.Count == 0)
 		{
-			PipHelpers.SetDefaultPlayerVar();
-			PipHelpers.OnGameFinish();
+			GameHelpers.SetDefaultPlayerVar();
+			GameHelpers.OnGameFinish();
 		}
 
 		Debug.Log("m_maxSpawn: " + m_maxSpawn);
@@ -315,8 +315,8 @@ public class PictureGamePlayer : GamePlayer
             }
 			else if(m_remainingWords.Count == 0)
 			{
-				PipHelpers.SetDefaultPlayerVar();
-				PipHelpers.OnGameFinish();
+				GameHelpers.SetDefaultPlayerVar();
+				GameHelpers.OnGameFinish();
 			}
         }
         else
