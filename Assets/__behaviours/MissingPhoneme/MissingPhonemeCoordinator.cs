@@ -55,7 +55,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordPool.AddRange(GameDataBridge.Instance.GetWords());
+		m_wordPool.AddRange(DataHelpers.GetWords());
 		
 		/*
 		int sectionId = 797;
@@ -80,7 +80,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			m_useLinkingIndices = true;
 		}
 
-		letterPool = GameDataBridge.Instance.GetLetters();
+		letterPool = DataHelpers.GetLetters();
 
 		foreach(DataRow letter in letterPool)
 		{
@@ -143,7 +143,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		{
 			for(int i = m_wordPool.Count - 1; i > -1; --i)
 			{
-				List<DataRow> orderedPhonemes = GameDataBridge.Instance.GetOrderedPhonemes(m_wordPool[i]);
+				List<DataRow> orderedPhonemes = DataHelpers.GetOrderedPhonemes(m_wordPool[i]);
 				if(!orderedPhonemes.Contains(m_targetLetterPool[0]))
 				{
 					m_wordPool.RemoveAt(i);

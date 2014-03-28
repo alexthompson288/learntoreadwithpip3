@@ -34,12 +34,12 @@ public class FlashcardPracticeCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordPool = GameDataBridge.Instance.GetWords();
+		m_wordPool = DataHelpers.GetWords();
 
 #if UNITY_EDITOR
 		if(m_guaranteeData)
 		{
-			m_wordPool = GameDataBridge.Instance.GetSectionWords(1398).Rows;
+			m_wordPool = DataHelpers.GetSectionWords(1398).Rows;
 		}
 #endif
 

@@ -35,7 +35,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordSelection = GameDataBridge.Instance.GetWords();
+		m_wordSelection = DataHelpers.GetWords();
 
         m_progressScoreBar.SetStarsTarget(m_scoreTarget);
 

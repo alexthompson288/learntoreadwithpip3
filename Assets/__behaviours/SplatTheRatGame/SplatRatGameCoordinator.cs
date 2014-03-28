@@ -85,8 +85,8 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			m_numWaitForPlayers = 1;
 		}
 
-		List<DataRow> lettersPool = GameDataBridge.Instance.GetLetters();
-		//List<DataRow> lettersPool = GameDataBridge.Instance.GetSectionLetters(1405);
+		List<DataRow> lettersPool = DataHelpers.GetLetters();
+		//List<DataRow> lettersPool = DataHelpers.GetSectionLetters(1405);
 
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);
 
@@ -122,7 +122,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
 
-			lettersPool.AddRange(GameDataBridge.Instance.GetInclusiveSetData(setNum, "setphonemes", "phonemes"));
+			lettersPool.AddRange(DataHelpers.GetInclusiveSetData(setNum, "setphonemes", "phonemes"));
 		}
 		*/
 

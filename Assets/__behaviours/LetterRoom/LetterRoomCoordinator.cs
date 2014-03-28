@@ -177,7 +177,7 @@ public class LetterRoomCoordinator : Singleton<LetterRoomCoordinator>
 			int objName = 0;
 			foreach(DataRow set in setData)
 			{
-				List<DataRow> phonemes = GameDataBridge.Instance.GetSetPhonemes(set);
+				List<DataRow> phonemes = DataHelpers.GetSetPhonemes(set);
 
 				int spawnedPhonemes = 0;
 				

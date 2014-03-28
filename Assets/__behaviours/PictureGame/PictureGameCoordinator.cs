@@ -30,8 +30,8 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         UnityEngine.Random.seed = DateTime.Now.Millisecond;
 
-		m_dataRows = GameDataBridge.Instance.GetWords();
-		//m_dataRows = GameDataBridge.Instance.GetSectionWords(1394).Rows;
+		m_dataRows = DataHelpers.GetWords();
+		//m_dataRows = DataHelpers.GetSectionWords(1394).Rows;
 
 		Debug.Log("There are " + m_dataRows.Count + " rows");
 

@@ -44,7 +44,7 @@ public class UnitProgressCoordinator : MonoBehaviour
 		int sectionId = SessionManager.Instance.GetCurrentSectionId();
 		//int sectionId = 1366;
 
-		List<DataRow> sentences = GameDataBridge.Instance.GetSectionSentences(sectionId);
+		List<DataRow> sentences = DataHelpers.GetSectionSentences(sectionId);
 
 		if(sentences.Count > 0)
 		{
@@ -112,7 +112,7 @@ public class UnitProgressCoordinator : MonoBehaviour
 			}
 		}
 
-		List<DataRow> phonemes = GameDataBridge.Instance.GetSectionLetters(sectionId);
+		List<DataRow> phonemes = DataHelpers.GetSectionLetters(sectionId);
 
 		foreach(DataRow phoneme in phonemes)
 		{

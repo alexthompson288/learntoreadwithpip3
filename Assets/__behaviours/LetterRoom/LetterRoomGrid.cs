@@ -29,7 +29,7 @@ public class LetterRoomGrid : Singleton<LetterRoomGrid>
 			int objName = 0;
 			foreach(DataRow set in setData)
 			{
-				List<DataRow> phonemes = GameDataBridge.Instance.GetSetPhonemes(set);
+				List<DataRow> phonemes = DataHelpers.GetSetPhonemes(set);
 
 				foreach(DataRow phoneme in phonemes)
 				{

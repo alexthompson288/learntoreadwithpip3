@@ -75,14 +75,14 @@ public class DragToContainerCoordinator : MonoBehaviour
 
 		if(m_dataType == DataType.phonemes)
 		{
-			data = GameDataBridge.Instance.GetLetters();
+			data = DataHelpers.GetLetters();
 			m_textAttribute = "phoneme";
 			targetAttribute = "is_target_phoneme";
 		}
 		else
 		{
-			//data = GameDataBridge.Instance.GetSectionWords(446).Rows;
-			data = GameDataBridge.Instance.GetWords();
+			//data = DataHelpers.GetSectionWords(446).Rows;
+			data = DataHelpers.GetWords();
 			m_textAttribute = "word";
 			targetAttribute = "is_target_word";
 		}

@@ -21,7 +21,7 @@ public class WordBankGrid : Singleton<WordBankGrid>
 
         foreach (int sectionId in ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds)
         {
-            DataTable dt = GameDataBridge.Instance.GetSectionWords(sectionId);
+            DataTable dt = DataHelpers.GetSectionWords(sectionId);
 
             m_data.AddRange(dt.Rows);
 

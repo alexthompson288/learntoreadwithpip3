@@ -76,19 +76,19 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		List<DataRow> words = GameDataBridge.Instance.GetWords();
+		List<DataRow> words = DataHelpers.GetWords();
 
 		/*
 		List<DataRow> words = new List<DataRow>();
 
 		if(Game.session == Game.Session.Premade)
 		{
-			words = GameDataBridge.Instance.GetWords();
-			//words = GameDataBridge.Instance.GetSectionWords(1455).Rows;
+			words = DataHelpers.GetWords();
+			//words = DataHelpers.GetSectionWords(1455).Rows;
 		}
 		else
 		{
-			words = GameDataBridge.Instance.GetSectionWords(1455).Rows;
+			words = DataHelpers.GetSectionWords(1455).Rows;
 		}
 		*/
 

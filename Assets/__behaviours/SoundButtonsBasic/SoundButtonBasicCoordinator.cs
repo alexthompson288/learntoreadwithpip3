@@ -26,7 +26,7 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordPool = GameDataBridge.Instance.GetWords();
+		m_wordPool = DataHelpers.GetWords();
 
 		/*
 		int sectionId = 1392;

@@ -34,7 +34,7 @@ public class AlphabetBookCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		List<DataRow> phonemes = GameDataBridge.Instance.GetSectionLetters();
+		List<DataRow> phonemes = DataHelpers.GetSectionLetters();
 
 		if(phonemes.Count > 0)
 		{

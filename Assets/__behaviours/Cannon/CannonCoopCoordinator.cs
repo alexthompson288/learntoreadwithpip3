@@ -65,13 +65,13 @@ public class CannonCoopCoordinator : MonoBehaviour
         switch (m_dataType)
         {
             case Game.Data.Phonemes:
-                m_dataPool = GameDataBridge.Instance.GetLetters();
+                m_dataPool = DataHelpers.GetLetters();
                 break;
             case Game.Data.Words:
-                m_dataPool = GameDataBridge.Instance.GetWords();
+                m_dataPool = DataHelpers.GetWords();
                 break;
             case Game.Data.Keywords:
-                m_dataPool = GameDataBridge.Instance.GetKeywords();
+                m_dataPool = DataHelpers.GetKeywords();
                 break;
         }
 

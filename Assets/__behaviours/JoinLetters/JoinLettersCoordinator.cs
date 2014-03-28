@@ -49,7 +49,7 @@ public class JoinLettersCoordinator : Singleton<JoinLettersCoordinator>
 		
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		List<DataRow> lettersPool = GameDataBridge.Instance.GetLetters();
+		List<DataRow> lettersPool = DataHelpers.GetLetters();
 		
 		foreach (DataRow myPh in lettersPool)
         {

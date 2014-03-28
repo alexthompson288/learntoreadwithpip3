@@ -91,7 +91,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 			int lowestSetNum = -1;
 			for(int i = 0; i < sets.Count; ++i)
 			{
-				if(GameDataBridge.Instance.SetContainsData(sets[i], m_setAttribute, m_contentAttribute))
+				if(DataHelpers.SetContainsData(sets[i], m_setAttribute, m_contentAttribute))
 				{
 					GameObject newSetButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_setButtonPrefab, m_setGrid);
 					newSetButton.GetComponentInChildren<UILabel>().text = String.Format("Set {0}", sets[i]["number"].ToString());
@@ -135,7 +135,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		
 		if(dt.Rows.Count > 0)
 		{
-			List<DataRow> data = GameDataBridge.Instance.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
+			List<DataRow> data = DataHelpers.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
 			Debug.Log(String.Format("Found {0} stories", data.Count));
 			
 			for(int i = 0; i < data.Count; ++i)
@@ -176,7 +176,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		if(dt.Rows.Count > 0)
 		{
-			List<DataRow> data = GameDataBridge.Instance.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
+			List<DataRow> data = DataHelpers.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
 
 			foreach(DataRow datum in data)
 			{

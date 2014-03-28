@@ -56,18 +56,18 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 		}
 		
 		int difficulty = SessionInformation.Instance.GetDifficulty();
-		m_wordsPool = GameDataBridge.Instance.GetSectionWords(sectionIds[difficulty]).Rows;
+		m_wordsPool = DataHelpers.GetSectionWords(sectionIds[difficulty]).Rows;
 		*/
 
 		if(m_nonsenseWords)
 		{
-			m_wordsPool = GameDataBridge.Instance.GetNonsenseWords();
+			m_wordsPool = DataHelpers.GetNonsenseWords();
 		}
 		else
 		{
-			m_wordsPool = GameDataBridge.Instance.GetWords();
-			//m_wordsPool = GameDataBridge.Instance.GetSectionWords(1414).Rows; // Keywords
-			//m_wordsPool = GameDataBridge.Instance.GetSectionWords(1392).Rows; // Words
+			m_wordsPool = DataHelpers.GetWords();
+			//m_wordsPool = DataHelpers.GetSectionWords(1414).Rows; // Keywords
+			//m_wordsPool = DataHelpers.GetSectionWords(1392).Rows; // Words
 
 			//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='pat'");
 			//if(dt.Rows.Count > 0)

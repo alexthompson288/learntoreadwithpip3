@@ -39,7 +39,7 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordSelection.AddRange(GameDataBridge.Instance.GetWords());
+		m_wordSelection.AddRange(DataHelpers.GetWords());
 
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 

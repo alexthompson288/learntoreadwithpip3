@@ -50,12 +50,12 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 		if(m_nonsenseWords)
 		{
-			m_wordsPool = GameDataBridge.Instance.GetNonsenseWords();
+			m_wordsPool = DataHelpers.GetNonsenseWords();
 			Debug.Log("m_wordsPool.Count: " + m_wordsPool.Count);
 		}
 		else
 		{
-			m_wordsPool = GameDataBridge.Instance.GetWords();
+			m_wordsPool = DataHelpers.GetWords();
 		}
 
 		if(m_targetScore > m_wordsPool.Count)

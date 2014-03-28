@@ -40,14 +40,14 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		m_wordPool = GameDataBridge.Instance.GetWords();
+		m_wordPool = DataHelpers.GetWords();
 
 		//SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
 		//int sectionId = 1392;
 		//DataTable dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
 		//m_wordPool = dt.Rows; 
 
-		List<DataRow> phonemes = GameDataBridge.Instance.GetLetters();
+		List<DataRow> phonemes = DataHelpers.GetLetters();
 		DataRow targetPhoneme = null;
 
 		foreach(DataRow phoneme in phonemes)
@@ -67,7 +67,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 
 			for(int i = m_wordPool.Count - 1; i > -1; --i)
 			{
-				List<DataRow> orderedPhonemes = GameDataBridge.Instance.GetOrderedPhonemes(m_wordPool[i]);
+				List<DataRow> orderedPhonemes = DataHelpers.GetOrderedPhonemes(m_wordPool[i]);
 				if(!orderedPhonemes.Contains(targetPhoneme))
 				{
 					m_wordPool.RemoveAt(i);

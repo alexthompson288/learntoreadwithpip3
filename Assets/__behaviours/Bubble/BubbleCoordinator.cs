@@ -352,14 +352,14 @@ public class BubbleCoordinator : MonoBehaviour
 		switch(m_dataType)
 		{
 		case Game.Data.Keywords:
-			m_dataPool.AddRange(GameDataBridge.Instance.GetKeywords(inclusive));
+			m_dataPool.AddRange(DataHelpers.GetKeywords(inclusive));
 			break;
 		case Game.Data.Phonemes:
-			m_dataPool.AddRange(GameDataBridge.Instance.GetLetters(inclusive));
+			m_dataPool.AddRange(DataHelpers.GetLetters(inclusive));
 			break;
 		default:
 			Debug.Log("Getting word data");
-			m_dataPool.AddRange(GameDataBridge.Instance.GetWords(inclusive));
+			m_dataPool.AddRange(DataHelpers.GetWords(inclusive));
 			break;
 		}
 	}

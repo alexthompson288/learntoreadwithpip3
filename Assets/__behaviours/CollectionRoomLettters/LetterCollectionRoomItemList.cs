@@ -183,7 +183,7 @@ public class LetterCollectionRoomItemList : MonoBehaviour {
 
     void AddStickersFromWords(int sectionId)
     {
-        DataTable dt = GameDataBridge.Instance.GetSectionWords(sectionId);
+        DataTable dt = DataHelpers.GetSectionWords(sectionId);
         HashSet<string> doneWords = new HashSet<string>();
         foreach (DataRow resultRow in dt.Rows)
         {

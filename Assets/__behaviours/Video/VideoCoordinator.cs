@@ -26,7 +26,7 @@ public class VideoCoordinator : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		List<DataRow> sentences = GameDataBridge.Instance.GetSectionSentences();
+		List<DataRow> sentences = DataHelpers.GetSectionSentences();
 		
 		Debug.Log("sentences.Count: " + sentences.Count);
 
@@ -88,7 +88,7 @@ public class VideoCoordinator : MonoBehaviour
 		{
             Debug.Log("Execute try");
 
-            string streamingRelativePath = String.Format("StandaloneOggs/{0}.ogg", filename);
+            string streamingRelativePath = String.Format("{0}/{1}.ogg", m_oggSubdirectory, filename);
 
             if(System.IO.File.Exists(String.Format("{0}/StreamingAssets/{1}", Application.dataPath, streamingRelativePath)))
             {
@@ -100,7 +100,7 @@ public class VideoCoordinator : MonoBehaviour
             }
             else
             {
-                Debug.Log("File not found");
+                Debug.Log("File not found: " + String.Format("{0}/StreamingAssets/{1}", Application.dataPath, streamingRelativePath));
                 GameHelpers.OnGameFinish(true, "NewVoyage");
             }
 		}

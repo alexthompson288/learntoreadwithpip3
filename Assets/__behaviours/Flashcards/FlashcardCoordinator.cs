@@ -34,7 +34,7 @@ public class FlashcardCoordinator : MonoBehaviour
 
 	public void RefreshWordPool()
 	{
-		m_wordPool = GameDataBridge.Instance.GetWords();
+		m_wordPool = DataHelpers.GetWords();
 	}
 
 	public IEnumerator RefreshPipPad()

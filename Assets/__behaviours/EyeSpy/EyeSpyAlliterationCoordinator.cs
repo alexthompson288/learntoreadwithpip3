@@ -38,7 +38,7 @@ public class EyeSpyAlliterationCoordinator : Singleton<EyeSpyAlliterationCoordin
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
 		m_wordPool.AddRange(dt.Rows);
 
-		//m_wordPool.AddRange(GameDataBridge.Instance.GetWords());
+		//m_wordPool.AddRange(DataHelpers.GetWords());
 
 		//Debug.Log("pre m_wordPool.Count: " + m_wordPool.Count);
 

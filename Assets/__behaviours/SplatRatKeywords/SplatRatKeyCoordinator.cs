@@ -86,8 +86,8 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		List<DataRow> lettersPool = new List<DataRow>();
 
 
-		lettersPool.AddRange(GameDataBridge.Instance.GetKeywords());
-		//lettersPool = GameDataBridge.Instance.GetSectionWords(1414).Rows;
+		lettersPool.AddRange(DataHelpers.GetKeywords());
+		//lettersPool = DataHelpers.GetSectionWords(1414).Rows;
 
 		
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);

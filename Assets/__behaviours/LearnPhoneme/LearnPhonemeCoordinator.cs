@@ -65,7 +65,7 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 			m_letterButton.SetMethods( m_letterButton.PlayPhonemeAudio , m_letterButton.PlayMnemonicAudio );
 		}
 
-		DataTable dtw = GameDataBridge.Instance.GetSectionWords(sectionId);
+		DataTable dtw = DataHelpers.GetSectionWords(sectionId);
 		List<DataRow> wordData = new List<DataRow>();
 
 		if(dtw.Rows.Count > 0)

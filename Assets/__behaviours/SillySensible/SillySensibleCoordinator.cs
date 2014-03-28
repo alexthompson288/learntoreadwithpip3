@@ -70,16 +70,16 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
         SessionInformation.Instance.SetPlayerIndex(0, 3);
         SessionInformation.Instance.SetWinner(0);
 
-		m_wordList.AddRange(GameDataBridge.Instance.GetWords());
+		m_wordList.AddRange(DataHelpers.GetWords());
 
 		/*
         int sillySectionId = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_nonsenseDatabaseIds
                     [SessionInformation.Instance.GetDifficulty()];
-        DataTable dtNonsense = GameDataBridge.Instance.GetSectionWords(sillySectionId);
+        DataTable dtNonsense = DataHelpers.GetSectionWords(sillySectionId);
         m_sillyWords = dtNonsense.Rows;
 		*/
 
-		m_sillyWords.AddRange(GameDataBridge.Instance.GetNonsenseWords());
+		m_sillyWords.AddRange(DataHelpers.GetNonsenseWords());
 
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 

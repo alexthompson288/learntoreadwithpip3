@@ -37,7 +37,7 @@ public class BingoKeywordsCoordinator : Singleton<BingoKeywordsCoordinator> {
 		int[] sectionIds = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
 		int difficulty = SessionInformation.Instance.GetDifficulty();
 		Debug.Log("sectionIds[difficulty]: " + sectionIds[difficulty]);
-		return GameDataBridge.Instance.GetSectionWords(sectionIds[difficulty]).Rows;
+		return DataHelpers.GetSectionWords(sectionIds[difficulty]).Rows;
 	}
 
 	void SetWordsPool()
@@ -45,7 +45,7 @@ public class BingoKeywordsCoordinator : Singleton<BingoKeywordsCoordinator> {
 		int[] sectionIds = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
 		int difficulty = SessionInformation.Instance.GetDifficulty();
 		Debug.Log("sectionIds[difficulty]: " + sectionIds[difficulty]);
-		m_wordsPool = GameDataBridge.Instance.GetSectionWords(sectionIds[difficulty]).Rows;
+		m_wordsPool = DataHelpers.GetSectionWords(sectionIds[difficulty]).Rows;
 	}
 
 	// Use this for initialization

@@ -15,7 +15,7 @@ public class SpellingPadTest : MonoBehaviour {
 		
 		int[] sectionIds =((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
 		int difficulty = SessionInformation.Instance.GetDifficulty();
-		m_wordsPool = GameDataBridge.Instance.GetSectionWords(sectionIds[difficulty]).Rows;
+		m_wordsPool = DataHelpers.GetSectionWords(sectionIds[difficulty]).Rows;
 	}
 
 	void Update ()

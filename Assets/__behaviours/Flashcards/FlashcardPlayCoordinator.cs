@@ -30,7 +30,7 @@ public class FlashcardPlayCoordinator : Singleton<FlashcardPlayCoordinator>
 
 		PipPadBehaviour.Instance.OnBlackboardClick += OnBlackboardClick;
 		
-		List<DataRow> wordSelection = GameDataBridge.Instance.GetWords();
+		List<DataRow> wordSelection = DataHelpers.GetWords();
 		
 
 		for(int i = 0; i < wordSelection.Count; ++i)
