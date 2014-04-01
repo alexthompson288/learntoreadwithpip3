@@ -37,7 +37,6 @@ public class UserInfo : Singleton<UserInfo>
 	Dictionary<string, string> m_users = new Dictionary<string, string>();
 
     string m_ipAddress = "";
-    string m_platform = "";
 
 
 #if UNITY_EDITOR
@@ -52,13 +51,13 @@ public class UserInfo : Singleton<UserInfo>
 
         WWWForm form = new WWWForm();
 
-        Debug.Log("Posting data: " + m_accountUsername);
+        Debug.Log("Posting user data: " + m_accountUsername);
 
         form.AddField(modelName + "[account_username]", m_accountUsername);
         form.AddField(modelName + "[email]", m_userEmail);
         form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
         form.AddField(modelName + "[child_usernames]", CollectionHelpers.ConcatList(m_users.Keys.ToList()));
-        form.AddField(modelName + "[platform]", m_platform);
+        form.AddField(modelName + "[platform]", Application.platform.ToString());
         form.AddField(modelName + "[ip_address]", m_ipAddress);
 
         Debug.Log(form.data.ToString());
@@ -136,8 +135,6 @@ public class UserInfo : Singleton<UserInfo>
 	void Awake()
 	{	
         Debug.Log("UserInfo.Awake()");
-
-        m_platform = Application.platform.ToString();
 
 #if UNITY_STANDALONE || UNITY_ANDROID
         try

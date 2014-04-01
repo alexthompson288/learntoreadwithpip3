@@ -27,7 +27,14 @@ public class PipGameBuildSettings : ScriptableObject
 	public bool m_isEverythingUnlocked;
 
     [SerializeField]
-    public string m_userType;
+    private string m_releaseUserType;
+    public string m_userType
+    {
+        get
+        {
+            return Debug.isDebugBuild ? "Developer" : m_releaseUserType;
+        }
+    }
 
 	[SerializeField]
 	public bool m_disableNavMenu;

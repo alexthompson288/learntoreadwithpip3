@@ -570,6 +570,7 @@ public class UserStats : Singleton<UserStats>
             Debug.Log ("base.PostData(): " + m_modelName);
             Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
             Debug.Log("childName: " + UserInfo.Instance.childName);
+            Debug.Log("platform: " + Application.platform.ToString());
             Debug.Log("hasCompleted: " + m_hasCompleted);
             Debug.Log("start: " + GetTrimmedStartTime());
             Debug.Log("end: " + GetTrimmedEndTime());
@@ -582,6 +583,7 @@ public class UserStats : Singleton<UserStats>
 
 			form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
 			form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
+            form.AddField (m_modelName + "[platform]", Application.platform.ToString());
 			form.AddField (m_modelName + "[has_completed]", Convert.ToInt32(m_hasCompleted));
 			form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
 			form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());

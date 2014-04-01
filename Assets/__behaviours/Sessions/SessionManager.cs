@@ -111,6 +111,7 @@ public class SessionManager : Singleton<SessionManager>
 
 		SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
 
+        // TODO: Delete
 		DataTable dtTest = db.ExecuteQuery("select * from programsessions ORDER BY number DESC");
 
 		dtTest = db.ExecuteQuery("select * from programsessions WHERE id=" + 280);

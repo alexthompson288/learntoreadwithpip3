@@ -57,7 +57,6 @@ public class GameDataBridge : Singleton<GameDataBridge>
 	// Use this for initialization
 	IEnumerator Start () 
     {
-		/*
 		Debug.Log("");
 		Debug.Log("");
 		Debug.Log("");
@@ -67,7 +66,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
 		Debug.Log("");
 		Debug.Log("");
 		Debug.Log("");
-		*/
+		
 		bool forceLocal = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_alwaysUseOfflineDatabase;
 		bool useLocal = true;
 	    int dbVersion = 0;
@@ -129,19 +128,20 @@ public class GameDataBridge : Singleton<GameDataBridge>
 				System.IO.File.WriteAllBytes(cmsDbPath, m_localDatabase.bytes);
 #else
 				Debug.Log(1);
-				string streamingAssetsPath = "jar:file://" + Application.dataPath + "!/assets/" + "local-store.bytes";
+				//string streamingAssetsPath = "jar:file://" + Application.dataPath + "!/assets/" + "local-store.bytes";
+                string streamingAssetsPath = Path.Combine(Application.streamingAssetsPath, dbName);
+                Debug.Log("STREAMING ASSETS PATH");
 				Debug.Log(streamingAssetsPath);
 				WWW loadDB = new WWW(streamingAssetsPath);
 				Debug.Log(2);
 
 				float counter = 0;
 				bool foundDB = true;
-				Debug.Log(3);
+				Debug.Log(3 + " - about to wait for loadDB");
 				while(!loadDB.isDone) 
 				{
-					Debug.Log(4);
 					counter += Time.deltaTime;
-					Debug.Log("counter: " + counter);
+
 					//float progess = loadDB.progress;
 					//Debug.Log(progress);
 
@@ -152,22 +152,22 @@ public class GameDataBridge : Singleton<GameDataBridge>
 						break;
 					}
 				}
-				Debug.Log(5);
+				Debug.Log(4);
 
 				Debug.Log("loadDB.bytes: " + loadDB.bytes);
 
 				if(foundDB)
 				{
-					Debug.Log(6 + "if");
-					Debug.Log("Writing db to persistent data path");
+					Debug.Log(5 + "if(foundDB)");
+                    Debug.Log("Writing db to - " + cmsDbPath);
 					System.IO.File.WriteAllBytes(cmsDbPath, loadDB.bytes);
-					Debug.Log(7 + "if");
+                    Debug.Log(6 + "if(foundDB)");
 	                SavedAssetBundles.Instance.AddAssetVersion(dbName, m_localDatabaseVersion);
-					Debug.Log(8 + "if");
+                    Debug.Log(7 + "if(foundDB)");
 				}
 				else
 				{
-					Debug.Log(6 + "else");
+					Debug.Log(5 + "else(!foundDB)");
 					Debug.Log("Not writing db because unable to find");
 				}
 #endif
