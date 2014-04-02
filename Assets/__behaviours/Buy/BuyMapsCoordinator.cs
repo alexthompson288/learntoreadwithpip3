@@ -79,7 +79,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 			if (pcTimeOut > 3.0f)
 			{
 				Debug.LogWarning("PC TIMEOUT. UNLOCKING BY DEFAULT");
-				BuyManager.Instance.SetMapPurchased(m_mapId);   
+				BuyInfo.Instance.SetMapPurchased(m_mapId);   
 				m_purchaseIsResolved = true;
 			}
 			#endif
@@ -123,7 +123,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 			m_purchaseIsResolved = true;
 		}
 		
-		BuyManager.Instance.SetMapPurchased(m_mapId);
+		BuyInfo.Instance.SetMapPurchased(m_mapId);
 	}
 	
 	void StoreKitManager_purchaseCancelledEvent(string obj)
@@ -135,8 +135,8 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 
 	public void RefreshBuyButton()
 	{
-		bool mapIsLocked = !BuyManager.Instance.IsMapBought(m_mapId);
+		bool mapIsLocked = !BuyInfo.Instance.IsMapBought(m_mapId);
 		m_buyButton.collider.enabled = mapIsLocked;
-		m_buyButton.GetComponentInChildren<UISprite>().color = mapIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+		m_buyButton.GetComponentInChildren<UISprite>().color = mapIsLocked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
 	}
 }

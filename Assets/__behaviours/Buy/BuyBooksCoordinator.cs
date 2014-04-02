@@ -50,7 +50,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	void Start()
 	{
-		if(BuyManager.Instance.IsEverythingBought())
+		if(BuyInfo.Instance.IsEverythingBought())
 		{
 			m_buyButtonsParent.SetActive(false);
 			m_infoText.position = m_infoNoBuyLocation.position;
@@ -79,19 +79,19 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	public void RefreshBuyButton()
 	{
-		bool bookIsLocked = m_currentBook != null && !BuyManager.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"]));
+		bool bookIsLocked = m_currentBook != null && !BuyInfo.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"]));
 		m_buyButton.collider.enabled = bookIsLocked;
 
 		UISprite buyButtonSprite = m_buyButton.GetComponentInChildren<UISprite>() as UISprite;
 		if(buyButtonSprite != null)
 		{
-			buyButtonSprite.color = bookIsLocked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+			buyButtonSprite.color = bookIsLocked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
 		}
 	}
 
 	public void Show(NewStoryBrowserBookButton currentBook)
 	{
-		m_buyAllBooksLabel.text = String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.GetNumBooks());
+		m_buyAllBooksLabel.text = String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
 		DisableUICams();
 
@@ -102,10 +102,10 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 #if UNITY_IPHONE
 		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
 		ep.Add("Title", bookData["title"].ToString());
-		ep.Add("isAlreadyBought", BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
+		ep.Add("isAlreadyBought", BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
 		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
 		//FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
-		//FlurryBinding.logEvent("isAlreadyBought: " + BuyManager.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
+		//FlurryBinding.logEvent("isAlreadyBought: " + BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
 #endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");

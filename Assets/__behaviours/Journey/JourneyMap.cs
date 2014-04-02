@@ -69,7 +69,7 @@ public class JourneyMap : MonoBehaviour, IComparable
 
 	public void Refresh()
 	{
-		bool isUnlocked = BuyManager.Instance.IsMapBought(m_mapId);
+		bool isUnlocked = BuyInfo.Instance.IsMapBought(m_mapId);
 
 		if(m_background != null)
 		{
@@ -100,7 +100,7 @@ public class JourneyMap : MonoBehaviour, IComparable
 	public void OnClickMapCollider()
 	{
 		Debug.Log("Map clicked");
-		if(!BuyManager.Instance.IsMapBought(m_mapId))
+		if(!BuyInfo.Instance.IsMapBought(m_mapId))
 		{
 			BuyMapsCoordinator.Instance.Show(m_mapId);
 		}

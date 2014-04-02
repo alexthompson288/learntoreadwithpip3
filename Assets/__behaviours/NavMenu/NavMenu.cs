@@ -78,7 +78,7 @@ public class NavMenu : Singleton<NavMenu>
 	{
 		Debug.Log("CallUserMoveable(): - isOn: " + m_userMoveable.IsOn());
 
-		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.GetNumBooks());
+		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
 		CallMoveable(m_userMoveable);
 	}

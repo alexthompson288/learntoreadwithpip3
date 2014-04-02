@@ -44,16 +44,16 @@ public class BuyableGame : MonoBehaviour
 
 	public void Refresh()
 	{
-		m_isUnlocked = BuyManager.Instance.IsGameBought(m_gameSceneName);
+		m_isUnlocked = BuyInfo.Instance.IsGameBought(m_gameSceneName);
 		
 		if(m_background != null)
 		{
-			m_background.color = m_isUnlocked ?  Color.white : BuyManager.Instance.GetDisabledColor();
+			m_background.color = m_isUnlocked ?  Color.white : BuyManager.Instance.unbuyableColor;
 		}
 
 		if(m_gameIcon != null)
 		{
-			m_gameIcon.color = m_isUnlocked ? Color.white : BuyManager.Instance.GetDisabledColor(); 
+			m_gameIcon.color = m_isUnlocked ? Color.white : BuyManager.Instance.unbuyableColor; 
 		}
 
 		if(m_lock != null)

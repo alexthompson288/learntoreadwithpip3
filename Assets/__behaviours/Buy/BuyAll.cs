@@ -32,16 +32,16 @@ public class BuyAll : MonoBehaviour
 		switch(m_buyType)
 		{
 		case BuyManager.BuyType.Books:
-			locked = !BuyManager.Instance.AreAllBooksBought();
+			locked = !BuyInfo.Instance.AreAllBooksBought();
 			break;
 		case BuyManager.BuyType.Maps:
-			locked = !BuyManager.Instance.AreAllMapsBought();
+			locked = !BuyInfo.Instance.AreAllMapsBought();
 			break;
 		case BuyManager.BuyType.Games:
-			locked = !BuyManager.Instance.AreAllGamesBought();
+			locked = !BuyInfo.Instance.AreAllGamesBought();
 			break;
 		case BuyManager.BuyType.Everything:
-			locked = !BuyManager.Instance.IsEverythingBought();
+			locked = !BuyInfo.Instance.IsEverythingBought();
 			break;
 		}
 
@@ -51,6 +51,6 @@ public class BuyAll : MonoBehaviour
 
 		//Debug.Log(m_buyType + " - collider.enabled: " + collider.enabled);
 		
-		m_background.color = locked ? BuyManager.Instance.GetEnabledColor() : BuyManager.Instance.GetDisabledColor();
+		m_background.color = locked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
 	}
 }
