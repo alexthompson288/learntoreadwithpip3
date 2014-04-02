@@ -21,7 +21,7 @@ public class BuyAll : MonoBehaviour
 	{
 		if(m_isClickable)
 		{
-			BuyManager.Instance.BuyAll(m_buyType);
+			BuyManager.Instance.Buy(m_buyType);
 		}
 	}
 

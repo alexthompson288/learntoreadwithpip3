@@ -37,7 +37,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	Texture2D m_defaultBackgroundTex;
 	Color m_defaultBackgroundColor;
 	
-	NewStoryBrowserBookButton m_currentBook;
+    NewStoryBrowserBookButton m_currentBook;
 
 	void Awake()
 	{
@@ -60,26 +60,12 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	public void BuyBook(ClickEvent click)
 	{
-		ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
-		ParentGate.Instance.On();
-	}
-	
-	void OnParentGateAnswer(bool isCorrect)
-	{
-		ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
-
-		if(isCorrect && m_currentBook != null)
-		{
-			Debug.Log("Purchasing book");
-			m_currentBook.Purchase();
-		}
-
-		EnableUICams();
+        m_currentBook.Buy(); // Call Buy() method on book because there is another script called BuyBookButton which lets user buy individual book.
 	}
 
-	public void RefreshBuyButton()
+	public override void RefreshBuyButton()
 	{
-		bool bookIsLocked = m_currentBook != null && !BuyInfo.Instance.IsBookBought(Convert.ToInt32(m_currentBook.GetData()["id"]));
+        bool bookIsLocked = !BuyInfo.Instance.IsBookBought(Convert.ToInt32(m_currentBook.storyData["id"]));
 		m_buyButton.collider.enabled = bookIsLocked;
 
 		UISprite buyButtonSprite = m_buyButton.GetComponentInChildren<UISprite>() as UISprite;
@@ -95,72 +81,40 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 		DisableUICams();
 
-		m_currentBook = currentBook;
-
-		DataRow bookData = m_currentBook.GetData();
+		DataRow storyData = currentBook.storyData;
 
 #if UNITY_IPHONE
 		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
 		ep.Add("Title", bookData["title"].ToString());
 		ep.Add("isAlreadyBought", BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
 		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
-		//FlurryBinding.logEvent("Buy Books Panel: " + bookData["title"].ToString(), false);
-		//FlurryBinding.logEvent("isAlreadyBought: " + BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])), false);
 #endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 		
-
 		RefreshBuyButton();
 
-		
-		//m_priceMeshParent.SetActive(true);
 		m_tweenBehaviour.On(false);
-
 		
-		SetFromText(m_titleLabel, bookData, "title");
-		SetFromText(m_descriptionLabel, bookData, "description");
-		SetFromText(m_authorLabel, bookData, "author", "by ");
-		SetFromText(m_ageGroupLabel, bookData, "storytype");
-		SetDifficultyStars(bookData);
+        SetFromText(m_titleLabel, storyData, "title");
+        SetFromText(m_descriptionLabel, storyData, "description");
+        SetFromText(m_authorLabel, storyData, "author", "by ");
+        SetFromText(m_ageGroupLabel, storyData, "storytype");
+        SetDifficultyStars(storyData);
 		
 		string price = "£0.69";
-        /*
-		try
-		{
-			int priceTier = Convert.ToInt32(bookData["readingpadart"].ToString());
-			
-			switch(priceTier)
-			{
-			case 1:
-				price = "£0.69p";
-				break;
-			case 2:
-				price = "£1.49p";
-				break;
-			default:
-				break;
-			}
-		}
-		catch
-		{
-			Debug.LogWarning("Could not find price tier for " + bookData["title"].ToString());
-		}
-        */
+
 		m_priceLabel.text = "Buy Book - " + price;
 
-		//m_priceTextMesh.text = price;
 
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + bookData["id"].ToString() + "' and pageorder='" + 1 + "'");
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + storyData["id"].ToString() + "' and pageorder='" + 1 + "'");
 
 		if (dt.Rows.Count > 0)
 		{
 			DataRow row = dt.Rows[0];
 			
-			//string imageName = row["image"] == null ? "" : row["image"].ToString().Replace(".png", "");
 			string bgImageName = row["backgroundart"] == null ? "" : row["backgroundart"].ToString().Replace(".png", "");
 			
-			//Texture2D image = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
 			Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
 
 			m_background.mainTexture = bgImage != null ? bgImage : m_defaultBackgroundTex;
@@ -171,7 +125,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	public void OnClickBackCollider(ClickEvent click)
 	{
 		m_tweenBehaviour.Off(false);
-		EnableUICams();
+		NGUIHelpers.EnableUICams();
 	}
 
 	void SetFromText(UILabel label, DataRow dr, string field, string preface = "")
@@ -198,6 +152,4 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 			}
 		}
 	}
-
-
 }

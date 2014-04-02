@@ -7,8 +7,6 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     [SerializeField]
     private UITexture m_coverSprite;
     [SerializeField]
-    private DataRow m_storyData;
-    [SerializeField]
     private float m_loadWithinRange = 2.0f;
     [SerializeField]
     private bool m_dynamicLoad = false;
@@ -22,6 +20,16 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     private GameObject m_padlockHierarchy;
 	[SerializeField]
 	private GameObject m_glowTexture;
+
+    [SerializeField]
+    private DataRow m_storyData;
+    public DataRow storyData
+    {
+        get
+        {
+            return m_storyData;
+        }
+    }
 
     bool m_isLoaded;
 
@@ -131,98 +139,13 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 		}
 	}
 
+    public void Buy()
+    {
+        BuyManager.Instance.BuyStory(m_storyData);
+    }
+
 	public void ShowBuyPanel()
 	{
 		BuyBooksCoordinator.Instance.Show(this);
-	}
-
-    public void Purchase()
-    {
-        int bookId = Convert.ToInt32(m_storyData["id"]);
-		Debug.Log("Purchasing " + bookId);
-        StartCoroutine(AttemptPurchase());
-    }
-
-    bool m_purchaseIsResolved = false;
-    IEnumerator AttemptPurchase()
-    {
-        StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-
-		m_purchaseIsResolved = false;
-
-		Debug.Log("Attempting purchase: " + BuyManager.Instance.BuildStoryProductIdentifier(m_storyData));
-		StoreKitBinding.purchaseProduct(BuyManager.Instance.BuildStoryProductIdentifier(m_storyData), 1);
-
-        UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
-        foreach (UICamera cam in uiCameras)
-        {
-            cam.enabled = false;
-        }
-
-        float pcTimeOut = 0;
-        while (!m_purchaseIsResolved)
-        {
-            pcTimeOut += Time.deltaTime;
-#if UNITY_EDITOR
-            if (pcTimeOut > 3.0f)
-            {
-				Debug.LogWarning("PC TIMEOUT. UNLOCKING BY DEFAULT");
-                int bookId = Convert.ToInt32(m_storyData["id"]);
-				BuyInfo.Instance.SetBookPurchased(bookId);   
-                m_purchaseIsResolved = true;
-            }
-#endif
-            yield return null;
-        }
-
-        foreach (UICamera cam in uiCameras)
-        {
-            if (cam != null)
-            {
-                cam.enabled = true;
-            }
-        }
-
-        Refresh();
-		BuyBooksCoordinator.Instance.RefreshBuyButton();
-
-        StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-    }
-
-    void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
-    {
-		Debug.Log("BOOK PURCHASE SUCCESS: " + m_storyData["title"].ToString());
-
-		CharacterPopper popper = UnityEngine.Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
-		if(popper != null)
-		{
-			popper.PopCharacter();
-		}
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
-
-        int bookId = Convert.ToInt32(m_storyData["id"]);
-		if (obj.productIdentifier == BuyManager.Instance.BuildStoryProductIdentifier(m_storyData))
-        {
-            m_purchaseIsResolved = true;
-        }
-
-		BuyInfo.Instance.SetBookPurchased(bookId);
-		InfoPanelBox.Instance.HideBuyButtons(false);
-    }
-
-    void StoreKitManager_purchaseCancelledEvent(string obj)
-    {
-		Debug.Log("BOOK PURCHASE CANCELLED: " + m_storyData["title"].ToString());
-
-        m_purchaseIsResolved = true;
-    }
-
-	public DataRow GetData()
-	{
-		return m_storyData;
 	}
 }

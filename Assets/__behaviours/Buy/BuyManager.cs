@@ -66,19 +66,47 @@ public class BuyManager : Singleton<BuyManager>
 		Games,
 		Everything
 	}
-	
-	BuyType m_buyType;
-
 
 	bool m_purchaseIsResolved = false;
-    bool m_productListResolved = false;
+
 
 	string m_productIdentifier;
 
+    bool m_isBuyingBundle;
 
-	public void BuyAll(BuyType buyType)
+    public void BuyMap(int id)
+    {
+        m_productIdentifier = BuildMapProductIdentifier(id);
+
+        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        ParentGate.Instance.On();
+    }
+
+    public void BuyStory(DataRow storyData)
+    {
+        m_productIdentifier = BuildStoryProductIdentifier(storyData);
+
+        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        ParentGate.Instance.On();
+    }
+
+	public void Buy(BuyType buyType)
 	{
-		m_buyType = buyType;
+		switch (buyType)
+        {
+            case BuyType.Books:
+                m_productIdentifier = m_booksProductIdentifier;
+                break;
+            case BuyType.Everything:
+                m_productIdentifier = m_everythingProductIdentifier;
+                break;
+            case BuyType.Games:
+                m_productIdentifier = m_gamesProductIdentifier;
+                break;
+            case BuyType.Maps:
+                m_productIdentifier = m_mapsProductIdentifier;
+                break;
+        }
 		
 		ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
 		ParentGate.Instance.On();
@@ -94,86 +122,60 @@ public class BuyManager : Singleton<BuyManager>
 		}
 	}
 
-    void CelebratePurchase()
-    {
-        CharacterPopper popper = UnityEngine.Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
-        if(popper != null)
-        {
-            popper.PopCharacter();
-        }
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
-    }
+    [SerializeField]
+    public string m_androidPublicKey;
 
-    void RefreshBooks()
-    {
-        NewStoryBrowserBookButton[] books = UnityEngine.Object.FindObjectsOfType(typeof(NewStoryBrowserBookButton)) as NewStoryBrowserBookButton[];
-        foreach(NewStoryBrowserBookButton book in books)
-        {
-            book.Refresh();
-        }
-    }
-    
-    void RefreshMaps()
-    {
-        JourneyMap[] maps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap)) as JourneyMap[];
-        foreach(JourneyMap map in maps)
-        {
-            map.Refresh();
-        }
-    }
-    
-    void RefreshGames()
-    {
-        BuyableGame[] games = UnityEngine.Object.FindObjectsOfType(typeof(BuyableGame)) as BuyableGame[];
-        foreach(BuyableGame game in games)
-        {
-            game.Refresh();
-        }
-    }
-    
-    void RefreshBuyAllButtons()
-    {
-        BuyAll[] buttons = UnityEngine.Object.FindObjectsOfType(typeof(BuyAll)) as BuyAll[];
-        foreach(BuyAll button in buttons)
-        {
-            button.Refresh();
-        }
-    }
-	
-    public string BuildStoryProductIdentifier(DataRow storyData)
-    {
-        string id = "stories_" + storyData["id"].ToString() + "_" +
-            storyData["title"].ToString().TrimEnd(new char[] { ' ' }).Replace(" ", "_").Replace("?", "").Replace("!", "").Replace("-", "_").Replace("'", "").Replace(".", "").ToLower();
-        
-        return id;
-    }
-    
-    public string BuildMapProductIdentifier(int map)
-    {
-        return m_mapProductIdentifiers[map - 1];
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Android
+#if UNITY_ANDROID
+    bool m_billingSupported = false;
 
     IEnumerator Start()
     {
         yield return null;
+
+        GoogleIABManager.billingSupportedEvent += GoogleIAB_billingSupportedEvent;
+        GoogleIABManager.billingNotSupportedEvent += GoogleIAB_billingNotSupportedEvent;
+
+        GoogleIAB.init(m_androidPublicKey);
+
+
+    }
+
+    void GoogleIAB_billingSupportedEvent()
+    {
+        m_billingSupported = true;
+
+        GoogleIABManager.billingSupportedEvent -= GoogleIAB_billingSupportedEvent;
+        GoogleIABManager.billingNotSupportedEvent -= GoogleIAB_billingNotSupportedEvent;
+    }
+
+    void GoogleIAB_billingNotSupportedEvent(string message)
+    {
+        Debug.Log("Billing Unsupported: " + message);
+
+        m_billingSupported = false;
+
+        GoogleIABManager.billingSupportedEvent -= GoogleIAB_billingSupportedEvent;
+        GoogleIABManager.billingNotSupportedEvent -= GoogleIAB_billingNotSupportedEvent;
     }
 
     IEnumerator AttemptPurchase()
     {
         yield return null;
+        if (m_billingSupported)
+        {
+        }
     }
 
     public IEnumerator RestorePurchases(float restoreTime)
     {
         yield return null;
+        if (m_billingSupported)
+        {
+        }
     }
+#elif UNITY_IPHONE
+    bool m_productListResolved = false;
 
-    ////////////////////////////////////////////////////////////
-    // iOS
-#if UNITY_IPHONE
     IEnumerator Start()
     {
         if(m_logProductRequests)
@@ -229,40 +231,13 @@ public class BuyManager : Singleton<BuyManager>
 		Debug.Log("BuyInfo.AttemptPurchase()");
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		
-		Action<StoreKitTransaction> purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_booksPurchaseSuccessfulEvent);
-
-		switch(m_buyType)
-		{
-		case BuyType.Books:
-			m_productIdentifier = m_booksProductIdentifier;
-			purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_booksPurchaseSuccessfulEvent);
-			break;
-		case BuyType.Maps:
-			m_productIdentifier = m_mapsProductIdentifier;
-			purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_mapsPurchaseSuccessfulEvent);
-			break;
-		case BuyType.Games:
-			m_productIdentifier = m_gamesProductIdentifier;
-			purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_gamesPurchaseSuccessfulEvent);
-			break;
-		case BuyType.Everything:
-			m_productIdentifier = m_everythingProductIdentifier;
-			purchaseSuccessfulEvent = new Action<StoreKitTransaction>(StoreKitManager_everythingPurchaseSuccessfulEvent);
-			break;
-		}
-		
-		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(purchaseSuccessfulEvent);
+        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
 		
 		Debug.Log("Attempting purchase on " + m_productIdentifier);
 		m_purchaseIsResolved = false;
 		StoreKitBinding.purchaseProduct(m_productIdentifier, 1);
 		
-		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
-		foreach (UICamera cam in uiCameras)
-		{
-			cam.enabled = false;
-		}
+        NGUIHelpers.EnableUICams(false);
 		
 		float pcTimeOut = 0;
 		while (!m_purchaseIsResolved)
@@ -279,73 +254,26 @@ public class BuyManager : Singleton<BuyManager>
 			yield return null;
 		}
 		
-		foreach (UICamera cam in uiCameras)
-		{
-			if (cam != null)
-			{
-				cam.enabled = true;
-			}
-		}
+        NGUIHelpers.EnableUICams(false);
 
 		RefreshBuyAllButtons();
 		RefreshBooks();
 		RefreshMaps();
 		RefreshGames();
+
+        // TODO: Call RefreshBuyButton on BuyCoordinator
 		
 		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(purchaseSuccessfulEvent);
+        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
 	}
 
-	public IEnumerator RestorePurchases(float restoreTime)
-	{
-		//string receiptLocation = StoreKitBinding.getAppStoreReceiptLocation();
-
-		Debug.Log("RestorePurchases - Opening processes");
-
-		StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		
-		UnityEngine.Object[] uiCameras = GameObject.FindObjectsOfType(typeof(UICamera));
-		foreach (UICamera cam in uiCameras)
-		{
-			cam.enabled = false;
-		}
-
-		// Restore
-		Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
-		StoreKitBinding.restoreCompletedTransactions();
-
-		Debug.Log("RestorePurchases - Waiting for " + restoreTime);
-		yield return new WaitForSeconds(restoreTime);
-
-		Debug.Log("RestorePurchases - Closing processes");
-
-		foreach (UICamera cam in uiCameras)
-		{
-			if (cam != null)
-			{
-				cam.enabled = true;
-			}
-		}
-		
-		RefreshBuyAllButtons();
-		RefreshBooks();
-		RefreshMaps();
-		RefreshGames();
-		
-		StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-	}
-
-	void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
-	{
-		Debug.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
-
-		string productId = obj.productIdentifier;
-
+    void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
+    {
+        Debug.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
+        
+        string productId = obj.productIdentifier;
+        
         if (productId == m_booksProductIdentifier)
         {
             BuyInfo.Instance.SetAllBooksPurchased();
@@ -364,121 +292,96 @@ public class BuyManager : Singleton<BuyManager>
             BuyInfo.Instance.SetAllMapsPurchased();
             BuyInfo.Instance.SetAllGamesPurchased();
         }
-		else if(productId.Contains("stories")) // Book
-		{
-			// Find the story id
-			string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
-			int bookId = Convert.ToInt32(idNum);
-
-			BuyInfo.Instance.SetBookPurchased(bookId);
-		}
-		else if(productId.Contains("map")) // Map
-		{
-			// Find the map id
-			//string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
-			int mapId = Array.IndexOf(m_mapProductIdentifiers, productId);
-
+        else if(productId.Contains("stories")) // Book
+        {
+            // Find the story id
+            string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
+            int bookId = Convert.ToInt32(idNum);
+            
+            BuyInfo.Instance.SetBookPurchased(bookId);
+        }
+        else if(productId.Contains("map")) // Map
+        {
+            // Find the map id
+            int mapId = Array.IndexOf(m_mapProductIdentifiers, productId);
+            
             Debug.Log("mapId: " + mapId);
-			
-			BuyInfo.Instance.SetMapPurchased(mapId);
-		}
-		else
-		{
-			Debug.LogError("Product Identifier not recognized: " + productId);
-		}
-	}
-	
-	void StoreKitManager_everythingPurchaseSuccessfulEvent(StoreKitTransaction obj)
-	{
-        Debug.Log("PURCHASE SUCCESS: EVERYTHING");
+            
+            BuyInfo.Instance.SetMapPurchased(mapId);
+        }
+        else
+        {
+            Debug.LogError("Product Identifier not recognized: " + productId);
+        }
 
-		if (obj.productIdentifier == m_productIdentifier)
-		{
-			m_purchaseIsResolved = true;
-		} 
-
-		FlurryBinding.logEvent("Purchasing Everything", false);
-
-		BuyInfo.Instance.SetAllBooksPurchased();
-		BuyInfo.Instance.SetAllMapsPurchased();
-		BuyInfo.Instance.SetAllGamesPurchased();
-		
-		CelebratePurchase();
-	}
-	
-	void StoreKitManager_gamesPurchaseSuccessfulEvent(StoreKitTransaction obj)
-	{
-		Debug.Log("PURCHASE SUCCESS: ALL GAMES");
-		
-		if (obj.productIdentifier == m_productIdentifier)
-		{
-			m_purchaseIsResolved = true;
-		} 
-		
-		BuyInfo.Instance.SetAllGamesPurchased();
-		
-		CelebratePurchase();
-	}
-	
-	void StoreKitManager_mapsPurchaseSuccessfulEvent(StoreKitTransaction obj)
-	{
-		Debug.Log("PURCHASE SUCCESS: ALL MAPS");
-		
-		if (obj.productIdentifier == m_productIdentifier)
-		{
-			m_purchaseIsResolved = true;
-		} 
-		
-		BuyInfo.Instance.SetAllMapsPurchased();
-		
-		CelebratePurchase();
-	}
-	
-	void StoreKitManager_booksPurchaseSuccessfulEvent(StoreKitTransaction obj)
-	{
-		Debug.Log("PURCHASE SUCCESS: ALL STORIES");
-		
-		if (obj.productIdentifier == m_productIdentifier)
-		{
-			m_purchaseIsResolved = true;
-		} 
-		
-		BuyInfo.Instance.SetAllBooksPurchased();
-
-		CelebratePurchase();
-	}
+        m_purchaseIsResolved = true;
+    }
 
 	void StoreKitManager_purchaseCancelledEvent(string obj)
 	{
-		Debug.Log("PURCHASE CANCELLED - m_buyType: " + m_buyType.ToString());
+		Debug.Log("PURCHASE CANCELLED - " + m_productIdentifier);
 		Debug.Log("Cancelled Message: " + obj);
 		m_purchaseIsResolved = true;
 	}
 
-	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
-	{
-		Debug.Log("PRODUCTLIST: Received " + productList.Count);
-		foreach(StoreKitProduct product in productList)
-		{
-			Debug.Log(product.productIdentifier);
-		}
 
-		m_productListResolved = true;
-	}
+    
+    void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
+    {
+        Debug.Log("PRODUCTLIST: Received " + productList.Count);
+        foreach(StoreKitProduct product in productList)
+        {
+            Debug.Log(product.productIdentifier);
+        }
+        
+        m_productListResolved = true;
+    }
+    
+    void StoreKitManager_productListFailedEvent(string s)
+    {
+        Debug.Log("PRODUCTLIST: Failed");
+        Debug.Log("Failed Message: " + s);
+        
+        m_productListResolved = true;
+    }
 
-	void StoreKitManager_productListFailedEvent(string s)
-	{
-		Debug.Log("PRODUCTLIST: Failed");
-		Debug.Log("Failed Message: " + s);
-
-		m_productListResolved = true;
-	}
+    public IEnumerator RestorePurchases(float restoreTime)
+    {
+        Debug.Log("RestorePurchases - Opening processes");
+        
+        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
+        StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        
+        NGUIHelpers.EnableUICams(false);
+        
+        // Restore
+        Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
+        StoreKitBinding.restoreCompletedTransactions();
+        
+        Debug.Log("RestorePurchases - Waiting for " + restoreTime);
+        yield return new WaitForSeconds(restoreTime);
+        
+        Debug.Log("RestorePurchases - Closing processes");
+        
+        NGUIHelpers.EnableUICams(false);
+        
+        RefreshBuyAllButtons();
+        RefreshBooks();
+        RefreshMaps();
+        RefreshGames();
+        
+        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
+        StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+    }
 #endif
 
 #if UNITY_EDITOR
     void UnlockOnTimeOut()
     {
         Debug.Log("UNLOCKING ON TIMEOUT");
+        /*
         switch(m_buyType)
         {
             case BuyType.Books:
@@ -496,6 +399,66 @@ public class BuyManager : Singleton<BuyManager>
                 BuyInfo.Instance.SetAllGamesPurchased();
                 break;
         }
+        */
     }
 #endif
+
+    void CelebratePurchase()
+    {
+        CharacterPopper popper = UnityEngine.Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
+        if(popper != null)
+        {
+            popper.PopCharacter();
+        }
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+    }
+    
+    void RefreshBooks()
+    {
+        NewStoryBrowserBookButton[] books = UnityEngine.Object.FindObjectsOfType(typeof(NewStoryBrowserBookButton)) as NewStoryBrowserBookButton[];
+        foreach(NewStoryBrowserBookButton book in books)
+        {
+            book.Refresh();
+        }
+    }
+    
+    void RefreshMaps()
+    {
+        JourneyMap[] maps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap)) as JourneyMap[];
+        foreach(JourneyMap map in maps)
+        {
+            map.Refresh();
+        }
+    }
+    
+    void RefreshGames()
+    {
+        BuyableGame[] games = UnityEngine.Object.FindObjectsOfType(typeof(BuyableGame)) as BuyableGame[];
+        foreach(BuyableGame game in games)
+        {
+            game.Refresh();
+        }
+    }
+    
+    void RefreshBuyAllButtons()
+    {
+        BuyAll[] buttons = UnityEngine.Object.FindObjectsOfType(typeof(BuyAll)) as BuyAll[];
+        foreach(BuyAll button in buttons)
+        {
+            button.Refresh();
+        }
+    }
+    
+    public string BuildStoryProductIdentifier(DataRow storyData)
+    {
+        string id = "stories_" + storyData["id"].ToString() + "_" +
+            storyData["title"].ToString().TrimEnd(new char[] { ' ' }).Replace(" ", "_").Replace("?", "").Replace("!", "").Replace("-", "_").Replace("'", "").Replace(".", "").ToLower();
+        
+        return id;
+    }
+    
+    public string BuildMapProductIdentifier(int map)
+    {
+        return m_mapProductIdentifiers[map - 1];
+    }
 }

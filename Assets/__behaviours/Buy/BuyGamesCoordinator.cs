@@ -22,6 +22,6 @@ public class BuyGamesCoordinator : BuyCoordinator<BuyGamesCoordinator>
 	public void OnClickBackCollider(ClickEvent click)
 	{
 		m_tweenBehaviour.Off(false);
-		EnableUICams();
+		NGUIHelpers.EnableUICams();
 	}
 }

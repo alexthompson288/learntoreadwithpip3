@@ -53,8 +53,6 @@ public class BuyInfo : Singleton<BuyInfo>
         Load();
     }
 
-
-    
     public bool IsBookBought(int bookId)
     {
 #if UNITY_EDITOR

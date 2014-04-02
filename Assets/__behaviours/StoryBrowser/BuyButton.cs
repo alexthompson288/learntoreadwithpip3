@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: Find out whether this script has been completely deprecated
 public class BuyButton : MonoBehaviour 
 {
 	void OnClick()
@@ -27,7 +28,7 @@ public class BuyButton : MonoBehaviour
 		if(isCorrect && currentBook != null)
 		{
 			Debug.Log("Purchasing book");
-			currentBook.Purchase();
+			currentBook.Buy();
 			gameObject.SetActive(false);
 		}
 	}
