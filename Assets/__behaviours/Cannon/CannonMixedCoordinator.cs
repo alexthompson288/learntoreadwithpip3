@@ -25,6 +25,8 @@ public class CannonMixedCoordinator : MonoBehaviour
     private Transform m_pop;
     [SerializeField]
     private bool m_areBallsSingleUse;
+    [SerializeField]
+    private bool m_isAnswerAlwaysCorrect;
     
     int m_score = 0;
     
@@ -56,6 +58,9 @@ public class CannonMixedCoordinator : MonoBehaviour
     
     IEnumerator Start()
     {
+        CannonBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CannonBehaviour)) as CannonBehaviour;
+        cannonBehaviour.MoveToMultiplayerLocation(0);
+
         m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -133,7 +138,7 @@ public class CannonMixedCoordinator : MonoBehaviour
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
         
-        if (target.data == m_currentData)
+        if (target.data == m_currentData || m_isAnswerAlwaysCorrect)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
 

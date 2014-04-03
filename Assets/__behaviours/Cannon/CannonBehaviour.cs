@@ -30,7 +30,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 
     void Start()
     {
-        Debug.Log("CannonBehaviour.Start()");
+        //Debug.Log("CannonBehaviour.Start()");
         StartCoroutine(SpawnBall(0));
     }
 
@@ -89,7 +89,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     IEnumerator SpawnBall(float delay)
     {
         yield return new WaitForSeconds(delay);
-        Debug.Log("Spawning CannonBall");
+        //Debug.Log("Spawning CannonBall");
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
         newBall.GetComponent<CannonBall>().SetUp(this);
         m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);

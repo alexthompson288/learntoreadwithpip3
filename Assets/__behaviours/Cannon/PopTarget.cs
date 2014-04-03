@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Wingrove;
 
 public class PopTarget : Target 
 {
@@ -43,10 +44,10 @@ public class PopTarget : Target
 
         rigidbody.velocity = Vector3.zero;
 
-        yield return null; 
+        yield return new WaitForSeconds(Time.fixedDeltaTime * 2); // Experimental bug fix: There was an error when we allegedly tried to move a kinematic rigidbody. 
+                                                                  // After setting velocity, wait for a minimum of 1 FixedUpdate to execute before setting the rigidbody kinematic 
 
         rigidbody.isKinematic = true;
-
         transform.position = m_startLocation.position;
 
         InvokeOnCompleteMove();
@@ -60,10 +61,12 @@ public class PopTarget : Target
     {
         yield return new WaitForSeconds(initialDelay);
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
         m_tweenBehaviour.On();
 
         yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDuration() + Random.Range(m_durationOn.x, m_durationOn.y));
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
         m_tweenBehaviour.Off();
 
         yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff() + Random.Range(m_durationOff.x, m_durationOff.y));

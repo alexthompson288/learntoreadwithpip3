@@ -6,13 +6,19 @@ public class TargetDetachable : MonoBehaviour
     [SerializeField]
     private UILabel m_label;
     [SerializeField]
+    private bool m_doesTweenUseDuration;
+    [SerializeField]
     private float m_moveTweenDuration;
+    [SerializeField]
+    private float m_moveTweenSpeed;
     [SerializeField]
     private float m_scaleTweenDuration;
     [SerializeField]
     private Vector3 m_gravity = new Vector3(0, -1.5f, 0);
     [SerializeField]
     private Vector3 m_upwardForce = new Vector3(0, 0.5f, 0);
+
+    Transform m_target;
 
     public void SetUp(DataRow data)
     {
@@ -22,24 +28,55 @@ public class TargetDetachable : MonoBehaviour
         }
     }
 
+
+
     public void On(Transform target)
     {
-        StartCoroutine(OnCo(target));
+        m_target = target;
+
+        StartCoroutine(OnCo());
     }
 
-    IEnumerator OnCo(Transform target)
+    IEnumerator OnCo()
     {
-        transform.parent = target;
-        gameObject.layer = target.gameObject.layer;
+        transform.parent = m_target;
+        gameObject.layer = m_target.gameObject.layer;
 
-        iTween.MoveTo(gameObject, target.position, m_moveTweenDuration);
+        Hashtable moveArgs = new Hashtable();
+        moveArgs.Add("position", m_target);
+        moveArgs.Add("easetype", iTween.EaseType.linear);
 
-        yield return new WaitForSeconds(m_moveTweenDuration);
+        if (m_doesTweenUseDuration)
+        {
+            moveArgs.Add("time", m_moveTweenDuration);
+        } 
+        else
+        {
+            moveArgs.Add("speed", m_moveTweenSpeed);
+            moveArgs.Add("oncomplete", "OnTweenComplete");
+        }
 
+        iTween.MoveTo(gameObject, moveArgs);
+
+        if (m_doesTweenUseDuration)
+        {
+            yield return new WaitForSeconds(m_moveTweenDuration);
+            OnTweenComplete();
+        }
+    }
+
+    void OnTweenComplete()
+    {
+        StartCoroutine(OnTweenCompleteCo());
+    }
+
+    IEnumerator OnTweenCompleteCo()
+    {
+        m_target.SendMessage("On");
         iTween.ScaleTo(gameObject, Vector3.zero, m_scaleTweenDuration);
-
+        
         yield return new WaitForSeconds(m_scaleTweenDuration);
-
+        
         Destroy(gameObject);
     }
 
