@@ -24,13 +24,15 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 
 	void Awake()
 	{
-        Debug.Log("CannonBehaviour.Awake()");
-
 		m_pullRange.x = Mathf.Clamp (m_pullRange.x, 0, m_pullRange.x);
 		m_forceRange.x = Mathf.Clamp (m_forceRange.x, 0, m_forceRange.x);
-
-        StartCoroutine(SpawnBall(0));
 	}
+
+    void Start()
+    {
+        Debug.Log("CannonBehaviour.Start()");
+        StartCoroutine(SpawnBall(0));
+    }
 
     public void MoveToMultiplayerLocation(int index)
     {
