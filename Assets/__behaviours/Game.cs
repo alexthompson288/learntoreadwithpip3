@@ -51,7 +51,7 @@ public static class Game
     // This property cannot be set 
     // It returns a string dependent on the value of m_data
     // It returns the most frequently used attribute name for each data type
-    public static string attribute
+    public static string textAttribute
     {
         get
         {

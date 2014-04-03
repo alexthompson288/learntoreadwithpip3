@@ -14,13 +14,16 @@ public class CannonBall : MonoBehaviour
     private bool m_limitSpeed;
     [SerializeField]
     private Vector3 m_maxSpeed = new Vector3 (2, 2, 0);
+    [SerializeField]
+    UISprite m_sprite;
     
     CannonBehaviour m_cannon = null;
     
     #if UNITY_EDITOR
     [SerializeField]
-    UISprite m_sprite;
+    private bool m_debugColorChange;
     #endif
+
     
     bool m_useGravity = false;
     
@@ -45,18 +48,19 @@ public class CannonBall : MonoBehaviour
     #if UNITY_EDITOR
     void Update()
     {
-        Vector3 cannonDelta = transform.position - m_cannon.GetBallCentrePos();
-        if (cannonDelta.magnitude > m_cannon.GetMaxPull ()) 
+        if (m_debugColorChange)
         {
-            m_sprite.color = Color.red;
-        } 
-        else if (cannonDelta.magnitude < m_cannon.GetMinPull ()) 
-        {
-            m_sprite.color = Color.black;
-        } 
-        else 
-        {
-            m_sprite.color = Color.white;
+            Vector3 cannonDelta = transform.position - m_cannon.GetBallCentrePos();
+            if (cannonDelta.magnitude > m_cannon.GetMaxPull())
+            {
+                m_sprite.color = Color.red;
+            } else if (cannonDelta.magnitude < m_cannon.GetMinPull())
+            {
+                m_sprite.color = Color.black;
+            } else
+            {
+                m_sprite.color = Color.white;
+            }
         }
     }
     #endif
@@ -95,6 +99,8 @@ public class CannonBall : MonoBehaviour
         {
             if (press)
             {
+                WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_STRETCH_2");
+
                 iTween.Stop(gameObject);
                 
                 Ray camPos = UICamera.currentCamera.ScreenPointToRay(new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
@@ -129,21 +135,26 @@ public class CannonBall : MonoBehaviour
         rigidbody.isKinematic = false;
         m_canDrag = false;
     }
-    
+
     public void Explode()
     {
-        StartCoroutine(ExplodeCo());
+        string spriteName = m_sprite.spriteName.Substring(0, m_sprite.spriteName.Length - 1);
+        spriteName += "b";
+        m_sprite.spriteName = spriteName;
+
+        collider.enabled = false;
     }
 
-    IEnumerator ExplodeCo()
+    void OnCollisionEnter(Collision other)
     {
-        m_cannon.OnBallDestroy(this);
+        if (other.collider.tag == "StopBall")
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
-        iTween.PunchScale(gameObject, Vector3.one * 1.2f, 0.2f);
+            Explode();
 
-        yield return new WaitForSeconds(0.2f);
-
-        Destroy(gameObject);
+            //collider.enabled = false;
+        }
     }
 }
 

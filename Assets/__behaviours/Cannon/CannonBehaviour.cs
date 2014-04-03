@@ -14,14 +14,18 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 	[SerializeField]
 	private Vector2 m_pullRange;
 	[SerializeField]
-	private Vector2 m_forceRange;
+    private Vector2 m_forceRange = new Vector2(1, 2.5f);
     [SerializeField]
     private Transform[] m_multiplayerLocations;
+    [SerializeField]
+    private float m_ballSpawnDelay = 0.5f;
 
 	List<CannonBall> m_spawnedBalls = new List<CannonBall>();
 
 	void Awake()
 	{
+        Debug.Log("CannonBehaviour.Awake()");
+
 		m_pullRange.x = Mathf.Clamp (m_pullRange.x, 0, m_pullRange.x);
 		m_forceRange.x = Mathf.Clamp (m_forceRange.x, 0, m_forceRange.x);
 
@@ -32,7 +36,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     {
         if (index < m_multiplayerLocations.Length)
         {
-            m_ballCentre.transform.localPosition = m_multiplayerLocations [index].transform.localPosition;
+            m_ballCentre.transform.localPosition = m_multiplayerLocations[index].transform.localPosition;
         }
     }
 
@@ -59,6 +63,8 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 		} 
 		else 
 		{
+            WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
+
             Vector3 delta = m_ballCentre.position - ball.rigidbody.transform.position;
             
             float distance = delta.magnitude;
@@ -74,13 +80,14 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
             ball.OnLaunch();
             ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
 
-            StartCoroutine(SpawnBall());
+            StartCoroutine(SpawnBall(m_ballSpawnDelay));
 		}
 	}
 
-    IEnumerator SpawnBall(float delay = 1)
+    IEnumerator SpawnBall(float delay)
     {
         yield return new WaitForSeconds(delay);
+        Debug.Log("Spawning CannonBall");
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
         newBall.GetComponent<CannonBall>().SetUp(this);
         m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);

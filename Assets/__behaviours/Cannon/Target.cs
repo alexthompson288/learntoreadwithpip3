@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Wingrove;
 
 public class Target : MonoBehaviour 
 {
@@ -9,6 +10,10 @@ public class Target : MonoBehaviour
     protected Transform m_parent;
     [SerializeField]
     protected Transform m_startLocation;
+    [SerializeField]
+    private GameObject m_detachablePrefab;
+    [SerializeField]
+    private Transform m_detachableLocation;
 
     public delegate void TargetHit(Target target, Collider ball);
     public event TargetHit OnTargetHit;
@@ -64,7 +69,6 @@ public class Target : MonoBehaviour
     {
         StopAllCoroutines();
 
-        
         rigidbody.isKinematic = false;
         
         rigidbody.AddForce(ball.rigidbody.velocity * 1.2f, ForceMode.VelocityChange);
@@ -85,6 +89,14 @@ public class Target : MonoBehaviour
         transform.position = m_startLocation.position;
 
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
+    }
+
+    public void DetachableOn(Transform detachableTarget)
+    {
+        GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
+
+        newDetachable.GetComponent<TargetDetachable>().SetUp(m_data);
+        newDetachable.GetComponent<TargetDetachable>().On(detachableTarget);
     }
 
     public virtual IEnumerator On(float initialDelay) { yield break; }

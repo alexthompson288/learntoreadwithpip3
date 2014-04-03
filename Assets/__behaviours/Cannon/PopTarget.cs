@@ -6,7 +6,7 @@ public class PopTarget : Target
     [SerializeField]
     private TweenOnOffBehaviour m_tweenBehaviour;
     [SerializeField]
-    private Vector2 m_durationOn = new Vector2(2.5f, 3.5f);
+    private Vector2 m_durationOn = new Vector2(3f, 4.5f);
     [SerializeField]
     private Vector2 m_durationOff = new Vector2(1.1f, 2.5f);
     [SerializeField]
@@ -42,6 +42,9 @@ public class PopTarget : Target
         yield return new WaitForSeconds(0.2f);
 
         rigidbody.velocity = Vector3.zero;
+
+        yield return null; 
+
         rigidbody.isKinematic = true;
 
         transform.position = m_startLocation.position;

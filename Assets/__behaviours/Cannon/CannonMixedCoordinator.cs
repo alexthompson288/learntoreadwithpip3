@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class CannonCoordinator : MonoBehaviour 
+public class CannonMixedCoordinator : MonoBehaviour 
 {
     [SerializeField]
     private Game.Data m_dataType;
@@ -21,6 +21,10 @@ public class CannonCoordinator : MonoBehaviour
     private Target[] m_rightTargets;
     [SerializeField]
     private Target[] m_topTargets;
+    [SerializeField]
+    private Transform m_pop;
+    [SerializeField]
+    private bool m_areBallsSingleUse;
     
     int m_score = 0;
     
@@ -58,15 +62,15 @@ public class CannonCoordinator : MonoBehaviour
         
         switch (m_dataType)
         {
-            case Game.Data.Phonemes:
-                m_dataPool = DataHelpers.GetLetters();
-                break;
-            case Game.Data.Words:
-                m_dataPool = DataHelpers.GetWords();
-                break;
-            case Game.Data.Keywords:
-                m_dataPool = DataHelpers.GetKeywords();
-                break;
+        case Game.Data.Phonemes:
+            m_dataPool = DataHelpers.GetLetters();
+            break;
+        case Game.Data.Words:
+            m_dataPool = DataHelpers.GetWords();
+            break;
+        case Game.Data.Keywords:
+            m_dataPool = DataHelpers.GetKeywords();
+            break;
         }
         
         if (m_dataPool.Count > 0)
@@ -75,7 +79,7 @@ public class CannonCoordinator : MonoBehaviour
             {
                 if (m_dataType == Game.Data.Phonemes)
                 {
-                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data ["grapheme"].ToString());
+                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
                 } 
                 else
@@ -86,9 +90,7 @@ public class CannonCoordinator : MonoBehaviour
             
             m_currentData = DataHelpers.FindTargetData(m_dataPool, m_dataType);
             
-            InitializeTargets(m_leftTargets);
-            InitializeTargets(m_rightTargets);
-            InitializeTargets(m_topTargets);
+            InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
             PlayShortAudio();
         } 
@@ -100,6 +102,8 @@ public class CannonCoordinator : MonoBehaviour
     
     void InitializeTargets(Target[] targets)
     {
+        Debug.Log("targets.Length: " + targets.Length);
+
         foreach(Target target in targets)
         {
             target.OnTargetHit += OnTargetHit;
@@ -128,13 +132,15 @@ public class CannonCoordinator : MonoBehaviour
     void OnTargetHit(Target target, Collider ball)
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
-
+        
         if (target.data == m_currentData)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+
+            target.DetachableOn(m_pop);
             
             target.ApplyHitForce(ball.transform);
-
+            
             if(m_changeCurrentData)
             {
                 m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
@@ -155,8 +161,11 @@ public class CannonCoordinator : MonoBehaviour
             //target.Off();
             //StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
         }
-        
-        ball.GetComponent<CannonBall>().Explode();
+
+        if (m_areBallsSingleUse)
+        {
+            ball.GetComponent<CannonBall>().Explode();
+        }
     }
     
     IEnumerator OnGameComplete()
@@ -186,4 +195,3 @@ public class CannonCoordinator : MonoBehaviour
         }
     }
 }
-
