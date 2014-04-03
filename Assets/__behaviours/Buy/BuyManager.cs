@@ -126,13 +126,29 @@ public class BuyManager : Singleton<BuyManager>
     public string m_androidPublicKey;
 
 #if UNITY_ANDROID
+
+    IEnumerator Start()
+    {
+        yield break;
+    }
+
+    IEnumerator AttemptPurchase()
+    {
+        yield break;
+    }
+
+    public IEnumerator RestorePurchases(float restoreTime)
+    {
+        yield break;
+    }
+    /*
     bool m_billingSupported = false;
     bool m_billingSupportedResolved = false;
 
 #if !UNITY_EDITOR
     void OnDestroy()
     {
-        GoogleIAB.unbindService();
+        //GoogleIAB.unbindService();
     }
 #endif
 
@@ -290,6 +306,7 @@ public class BuyManager : Singleton<BuyManager>
         {
         }
     }
+    */
 #elif UNITY_IPHONE
  
     IEnumerator Start()

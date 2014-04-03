@@ -133,14 +133,17 @@ public class CannonCoopCoordinator : MonoBehaviour
 
     void OnTargetHit(Target target, Collider ball)
     {
-        //if (target.data == m_currentData)
-        if(true)
+        if (target.data == m_currentData)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
 
             target.ApplyHitForce(ball.transform);
-            m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
-            PlayShortAudio();
+
+            if(m_changeCurrentData)
+            {
+                m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
+                PlayShortAudio();
+            }
             
             m_score++;
             

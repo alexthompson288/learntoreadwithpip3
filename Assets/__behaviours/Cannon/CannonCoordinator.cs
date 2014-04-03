@@ -3,49 +3,59 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class CannonCoordinator : Singleton<CannonCoordinator> 
+public class CannonCoordinator : MonoBehaviour 
 {
     [SerializeField]
     private Game.Data m_dataType;
     [SerializeField]
-    private Transform[] m_locators;
-    [SerializeField]
-    private GameObject m_cannonTargetPrefab;
-    [SerializeField]
-    private AudioSource m_audioSource;
-    [SerializeField]
-    private int m_initialSpawnNum = 3;
-    [SerializeField]
-    private Vector2 m_timeBetweenSpawn = new Vector2(4f, 8f);
+    private bool m_changeCurrentData;
     [SerializeField]
     private float m_probabilityTargetIsCurrent = 0.5f;
     [SerializeField]
-    private Transform m_minTargetDestroyLocation;
+    private int m_targetScore;
     [SerializeField]
-    private Transform m_maxTargetDestroyLocation;
+    private AudioSource m_audioSource;
     [SerializeField]
-    private int m_targetScore = 5;
+    private Target[] m_leftTargets;
     [SerializeField]
-    private ProgressScoreBar m_scoreBar;
+    private Target[] m_rightTargets;
     [SerializeField]
-    private CastleBehaviour m_castleBehaviour;
-
+    private Target[] m_topTargets;
+    
     int m_score = 0;
-
+    
     List<DataRow> m_dataPool = new List<DataRow>();
     DataRow m_currentData;
-
+    
     Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
-
-    List<Transform> m_spawnedTargets = new List<Transform>();
-
-	IEnumerator Start () 
+    
+    void Awake()
+    {
+        float targetOffDistance = 700;
+        
+        foreach (Target target in m_leftTargets)
+        {
+            target.SetOffPosition(Vector3.left, targetOffDistance);
+        }
+        
+        foreach (Target target in m_rightTargets)
+        {
+            target.SetOffPosition(Vector3.right, targetOffDistance);
+        }
+        
+        foreach (Target target in m_topTargets)
+        {
+            target.SetOffPosition(Vector3.up, targetOffDistance);
+        }
+    }
+    
+    IEnumerator Start()
     {
         m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
-
+        
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
+        
         switch (m_dataType)
         {
             case Game.Data.Phonemes:
@@ -58,7 +68,7 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
                 m_dataPool = DataHelpers.GetKeywords();
                 break;
         }
-
+        
         if (m_dataPool.Count > 0)
         {
             foreach (DataRow data in m_dataPool)
@@ -67,55 +77,42 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
                 {
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data ["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
-                } else
+                } 
+                else
                 {
                     m_shortAudio [data] = LoaderHelpers.LoadAudioForWord(data);
                 }
             }
-
-            m_currentData = m_dataPool [Random.Range(0, m_dataPool.Count)];
-
+            
+            m_currentData = DataHelpers.FindTargetData(m_dataPool, m_dataType);
+            
+            InitializeTargets(m_leftTargets);
+            InitializeTargets(m_rightTargets);
+            InitializeTargets(m_topTargets);
+            
             PlayShortAudio();
-
-            for (int i = 0; i < m_initialSpawnNum && i < m_locators.Length; ++i)
-            {
-                bool makeRecursive = (i == 0);
-                StartCoroutine(SpawnTarget(makeRecursive));
-            }
-
-            StartCoroutine(DestroyTargets());
         } 
         else
         {
-            OnGameComplete();
+            StartCoroutine(OnGameComplete());
         }
     }
-
-    IEnumerator DestroyTargets()
+    
+    void InitializeTargets(Target[] targets)
     {
-        List<Transform> targetsToDestroy = m_spawnedTargets.FindAll(ShouldDestroyTarget);
-        foreach (Transform target in targetsToDestroy)
+        foreach(Target target in targets)
         {
-            m_spawnedTargets.Remove(target);
-            Destroy(target.gameObject);
+            target.OnTargetHit += OnTargetHit;
+            target.OnCompleteMove += SetTargetData;
+            
+            SetTargetData(target);
+            
+            StartCoroutine(target.On(Random.Range(1f, 4f)));
         }
-
-        yield return new WaitForSeconds(3f);
-        StartCoroutine(DestroyTargets());
     }
-
-    bool ShouldDestroyTarget(Transform target)
+    
+    void SetTargetData(Target target)
     {
-        return (target.position.x > m_maxTargetDestroyLocation.position.x ||  target.position.y > m_maxTargetDestroyLocation.position.y 
-                || target.position.y < m_minTargetDestroyLocation.position.y || target.position.y < m_minTargetDestroyLocation.position.y);
-    }
-
-    IEnumerator SpawnTarget(bool makeRecursive)
-    {
-        Transform locator = m_locators [Random.Range(0, m_locators.Length)];
-
-        GameObject newTarget = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonTargetPrefab, locator);
-
         DataRow targetData = m_currentData;
         if (Random.Range(0f, 1f) > m_probabilityTargetIsCurrent)
         {
@@ -123,42 +120,27 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
             {
                 targetData = m_dataPool [Random.Range(0, m_dataPool.Count)];
             }
-        } 
-
-        CannonTarget targetBehaviour = newTarget.GetComponent<CannonTarget>() as CannonTarget;
-
-        targetBehaviour.SetUp(targetData, m_dataType);
-        targetBehaviour.OnTargetHit += OnTargetHit;
-        targetBehaviour.OnDestroyGo += OnDestroyTarget;
-
-        m_spawnedTargets.Add(newTarget.transform);
-
-        yield return new WaitForSeconds(Random.Range(m_timeBetweenSpawn.x, m_timeBetweenSpawn.y) + 0.5f);
-
-        if (makeRecursive)
-        {
-            StartCoroutine(SpawnTarget(true));
         }
+        
+        target.SetData(targetData, m_dataType);
     }
-
-    void OnDestroyTarget(CannonTarget target)
-    {
-        if (m_spawnedTargets.Contains(target.transform))
-        {
-            m_spawnedTargets.Remove(target.transform);
-        }
-    }
-
-    void OnTargetHit(CannonTarget target, Collider ball)
+    
+    void OnTargetHit(Target target, Collider ball)
     {
         if (target.data == m_currentData)
         {
-            target.Explode();
-            m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
-            PlayShortAudio();
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+            
+            target.ApplyHitForce(ball.transform);
 
+            if(m_changeCurrentData)
+            {
+                m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
+                PlayShortAudio();
+            }
+            
             m_score++;
-
+            
             if(m_score >= m_targetScore)
             {
                 OnGameComplete();
@@ -166,12 +148,20 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
         } 
         else
         {
-            target.ApplyHitForce(ball.transform);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+            
+            target.Off();
+            StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
         }
-
+        
         ball.GetComponent<CannonBall>().Explode();
     }
-
+    
+    IEnumerator OnGameComplete()
+    {
+        yield return null;
+    }
+    
     void PlayLongAudio()
     {
         m_audioSource.clip = m_longAudio [m_currentData];
@@ -184,7 +174,7 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
             PlayShortAudio();
         }
     }
-
+    
     void PlayShortAudio()
     {
         m_audioSource.clip = m_shortAudio [m_currentData];
@@ -193,25 +183,5 @@ public class CannonCoordinator : Singleton<CannonCoordinator>
             m_audioSource.Play();
         }
     }
-
-    void OnGameComplete()
-    {
-        StopAllCoroutines();
-        StartCoroutine(OnGameCompleteCo());
-    }
-
-    IEnumerator OnGameCompleteCo()
-    {
-        yield return null;
-
-        if (m_castleBehaviour.gameObject.activeInHierarchy)
-        {
-            m_castleBehaviour.On();
-        }
-    }
-
-    void OnGUI()
-    {
-        GUILayout.Label("Score: " + m_score);
-    }
 }
+
