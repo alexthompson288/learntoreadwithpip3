@@ -21,8 +21,8 @@ public class FlickCoordinator : MonoBehaviour
 	private Vector2 m_spawnDelay;
     [SerializeField]
     private float m_probabilityLetterIsTarget = 0.5f;
-    [SerializeField]
-    private ProgressScoreBar m_scoreBar;
+    //[SerializeField]
+    //private ProgressScoreBar m_scoreBar;
     [SerializeField]
     private int m_targetScore = 5;
     [SerializeField]
@@ -43,7 +43,7 @@ public class FlickCoordinator : MonoBehaviour
 		m_spawnDelay.x = Mathf.Clamp(m_spawnDelay.x, 0, m_spawnDelay.x);
 		m_spawnDelay.y = Mathf.Clamp(m_spawnDelay.y, m_spawnDelay.x, m_spawnDelay.y);
 
-        m_scoreBar.SetStarsTarget(m_targetScore);
+        //m_scoreBar.SetStarsTarget(m_targetScore);
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -85,8 +85,8 @@ public class FlickCoordinator : MonoBehaviour
         if (flickableCollider.GetComponent<FlickableWidget>().data == m_targetData)
         {
             m_score++;
-            m_scoreBar.SetStarsCompleted(m_score);
-            m_scoreBar.SetScore(m_score);
+            //m_scoreBar.SetStarsCompleted(m_score);
+            //m_scoreBar.SetScore(m_score);
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
 

@@ -19,80 +19,46 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     private Transform[] m_multiplayerLocations;
     [SerializeField]
     private float m_ballSpawnDelay = 0.5f;
+    [SerializeField]
+    private LineRenderer[] m_lineRenderers;
+    [SerializeField]
+    private Transform[] m_lineOrigins;
+    [SerializeField]
+    private Transform[] m_debugMarkers;
+    [SerializeField]
+    private Transform m_lineEnd;
+    [SerializeField]
+    private bool m_lineRendererUseWorld;
 
 	List<CannonBall> m_spawnedBalls = new List<CannonBall>();
+
+    CannonBall m_currentBall = null;
 
 	void Awake()
 	{
 		m_pullRange.x = Mathf.Clamp (m_pullRange.x, 0, m_pullRange.x);
 		m_forceRange.x = Mathf.Clamp (m_forceRange.x, 0, m_forceRange.x);
-	}
 
-    void Start()
-    {
-        //Debug.Log("CannonBehaviour.Start()");
-        StartCoroutine(SpawnBall(0));
-    }
-
-    public void MoveToMultiplayerLocation(int index)
-    {
-        if (index < m_multiplayerLocations.Length)
+        foreach (LineRenderer renderer in m_lineRenderers)
         {
-            m_ballCentre.transform.localPosition = m_multiplayerLocations[index].transform.localPosition;
+            renderer.useWorldSpace = m_lineRendererUseWorld;
+            renderer.SetVertexCount(2);
         }
-    }
 
-	public Vector3 GetBallCentrePos()
-	{
-		return m_ballCentre.position;
+        MoveLineOrigins();
+        SetLineRenderersPos(m_ballCentre.position);
+
+        SpawnBall();
 	}
 
-	public float GetMaxPull()
-	{
-		return m_pullRange.y;
-	}
-
-	public float GetMinPull()
-	{
-		return m_pullRange.x;
-	}
-
-	public void OnBallRelease(CannonBall ball)
-	{
-		if ((m_ballCentre.position - ball.rigidbody.transform.position).magnitude < m_pullRange.x) 
-		{
-			iTween.MoveTo (ball.rigidbody.gameObject, m_ballCentre.position, 0.3f);
-		} 
-		else 
-		{
-            WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
-
-            Vector3 delta = m_ballCentre.position - ball.rigidbody.transform.position;
-            
-            float distance = delta.magnitude;
-            float proportionalDistance = (distance - m_pullRange.x) / (m_pullRange.y - m_pullRange.x);
-            //Debug.Log ("proportionalDistance: " + proportionalDistance);
-            
-            Vector3 direction = delta.normalized;
-            //Debug.Log ("direction: " + direction);
-            
-            Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
-            //Debug.Log ("force: " + force);
-
-            ball.OnLaunch();
-            ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
-
-            StartCoroutine(SpawnBall(m_ballSpawnDelay));
-		}
-	}
-
-    IEnumerator SpawnBall(float delay)
+    void MoveLineOrigins()
     {
-        yield return new WaitForSeconds(delay);
-        //Debug.Log("Spawning CannonBall");
-        GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
-        newBall.GetComponent<CannonBall>().SetUp(this);
-        m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);
+        for (int i = 0; i < m_lineRenderers.Length && i < m_lineOrigins.Length; ++i)
+        {
+            Vector3 pos = m_lineRendererUseWorld ? m_lineOrigins[i].transform.position : m_lineOrigins[i].transform.localPosition;
+            pos.z = m_lineRendererUseWorld ? -0.2f : -50;
+            m_lineRenderers[i].SetPosition(0, pos);
+        }
     }
 
     void Update()
@@ -103,7 +69,84 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
             m_spawnedBalls.Remove(ball);
             Destroy(ball.gameObject);
         }
+
+        if(m_currentBall != null)
+        {
+            m_lineEnd.position = m_currentBall.FindOppositePosition(m_lineEnd);
+        }
+
+        SetLineRenderersPos(m_lineEnd.position);
     }
+
+    void SetLineRenderersPos(Vector3 pos)
+    {
+        for(int i = 0; i < m_lineOrigins.Length && i < m_lineRenderers.Length; ++i)
+        {
+            m_lineRenderers[i].SetPosition(1, pos);   
+        }
+    }
+
+    public void MoveToMultiplayerLocation(int index)
+    {
+        if (index < m_multiplayerLocations.Length)
+        {
+            m_ballCentre.transform.localPosition = m_multiplayerLocations[index].transform.localPosition;
+        }
+
+        MoveLineOrigins();
+    }
+
+	public void OnBallRelease(CannonBall ball)
+	{
+		if ((m_ballCentre.position - ball.rigidbody.transform.position).magnitude < m_pullRange.x) 
+		{
+			iTween.MoveTo (ball.rigidbody.gameObject, m_ballCentre.position, 0.3f);
+		} 
+		else 
+		{
+            m_currentBall.SetHasLaunchedTrue();
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
+
+            Vector3 delta = m_ballCentre.position - ball.rigidbody.transform.position;
+            
+            float distance = delta.magnitude;
+            float proportionalDistance = (distance - m_pullRange.x) / (m_pullRange.y - m_pullRange.x);
+            
+            Vector3 direction = delta.normalized;
+            
+            Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
+
+            ball.OnLaunch();
+            ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
+		}
+	}
+
+    public void ResetLineRenderersPos()
+    {
+        m_currentBall = null;
+
+        Debug.Log("ResetLineRendererPos");
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", m_ballCentre);
+        tweenArgs.Add("speed", 3);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+        tweenArgs.Add("oncomplete", "SpawnBall");
+        tweenArgs.Add("oncompletetarget", gameObject);
+        
+        iTween.MoveTo(m_lineEnd.gameObject, tweenArgs);
+    }
+
+    void SpawnBall()
+    {
+        Debug.Log("SpawnBall");
+        GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
+        newBall.GetComponent<CannonBall>().SetUp(this);
+        m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);
+        
+        m_currentBall = newBall.GetComponent<CannonBall>() as CannonBall;
+    }
+
 
     bool IsBallBelowThreshold(CannonBall ball)
     {
@@ -113,5 +156,29 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     public void OnBallDestroy(CannonBall ball)
     {
         m_spawnedBalls.Remove(ball);
+    }
+
+    public Vector3 ballCentrePos
+    {
+        get
+        {
+            return m_ballCentre.position;
+        }
+    }
+    
+    public float maxPull
+    {
+        get
+        {
+            return m_pullRange.y;
+        }
+    }
+    
+    public float minPull
+    {
+        get
+        {
+            return m_pullRange.x;
+        }
     }
 }

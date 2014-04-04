@@ -14,6 +14,16 @@ public class Target : MonoBehaviour
     private GameObject m_detachablePrefab;
     [SerializeField]
     private Transform m_detachableLocation;
+    [SerializeField]
+    private bool m_isAlwaysCorrect;
+
+    public bool isAlwaysCorrect
+    {
+        get
+        {
+            return m_isAlwaysCorrect;
+        }
+    }
 
     public delegate void TargetHit(Target target, Collider ball);
     public event TargetHit OnTargetHit;

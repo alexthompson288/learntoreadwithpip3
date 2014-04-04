@@ -7,7 +7,9 @@ public class FlickableWidget : MonoBehaviour
 	[SerializeField]
 	private UILabel m_label;
 	[SerializeField]
-	private Vector3 m_gravity = new Vector3(0, -0.5f, 0);
+	private Vector3 m_preFlickGravity = new Vector3(0, -0.2f, 0);
+    [SerializeField]
+    private Vector3 m_postFlickGravity = new Vector3(0, -0.5f, 0);
 	[SerializeField]
     private Vector3 m_maxSpeed = Vector3.one * -1;
     [SerializeField]
@@ -17,9 +19,10 @@ public class FlickableWidget : MonoBehaviour
 
 	Vector3 m_dragOffset;
 
+    // TODO: MAke these into an enum
 	bool m_pressed = false;
-
 	bool m_applyFlick = false;
+    bool m_hasFlicked = false;
 
 	private DataRow m_data = null;
     public DataRow data
@@ -35,7 +38,8 @@ public class FlickableWidget : MonoBehaviour
 	void Awake()
 	{
 		m_maxSpeed.z = 0;
-		m_gravity.z = 0;
+		m_preFlickGravity.z = 0;
+        m_postFlickGravity.z = 0;
 	}
 
 	public void SetUp(DataRow data, Game.Data dataType)
@@ -50,7 +54,14 @@ public class FlickableWidget : MonoBehaviour
 	{
 		if(!m_pressed)
 		{
-			rigidbody.AddForce(m_gravity);
+            if(m_hasFlicked)
+            {
+			    rigidbody.AddForce(m_preFlickGravity);
+            }
+            else
+            {
+                rigidbody.AddForce(m_postFlickGravity);
+            }
 
 			if(m_applyFlick)
 			{
@@ -67,6 +78,7 @@ public class FlickableWidget : MonoBehaviour
 				Debug.Log("Apply: " + flickVelocity);
 				rigidbody.velocity = flickVelocity;
 				m_applyFlick = false;
+                m_hasFlicked = true;
 			}
 
 			if(!Mathf.Approximately(m_maxSpeed.x, -1))

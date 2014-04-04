@@ -16,13 +16,15 @@ public class CannonMixedCoordinator : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
+    private Target[] m_botTargets;
+    [SerializeField]
     private Target[] m_leftTargets;
     [SerializeField]
     private Target[] m_rightTargets;
     [SerializeField]
     private Target[] m_topTargets;
     [SerializeField]
-    private Transform m_pop;
+    private CannonPop m_pop;
     [SerializeField]
     private bool m_areBallsSingleUse;
     [SerializeField]
@@ -39,6 +41,11 @@ public class CannonMixedCoordinator : MonoBehaviour
     void Awake()
     {
         float targetOffDistance = 700;
+
+        foreach (Target target in m_botTargets)
+        {
+            target.SetOffPosition(Vector3.down, targetOffDistance);
+        }
         
         foreach (Target target in m_leftTargets)
         {
@@ -138,11 +145,11 @@ public class CannonMixedCoordinator : MonoBehaviour
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
         
-        if (target.data == m_currentData || m_isAnswerAlwaysCorrect)
+        if (target.data == m_currentData || target.isAlwaysCorrect || m_isAnswerAlwaysCorrect)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
 
-            target.DetachableOn(m_pop);
+            target.DetachableOn(m_pop.transform);
             
             target.ApplyHitForce(ball.transform);
             
@@ -156,7 +163,7 @@ public class CannonMixedCoordinator : MonoBehaviour
             
             if(m_score >= m_targetScore)
             {
-                OnGameComplete();
+                StartCoroutine(OnGameComplete());
             }
         } 
         else
@@ -198,5 +205,10 @@ public class CannonMixedCoordinator : MonoBehaviour
         {
             m_audioSource.Play();
         }
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("Score: " + m_score);
     }
 }
