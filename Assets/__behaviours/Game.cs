@@ -5,13 +5,15 @@ using System.Collections;
 // the code shorter and more readable every place it is referenced
 public static class Game 
 {
+    // TODO - Rename: Request
     public enum Session
     {
-        Premade,
-        Custom,
-        Single
+        Premade, // Premade
+        Custom, // Custom
+        Single // Color
     }
 
+    // TODO - Rename: m_request
     private static Session m_session;
     public static Session session
     {
@@ -25,6 +27,11 @@ public static class Game
     {
         m_session = newSession;
     }
+
+    // TODO - Create: End game scene changing enum.
+    // Go straight to the next game (e.g. Pipisode)
+    // Return to the scene we launched the game from (e.g. Voyage) (N.B. You don't only have to return to the Voyage, but to the exact map and session that you played)
+    // Return to a pre-determined scene that we did not launch from (e.g. NewScoreDanceScene)
 
     public enum Data
     {
