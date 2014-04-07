@@ -141,13 +141,26 @@ public class FlickCoordinator : MonoBehaviour
 	
 	void SayTarget()
 	{
-		AudioClip clip = m_dataType == Game.Data.Phonemes ? AudioBankManager.Instance.GetAudioClip(m_targetData["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData["word"].ToString());
-		
-		if(clip != null)
-		{
-			m_audioSource.clip = clip;
-			m_audioSource.Play();
-		}
+        if (m_targetData != null)
+        {
+            Debug.Log("ABM: " + AudioBankManager.Instance);
+            Debug.Log("phonemes: " + (m_dataType == Game.Data.Phonemes));
+            Debug.Log("targetData: " + m_targetData["id"].ToString());
+            Debug.Log("isPhoneme: " + (m_targetData["phoneme"] != null));
+            Debug.Log("isWord: " + (m_targetData["word"] != null));
+
+            AudioClip clip = m_dataType == Game.Data.Phonemes ? AudioBankManager.Instance.GetAudioClip(m_targetData ["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData ["word"].ToString());
+    		
+            if (clip != null)
+            {
+                m_audioSource.clip = clip;
+                m_audioSource.Play();
+            }
+        } 
+        else
+        {
+            Debug.Log("No target data");
+        }
 	}
 
 	IEnumerator DestroyFlickables()

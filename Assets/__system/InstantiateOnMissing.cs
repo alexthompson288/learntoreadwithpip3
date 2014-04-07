@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace Wingrove
 {
-
     public class InstantiateOnMissing : MonoBehaviour
     {
         [SerializeField]
