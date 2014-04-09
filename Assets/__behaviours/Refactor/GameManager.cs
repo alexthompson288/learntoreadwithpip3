@@ -1,0 +1,206 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+public class GameManager : Singleton<GameManager> 
+{
+    // TODO: Move these methods back to the middle of the class. I put them at the top because they are the most complex and the last thing written.
+    void Start()
+    {
+        m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
+    }
+
+    // I have created this method so as a pre-emptive measure. If we need to execute something before starting any games then we can add it here without changing code in any other classes
+    public void StartGames()  
+    {
+        PlayNextGame();
+    }
+
+    void PlayNextGame()
+    {
+        m_state = State.StartGame;
+
+        string nextScene = m_scenes.Dequeue();
+
+        TransitionScreen.Instance.ChangeLevel(nextScene, true);
+    }
+
+    public void CompleteGame()
+    {
+        if (m_scenes.Count == 0)
+        {
+            if(onComplete != null)
+            {
+                onComplete();
+            }
+
+            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
+
+            m_returnScene = ""; // Reset return scene so that if it is improperly set next time, we will return to the default return scene
+
+            TransitionScreen.Instance.ChangeLevel(returnScene, false);
+        } 
+        else
+        {
+            PlayNextGame();
+        }
+    }
+
+    void OnLevelWasLoaded()
+    {
+        switch (m_state)
+        {
+            case State.Sleep:
+                break;
+            case State.StartGame:
+                if(Application.loadedLevelName != "DeliberatelyEmptyScene")
+                {
+                    m_state = State.Wait;
+                }
+                break;
+            case State.Wait:
+                m_state = State.Sleep;
+                if(onCancel != null)
+                {
+                    onCancel();
+                }
+                break;
+        }
+    }
+
+    Queue<string> m_scenes = new Queue<string>();
+
+    public void AddScenes(string[] scenes)
+    {
+        foreach (string scene in scenes)
+        {
+            m_scenes.Enqueue(scene);
+        }
+    }
+
+
+    Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
+
+    public void AddData(string type, List<DataRow> data)
+    {
+        m_data = data.ToDictionary(item => item, item => type);
+    }
+
+    public List<DataRow> GetData(string type)
+    {
+        List<DataRow> typeMatches = new List<DataRow>();
+
+        foreach (KeyValuePair<DataRow, string> kvp in m_data)
+        {
+            if(kvp.Value == type)
+            {
+                typeMatches.Add(kvp.Key);
+            }
+        }
+
+        //Dictionary<DataRow, string> typeMatches = m_data.Where(kvp => kvp.Value == type);
+
+        //var duplicateValues = plants.GroupBy(x => x.Value).Where(x => x.Count() > 1);
+        //var typeMatches = m_data.GroupBy(x => x.Value).Where(x => x.Count() > 1);
+
+        //return typeMatches.Keys.ToList();
+
+        return typeMatches;
+    }
+
+    string m_defaultReturnScene;
+    string m_returnScene;
+    
+    public void SetReturnScene(string returnScene)
+    {
+        m_returnScene = returnScene;
+    }
+
+
+    string m_dataType;
+
+    public string dataType
+    {
+        get
+        {
+            return m_dataType;
+        }
+    }
+
+    public void SetDataType(string type)
+    {
+        m_dataType = type;
+    }
+
+    public string textAttribute
+    {
+        get
+        {
+            switch(m_dataType)
+            {
+                case "phonemes":
+                    return "phoneme";
+                    break;
+                case "words":
+                    return "word";
+                    break;
+                case "keywords":
+                    return "word";
+                    break;
+                case "stories":
+                    return "title";
+                    break;
+                default:
+                    return "default";
+                    break;
+            }
+        }
+    }
+
+    enum State
+    {
+        Sleep,
+        Wait,
+        StartGame
+    }
+
+    State m_state = State.Sleep;
+
+    // TODO: Move these events back to the top of the class. I have moved them to the bottom so that it is easier to write the rest of the class
+    public delegate void Complete ();
+    private event Complete onComplete;
+    public event Complete OnComplete
+    {
+        add
+        {
+            if(onComplete == null || !onComplete.GetInvocationList().Contains(value))
+            {
+                onComplete += value;
+            }
+        }
+
+        remove
+        {
+            onComplete -= value;
+        }
+    }
+
+    public delegate void Cancel ();
+    private event Cancel onCancel;
+    public event Cancel OnCancel
+    {
+        add
+        {
+            if(onCancel == null || !onCancel.GetInvocationList().Contains(value))
+            {
+                onCancel += value;
+            }
+        }
+
+        remove
+        {
+            onCancel -= value;
+        }
+    }
+}
