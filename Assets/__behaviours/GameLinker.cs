@@ -22,7 +22,7 @@ public class GameLinker : Singleton<GameLinker>
 
 	public string GetSceneName(string dbGameName)
 	{
-		return m_gameNames [dbGameName];
+        return m_gameNames.ContainsKey (dbGameName) ? m_gameNames [dbGameName] : "";
 	}
 	
 	void Awake()

@@ -71,7 +71,7 @@ public class GameManager : Singleton<GameManager>
 
     Queue<string> m_scenes = new Queue<string>();
 
-    public void AddScenes(string[] scenes)
+    public void SetScenes(string[] scenes)
     {
         foreach (string scene in scenes)
         {
@@ -82,7 +82,7 @@ public class GameManager : Singleton<GameManager>
 
     Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
 
-    public void AddData(string type, List<DataRow> data)
+    public void SetData(string type, List<DataRow> data)
     {
         m_data = data.ToDictionary(item => item, item => type);
     }
