@@ -20,10 +20,6 @@ public static class DataHelpers
 		}
 	}
 
-    public static DataRow FindGameForSection(int sectionId)
-    {
-    }
-
     public static DataRow FindTargetData(List<DataRow> dataPool, Game.Data dataType)
     {
         DataRow currentData = null;
