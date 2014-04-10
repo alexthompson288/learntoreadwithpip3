@@ -37,6 +37,14 @@ public class VoyageMap : MonoBehaviour
     public void SetUp(int index)
     {
         m_mapIndex = index;
+
+        VoyageSessionButton[] points = GetComponentsInChildren<VoyageSessionButton>() as VoyageSessionButton[];
+
+        for (int i = 0; i < points.Length; ++i)
+        {
+            string sessionNum = System.String.Format("{0}0000{1}0", index + 1, i + 1);
+            points[i].SetUp(m_moduleColor, System.Convert.ToInt32(sessionNum));
+        }
     }
 
     void Awake()
