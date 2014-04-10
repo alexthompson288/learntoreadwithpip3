@@ -140,7 +140,6 @@ public class TweenOnOffBehaviour : MonoBehaviour {
         
         if(!System.String.IsNullOrEmpty(m_audioOn))
         {
-            Debug.Log("Posting Audio: " + m_audioOn);
             WingroveAudio.WingroveRoot.Instance.PostEvent(m_audioOn);
         }
         
@@ -197,7 +196,6 @@ public class TweenOnOffBehaviour : MonoBehaviour {
         
         if(!System.String.IsNullOrEmpty(m_audioOff))
         {
-            Debug.Log("Posting Audio: " + m_audioOff);
             WingroveAudio.WingroveRoot.Instance.PostEvent(m_audioOff);
         }
         
