@@ -45,18 +45,23 @@ public class VoyageGameButton : MonoBehaviour
     {
         VoyageInfo.Instance.OnChooseSection(System.Convert.ToInt32(m_section["id"]));
 
-        string dbGameName = DataHelpers.FindGameForSection(m_section);
-        string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
+        DataRow game = DataHelpers.FindGameForSection(m_section);
 
-        // Set scenes
-        GameManager.Instance.SetScenes(sceneName);
+        if(game != null)
+        {
+            string dbGameName = game["name"].ToString();
+            string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
 
-        // Set return scene
-        GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-        
-        // TODO: Set data type
+            // Set scenes
+            GameManager.Instance.SetScenes(new string[] { sceneName });
 
-        // Set data
+            // Set return scene
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+            
+            // TODO: Set data type
+
+            // Set data
+        }
 
 
 
