@@ -225,4 +225,14 @@ public class GameManager : Singleton<GameManager>
             onCancel -= value;
         }
     }
+
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S) && m_state == State.Wait)
+        {
+            CompleteGame();
+        }
+    }
+#endif
 }

@@ -33,24 +33,6 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         }
     }
 
-    int m_sessionNum = -1;
-    public int sessionNum
-    {
-        get
-        {
-            return m_sessionNum;
-        }
-    }
-
-    ColorInfo.PipColor m_color;
-    public ColorInfo.PipColor color
-    {
-        get
-        {
-            return m_color;
-        }
-    }
-
     void Awake()
     {
         m_pipisodeButton.OnSingleClick += OnClickPipisodeButton;
@@ -78,16 +60,13 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         Debug.Log("VoyageSessionBoard.On()");
         Debug.Log("sessionNum: " + sessionNum);
 
-        m_sessionNum = sessionNum;
-
-        m_color = pipColor;
-        Color col = ColorInfo.Instance.GetColor(m_color);
+        Color color = ColorInfo.Instance.GetColor(pipColor);
         foreach (UIWidget widget in m_widgetsToColor)
         {
-            widget.color = col;
+            widget.color = color;
         }
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + m_sessionNum);
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
 
         Debug.Log(String.Format("Found {0} sessions", dt.Rows.Count));
 

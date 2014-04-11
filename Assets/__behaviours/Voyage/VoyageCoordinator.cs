@@ -28,6 +28,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     private int m_horizontalMapDistance = 1024;
 
     VoyageMap m_currentModuleMap = null;
+    public VoyageMap currentModuleMap
+    {
+        get
+        {
+            return m_currentModuleMap;
+        } 
+    }
 
     IEnumerator Start()
     {

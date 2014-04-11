@@ -312,7 +312,7 @@ public class SessionManager : Singleton<SessionManager>
 	{
 		if(Input.GetKeyDown(KeyCode.S) && Game.session == Game.Session.Premade)
 		{
-			OnGameFinish();
+			//OnGameFinish();
 		}
 	}
 	#endif

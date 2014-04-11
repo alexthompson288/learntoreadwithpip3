@@ -4,6 +4,8 @@ using System.Collections;
 public class VoyageMedal : MonoBehaviour 
 {
     [SerializeField]
+    private float m_initialDelay = 0.6f;
+    [SerializeField]
     private float m_medalTweenDuration = 0.5f;
     [SerializeField]
     private float m_interTweenDelay = 0.3f;
@@ -25,14 +27,17 @@ public class VoyageMedal : MonoBehaviour
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        yield return new WaitForSeconds(m_initialDelay);
+
         Hashtable medalTweenArgs = new Hashtable();
 
         medalTweenArgs.Add("position", m_medalOnLocation);
         medalTweenArgs.Add("time", m_medalTweenDuration);
-        medalTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
+        //medalTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
+        medalTweenArgs.Add("easetype", iTween.EaseType.easeOutElastic);
 
-        //iTween.MoveTo(m_medalParent, medalTweenArgs);
-        iTween.MoveTo(m_medalParent, m_medalOnLocation.position, m_medalTweenDuration);
+        iTween.MoveTo(m_medalParent, medalTweenArgs);
+        //iTween.MoveTo(m_medalParent, m_medalOnLocation.position, m_medalTweenDuration);
 
         yield return new WaitForSeconds(m_medalTweenDuration + m_interTweenDelay);
 

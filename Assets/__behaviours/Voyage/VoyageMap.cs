@@ -17,7 +17,6 @@ public class VoyageMap : MonoBehaviour
     [SerializeField]
     private Transform m_medalParent;
 
-    // TODO: Deprecate: VoyageCoordinator should save the index and module color so that it is easier to reference from other classes (eg VoyageGameButton).
     int m_mapIndex;
     public int mapIndex
     {
@@ -27,7 +26,15 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
-    /*
+    int m_sessionNum;
+    public int sessionNum
+    {
+        get
+        {
+            return m_sessionNum;
+        }
+    }
+
     public ColorInfo.PipColor moduleColor
     {
         get
@@ -35,7 +42,7 @@ public class VoyageMap : MonoBehaviour
             return m_moduleColor;
         }
     }
-    */
+
 
     public void SetUp(int index)
     {
@@ -46,7 +53,8 @@ public class VoyageMap : MonoBehaviour
         for (int i = 0; i < points.Length; ++i)
         {
             string sessionNum = System.String.Format("{0}0000{1}0", index + 1, i + 1);
-            points[i].SetUp(m_moduleColor, System.Convert.ToInt32(sessionNum));
+            m_sessionNum = System.Convert.ToInt32(sessionNum);
+            points[i].SetUp(m_moduleColor, m_sessionNum);
         }
     }
 

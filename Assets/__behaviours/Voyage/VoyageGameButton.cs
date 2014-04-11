@@ -52,10 +52,9 @@ public class VoyageGameButton : MonoBehaviour
 
         if(game != null)
         {
-            VoyageMap map = Object.FindObjectOfType(typeof(VoyageMap)) as VoyageMap;
-            int module = map.mapIndex;
-            int sessionNum = VoyageSessionBoard.Instance.sessionNum;
-            ColorInfo.PipColor color = VoyageSessionBoard.Instance.color;
+            int module = VoyageCoordinator.Instance.currentModuleMap.mapIndex;
+            int sessionNum = VoyageCoordinator.Instance.currentModuleMap.sessionNum;
+            ColorInfo.PipColor color = VoyageCoordinator.Instance.currentModuleMap.moduleColor;
 
             VoyageInfo.Instance.SetCurrentLocation(module, sessionNum, color);
 

@@ -12,8 +12,8 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     // Permanently saved
     List<int> m_completedSections = new List<int>();
-    List<int> m_completedSessions = new List<int>(); // TODO: Replace list with dictionary
-    //Dictionary<int, float> m_sessionProgress = new Dictionary<int, float>();
+    //List<int> m_completedSessions = new List<int>(); // TODO: Replace list with dictionary
+    Dictionary<int, int> m_moduleProgress = new Dictionary<int, int>();
 
     // Forgotten when app is closed
     int m_currentSection = -1;
@@ -139,7 +139,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver("VoyageInfo");
+        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
         
@@ -152,12 +152,15 @@ public class VoyageInfo : Singleton<VoyageInfo>
                 m_completedSections.Add(sectionId);
             }
 
-            int numCompletedSessions = br.ReadInt32();
-            for(int i = 0; i < numCompletedSessions; ++i)
+            /*
+            int numModules = br.ReadInt32();
+            for(int i = 0; i < numModules; ++i)
             {
-                int sessionId = br.ReadInt32();
-                m_completedSessions.Add(sessionId);
+                int moduleIndex = br.ReadInt32();
+                int numCompletedSessions = br.ReadInt32();
+                m_moduleProgress.Add(moduleIndex, completedSessions);
             }
+            */
         }
         
         br.Close();
@@ -166,7 +169,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
     
     void Save()
     {
-        DataSaver ds = new DataSaver("VoyageInfo");
+        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
         
@@ -175,6 +178,9 @@ public class VoyageInfo : Singleton<VoyageInfo>
         {
             bw.Write(i);
         }
+
+        //bw.Write(m_moduleProgress.Count);
+        //foreach(KeyValuePair<int, int> kvp in m_
         
         ds.Save(newData);
         
