@@ -26,6 +26,16 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     private GameObject m_worldMap;
     [SerializeField]
     private int m_horizontalMapDistance = 1024;
+    [SerializeField]
+    private GameObject m_footprintPrefab;
+
+    public GameObject footprintPrefab
+    {
+        get
+        {
+            return m_footprintPrefab;
+        }
+    }
 
     VoyageMap m_currentModuleMap = null;
     public VoyageMap currentModuleMap
@@ -40,7 +50,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-
+        /*
         if (VoyageInfo.Instance.hasCurrent)
         {
             Debug.Log("Instantiate module map");
@@ -54,17 +64,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             Debug.Log("Instantiate world map");
             InstantiateWorldMap();
         }
+        */
 
         VoyageInfo.Instance.SetCurrentLocationNull();
-
-        /*
-        Debug.Log("Instantiate module map");
-        m_movingCamera.transform.position = m_moduleMapLocation.position;
-        InstantiateModuleMap(0);
-
-        Debug.Log("VoyageSessionBoard: " + VoyageSessionBoard.Instance);
-        VoyageSessionBoard.Instance.On(ColorInfo.PipColor.Pink, 1000010);
-        */
     }
 
     void InstantiateWorldMap()
