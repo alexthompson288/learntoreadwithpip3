@@ -149,7 +149,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 		if(Game.session == Game.Session.Premade)
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 		else
 		{

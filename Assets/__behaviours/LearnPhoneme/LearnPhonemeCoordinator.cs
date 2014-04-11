@@ -81,7 +81,7 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 
@@ -112,6 +112,6 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 		yield return new WaitForSeconds(m_letterButton.GetAllAudioLength() + 0.8f);
 
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		SessionManager.Instance.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 }

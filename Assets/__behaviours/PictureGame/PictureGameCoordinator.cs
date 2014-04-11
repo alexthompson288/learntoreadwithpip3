@@ -180,13 +180,13 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 		if (winningIndex != -1)
 		{
 			GameHelpers.SetDefaultPlayerVar();
-			GameHelpers.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 		else
 		{
 			if(Game.session == Game.Session.Premade)
 			{
-				SessionManager.Instance.OnGameFinish(false);
+				GameManager.Instance.CompleteGame(false);
 			}
 			else
 			{

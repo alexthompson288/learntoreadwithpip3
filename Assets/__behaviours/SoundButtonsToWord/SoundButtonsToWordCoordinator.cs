@@ -104,7 +104,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 	
@@ -237,7 +237,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 

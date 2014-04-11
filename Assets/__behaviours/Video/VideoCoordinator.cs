@@ -68,7 +68,7 @@ public class VideoCoordinator : MonoBehaviour
 		}
 #endif
 
-        GameHelpers.OnGameFinish(true, "NewVoyage");
+        GameManager.Instance.CompleteGame(true, "NewVoyage");
 	}
 
 	void PlayAudio (string filename)
@@ -101,14 +101,14 @@ public class VideoCoordinator : MonoBehaviour
             else
             {
                 Debug.Log("File not found: " + String.Format("{0}/StreamingAssets/{1}", Application.dataPath, streamingRelativePath));
-                GameHelpers.OnGameFinish(true, "NewVoyage");
+                GameManager.Instance.CompleteGame(true, "NewVoyage");
             }
 		}
 		catch
 		{
             Debug.Log("Execute catch");
 
-            GameHelpers.OnGameFinish(true, "NewVoyage");
+            GameManager.Instance.CompleteGame(true, "NewVoyage");
 		}
 	}
 }

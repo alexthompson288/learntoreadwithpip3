@@ -14,18 +14,48 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
     [SerializeField]
     private float m_tweenDuration;
     [SerializeField]
-    VoyageGameButton[] m_gameButtons;
+    private VoyageGameButton[] m_gameButtons;
     [SerializeField]
-    ClickEvent m_pipisodeButton;
+    private ClickEvent m_pipisodeButton;
     [SerializeField]
-    ClickEvent m_storyButton;
+    private ClickEvent m_storyButton;
+    [SerializeField]
+    private ClickEvent m_backBlocker;
     [SerializeField]
     private UIWidget[] m_widgetsToColor;
+
+    int m_sessionId = -1;
+    public int sessionId
+    {
+        get
+        {
+            return m_sessionId;
+        }
+    }
+
+    int m_sessionNum = -1;
+    public int sessionNum
+    {
+        get
+        {
+            return m_sessionNum;
+        }
+    }
+
+    ColorInfo.PipColor m_color;
+    public ColorInfo.PipColor color
+    {
+        get
+        {
+            return m_color;
+        }
+    }
 
     void Awake()
     {
         m_pipisodeButton.OnSingleClick += OnClickPipisodeButton;
         m_storyButton.OnSingleClick += OnClickStoryButton;
+        m_backBlocker.OnSingleClick += OnClickBackBlocker;
     }
 
     void OnClickPipisodeButton(ClickEvent click)
@@ -38,27 +68,36 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
 
     }
 
+    void OnClickBackBlocker(ClickEvent click)
+    {
+        Off();
+    }
+
 	public void On(ColorInfo.PipColor pipColor, int sessionNum)
     {
+        Debug.Log("VoyageSessionBoard.On()");
         Debug.Log("sessionNum: " + sessionNum);
 
-        Color color = ColorInfo.Instance.GetColor(pipColor);
+        m_sessionNum = sessionNum;
+
+        m_color = pipColor;
+        Color col = ColorInfo.Instance.GetColor(m_color);
         foreach (UIWidget widget in m_widgetsToColor)
         {
-            widget.color = color;
+            widget.color = col;
         }
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + sessionNum);
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + m_sessionNum);
 
         Debug.Log(String.Format("Found {0} sessions", dt.Rows.Count));
 
         if(dt.Rows.Count > 0)
         {
-            DataRow programSession = dt.Rows[0];
+            DataRow sessionData = dt.Rows[0];
 
-            int sessionId = Convert.ToInt32(programSession["id"]);
-            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId);
-            Debug.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, sessionId));
+            m_sessionId = Convert.ToInt32(sessionData["id"]);
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + m_sessionId);
+            Debug.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, m_sessionId));
             if(dt.Rows.Count > 0)
             {
                 for(int i = 0; i < dt.Rows.Count && i < m_gameButtons.Length; ++i)
@@ -67,10 +106,10 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
                 }
             }
 
-            bool enablePipisodeButton = programSession["pipisode_id"] != null && Convert.ToInt32(programSession["pipisode_id"]) != 0;
+            bool enablePipisodeButton = sessionData["pipisode_id"] != null && Convert.ToInt32(sessionData["pipisode_id"]) != 0;
             m_pipisodeButton.gameObject.SetActive(enablePipisodeButton);
 
-            bool enableStoryButton = programSession["story_id"] != null && Convert.ToInt32(programSession["story_id"]) != 0;
+            bool enableStoryButton = sessionData["story_id"] != null && Convert.ToInt32(sessionData["story_id"]) != 0;
             m_storyButton.gameObject.SetActive(enableStoryButton);
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
@@ -90,5 +129,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         tweenArgs.Add("time", m_tweenDuration);
         tweenArgs.Add("easetype", iTween.EaseType.linear);
         iTween.MoveTo(m_moveable, tweenArgs);
+
+        m_sessionId = -1;
     }
 }

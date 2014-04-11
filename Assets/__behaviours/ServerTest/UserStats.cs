@@ -14,7 +14,7 @@ public class UserStats : Singleton<UserStats>
 	
 	void Start()
 	{
-        Debug.Log("UserStats.Start()");
+        //Debug.Log("UserStats.Start()");
 		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
 		SessionManager.Instance.OnSessionCancel += OnSessionCancel;
 	}
@@ -22,7 +22,7 @@ public class UserStats : Singleton<UserStats>
 	// Called every time a new level is loaded
 	void OnLevelWasLoaded(int level)
 	{
-		Debug.Log ("UserStats.OnLevelWasLoaded()");
+		//Debug.Log ("UserStats.OnLevelWasLoaded()");
 		
 		Activity.OnNewScene ();
 	}   
@@ -53,7 +53,7 @@ public class UserStats : Singleton<UserStats>
 
 		public Activity() : base()
 		{
-			Debug.Log("new Activity() - " + Application.loadedLevelName);
+			//Debug.Log("new Activity() - " + Application.loadedLevelName);
 
 			m_scene = Application.loadedLevelName;
 			m_sessionIdentifier = Session.OnNewGame(m_scene);
@@ -75,7 +75,7 @@ public class UserStats : Singleton<UserStats>
 
 		public static void OnNewScene()
 		{
-            Debug.Log("Activity.OnNewScene()");
+            //Debug.Log("Activity.OnNewScene()");
 
 			if (m_current != null) 
 			{
@@ -98,7 +98,7 @@ public class UserStats : Singleton<UserStats>
 
 		public override void EndEvent(bool completed)
 		{
-			Debug.Log (String.Format ("Activity.EndEvent({0})", completed));
+			//Debug.Log (String.Format ("Activity.EndEvent({0})", completed));
 
 			base.EndEvent (completed);
 			
@@ -119,7 +119,7 @@ public class UserStats : Singleton<UserStats>
 
             if (UserStats.Instance.m_debugActivityData)
             {
-                Debug.Log("Using Debug Activity Data");
+                //Debug.Log("Using Debug Activity Data");
 
                 form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
                 form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
@@ -127,11 +127,11 @@ public class UserStats : Singleton<UserStats>
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
                 form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());
 
-                Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
-                Debug.Log("childName: " + UserInfo.Instance.childName);
-                Debug.Log("setNum: " + m_setNum);
-                Debug.Log("createdAt: " + GetTrimmedStartTime());
-                Debug.Log("updatedAt: " + GetTrimmedEndTime());
+                //Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
+                //Debug.Log("childName: " + UserInfo.Instance.childName);
+                //Debug.Log("setNum: " + m_setNum);
+                //Debug.Log("createdAt: " + GetTrimmedStartTime());
+                //Debug.Log("updatedAt: " + GetTrimmedEndTime());
                 
                 WWW www = new WWW(m_url, form);
                 
@@ -140,18 +140,18 @@ public class UserStats : Singleton<UserStats>
             else
             {
 #if UNITY_EDITOR
-                Debug.Log("Activity.PostData()");
-                Debug.Log("ActivityModelName: " + m_modelName);
-                Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
-                Debug.Log("scene: " + m_scene);
-                Debug.Log("setNum: " + m_setNum);
-                Debug.Log("sectionId: " + m_sectionId);
-                Debug.Log("numAnswers: " + m_numAnswers);
-                Debug.Log("numIncorrectPhonemes: " + m_incorrectPhonemeIds.Count);
-                Debug.Log("incorrectPhonemes: " + CollectionHelpers.ConcatList(m_incorrectPhonemeIds));
-                Debug.Log("storyId: " + m_storyId);
-                Debug.Log("numPipPadCalls: " + m_pipPadCalls.Count);
-                Debug.Log("pipPadCalls: " + CollectionHelpers.ConcatList(m_pipPadCalls));
+                //Debug.Log("Activity.PostData()");
+                //Debug.Log("ActivityModelName: " + m_modelName);
+                //Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
+                //Debug.Log("scene: " + m_scene);
+                //Debug.Log("setNum: " + m_setNum);
+                //Debug.Log("sectionId: " + m_sectionId);
+                //Debug.Log("numAnswers: " + m_numAnswers);
+                //Debug.Log("numIncorrectPhonemes: " + m_incorrectPhonemeIds.Count);
+                //Debug.Log("incorrectPhonemes: " + CollectionHelpers.ConcatList(m_incorrectPhonemeIds));
+                //Debug.Log("storyId: " + m_storyId);
+                //Debug.Log("numPipPadCalls: " + m_pipPadCalls.Count);
+                //Debug.Log("pipPadCalls: " + CollectionHelpers.ConcatList(m_pipPadCalls));
 #endif
 
                 form.AddField (m_modelName + "[core_skill]", m_coreSkill);
@@ -174,7 +174,7 @@ public class UserStats : Singleton<UserStats>
 		// Setters
 		public static void IncrementNumAnswers()
 		{
-			//Debug.Log ("Activity.IncrementNumAnswers()");
+			////Debug.Log ("Activity.IncrementNumAnswers()");
             if (m_current != null)
             {
                 ++m_current.m_numAnswers;
@@ -241,7 +241,7 @@ public class UserStats : Singleton<UserStats>
 
 		public static void AddPhoneme(DataRow phoneme)
 		{
-			//Debug.Log (String.Format ("Activity.AddPhoneme({0})", phoneme ["phoneme"]));
+			////Debug.Log (String.Format ("Activity.AddPhoneme({0})", phoneme ["phoneme"]));
             if (m_current != null)
             {
                 m_current.m_phonemeIds.Add(Convert.ToInt32(phoneme ["id"]));
@@ -258,7 +258,7 @@ public class UserStats : Singleton<UserStats>
 
 		public static void AddIncorrectPhoneme(DataRow phoneme)
 		{
-			//Debug.Log (String.Format ("Activity.AddIncorrectPhoneme({0})", phoneme ["phoneme"]));
+			////Debug.Log (String.Format ("Activity.AddIncorrectPhoneme({0})", phoneme ["phoneme"]));
             if (m_current != null)
             {
                 m_current.m_incorrectPhonemeIds.Add(Convert.ToInt32(phoneme ["id"]));
@@ -299,7 +299,7 @@ public class UserStats : Singleton<UserStats>
 
 		public static void SetStoryId(int storyId)
 		{
-            //Debug.Log(String.Format("Activity.SetStoryId({0})", storyId));
+            ////Debug.Log(String.Format("Activity.SetStoryId({0})", storyId));
             if (m_current != null)
             {
                 m_current.m_storyId = storyId;
@@ -308,7 +308,7 @@ public class UserStats : Singleton<UserStats>
 
 		public static void AddPipPadCall(int wordId)
 		{
-			//Debug.Log(String.Format("Activity.AddPipPadCall({0})", wordId));
+			////Debug.Log(String.Format("Activity.AddPipPadCall({0})", wordId));
             if (m_current != null)
             {
                 m_current.m_pipPadCalls.Add(wordId);
@@ -354,7 +354,7 @@ public class UserStats : Singleton<UserStats>
 			JointConstructor(sessionType);
 
 #if UNITY_EDITOR
-			Debug.Log("new Session(): Voyage/Pippisode");
+			//Debug.Log("new Session(): Voyage/Pippisode");
 			DebugLog();
 #endif
 		}
@@ -376,7 +376,7 @@ public class UserStats : Singleton<UserStats>
 			JointConstructor(sessionType);
 
 #if UNITY_EDITOR
-			Debug.Log("new Session(): Lesson");
+			//Debug.Log("new Session(): Lesson");
 			DebugLog();
 #endif
 		}
@@ -396,11 +396,11 @@ public class UserStats : Singleton<UserStats>
 #if UNITY_EDITOR
 		void DebugLog()
 		{
-			Debug.Log ("sessionIdentifier: " + m_sessionIdentifier);
-			Debug.Log ("sessionType: " + m_sessionType);
-			Debug.Log ("sessionName: " + m_sessionName);
-			Debug.Log ("sessionId: " + m_sessionId);
-			Debug.Log ("sessionNum: " + m_sessionNum);
+			//Debug.Log ("sessionIdentifier: " + m_sessionIdentifier);
+			//Debug.Log ("sessionType: " + m_sessionType);
+			//Debug.Log ("sessionName: " + m_sessionName);
+			//Debug.Log ("sessionId: " + m_sessionId);
+			//Debug.Log ("sessionNum: " + m_sessionNum);
 		}
 #endif
 
@@ -411,19 +411,19 @@ public class UserStats : Singleton<UserStats>
 
 		public static string OnNewGame(string scene)
 		{
-			Debug.Log ("Session.OnNewGame()");
+			//Debug.Log ("Session.OnNewGame()");
 
 			string sessionIdentifier = "";
 
 			if (m_current != null) 
 			{
-				Debug.Log ("Linking activity to session: " + m_current.m_sessionIdentifier);
+				//Debug.Log ("Linking activity to session: " + m_current.m_sessionIdentifier);
 				sessionIdentifier = m_current.m_sessionIdentifier;
 				m_current.m_scenes.Add (scene);
 			} 
 			else 
 			{
-				Debug.Log("No session to link activity");	
+				//Debug.Log("No session to link activity");	
 			}
 
 			return sessionIdentifier;
@@ -439,7 +439,7 @@ public class UserStats : Singleton<UserStats>
 
 		public override void EndEvent(bool completed)
 		{
-			Debug.Log(String.Format("Session.EndEvent({0})", completed));
+			//Debug.Log(String.Format("Session.EndEvent({0})", completed));
 			base.EndEvent (completed);
 			
 			m_current = null;
@@ -472,13 +472,13 @@ public class UserStats : Singleton<UserStats>
             else
             {
 #if UNITY_EDITOR
-                Debug.Log ("Session.PostData()");
-                Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
-                Debug.Log("sessionName: " + m_sessionName);
-                Debug.Log("sessionId: " + m_sessionId);
-                Debug.Log("sessionNum: " + m_sessionNum);
-                Debug.Log("sessionType: " + m_sessionType);
-                Debug.Log("scenes: " + CollectionHelpers.ConcatList(m_scenes));
+                //Debug.Log ("Session.PostData()");
+                //Debug.Log("sessionIdentifier: " + m_sessionIdentifier);
+                //Debug.Log("sessionName: " + m_sessionName);
+                //Debug.Log("sessionId: " + m_sessionId);
+                //Debug.Log("sessionNum: " + m_sessionNum);
+                //Debug.Log("sessionType: " + m_sessionType);
+                //Debug.Log("scenes: " + CollectionHelpers.ConcatList(m_scenes));
 #endif
 
                 form.AddField (m_modelName + "[session_identifier]", m_sessionIdentifier);
@@ -567,16 +567,16 @@ public class UserStats : Singleton<UserStats>
 		public virtual void PostData (string eventName, WWWForm form)
 		{	
 #if UNITY_EDITOR
-            Debug.Log ("base.PostData(): " + m_modelName);
-            Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
-            Debug.Log("childName: " + UserInfo.Instance.childName);
-            Debug.Log("platform: " + Application.platform.ToString());
-            Debug.Log("hasCompleted: " + m_hasCompleted);
-            Debug.Log("start: " + GetTrimmedStartTime());
-            Debug.Log("end: " + GetTrimmedEndTime());
+            //Debug.Log ("base.PostData(): " + m_modelName);
+            //Debug.Log("accountUsername: " + UserInfo.Instance.accountUsername);
+            //Debug.Log("childName: " + UserInfo.Instance.childName);
+            //Debug.Log("platform: " + Application.platform.ToString());
+            //Debug.Log("hasCompleted: " + m_hasCompleted);
+            //Debug.Log("start: " + GetTrimmedStartTime());
+            //Debug.Log("end: " + GetTrimmedEndTime());
             
-            Debug.Log("url: " + m_url);
-            Debug.Log("tableName: " + m_modelName);
+            //Debug.Log("url: " + m_url);
+            //Debug.Log("tableName: " + m_modelName);
 
             //DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(byte[]));
 #endif
@@ -601,21 +601,21 @@ public class UserStats : Singleton<UserStats>
 	
 	public IEnumerator WaitForRequestCo(string eventName, WWW www)
 	{
-		Debug.Log ("Waiting for request");
+		//Debug.Log ("Waiting for request");
 		
 		yield return www;
 		
 		// check for errors
 		if (www.error == null)
 		{
-			Debug.Log(String.Format("WWW {0} - OK", eventName));
-			Debug.Log("Data: " + www.data);
-			Debug.Log("Text: " + www.text);
+			//Debug.Log(String.Format("WWW {0} - OK", eventName));
+			//Debug.Log("Data: " + www.data);
+			//Debug.Log("Text: " + www.text);
 		} 
 		else 
 		{
-			Debug.Log(String.Format("WWW {0} - ERROR", eventName));
-			Debug.Log("Error: "+ www.error);
+			//Debug.Log(String.Format("WWW {0} - ERROR", eventName));
+			//Debug.Log("Error: "+ www.error);
 		}    
 	}
 }

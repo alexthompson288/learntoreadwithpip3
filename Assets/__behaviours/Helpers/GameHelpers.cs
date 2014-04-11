@@ -13,7 +13,7 @@ public class GameHelpers : MonoBehaviour
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 

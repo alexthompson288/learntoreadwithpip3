@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class VoyageGameButton : MonoBehaviour 
 {
@@ -32,7 +33,7 @@ public class VoyageGameButton : MonoBehaviour
 
         m_border.SetActive(hasCompleted);
 
-        string skillName = m_section ["sectiontype"] != null ? m_section ["gameprogresstype"].ToString() : "";
+        string skillName = m_section ["gameprogresstype"] != null ? m_section ["gameprogresstype"].ToString() : "";
 
         m_label.text = skillName;
 
@@ -47,13 +48,25 @@ public class VoyageGameButton : MonoBehaviour
 
         DataRow game = DataHelpers.FindGameForSection(m_section);
 
+        Debug.Log("game: " + game);
+
         if(game != null)
         {
+            VoyageMap map = Object.FindObjectOfType(typeof(VoyageMap)) as VoyageMap;
+            int module = map.mapIndex;
+            int sessionNum = VoyageSessionBoard.Instance.sessionNum;
+            ColorInfo.PipColor color = VoyageSessionBoard.Instance.color;
+
+            VoyageInfo.Instance.SetCurrentLocation(module, sessionNum, color);
+
             string dbGameName = game["name"].ToString();
             string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
 
+            Debug.Log("dbGameName: " + dbGameName);
+            Debug.Log("sceneName: " + sceneName);
+
             // Set scenes
-            GameManager.Instance.SetScenes(new string[] { sceneName });
+            GameManager.Instance.SetScenes(sceneName);
 
             // Set return scene
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
@@ -61,9 +74,29 @@ public class VoyageGameButton : MonoBehaviour
             // TODO: Set data type
 
             // Set data
+            GameManager.Instance.ClearData();
+
+            int sessionId = VoyageSessionBoard.Instance.sessionId;
+
+            // Phonemes
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                GameManager.Instance.AddData("phonemes", dt.Rows);
+            }
+
+            // Words/Keywords
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
+                GameManager.Instance.AddData("words", words);
+
+                List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+                GameManager.Instance.AddData("keywords", keywords);
+            }
+
+            GameManager.Instance.StartGames();
         }
-
-
-
     }
 }

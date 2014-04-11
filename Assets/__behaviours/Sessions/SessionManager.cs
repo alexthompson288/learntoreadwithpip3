@@ -181,7 +181,7 @@ public class SessionManager : Singleton<SessionManager>
 	
 	public void OnGameFinish(bool wonGame = true)
 	{
-		Debug.Log("OnGameFinish()");
+		Debug.Log("SessionManager.OnGameFinish()");
 		if(wonGame)
 		{
 			++m_activitiesComplete;

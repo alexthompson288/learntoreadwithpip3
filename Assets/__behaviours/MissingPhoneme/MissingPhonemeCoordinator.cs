@@ -380,7 +380,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	void EndGame ()
 	{
 		GameHelpers.SetDefaultPlayerVar();
-		GameHelpers.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 
 	void DestroyDraggables ()

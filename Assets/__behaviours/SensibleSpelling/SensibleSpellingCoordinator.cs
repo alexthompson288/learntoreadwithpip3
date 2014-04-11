@@ -169,7 +169,7 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 	void EndGame ()
 	{
 		GameHelpers.SetDefaultPlayerVar();
-		GameHelpers.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 	
 	IEnumerator OnQuestionEnd()

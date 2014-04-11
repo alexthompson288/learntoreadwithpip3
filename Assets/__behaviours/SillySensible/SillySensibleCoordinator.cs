@@ -291,7 +291,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 	{
 		if(Game.session == Game.Session.Premade)
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 		else
 		{

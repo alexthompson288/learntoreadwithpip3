@@ -303,7 +303,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_TROLL");
 		yield return new WaitForSeconds(3.0f);
 
-		GameHelpers.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 	
 	public void PlayLetterSound(DataRow letterData, bool tryLong = true)

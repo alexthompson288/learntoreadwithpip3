@@ -163,7 +163,7 @@ public class JoinLettersCoordinator : Singleton<JoinLettersCoordinator>
 	{
 		if(Game.session == Game.Session.Premade)
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 		else
 		{

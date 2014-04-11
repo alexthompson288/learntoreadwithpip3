@@ -435,7 +435,7 @@ public class BubbleCoordinator : MonoBehaviour
 		{
 			if(Game.session == Game.Session.Premade)
 			{
-				SessionManager.Instance.OnGameFinish();
+				GameManager.Instance.CompleteGame();
 			}
 			else
 			{

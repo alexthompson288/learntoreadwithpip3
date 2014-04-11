@@ -297,7 +297,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
 
-		GameHelpers.OnGameFinish();		
+		GameManager.Instance.CompleteGame();		
 	}
 	
 	void StopPlayer(int index)

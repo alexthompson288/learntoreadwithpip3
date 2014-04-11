@@ -44,7 +44,7 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 
@@ -143,7 +143,7 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 		}
 		else
 		{
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 }

@@ -23,13 +23,21 @@ public class GameManager : Singleton<GameManager>
 
         string nextScene = m_scenes.Dequeue();
 
+        Debug.Log("TransitionScreen: " + TransitionScreen.Instance);
+
         TransitionScreen.Instance.ChangeLevel(nextScene, true);
     }
 
-    public void CompleteGame()
+    public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene")
     {
+        Debug.Log("GameManager.CompleteGame()");
+
+        Debug.Log(System.String.Format("{0} scenes remaining", m_scenes.Count));
+
         if (m_scenes.Count == 0)
         {
+            m_state = State.Sleep;
+
             if(onComplete != null)
             {
                 onComplete();
@@ -43,6 +51,7 @@ public class GameManager : Singleton<GameManager>
         } 
         else
         {
+            m_state = State.StartGame;
             PlayNextGame();
         }
     }
@@ -71,6 +80,11 @@ public class GameManager : Singleton<GameManager>
 
     Queue<string> m_scenes = new Queue<string>();
 
+    public void SetScenes(string scene)
+    {
+        SetScenes(new string [] { scene });
+    }
+
     public void SetScenes(string[] scenes)
     {
         foreach (string scene in scenes)
@@ -82,9 +96,17 @@ public class GameManager : Singleton<GameManager>
 
     Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
 
-    public void SetData(string type, List<DataRow> data)
+    public void ClearData()
     {
-        m_data = data.ToDictionary(item => item, item => type);
+        m_data.Clear();
+    }
+
+    public void AddData(string type, List<DataRow> data)
+    {
+        foreach (DataRow datum in data)
+        {
+            m_data.Add(datum, type);
+        }
     }
 
     public List<DataRow> GetData(string type)

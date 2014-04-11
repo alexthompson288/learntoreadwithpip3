@@ -169,7 +169,7 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 	void FinishGame()
 	{
 		GameHelpers.SetDefaultPlayerVar();
-		GameHelpers.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 
     public void SpeakWord(string word)

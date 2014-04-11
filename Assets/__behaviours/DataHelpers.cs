@@ -194,6 +194,7 @@ public static class DataHelpers
     
     public static List<DataRow> GetLetters(bool inclusiveSets = true)
     {
+        /*
         List<DataRow> letterData = new List<DataRow>();
         
         switch(Game.session)
@@ -241,10 +242,14 @@ public static class DataHelpers
         }
         
         return letterData;
+        */
+
+        return GameManager.Instance.GetData("phonemes");
     }
     
     public static List<DataRow> GetWords(bool inclusiveSets = false)
     {
+        /*
         List<DataRow> wordData = new List<DataRow>();
         
         switch(Game.session)
@@ -291,10 +296,13 @@ public static class DataHelpers
         }
         
         return wordData;
+        */
+        return GameManager.Instance.GetData("words");
     }
     
     public static List<DataRow> GetKeywords(bool inclusiveSets = false)
     {
+        /*
         List<DataRow> keywordData = new List<DataRow>();
         
         switch(Game.session)
@@ -306,17 +314,6 @@ public static class DataHelpers
                 if(dt.Rows.Count > 0)
                 {
                     keywordData.AddRange(dt.Rows);
-                    
-                    /*
-                for(int i = keywordData.Count - 1; i > -1; --i)
-                {
-                    Debug.Log("keywordData[" + i + "]: " + keywordData[i]);
-                    if(!WordIsKeyword(keywordData[i]))
-                    {
-                        keywordData.RemoveAt(i);
-                    }
-                }
-                */
                 }
                 break;
                 
@@ -338,20 +335,6 @@ public static class DataHelpers
                         keywordData.AddRange(GetSetData(setNum, "setkeywords", "words"));
                     }
                     
-                    /*
-                for(int i = keywordData.Count - 1; i > -1; --i)
-                {
-                    if(!WordIsKeyword(keywordData[i]))
-                    {
-                        keywordData.RemoveAt(i);
-                    }
-                    else
-                    {
-                        Debug.Log("Found " + keywordData[i]["word"].ToString());
-                    }
-                }
-                */
-                    
                     ++setNum;
                 }
                 break;
@@ -370,6 +353,9 @@ public static class DataHelpers
         }
         
         return keywordData;
+        */
+
+        return GameManager.Instance.GetData("keywords");
     }
     
     public static List<DataRow> GetNonsenseWords()

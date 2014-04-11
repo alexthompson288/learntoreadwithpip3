@@ -166,7 +166,7 @@ public class EyeSpyBlendingCoordinator : Singleton<EyeSpyBlendingCoordinator>
 		else
 		{
 			yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-			SessionManager.Instance.OnGameFinish();
+			GameManager.Instance.CompleteGame();
 		}
 	}
 

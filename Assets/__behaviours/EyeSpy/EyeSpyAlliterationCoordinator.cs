@@ -172,7 +172,8 @@ public class EyeSpyAlliterationCoordinator : Singleton<EyeSpyAlliterationCoordin
 		else
 		{
 			yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-			SessionManager.Instance.OnGameFinish();
+			//GameManager.Instance.CompleteGame();
+            GameManager.Instance.CompleteGame();
 		}
 	}
 

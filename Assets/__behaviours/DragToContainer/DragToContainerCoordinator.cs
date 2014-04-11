@@ -284,7 +284,7 @@ public class DragToContainerCoordinator : MonoBehaviour
 	IEnumerator OnGameFinish()
 	{
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		SessionManager.Instance.OnGameFinish();
+		GameManager.Instance.CompleteGame();
 	}
 
 	float PlayShortAudio()
