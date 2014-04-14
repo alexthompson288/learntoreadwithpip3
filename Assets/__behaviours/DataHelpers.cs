@@ -516,4 +516,99 @@ public static class DataHelpers
     {
         return (wordData["nonsense"].ToString() == "t");
     }
+
+    public static string GetTextAttribute(string dataType)
+    {
+        dataType = dataType.ToLower();
+
+        string attributeName = "phoneme";
+
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                attributeName = "word";
+                break;
+            default:
+                break;
+        }
+
+        return attributeName;
+    }
+
+    public static string GetTargetAttribute(string dataType)
+    {
+        dataType = dataType.ToLower();
+        
+        string attributeName = "is_target_phoneme";
+        
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                attributeName = "is_target_word";
+                break;
+            default:
+                break;
+        }
+        
+        return attributeName;
+    }
+
+    public static string GetTable(string dataType)
+    {
+        dataType = dataType.ToLower();
+        
+        string table = "phonemes";
+        
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                table = "words";
+                break;
+            default:
+                break;
+        }
+        
+        return table;
+    }
+
+    public static string GetLinkingTable(string dataType)
+    {
+        dataType = dataType.ToLower();
+
+        string linkingTable = "data_phonemes";
+        
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                linkingTable = "data_words";
+                break;
+            default:
+                break;
+        }
+        
+        return linkingTable;
+    }
+
+    public static string GetLinkingAttribute(string dataType)
+    {
+        dataType = dataType.ToLower();
+        
+        string linkingAttribute = "phoneme_id";
+        
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                linkingAttribute = "word_id";
+                break;
+            default:
+                break;
+        }
+        
+        return linkingAttribute;
+    }
 }

@@ -37,36 +37,30 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
+
     VoyageMap m_currentModuleMap = null;
-    public VoyageMap currentModuleMap
-    {
-        get
-        {
-            return m_currentModuleMap;
-        } 
-    }
 
     IEnumerator Start()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         /*
-        if (VoyageInfo.Instance.hasCurrent)
+        if (VoyageInfo.Instance.hasBookmark)
         {
             Debug.Log("Instantiate module map");
             m_movingCamera.transform.position = m_moduleMapLocation.position;
             InstantiateModuleMap(VoyageInfo.Instance.currentModule);
             
-            VoyageSessionBoard.Instance.On(VoyageInfo.Instance.currentColor, VoyageInfo.Instance.currentSessionNum);
+            VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
         } 
         else
         {
             Debug.Log("Instantiate world map");
             InstantiateWorldMap();
         }
-        */
 
-        VoyageInfo.Instance.SetCurrentLocationNull();
+        VoyageInfo.Instance.DestroyBookmark();
+        */
     }
 
     void InstantiateWorldMap()
@@ -151,49 +145,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-    /*
-    public void MoveToModuleMap(int mapIndex)
+    public void CreateBookmark(int sectionId)
     {
-        if (mapIndex > -1 && mapIndex < m_moduleMapPrefabs.Length)
-        {
-            StartCoroutine(MoveToModuleMapCo(mapIndex));
-        }
+        VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.mapIndex, VoyageSessionBoard.Instance.sessionNum, sectionId);
     }
-
-    IEnumerator MoveToModuleMapCo(int mapIndex)
-    {
-        if (m_currentModuleMap != null)
-        {
-            int modifier = mapIndex < m_currentModuleMap.mapIndex ? -1 : 1;
-
-            Vector3 locationParentPos = m_mapLocationParent.localPosition;
-            locationParentPos.x += (m_horizontalMapDistance * modifier);
-
-            m_mapLocationParent.localPosition = locationParentPos;
-        }
-
-        GameObject newMap = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_moduleMapPrefabs [mapIndex], m_moduleMapParent);
-        newMap.transform.position = m_moduleMapLocation.position;
-        
-        VoyageMap moduleMap = newMap.GetComponent<VoyageMap>() as VoyageMap;
-
-        moduleMap.SetUp(mapIndex);
-
-        iTween.MoveTo(m_movingCamera, m_moduleMapLocation.position, m_cameraTweenDuration);
-
-        yield return new WaitForSeconds(m_cameraTweenDuration);
-
-        if (m_worldMap != null)
-        {
-            Destroy(m_worldMap);
-        }
-
-        if (m_currentModuleMap != null)
-        {
-            Destroy(m_currentModuleMap.gameObject);
-        }
-
-        m_currentModuleMap = moduleMap;
-    }
-    */
 }

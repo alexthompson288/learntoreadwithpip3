@@ -20,6 +20,28 @@ public class ColorInfo : Singleton<ColorInfo>
         Blue
     }
 
+    public Color GetColor(string color)
+    {
+        switch (color)
+        {
+            case "Pink":
+                return m_pink;
+                break;
+            case "Red":
+                return m_red;
+                break;
+            case "Yellow":
+                return m_yellow;
+                break;
+            case "Blue":
+                return m_blue;
+                break;
+            default:
+                return Color.white;
+                break;
+        }
+    }
+
     public Color GetColor(PipColor pipColor)
     {
         switch(pipColor)

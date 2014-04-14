@@ -16,6 +16,10 @@ public class VoyageMap : MonoBehaviour
     private GameObject m_medalPrefab;
     [SerializeField]
     private Transform m_medalParent;
+    [SerializeField]
+    private GameObject m_sessionButtonPrefab;
+    [SerializeField]
+    private UIGrid m_sessionButtonGrid;
 
     int m_mapIndex;
     public int mapIndex
@@ -23,15 +27,6 @@ public class VoyageMap : MonoBehaviour
         get
         {
             return m_mapIndex;
-        }
-    }
-
-    int m_sessionNum;
-    public int sessionNum
-    {
-        get
-        {
-            return m_sessionNum;
         }
     }
 
@@ -43,18 +38,43 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
+    DataRow m_moduleData = null;
+
 
     public void SetUp(int index)
     {
         m_mapIndex = index;
 
+        /*
         VoyageSessionButton[] points = GetComponentsInChildren<VoyageSessionButton>() as VoyageSessionButton[];
 
         for (int i = 0; i < points.Length; ++i)
         {
-            string sessionNum = System.String.Format("{0}0000{1}0", index + 1, i + 1);
-            m_sessionNum = System.Convert.ToInt32(sessionNum);
-            points[i].SetUp(m_moduleColor, m_sessionNum);
+            string sessionNumString = System.String.Format("{0}00{1}0", index + 1, i + 1);
+            int sessionNum = System.Convert.ToInt32(sessionNumString);
+            Debug.Log("sessionNum: " + sessionNum);
+            points[i].SetUp(m_moduleColor,  sessionNum);
+        }
+        */
+
+        Debug.Log("Looking for module color: " + m_moduleColor.ToString());
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE colour='" + m_moduleColor.ToString() + "'");
+
+        if (dt.Rows.Count > 0)
+        {
+            m_moduleData = dt.Rows[0];
+        }
+
+        string dataType = m_moduleData ["modulereward"].ToString();
+        Debug.Log("module dataType: " + dataType);
+
+        for (int i = 0; i < 16; ++i)
+        {
+            GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
+
+            string sessionNumString = System.String.Format("{0}00{1}0", index + 1, i + 1);
+            int sessionNum = System.Convert.ToInt32(sessionNumString);
+            newSessionButton.GetComponent<VoyageSessionButton>().SetUp(m_moduleColor,  sessionNum, dataType);
         }
     }
 

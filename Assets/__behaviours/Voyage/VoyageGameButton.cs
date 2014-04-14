@@ -25,7 +25,7 @@ public class VoyageGameButton : MonoBehaviour
 
         int sectionId = System.Convert.ToInt32(m_section["id"]);
 
-        bool hasCompleted = VoyageInfo.Instance.HasCompleted(sectionId);
+        bool hasCompleted = VoyageInfo.Instance.HasCompletedSection(sectionId);
 
         Debug.Log("Game: " + sectionId + " - " + hasCompleted);
 
@@ -44,19 +44,13 @@ public class VoyageGameButton : MonoBehaviour
 
     void OnClick()
     {
-        VoyageInfo.Instance.OnChooseSection(System.Convert.ToInt32(m_section["id"]));
-
         DataRow game = DataHelpers.FindGameForSection(m_section);
 
         Debug.Log("game: " + game);
 
         if(game != null)
         {
-            int module = VoyageCoordinator.Instance.currentModuleMap.mapIndex;
-            int sessionNum = VoyageCoordinator.Instance.currentModuleMap.sessionNum;
-            ColorInfo.PipColor color = VoyageCoordinator.Instance.currentModuleMap.moduleColor;
-
-            VoyageInfo.Instance.SetCurrentLocation(module, sessionNum, color);
+            VoyageCoordinator.Instance.CreateBookmark(System.Convert.ToInt32(m_section ["id"]));
 
             string dbGameName = game["name"].ToString();
             string sceneName = GameLinker.Instance.GetSceneName(dbGameName);

@@ -59,4 +59,6 @@ NewDragToContainerWords,
 NewVideo,
 NewVideo,
 NewStories,
-NewStories
+NewStories,
+NewCorrectPictureGame,
+NewChoosePicture

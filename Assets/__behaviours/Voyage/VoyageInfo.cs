@@ -10,61 +10,18 @@ public class VoyageInfo : Singleton<VoyageInfo>
     private bool m_overwrite;
 #endif
 
-    // Permanently saved
-    List<int> m_completedSections = new List<int>();
-    //List<int> m_completedSessions = new List<int>(); // TODO: Replace list with dictionary
-    Dictionary<int, int> m_moduleProgress = new Dictionary<int, int>();
-
-    // Forgotten when app is closed
-    int m_currentSection = -1;
-
-
-    GameLocation m_currentLocation = null;
-
-    public void SetCurrentLocation(int module, int sessionNum, ColorInfo.PipColor color)
-    {
-        m_currentLocation = new GameLocation(module, sessionNum, color);
-    }
-
-    public void SetCurrentLocationNull()
-    {
-        m_currentLocation = null;
-    }
-
-    public bool hasCurrent
+    static int m_sectionsInSession = 4;
+    static int m_sessionsInModule = 16;
+    public static int sessionsInModule
     {
         get
         {
-            Debug.Log("hasCurrent: " + (m_currentLocation != null));
-            return m_currentLocation != null;
+            return m_sessionsInModule;
         }
     }
-   
-    public int currentModule
-    {
-        get
-        {
-            return m_currentLocation.GetModule();
-        }
-    }
-
-    public int currentSessionNum
-    {
-        get
-        {
-            return m_currentLocation.GetSessionNum();
-        }
-    }
-
-    public ColorInfo.PipColor currentColor
-    {
-        get
-        {
-            return m_currentLocation.GetColor();
-        }
-    }
-
-    class GameLocation
+  
+    // Bookmarks save the module, session and section being played. They are forgotten between app launches
+    class Bookmark
     {
         int m_module;
         public int GetModule()
@@ -78,23 +35,210 @@ public class VoyageInfo : Singleton<VoyageInfo>
             return m_sessionNum;
         }
 
-        ColorInfo.PipColor m_color;
-        public ColorInfo.PipColor GetColor()
+        int m_sectionId;
+        public int GetSectionId()
         {
-            return m_color;
+            return m_sectionId;
         }
 
-        public GameLocation (int module, int sessionNum, ColorInfo.PipColor color)
+        public Bookmark (int module, int sessionNum, int sectionId)
         {
             m_module = module;
             m_sessionNum = sessionNum;
-            m_color = color;
+            m_sectionId = sectionId;
         }
     }
 
-    public bool HasCompleted(int sectionId)
+    Bookmark m_bookmark = null;
+    
+    public void CreateBookmark(int module, int sessionNum, int sectionId)
     {
-        return m_completedSections.Contains(sectionId);
+        m_bookmark = new Bookmark(module, sessionNum, sectionId);
+        GameManager.Instance.OnComplete += OnGameComplete;
+    }
+    
+    public void DestroyBookmark()
+    {
+        m_bookmark = null;
+    }
+    
+    public bool hasBookmark
+    {
+        get
+        {
+            Debug.Log("hasBookmark: " + (m_bookmark != null));
+            return m_bookmark != null;
+        }
+    }
+    
+    public int currentModule
+    {
+        get
+        {
+            return m_bookmark.GetModule();
+        }
+    }
+    
+    public int currentSessionNum
+    {
+        get
+        {
+            return m_bookmark.GetSessionNum();
+        }
+    }
+
+    // ProgressTrackers save player progress. They are saved between app launches. 
+    class ProgressTracker
+    {
+        int m_module;
+        public int GetModule()
+        {
+            return m_module;
+        }
+
+        Dictionary<int, int> m_sectionSessions = new Dictionary<int, int>();
+
+        public int GetNumSectionsComplete(int sessionNum)
+        {
+            int sectionsComplete = 0;
+
+            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
+            {
+                if(kvp.Value == sessionNum)
+                {
+                    ++sectionsComplete;
+                }
+            }
+
+            return sectionsComplete;
+        }
+
+        public int GetNumSessionsComplete()
+        {
+            /*
+            int sessionsComplete = 0;
+
+            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
+            {
+                if(GetNumSectionsComplete(kvp.Value) >= m_sectionsInSession)
+                {
+                    ++ sessionsComplete;
+                }
+            }
+
+            return sessionsComplete;
+            */
+
+            HashSet<int> completedSessions = new HashSet<int>();
+
+            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
+            {
+                if(GetNumSectionsComplete(kvp.Value) >= m_sectionsInSession)
+                {
+                    completedSessions.Add(kvp.Value);
+                }
+            }
+
+            return completedSessions.Count;
+        }
+
+        public void AddSectionComplete(int sectionId, int sessionNum)
+        {
+            m_sectionSessions [sectionId] = sessionNum;
+        }
+
+        public bool HasCompletedSection(int sectionId)
+        {
+            return m_sectionSessions.ContainsKey(sectionId);
+        }
+
+        public Dictionary<int, int> GetSectionSessions()
+        {
+            return m_sectionSessions;
+        }
+
+        public ProgressTracker (int module)
+        {
+            m_module = module;
+        }
+    }
+
+    List<ProgressTracker> m_trackers = new List<ProgressTracker>();
+
+    public bool HasCompletedSection(int sectionId)
+    {
+        bool hasCompleted = false;
+
+        foreach(ProgressTracker tracker in m_trackers)
+        {
+            if(tracker.HasCompletedSection(sectionId))
+            {
+                hasCompleted = true;
+                break;
+            }
+        }
+
+        return hasCompleted;
+    }
+
+    public bool HasCompletedSession(int sessionNum)
+    {
+        bool hasCompleted = false;
+
+        foreach (ProgressTracker tracker in m_trackers)
+        {
+            if(tracker.GetNumSectionsComplete(sessionNum) >= m_sectionsInSession)
+            {
+                hasCompleted = true;
+                break;
+            }
+        }
+
+        return hasCompleted;
+    }
+
+    public int GetNumSessionsComplete(int module)
+    {
+        int sessionsComplete = 0;
+
+        ProgressTracker tracker = m_trackers.Find(x => x.GetModule() == module);
+        if (tracker != null)
+        {
+            sessionsComplete = tracker.GetNumSessionsComplete();
+        }
+
+        return sessionsComplete;
+    }
+
+    void OnGameComplete()
+    {
+        Debug.Log("VoyageInfo.OnGameComplete");
+        GameManager.Instance.OnComplete -= OnGameComplete;
+        
+        if (m_bookmark != null)
+        {
+            ProgressTracker tracker = m_trackers.Find(x => x.GetModule() == m_bookmark.GetModule());
+            if(tracker == null)
+            {
+                Debug.Log("Creating new tracker");
+                tracker = new ProgressTracker(m_bookmark.GetModule());
+                m_trackers.Add(tracker);
+            }
+            
+            Debug.Log(System.String.Format("Adding to tracker {0} - {1}", m_bookmark.GetSectionId(), m_bookmark.GetSessionNum()));
+            
+            tracker.AddSectionComplete(m_bookmark.GetSectionId(), m_bookmark.GetSessionNum());
+        }
+        
+        Save();
+    }
+    
+    void OnGameCancel()
+    {
+        Debug.Log("VoyageInfo.OnGameCancel");
+        GameManager.Instance.OnComplete -= OnGameComplete;
+        
+        m_bookmark = null;
     }
 
     void Start()
@@ -111,30 +255,15 @@ public class VoyageInfo : Singleton<VoyageInfo>
         GameManager.Instance.OnCancel += OnGameCancel;
     }
 
-    void OnGameComplete()
+    void LogTracker(ProgressTracker tracker)
     {
-        Debug.Log("VoyageInfo.OnGameComplete: " + m_currentSection);
-        GameManager.Instance.OnComplete -= OnGameComplete;
-        m_currentSection = -1;
-
-        m_completedSections.Add(m_currentSection);
-
-        Save();
-    }
-
-    void OnGameCancel()
-    {
-        Debug.Log("VoyageInfo.OnGameCancel");
-        GameManager.Instance.OnComplete -= OnGameComplete;
-        m_currentSection = -1;
-
-        m_currentLocation = null;
-    }
-
-    public void OnChooseSection(int sectionId)
-    {
-        GameManager.Instance.OnComplete += OnGameComplete;
-        m_currentSection = sectionId;
+        Debug.Log("Logging Tracker " + tracker.GetModule());
+        Dictionary<int, int> sectionSessions = tracker.GetSectionSessions();
+        Debug.Log("sectionSessions.Count: " + sectionSessions.Count);
+        foreach (KeyValuePair<int, int> kvp in sectionSessions)
+        {
+            Debug.Log(System.String.Format("{0} - {1}", kvp.Key, kvp.Value));
+        }
     }
 
     void Load()
@@ -145,22 +274,19 @@ public class VoyageInfo : Singleton<VoyageInfo>
         
         if (data.Length != 0)
         {
-            int numCompletedSections = br.ReadInt32();
-            for (int i = 0; i < numCompletedSections; ++i)
+            int numTrackers = br.ReadInt32();
+            for(int i = 0; i < numTrackers; ++i)
             {
-                int sectionId = br.ReadInt32();
-                m_completedSections.Add(sectionId);
-            }
+                ProgressTracker tracker = new ProgressTracker(br.ReadInt32());
 
-            /*
-            int numModules = br.ReadInt32();
-            for(int i = 0; i < numModules; ++i)
-            {
-                int moduleIndex = br.ReadInt32();
-                int numCompletedSessions = br.ReadInt32();
-                m_moduleProgress.Add(moduleIndex, completedSessions);
+                int numSectionSessions = br.ReadInt32();
+                for(int j = 0; j < numSectionSessions; ++j)
+                {
+                    tracker.AddSectionComplete(br.ReadInt32(), br.ReadInt32());
+                }
+
+                m_trackers.Add(tracker);
             }
-            */
         }
         
         br.Close();
@@ -172,15 +298,21 @@ public class VoyageInfo : Singleton<VoyageInfo>
         DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
-        
-        bw.Write(m_completedSections.Count);
-        foreach (int i in m_completedSections)
-        {
-            bw.Write(i);
-        }
 
-        //bw.Write(m_moduleProgress.Count);
-        //foreach(KeyValuePair<int, int> kvp in m_
+        bw.Write(m_trackers.Count);
+        foreach (ProgressTracker tracker in m_trackers)
+        {
+            bw.Write(tracker.GetModule());
+
+            Dictionary<int, int> sectionSessions = tracker.GetSectionSessions();
+            bw.Write(sectionSessions.Count);
+            foreach(KeyValuePair<int, int> kvp in sectionSessions)
+            {
+                Debug.Log(System.String.Format("Writing: {0} - {1}", kvp.Key, kvp.Value));
+                bw.Write(kvp.Key);
+                bw.Write(kvp.Value);
+            }
+        }
         
         ds.Save(newData);
         
