@@ -31,6 +31,19 @@ public class ClickEvent : MonoBehaviour
 		m_int = i;
 	}
 
+    [SerializeField]
+    private string m_string;
+
+    public string GetString()
+    {
+        return m_string;
+    }
+
+    public void SetString(string s)
+    {
+        m_string = s;
+    }
+
 	void OnClick()
 	{
 		if(OnSingleClick != null)

@@ -7,10 +7,13 @@ public class ChooseStoryType : MonoBehaviour
     ColorInfo.PipColor m_storyType;
     [SerializeField]
     private UISprite m_sprite;
+    [SerializeField]
+    private UILabel m_label;
 
     void Start()
     {
         m_sprite.color = ColorInfo.GetColor(m_storyType);
+        m_label.text = ColorInfo.GetColorString(m_storyType);
     }
 	
 	// Update is called once per frame

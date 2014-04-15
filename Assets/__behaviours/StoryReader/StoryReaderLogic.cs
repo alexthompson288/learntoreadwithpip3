@@ -384,7 +384,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 			if(storyType == "" || storyType == null)
 			{
-				storyType = "Classic";
+				storyType = "Pink";
 			}
 
 			m_decodeList.Clear();

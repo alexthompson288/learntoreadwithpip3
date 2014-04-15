@@ -115,20 +115,6 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
         public int GetNumSessionsComplete()
         {
-            /*
-            int sessionsComplete = 0;
-
-            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
-            {
-                if(GetNumSectionsComplete(kvp.Value) >= m_sectionsInSession)
-                {
-                    ++ sessionsComplete;
-                }
-            }
-
-            return sessionsComplete;
-            */
-
             HashSet<int> completedSessions = new HashSet<int>();
 
             foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
@@ -164,6 +150,21 @@ public class VoyageInfo : Singleton<VoyageInfo>
     }
 
     List<ProgressTracker> m_trackers = new List<ProgressTracker>();
+
+    Dictionary<int, string> m_sessionBackgrounds = new Dictionary<int, string>();
+
+    public void AddSessionBackground(int sessionNum, string spriteName)
+    {
+        m_sessionBackgrounds [sessionNum] = spriteName;
+
+        Save();
+    }
+
+    public string GetSessionBackground(int sessionNum)
+    {
+        string spriteName = m_sessionBackgrounds.ContainsKey(sessionNum) ? m_sessionBackgrounds [sessionNum] : "Incomplete";
+        return spriteName;
+    }
 
     public bool HasCompletedSection(int sectionId)
     {
@@ -287,6 +288,12 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
                 m_trackers.Add(tracker);
             }
+
+            int numSessionBackgrounds = br.ReadInt32();
+            for(int i = 0; i < numSessionBackgrounds; ++i)
+            {
+                m_sessionBackgrounds.Add(br.ReadInt32(), br.ReadString());
+            }
         }
         
         br.Close();
@@ -312,6 +319,13 @@ public class VoyageInfo : Singleton<VoyageInfo>
                 bw.Write(kvp.Key);
                 bw.Write(kvp.Value);
             }
+        }
+
+        bw.Write(m_sessionBackgrounds.Count);
+        foreach (KeyValuePair<int, string> kvp in m_sessionBackgrounds)
+        {
+            bw.Write(kvp.Key);
+            bw.Write(kvp.Value);
         }
         
         ds.Save(newData);
