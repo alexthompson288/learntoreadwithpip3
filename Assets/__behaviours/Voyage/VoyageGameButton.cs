@@ -30,7 +30,7 @@ public class VoyageGameButton : MonoBehaviour
 
         Debug.Log("Game: " + sectionId + " - " + hasCompleted);
 
-        m_background.spriteName = hasCompleted ? m_completeName : m_incompleteName;
+        m_background.spriteName = hasCompleted ? VoyageInfo.Instance.GetSessionBackground(System.Convert.ToInt32(m_section["number"])) : m_incompleteName;
         m_background.color = hasCompleted ? completedColor : Color.white;
 
         m_border.SetActive(hasCompleted);
@@ -63,6 +63,7 @@ public class VoyageGameButton : MonoBehaviour
         m_game = DataHelpers.FindGameForSection(m_section);
 
         Debug.Log("game: " + m_game);
+        Debug.Log("sectionId: " + System.Convert.ToInt32(m_section ["id"]));
 
         if(m_game != null)
         {
@@ -75,7 +76,17 @@ public class VoyageGameButton : MonoBehaviour
             Debug.Log("sceneName: " + sceneName);
 
             // Set scenes
-            GameManager.Instance.SetScenes(sceneName);
+
+            int sessionNum = System.Convert.ToInt32(m_section["number"]);
+            if(VoyageInfo.Instance.NearlyCompletedSession(sessionNum) || VoyageInfo.Instance.HasCompletedSession(sessionNum))
+            {
+                GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
+            }
+            else
+            {
+                GameManager.Instance.SetScenes(sceneName);
+            }
+
 
             // Set return scene
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
@@ -87,11 +98,18 @@ public class VoyageGameButton : MonoBehaviour
 
             int sessionId = VoyageSessionBoard.Instance.sessionId;
 
+         
             // Phonemes
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
             if(dt.Rows.Count > 0)
             {
                 GameManager.Instance.AddData("phonemes", dt.Rows);
+
+                //Debug.Log("Phonemes");
+                foreach(DataRow row in dt.Rows)
+                {
+                    //Debug.Log(row["phoneme"].ToString());
+                }
             }
 
             // Words/Keywords
@@ -101,11 +119,33 @@ public class VoyageGameButton : MonoBehaviour
                 List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
                 GameManager.Instance.AddData("words", words);
 
+                Debug.Log("Words");
+                foreach(DataRow row in words)
+                {
+                    Debug.Log(row["id"].ToString() + " - " + row["word"].ToString());
+                }
+
                 List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
                 GameManager.Instance.AddData("keywords", keywords);
+
+
+                //Debug.Log("Keywords");
+                foreach(DataRow row in keywords)
+                {
+                    //Debug.Log(row["word"].ToString());
+                }
+            }
+
+            List<DataRow> testWords = DataHelpers.GetWords();
+            Debug.Log("TestWords");
+            foreach(DataRow word in testWords)
+            {
+                string s = word["word"] != null ? word["word"].ToString() : "";
+                Debug.Log(word["id"].ToString() + " - " + s);
             }
 
             GameManager.Instance.StartGames();
         }
+
     }
 }

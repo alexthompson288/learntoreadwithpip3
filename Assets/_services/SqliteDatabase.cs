@@ -122,11 +122,41 @@ public class SqliteDatabase
             string columnName = Marshal.PtrToStringAnsi(sqlite3_column_name(stmHandle, i));
             dataTable.Columns.Add(columnName);
         }
+
+        // Tom Mulvaney
+        // Add a column called "tablename". It will contain the name of the table which contains the DataRow
+        dataTable.Columns.Add("tablename");
+
+        // Tom Mulvaney
+        // Find "tablename"
+        Debug.Log("query: " + query);
+
+        string fromString = " from ";
+        int fromIndex = query.IndexOf(fromString);
+        fromIndex += fromString.Length;
+        Debug.Log(String.Format("query[{0}] = {1}", fromIndex, query[fromIndex])); 
+
+        string tableName = "";
+        for(int i = fromIndex; i < query.Length; ++i)
+        {
+            if(!IsNullOrWhiteSpace(query[i].ToString()))
+            {
+                tableName += query[i];
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        Debug.Log("tablename: " + tableName);
         
         //populate datatable
         while (sqlite3_step(stmHandle) == SQLITE_ROW)
         {
-            object[] row = new object[columnCount];
+            //object[] row = new object[columnCount];
+            object[] row = new object[columnCount + 1]; // Tom Mulvaney: Add an extra column for tablename
+
             for (int i = 0; i < columnCount; i++)
             {
                 switch (sqlite3_column_type(stmHandle, i))
@@ -149,6 +179,11 @@ public class SqliteDatabase
                         break;
                 }
             }
+
+            // Tom Mulvaney
+            // Set tablename
+            row[columnCount] = tableName;
+
         
             dataTable.AddRow(row);
         }
@@ -156,6 +191,11 @@ public class SqliteDatabase
         Finalize(stmHandle);
         
         return dataTable;
+    }
+
+    public bool IsNullOrWhiteSpace(string s)
+    {
+        return (String.IsNullOrEmpty(s) || s == " ");
     }
     
     public void ExecuteScript(string script)

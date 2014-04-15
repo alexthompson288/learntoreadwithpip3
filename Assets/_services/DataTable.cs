@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Data;
 
 public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
 {
@@ -52,13 +53,14 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
 		}
 		else
 		{
-			return (Convert.ToInt32(this["id"]) == Convert.ToInt32(other["id"]));
+			return (Convert.ToInt32(this["id"]) == Convert.ToInt32(other["id"]) && this["tablename"].ToString() == other["tablename"].ToString());
 		}
 	}
 
 	public override int GetHashCode()
 	{
-		return Convert.ToInt32(this["id"]);
+        return (this ["tablename"].ToString() + this ["id"].ToString()).GetHashCode();
+		//return Convert.ToInt32(this["id"]);
 	}
 }
 

@@ -198,6 +198,22 @@ public class VoyageInfo : Singleton<VoyageInfo>
         return hasCompleted;
     }
 
+    public bool NearlyCompletedSession(int sessionNum)
+    {
+        bool nearlyCompleted = false;
+        
+        foreach (ProgressTracker tracker in m_trackers)
+        {
+            if(tracker.GetNumSectionsComplete(sessionNum) == m_sectionsInSession - 1)
+            {
+                nearlyCompleted = true;
+                break;
+            }
+        }
+        
+        return nearlyCompleted;
+    }
+
     public int GetNumSessionsComplete(int module)
     {
         int sessionsComplete = 0;

@@ -41,7 +41,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		for(int i = m_wordSelection.Count - 1; i > -1; --i)
 		{
-			Debug.Log(m_wordSelection[i]["word"].ToString());
+			//Debug.Log(m_wordSelection[i]["word"].ToString());
+            Debug.Log("word: " + m_wordSelection[i]["word"]);
 			Texture2D tex = null;
 			if(m_wordSelection[i]["image"] != null)
 			{

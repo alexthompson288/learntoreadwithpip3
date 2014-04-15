@@ -28,7 +28,7 @@ public class GameManager : Singleton<GameManager>
         TransitionScreen.Instance.ChangeLevel(nextScene, true);
     }
 
-    public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene")
+    public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene") // TODO: Deprecate the parameters passed to this method
     {
         Debug.Log("GameManager.CompleteGame()");
 
@@ -105,7 +105,7 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (DataRow datum in data)
         {
-            m_data.Add(datum, type);
+            m_data[datum] = type;
         }
     }
 
