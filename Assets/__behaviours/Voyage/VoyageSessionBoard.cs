@@ -69,7 +69,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         Debug.Log("VoyageSessionBoard.On()");
         Debug.Log("sessionNum: " + sessionNum);
 
-        Color color = ColorInfo.Instance.GetColor(pipColor);
+        Color color = ColorInfo.GetColor(pipColor);
         foreach (UIWidget widget in m_widgetsToColor)
         {
             widget.color = color;
@@ -90,7 +90,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
             {
                 for(int i = 0; i < dt.Rows.Count && i < m_gameButtons.Length; ++i)
                 {
-                    m_gameButtons[i].On(dt.Rows[i]);
+                    m_gameButtons[i].On(dt.Rows[i], color);
                 }
             }
 

@@ -29,6 +29,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     [SerializeField]
     private GameObject m_footprintPrefab;
 
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_debugNoSpawn;
+#endif
+
     public GameObject footprintPrefab
     {
         get
@@ -44,23 +49,30 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        /*
-        if (VoyageInfo.Instance.hasBookmark)
+        bool spawnMap = true;
+
+#if UNITY_EDITOR
+        spawnMap = !m_debugNoSpawn;
+#endif
+
+        if (spawnMap)
         {
-            Debug.Log("Instantiate module map");
-            m_movingCamera.transform.position = m_moduleMapLocation.position;
-            InstantiateModuleMap(VoyageInfo.Instance.currentModule);
-            
-            VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
-        } 
-        else
-        {
-            Debug.Log("Instantiate world map");
-            InstantiateWorldMap();
+            if (VoyageInfo.Instance.hasBookmark)
+            {
+                Debug.Log("Instantiate module map");
+                m_movingCamera.transform.position = m_moduleMapLocation.position;
+                InstantiateModuleMap(VoyageInfo.Instance.currentModule);
+                
+                VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
+            } else
+            {
+                Debug.Log("Instantiate world map");
+                InstantiateWorldMap();
+            }
+
+            VoyageInfo.Instance.DestroyBookmark();
         }
 
-        VoyageInfo.Instance.DestroyBookmark();
-        */
     }
 
     void InstantiateWorldMap()

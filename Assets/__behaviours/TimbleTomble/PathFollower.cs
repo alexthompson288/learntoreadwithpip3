@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: Make an integrated PathFollower class. It needs to have multiple orientation options
 public abstract class PathFollower : MonoBehaviour 
 {
 	public Spline Path;

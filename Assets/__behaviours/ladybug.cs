@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ladybug : PathFollower {
-	
+// TODO: Make an integrated PathFollower class. It needs to have multiple orientation options
+public class ladybug : PathFollower 
+{
 	//public Spline Path;
 	public float TotalTime = 20.0f;
 	private float CurrTime = 0.0f;

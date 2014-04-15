@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class SessionInformation : Singleton<SessionInformation> {
-
+public class SessionInformation : Singleton<SessionInformation> 
+{
 	private string m_classicStoryLevel;
 	private string m_storyType;
     private int m_currentlySelectedBook = 4;

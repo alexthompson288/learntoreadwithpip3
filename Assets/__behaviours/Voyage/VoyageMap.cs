@@ -45,18 +45,6 @@ public class VoyageMap : MonoBehaviour
     {
         m_mapIndex = index;
 
-        /*
-        VoyageSessionButton[] points = GetComponentsInChildren<VoyageSessionButton>() as VoyageSessionButton[];
-
-        for (int i = 0; i < points.Length; ++i)
-        {
-            string sessionNumString = System.String.Format("{0}00{1}0", index + 1, i + 1);
-            int sessionNum = System.Convert.ToInt32(sessionNumString);
-            Debug.Log("sessionNum: " + sessionNum);
-            points[i].SetUp(m_moduleColor,  sessionNum);
-        }
-        */
-
         Debug.Log("Looking for module color: " + m_moduleColor.ToString());
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE colour='" + m_moduleColor.ToString() + "'");
 
@@ -87,7 +75,7 @@ public class VoyageMap : MonoBehaviour
             click.OnSingleClick += OnClickModuleMapButton;
         }
 
-        Color color = ColorInfo.Instance.GetColor(m_moduleColor);
+        Color color = ColorInfo.GetColor(m_moduleColor);
         foreach (UIWidget widget in m_widgetsToColor)
         {
             widget.color = color;

@@ -18,8 +18,9 @@ public class VoyageGameButton : MonoBehaviour
     private UILabel m_label;
 
     DataRow m_section;
+    DataRow m_game;
 
-    public void On(DataRow section)
+    public void On(DataRow section, Color completedColor)
     {
         m_section = section;
 
@@ -30,29 +31,44 @@ public class VoyageGameButton : MonoBehaviour
         Debug.Log("Game: " + sectionId + " - " + hasCompleted);
 
         m_background.spriteName = hasCompleted ? m_completeName : m_incompleteName;
+        m_background.color = hasCompleted ? completedColor : Color.white;
 
         m_border.SetActive(hasCompleted);
 
-        string skillName = m_section ["gameprogresstype"] != null ? m_section ["gameprogresstype"].ToString() : "";
+        m_game = DataHelpers.FindGameForSection(m_section);
 
-        m_label.text = skillName;
+        if (m_game != null)
+        {
+            string skillName = m_game ["skill"] != null ? m_game ["skill"].ToString() : "";
 
-        string completedString = hasCompleted ? "complete" : "incomplete";
+            m_label.text = skillName;
 
-        m_icon.spriteName = System.String.Format("{0}_{1}", skillName, completedString);
+            string completedString = hasCompleted ? "complete" : "incomplete";
+
+            Debug.Log(System.String.Format("icon: {0}_{1}", skillName.ToLower(), completedString));
+            m_icon.spriteName = System.String.Format("{0}_{1}", skillName.ToLower(), completedString);
+
+            float iconAlpha = hasCompleted ? 1 : 0.8f;
+            m_icon.color = new Color(1, 1, 1, iconAlpha);
+        } 
+        else
+        {
+            m_icon.gameObject.SetActive(false);
+            m_label.gameObject.SetActive(false);
+        }
     }
 
     void OnClick()
     {
-        DataRow game = DataHelpers.FindGameForSection(m_section);
+        m_game = DataHelpers.FindGameForSection(m_section);
 
-        Debug.Log("game: " + game);
+        Debug.Log("game: " + m_game);
 
-        if(game != null)
+        if(m_game != null)
         {
             VoyageCoordinator.Instance.CreateBookmark(System.Convert.ToInt32(m_section ["id"]));
 
-            string dbGameName = game["name"].ToString();
+            string dbGameName = m_game["name"].ToString();
             string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
 
             Debug.Log("dbGameName: " + dbGameName);

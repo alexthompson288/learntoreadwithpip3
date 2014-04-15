@@ -50,7 +50,7 @@ public class BuyAll : MonoBehaviour
 		collider.enabled = locked;
 
 		//Debug.Log(m_buyType + " - collider.enabled: " + collider.enabled);
-		
+        Debug.Log("BuyManager: " + BuyManager.Instance);
 		m_background.color = locked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
 	}
 }

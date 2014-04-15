@@ -21,19 +21,15 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 
 	IEnumerator Start () 
     {
-		//Debug.Log("PRODUCTLIST: Waiting for db");
-
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-		//Debug.Log("PRODUCTLIST: Building");
 
 		m_loadingIcon.SetActive(false);
 
 		string storyType = SessionInformation.Instance.GetStoryType();
 		if(storyType == "" || storyType == null)
 		{
-			Debug.Log("Populator defaulting to Classic");
-			storyType = "Classic";
+            Debug.Log("Populator defaulting to Pink");
+			storyType = "Pink";
 		}
 		else
 		{
@@ -91,29 +87,9 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
                 bookInstance.name = bookIndex.ToString() + "_Book";
                 NewStoryBrowserBookButton bookButton = bookInstance.GetComponent<NewStoryBrowserBookButton>();
                 bookButton.SetUpWith(row);
-                //bookProductIds.Add(bookButton.BuildProductIdentifier());
                 ++bookIndex;
             }
         }
-        
-		//bookProductIds.Add(BuyAllButton.Instance.GetProductIdentifier());
-
-		//StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-		//StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
-		
-		//Debug.Log("PRODUCTLIST: Requesting");
-
-		//StoreKitBinding.requestProductData(bookProductIds.ToArray()); 
-
-		//while(!m_productListResolved)
-		//{
-			//yield return null;
-		//}
-		
-		//StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-		//StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
-		
-		//Debug.Log("PRODUCTLIST: Finished");
 
         m_grid.Reposition();
 	}
