@@ -18,17 +18,13 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public enum PipColor
     {
-        Pink,
-        Red,
-        Yellow,
-        Blue,
-        Green,
-        Orange
+        Pink = 1,
+        Red = 2,
+        Yellow = 3,
+        Blue = 4,
+        Green = 5,
+        Orange = 6
     }
-
-
-    // TODO: Write static methods to get programmodule ids from color and vice versa
-
 
     // Methods are static to reduce typing required in other classes
 

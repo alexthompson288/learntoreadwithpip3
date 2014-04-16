@@ -42,11 +42,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-
     VoyageMap m_currentModuleMap = null;
 
     IEnumerator Start()
     {
+        Debug.Log("Pink: " + (int)ColorInfo.PipColor.Pink);
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         bool spawnMap = true;
@@ -108,34 +109,38 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-    void InstantiateModuleMap(int mapIndex)
+    void InstantiateModuleMap(int moduleNumber)
     {
-        if (mapIndex > -1 && mapIndex < m_moduleMapPrefabs.Length)
+        GameObject mapPrefab = FindModuleMap(moduleNumber);
+
+        if (mapPrefab != null)
         {
             if (m_currentModuleMap != null)
             {
-                int modifier = mapIndex < m_currentModuleMap.mapIndex ? -1 : 1;
+                int modifier = moduleNumber < (int)(m_currentModuleMap.moduleColor) ? -1 : 1;
                 
                 Vector3 locationParentPos = m_mapLocationParent.localPosition;
                 locationParentPos.x += (m_horizontalMapDistance * modifier);
                 
                 m_mapLocationParent.localPosition = locationParentPos;
             }
-            
-            GameObject newMap = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_moduleMapPrefabs [mapIndex], m_moduleMapParent);
+
+
+            //GameObject newMapPrefab = FindModuleMap(
+            GameObject newMap = SpawningHelpers.InstantiateUnderWithIdentityTransforms(mapPrefab, m_moduleMapParent);
             newMap.transform.position = m_moduleMapLocation.position;
             
             m_currentModuleMap = newMap.GetComponent<VoyageMap>() as VoyageMap;
             
-            m_currentModuleMap.SetUp(mapIndex);
+            m_currentModuleMap.SetUp();
         }
     }
 
-    public void MoveToModuleMap(int mapIndex)
+    public void MoveToModuleMap(int moduleNumber)
     {
-        if (mapIndex > -1 && mapIndex < m_moduleMapPrefabs.Length)
+        if (FindModuleMap(moduleNumber) != null)
         {
-            InstantiateModuleMap(mapIndex);
+            InstantiateModuleMap(moduleNumber);
             StartCoroutine(MoveToModuleMapCo());
         }
     }
@@ -163,6 +168,22 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     public void CreateBookmark(int sectionId)
     {
-        VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.mapIndex, VoyageSessionBoard.Instance.sessionNum, sectionId);
+        VoyageInfo.Instance.CreateBookmark((int)(m_currentModuleMap.moduleColor), VoyageSessionBoard.Instance.sessionNum, sectionId);
+    }
+
+    GameObject FindModuleMap(int programmoduleId)
+    {
+        GameObject correctMap = null;
+
+        foreach (GameObject map in m_moduleMapPrefabs)
+        {
+            if((int)(map.GetComponent<VoyageMap>().moduleColor) == programmoduleId)
+            {
+                correctMap = map;
+                break;
+            }
+        }
+
+        return correctMap;
     }
 }

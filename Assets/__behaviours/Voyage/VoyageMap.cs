@@ -21,15 +21,6 @@ public class VoyageMap : MonoBehaviour
     [SerializeField]
     private UIGrid m_sessionButtonGrid;
 
-    int m_mapIndex;
-    public int mapIndex
-    {
-        get
-        {
-            return m_mapIndex;
-        }
-    }
-
     public ColorInfo.PipColor moduleColor
     {
         get
@@ -41,10 +32,8 @@ public class VoyageMap : MonoBehaviour
     DataRow m_moduleData = null;
 
 
-    public void SetUp(int index)
+    public void SetUp()
     {
-        m_mapIndex = index;
-
         Debug.Log("Looking for module color: " + m_moduleColor.ToString());
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE colour='" + m_moduleColor.ToString() + "'");
 
@@ -60,7 +49,7 @@ public class VoyageMap : MonoBehaviour
         {
             GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
 
-            string sessionNumString = System.String.Format("{0}00{1}0", index + 1, i + 1);
+            string sessionNumString = System.String.Format("{0}00{1}0", (int)m_moduleColor, i + 1);
             int sessionNum = System.Convert.ToInt32(sessionNumString);
             newSessionButton.GetComponent<VoyageSessionButton>().SetUp(m_moduleColor,  sessionNum, dataType);
         }
@@ -94,6 +83,6 @@ public class VoyageMap : MonoBehaviour
 
     void OnClickModuleMapButton(ClickEvent click)
     {
-        VoyageCoordinator.Instance.MoveToModuleMap(m_mapIndex + click.GetInt());
+        VoyageCoordinator.Instance.MoveToModuleMap((int)m_moduleColor + click.GetInt());
     }
 }

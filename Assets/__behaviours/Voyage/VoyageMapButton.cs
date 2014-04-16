@@ -87,6 +87,7 @@ public class VoyageMapButton : MonoBehaviour
 
 	void OnClick()
     {
+        Debug.Log("Clicked map: " + m_color + " - " + (int)m_color);
         VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
     }
 }

@@ -109,7 +109,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     void SpawnGameButtons()
     {
         // TODO: Adding 1 should be done in ColorInfo
-        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoin WHERE colour=" + (((int)m_color) + 1)); 
+        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoin WHERE colour=" + (int)m_color); 
 
         List<DataRow> games = new List<DataRow>();
 
