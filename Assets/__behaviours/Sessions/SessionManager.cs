@@ -77,7 +77,7 @@ public class SessionManager : Singleton<SessionManager>
 	public enum ST //SessionType
 	{
 		Voyage,
-		Pippisode,
+		Pipisode,
 		Lesson
 	}
 
@@ -260,9 +260,9 @@ public class SessionManager : Singleton<SessionManager>
 
 		string newScene = "NewVoyage";
 
-		if (m_st == ST.Pippisode) 
+		if (m_st == ST.Pipisode) 
 		{
-			newScene = "NewPippisodeMenu";
+			newScene = "NewPipisodeMenu";
 		} 
 		else if (m_st == ST.Lesson) 
 		{

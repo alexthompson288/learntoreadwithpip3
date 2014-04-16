@@ -345,7 +345,7 @@ public class UserStats : Singleton<UserStats>
 		List<int> m_keywords = new List<int>();
 		int m_targetKeyword = 0;
 
-		// Voyage/Pippisode Constructor
+		// Voyage/Pipisode Constructor
 		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
 		{
 			m_sessionId = sessionId;
@@ -354,7 +354,7 @@ public class UserStats : Singleton<UserStats>
 			JointConstructor(sessionType);
 
 #if UNITY_EDITOR
-			//Debug.Log("new Session(): Voyage/Pippisode");
+			//Debug.Log("new Session(): Voyage/Pipisode");
 			DebugLog();
 #endif
 		}

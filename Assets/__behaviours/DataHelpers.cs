@@ -191,6 +191,11 @@ public static class DataHelpers
         
         return dataList;
     }
+
+    public static List<DataRow> GetSentences()
+    {
+        return GameManager.Instance.GetData("sentences");
+    }
     
     public static List<DataRow> GetLetters(bool inclusiveSets = true)
     {

@@ -62,9 +62,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 Debug.Log("Instantiate module map");
                 m_movingCamera.transform.position = m_moduleMapLocation.position;
                 InstantiateModuleMap(VoyageInfo.Instance.currentModule);
-                
-                VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
-            } else
+
+                if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionNum))
+                {
+                    VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
+                }
+            } 
+            else
             {
                 Debug.Log("Instantiate world map");
                 InstantiateWorldMap();

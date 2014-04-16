@@ -28,9 +28,9 @@ public class VoyageGameButton : MonoBehaviour
 
         bool hasCompleted = VoyageInfo.Instance.HasCompletedSection(sectionId);
 
-        Debug.Log("Game: " + sectionId + " - " + hasCompleted);
+        //Debug.Log("Game: " + sectionId + " - " + hasCompleted);
 
-        m_background.spriteName = hasCompleted ? VoyageInfo.Instance.GetSessionBackground(System.Convert.ToInt32(m_section["number"])) : m_incompleteName;
+        m_background.spriteName = hasCompleted ? m_completeName : m_incompleteName;
         m_background.color = hasCompleted ? completedColor : Color.white;
 
         m_border.SetActive(hasCompleted);
@@ -45,7 +45,7 @@ public class VoyageGameButton : MonoBehaviour
 
             string completedString = hasCompleted ? "complete" : "incomplete";
 
-            Debug.Log(System.String.Format("icon: {0}_{1}", skillName.ToLower(), completedString));
+            //Debug.Log(System.String.Format("icon: {0}_{1}", skillName.ToLower(), completedString));
             m_icon.spriteName = System.String.Format("{0}_{1}", skillName.ToLower(), completedString);
 
             float iconAlpha = hasCompleted ? 1 : 0.8f;
@@ -62,8 +62,8 @@ public class VoyageGameButton : MonoBehaviour
     {
         m_game = DataHelpers.FindGameForSection(m_section);
 
-        Debug.Log("game: " + m_game);
-        Debug.Log("sectionId: " + System.Convert.ToInt32(m_section ["id"]));
+        //Debug.Log("game: " + m_game);
+        //Debug.Log("sectionId: " + System.Convert.ToInt32(m_section ["id"]));
 
         if(m_game != null)
         {
@@ -72,18 +72,18 @@ public class VoyageGameButton : MonoBehaviour
             string dbGameName = m_game["name"].ToString();
             string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
 
-            Debug.Log("dbGameName: " + dbGameName);
-            Debug.Log("sceneName: " + sceneName);
+            //Debug.Log("dbGameName: " + dbGameName);
+            //Debug.Log("sceneName: " + sceneName);
 
             // Set scenes
-
-            int sessionNum = System.Convert.ToInt32(m_section["number"]);
-            if(VoyageInfo.Instance.NearlyCompletedSession(sessionNum) || VoyageInfo.Instance.HasCompletedSession(sessionNum))
+            if(VoyageInfo.Instance.NearlyCompletedSession(VoyageSessionBoard.Instance.sessionNum) || VoyageInfo.Instance.HasCompletedSession(VoyageSessionBoard.Instance.sessionNum))
             {
+                Debug.Log("Nearly Complete");
                 GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
             }
             else
             {
+                Debug.Log("Not Complete");
                 GameManager.Instance.SetScenes(sceneName);
             }
 
@@ -104,12 +104,6 @@ public class VoyageGameButton : MonoBehaviour
             if(dt.Rows.Count > 0)
             {
                 GameManager.Instance.AddData("phonemes", dt.Rows);
-
-                //Debug.Log("Phonemes");
-                foreach(DataRow row in dt.Rows)
-                {
-                    //Debug.Log(row["phoneme"].ToString());
-                }
             }
 
             // Words/Keywords
@@ -119,29 +113,8 @@ public class VoyageGameButton : MonoBehaviour
                 List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
                 GameManager.Instance.AddData("words", words);
 
-                Debug.Log("Words");
-                foreach(DataRow row in words)
-                {
-                    Debug.Log(row["id"].ToString() + " - " + row["word"].ToString());
-                }
-
                 List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
                 GameManager.Instance.AddData("keywords", keywords);
-
-
-                //Debug.Log("Keywords");
-                foreach(DataRow row in keywords)
-                {
-                    //Debug.Log(row["word"].ToString());
-                }
-            }
-
-            List<DataRow> testWords = DataHelpers.GetWords();
-            Debug.Log("TestWords");
-            foreach(DataRow word in testWords)
-            {
-                string s = word["word"] != null ? word["word"].ToString() : "";
-                Debug.Log(word["id"].ToString() + " - " + s);
             }
 
             GameManager.Instance.StartGames();

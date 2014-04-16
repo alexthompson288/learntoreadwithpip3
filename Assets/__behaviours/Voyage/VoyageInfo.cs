@@ -8,6 +8,22 @@ public class VoyageInfo : Singleton<VoyageInfo>
 #if UNITY_EDITOR
     [SerializeField]
     private bool m_overwrite;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            foreach(ProgressTracker tracker in m_trackers)
+            {
+                if(tracker.GetModule() == 0)
+                {
+                    tracker.RemoveFirstSectionSession();
+                }
+            }
+
+            Save();
+        }
+    }
 #endif
 
     static int m_sectionsInSession = 4;
@@ -66,7 +82,6 @@ public class VoyageInfo : Singleton<VoyageInfo>
     {
         get
         {
-            Debug.Log("hasBookmark: " + (m_bookmark != null));
             return m_bookmark != null;
         }
     }
@@ -130,7 +145,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
         public void AddSectionComplete(int sectionId, int sessionNum)
         {
-            m_sectionSessions [sectionId] = sessionNum;
+            m_sectionSessions[sectionId] = sessionNum;
         }
 
         public bool HasCompletedSection(int sectionId)
@@ -147,6 +162,21 @@ public class VoyageInfo : Singleton<VoyageInfo>
         {
             m_module = module;
         }
+
+#if UNITY_EDITOR
+        public void RemoveFirstSectionSession()
+        {
+            int toRemove = -1;
+            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
+            {
+                toRemove = kvp.Key;
+                break;
+            }
+
+            Debug.Log("Removing: " + toRemove);
+            m_sectionSessions.Remove(toRemove);
+        }
+#endif
     }
 
     List<ProgressTracker> m_trackers = new List<ProgressTracker>();
@@ -182,6 +212,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         return hasCompleted;
     }
 
+    // TODO: Integrate HasCompletedSession and NearlyCompletedSession into single method
     public bool HasCompletedSession(int sessionNum)
     {
         bool hasCompleted = false;

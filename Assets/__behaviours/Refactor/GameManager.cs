@@ -21,9 +21,10 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
-        string nextScene = m_scenes.Dequeue();
+        Debug.Log("Num Scenes: " + m_scenes.Count);
+        Debug.Log("Next Scene: " + m_scenes.Peek());
 
-        Debug.Log("TransitionScreen: " + TransitionScreen.Instance);
+        string nextScene = m_scenes.Dequeue();
 
         TransitionScreen.Instance.ChangeLevel(nextScene, true);
     }
@@ -89,6 +90,7 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (string scene in scenes)
         {
+            Debug.Log("Adding scene: " + scene);
             m_scenes.Enqueue(scene);
         }
     }

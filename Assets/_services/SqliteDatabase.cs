@@ -127,29 +127,38 @@ public class SqliteDatabase
         // Add a column called "tablename". It will contain the name of the table which contains the DataRow
         dataTable.Columns.Add("tablename");
 
+        // TODO: Find an absoultely reliable way to parse the query to find the tablename. 
+        //       sqlite documentation contains 2 promising functions: sqlite3_column_table_name and sqlite3_column_origin_name
+        //       However, these APIs are only available if the library was compiled with the SQLITE_ENABLE_COLUMN_METADATA C-preprocessor symbol
+        //       Additionally, these are taken from the C++ documentation which means that the Entry Point name might need to be demangled
+        //       https://sqlite.org/c3ref/column_database_name.html
+
         // Tom Mulvaney
         // Find "tablename"
-        Debug.Log("query: " + query);
-
-        string fromString = " from ";
-        int fromIndex = query.IndexOf(fromString);
-        fromIndex += fromString.Length;
-        Debug.Log(String.Format("query[{0}] = {1}", fromIndex, query[fromIndex])); 
-
         string tableName = "";
-        for(int i = fromIndex; i < query.Length; ++i)
+        try
         {
-            if(!IsNullOrWhiteSpace(query[i].ToString()))
+            string fromString = " from ";
+            int fromIndex = query.IndexOf(fromString);
+            fromIndex += fromString.Length; 
+
+            for(int i = fromIndex; i < query.Length; ++i)
             {
-                tableName += query[i];
-            }
-            else
-            {
-                break;
+                if(!IsNullOrWhiteSpace(query[i].ToString()))
+                {
+                    tableName += query[i];
+                }
+                else
+                {
+                    break;
+                }
             }
         }
-
-        Debug.Log("tablename: " + tableName);
+        catch
+        {
+            Debug.LogError("Could not parse tablename");
+            tableName = "default";
+        }
         
         //populate datatable
         while (sqlite3_step(stmHandle) == SQLITE_ROW)
