@@ -26,6 +26,10 @@ public class ColorInfo : Singleton<ColorInfo>
         Orange
     }
 
+
+    // TODO: Write static methods to get programmodule ids from color and vice versa
+
+
     // Methods are static to reduce typing required in other classes
 
     public static Color GetColor(string color)
@@ -80,6 +84,34 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             default:
                 return Color.white;
+                break;
+        }
+    }
+
+    public static PipColor GetPipColor(string color)
+    {
+        switch (color)
+        {
+            case "Pink":
+                return PipColor.Pink;
+                break;
+            case "Red":
+                return PipColor.Red;
+                break;
+            case "Yellow":
+                return PipColor.Yellow;
+                break;
+            case "Blue":
+                return PipColor.Blue;
+                break;
+            case "Green":
+                return PipColor.Green;
+                break;
+            case "Orange":
+                return PipColor.Orange;
+                break;
+            default:
+                return PipColor.Pink;
                 break;
         }
     }

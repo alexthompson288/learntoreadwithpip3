@@ -31,7 +31,7 @@ public class ChooseLevel : MonoBehaviour
 			FlurryBinding.logEventWithParameters("GameMenu - Level", ep, false);
 #endif
 
-			GameMenuCoordinator.Instance.OnChooseLevel(m_setNum);
+			OldGameMenuCoordinator.Instance.OnChooseLevel(m_setNum);
 		//}
 	}
 

@@ -29,6 +29,6 @@ public class SelectNumberPlayersButton : MonoBehaviour {
 		FlurryBinding.logEventWithParameters("GameMenu - NumPlayers", ep, false);
 #endif
 
-		GameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);
+		OldGameMenuCoordinator.Instance.OnChooseNumPlayers(m_numPlayers);
     }
 }

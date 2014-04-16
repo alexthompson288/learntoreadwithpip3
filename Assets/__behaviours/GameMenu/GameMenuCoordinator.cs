@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
@@ -10,152 +10,149 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	[SerializeField]
 	private float m_cameraTweenDuration = 0.5f;
 	[SerializeField]
-	private GameObject m_skillMenu;
-	[SerializeField]
 	private GameObject m_numPlayerMenu;
+    [SerializeField]
+    private ClickEvent[] m_numPlayerButtons;
 	[SerializeField]
-	private GameObject m_levelMenu;
+	private GameObject m_colorMenu;
+    [SerializeField]
+    private ClickEvent[] m_colorButtons;
+    [SerializeField]
+    private GameObject m_gameMenu;
 	[SerializeField]
 	private ClickEvent[] m_backButtons;
 	[SerializeField]
-	private GameObject m_chooseLevelPrefab;
+	private GameObject m_chooseGamePrefab;
 	[SerializeField]
-	private UIGrid m_levelMenuGrid;
-	[SerializeField]
-	private int m_numLevels = 19;
+	private UIGrid m_gameGrid;
 	
 	GameObject m_currentGameMenu = null;
 
-	string m_currentGame;
-
-	List<ChooseLevel> m_levels = new List<ChooseLevel>();
-
-	Vector3 m_levelMenuDefaultPos;
 	bool m_isTwoPlayer;
+    ColorInfo.PipColor m_color;
 
-	void Start()
-	{
-		Game.SetSession(Game.Session.Single);
-		EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
+    void Start()
+    {
+        EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
+        NavMenu.Instance.HideCallButton();
 
-		NavMenu.Instance.HideCallButton();
+        foreach(ClickEvent click in m_backButtons)
+        {
+            click.OnSingleClick += OnClickBack;
+        }
 
-		m_levelMenuDefaultPos = m_levelMenu.transform.position;
+        foreach (ClickEvent click in m_numPlayerButtons)
+        {
+            click.OnSingleClick += OnChooseNumPlayers;
+        }
 
-		foreach(ClickEvent click in m_backButtons)
-		{
-			click.OnSingleClick += OnClickBack;
-		}
+        foreach (ClickEvent click in m_colorButtons)
+        {
+            click.OnSingleClick += OnChooseColor;
 
-		for(int i = 0; i < m_numLevels; ++i)
-		{
-			GameObject levelButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseLevelPrefab, m_levelMenuGrid.transform);
-			ChooseLevel level = levelButton.GetComponent<ChooseLevel>() as ChooseLevel;
-			level.SetUp(i + 1);
-			m_levels.Add(level);
-		}
+            click.GetComponentInChildren<UISprite>().color = ColorInfo.GetColor(click.GetString());
+            click.GetComponentInChildren<UILabel>().text = click.GetString();
+        }
+    }
 
-		m_levelMenuGrid.Reposition();
-	}
+    void OnChooseNumPlayers(ClickEvent click)
+    {
+        m_isTwoPlayer = click.GetInt() == 2;
 
-	public void OnChooseSkill(GameObject gameMenu, string levelSkillName, string starSkillName)
-	{
-		m_currentGameMenu = gameMenu;
+        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu));
+    }
 
-		SkillProgressInformation.Instance.SetCurrentSkill(levelSkillName);
-		SkillProgressInformation.Instance.SetCurrentStarSkill(starSkillName);
+    void OnChooseColor(ClickEvent click)
+    {
+        m_color = ColorInfo.GetPipColor(click.GetString());
 
-		StartCoroutine(MoveCamera(m_skillMenu, m_currentGameMenu));
-	}
+        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
 
-	public void OnChooseGame(string game, bool isTwoPlayer)
-	{
-		m_currentGame = game;
-		m_isTwoPlayer = isTwoPlayer;
+        StartCoroutine(DestroyGameButtons(0));
 
-		//int currentLevel = SkillProgressInformation.Instance.GetProgress(levelSkillName) + 1;
-		int currentLevel = SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1;
-		foreach(ChooseLevel level in m_levels)
-		{
-			level.CheckUnlocked(currentLevel);
-		}
+        SpawnGameButtons();
+    }
 
-		m_numPlayerMenu.SetActive(m_isTwoPlayer);
+    void OnChooseGame(ClickEvent click)
+    {
+        DataRow game = click.GetData();
+        
+        // Set the game scene
+        if (game ["name"] != null)
+        {
+            string sceneName = GameLinker.Instance.GetSceneName(game["name"].ToString());
 
-		Debug.Log("m_isTwoPlayer: " + m_isTwoPlayer);
-		Debug.Log("m_numPlayerMenu.isActive: " + m_numPlayerMenu.activeInHierarchy);
+            if(!System.String.IsNullOrEmpty(sceneName))
+            {
+                GameManager.Instance.SetScenes(sceneName);
 
-		if(m_isTwoPlayer)
-		{
-			m_levelMenu.transform.position = m_levelMenuDefaultPos;
-			StartCoroutine(MoveCamera(m_currentGameMenu, m_numPlayerMenu));
-		}
-		else
-		{
-			m_levelMenu.transform.position = m_numPlayerMenu.transform.position;
-			StartCoroutine(MoveCamera(m_currentGameMenu, m_levelMenu));
-		}
-	}
+                GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 
-	public void OnChooseNumPlayers(int numPlayers)
-	{
-		SessionInformation.Instance.SetNumPlayers(numPlayers);
+                // Get and set all the data associated with the color
+            }
+        }
+    }
 
-		StartCoroutine(MoveCamera(m_numPlayerMenu, m_levelMenu));
-	}
+    IEnumerator DestroyGameButtons(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
-	public void OnChooseLevel(int setNum)
-	{
-		SkillProgressInformation.Instance.SetCurrentLevel(setNum);
-        SessionInformation.Instance.SetRetryScene(m_currentGame);
+        Transform grid = m_gameGrid.transform;
 
-		TransitionScreen.Instance.ChangeLevel(m_currentGame, false);
-	}
+        int gameCount = grid.childCount;
+        for (int i = gameCount - 1; i > -1; --i)
+        {
+            Destroy(grid.GetChild(i));
+        }
+    }
 
-	public void OnClickBack(ClickEvent click)
-	{
-		Debug.Log("OnClickBack()");
-		if(TransformHelpers.ApproxPos(m_camera, m_levelMenu))
-		{
-			if(m_isTwoPlayer)
-			{
-				Debug.Log("From level to numPlayers");
-				StartCoroutine(MoveCamera(m_levelMenu, m_numPlayerMenu));
-			}
-			else
-			{
-				Debug.Log("From level to gameMenu: " + m_currentGameMenu.name);
-				StartCoroutine(MoveCamera(m_levelMenu, m_currentGameMenu));
-				StartCoroutine(ReturnLevelMenuToDefaultPos());
-			}
-		}
-		else if(TransformHelpers.ApproxPos(m_camera, m_numPlayerMenu))
-		{
-			Debug.Log("From numPlayers to gameMenu: " + m_currentGameMenu.name);
-			StartCoroutine(MoveCamera(m_numPlayerMenu, m_currentGameMenu));
-			StartCoroutine(ReturnLevelMenuToDefaultPos());
-		}
-		else
-		{
-			Debug.Log("From gameMenu to skillMenu");
-			StartCoroutine(MoveCamera(m_currentGameMenu, m_skillMenu));
-		}
-	}
+    void SpawnGameButtons()
+    {
+        // TODO: Adding 1 should be done in ColorInfo
+        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoin WHERE colour=" + (((int)m_color) + 1)); 
 
-	// Always return the level menu to the default position of moving the camera back to the game menu
-	public IEnumerator ReturnLevelMenuToDefaultPos()
-	{
-		yield return new WaitForSeconds(m_cameraTweenDuration);
-		m_levelMenu.transform.position = m_levelMenuDefaultPos;
-	}
+        List<DataRow> games = new List<DataRow>();
 
-	IEnumerator MoveCamera(GameObject from, GameObject to)
-	{
-		to.SetActive(true);
-		iTween.MoveTo(m_camera, to.transform.position, m_cameraTweenDuration);
-		
-		yield return new WaitForSeconds(m_cameraTweenDuration);
-		
-		from.SetActive(false);
-	}
+        foreach (DataRow join in joinTable.Rows)
+        {
+            DataTable gameTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE id=" + System.Convert.ToInt32(join["game"]));
+
+            if(gameTable.Rows.Count > 0)
+            {
+                DataRow game = gameTable.Rows[0];
+
+                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
+
+                if(gameIsMultiplayer == m_isTwoPlayer)
+                {
+                    GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
+                    newButton.GetComponent<ClickEvent>().SetData(game);
+                    newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
+                }
+            }
+        }
+    }
+
+    void OnClickBack(ClickEvent click)
+    {
+        if (TransformHelpers.ApproxPos(m_camera, m_colorMenu))
+        {
+            StartCoroutine(MoveCamera(m_colorMenu, m_numPlayerMenu));
+        } 
+        else if (TransformHelpers.ApproxPos(m_camera, m_gameMenu))
+        {
+            StartCoroutine(MoveCamera(m_gameMenu, m_colorMenu));
+            StartCoroutine(DestroyGameButtons(m_cameraTweenDuration));
+        }
+    }
+
+    IEnumerator MoveCamera(GameObject from, GameObject to)
+    {
+        to.SetActive(true);
+        iTween.MoveTo(m_camera, to.transform.position, m_cameraTweenDuration);
+        
+        yield return new WaitForSeconds(m_cameraTweenDuration);
+        
+        from.SetActive(false);
+    }  
 }

@@ -13,7 +13,7 @@ public class ChooseGame : BuyableGame
 			FlurryBinding.logEventWithParameters("GameMenu - Game", ep, false);
 #endif
 
-			GameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
+			OldGameMenuCoordinator.Instance.OnChooseGame(m_gameSceneName, m_isTwoPlayer);
 		}
 		else
 		{

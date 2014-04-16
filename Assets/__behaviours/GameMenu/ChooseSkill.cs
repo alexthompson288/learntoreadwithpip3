@@ -18,7 +18,7 @@ public class ChooseSkill : MonoBehaviour
 		FlurryBinding.logEventWithParameters("GameMenu - Skill", ep, false);
 #endif
 
-		GameMenuCoordinator.Instance.OnChooseSkill(m_gameMenu, m_levelSkill, m_starSkill);
+		OldGameMenuCoordinator.Instance.OnChooseSkill(m_gameMenu, m_levelSkill, m_starSkill);
 	}
 
 	public string GetLevelSkill()
