@@ -14,6 +14,8 @@ public class BuyManager : Singleton<BuyManager>
     private string m_mapsProductIdentifier;
 	[SerializeField]
     private string m_gamesProductIdentifier;
+    [SerializeField]
+    private string m_pipisodesProductIdentifier;
 	[SerializeField]
     private string m_everythingProductIdentifier;
     [SerializeField]
@@ -64,6 +66,7 @@ public class BuyManager : Singleton<BuyManager>
 		Books,
 		Maps,
 		Games,
+        Pipisodes,
 		Everything
 	}
 
@@ -90,6 +93,14 @@ public class BuyManager : Singleton<BuyManager>
         ParentGate.Instance.On();
     }
 
+    public void BuyPipisode(DataRow pipisodeData)
+    {
+        m_productIdentifier = BuildPipisodeProductIdentifier(pipisodeData);
+
+        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        ParentGate.Instance.On();
+    }
+
 	public void Buy(BuyType buyType)
 	{
 		switch (buyType)
@@ -105,6 +116,9 @@ public class BuyManager : Singleton<BuyManager>
                 break;
             case BuyType.Maps:
                 m_productIdentifier = m_mapsProductIdentifier;
+                break;
+            case BuyType.Pipisodes:
+                m_productIdentifier = m_pipisodesProductIdentifier;
                 break;
         }
 		
@@ -488,20 +502,22 @@ public class BuyManager : Singleton<BuyManager>
         if (productId == m_booksProductIdentifier)
         {
             BuyInfo.Instance.SetAllBooksPurchased();
-        } 
-        else if (productId == m_mapsProductIdentifier)
+        } else if (productId == m_mapsProductIdentifier)
         {
             BuyInfo.Instance.SetAllMapsPurchased();
-        } 
-        else if (productId == m_gamesProductIdentifier)
+        } else if (productId == m_gamesProductIdentifier)
         {
             BuyInfo.Instance.SetAllGamesPurchased();
-        } 
-        else if (productId == m_everythingProductIdentifier)
+        } else if (productId == m_everythingProductIdentifier)
         {
             BuyInfo.Instance.SetAllBooksPurchased();
             BuyInfo.Instance.SetAllMapsPurchased();
             BuyInfo.Instance.SetAllGamesPurchased();
+            BuyInfo.Instance.SetAllPipisodesPurchased();
+        } 
+        else if (productId == m_pipisodesProductIdentifier)
+        {
+            // TODO
         }
         else if(productId.Contains("stories")) // Book
         {
@@ -616,5 +632,11 @@ public class BuyManager : Singleton<BuyManager>
     public string BuildMapProductIdentifier(int map)
     {
         return m_mapProductIdentifiers[map - 1];
+    }
+
+    // TODO
+    public string BuildPipisodeProductIdentifier(DataRow pipisodeData)
+    {
+        return "placeholder_pipisode_product_identifier";
     }
 }

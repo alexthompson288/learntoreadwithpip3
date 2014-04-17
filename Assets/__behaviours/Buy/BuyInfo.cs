@@ -22,9 +22,12 @@ public class BuyInfo : Singleton<BuyInfo>
     private int[] m_defaultUnlockedMaps;
     [SerializeField]
     private string[] m_defaultUnlockedGames;
+    [SerializeField]
+    private string[] m_defaultUnlockedPipisodes;
     
     HashSet<int> m_boughtBooks = new HashSet<int>();
     HashSet<int> m_boughtMaps = new HashSet<int>();
+    HashSet<int> m_boughtPipisodes = new HashSet<int>();
     bool m_boughtGames = false;
 
     // TODO: You need to record whether they have bought everything, all maps, all books versus have bought each item individually.
@@ -53,6 +56,76 @@ public class BuyInfo : Singleton<BuyInfo>
         Load();
     }
 
+    // TODO: Integrate IsBought methods into single method 
+
+    public bool IsPipisodeBought(int pipisodeId)
+    {
+        #if UNITY_EDITOR
+        if(m_unlockInEditor)
+        {
+            return true;
+        }
+        #endif
+        
+        return m_boughtPipisodes.Contains(pipisodeId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
+    }
+
+    public bool AreAllPipisodesBought()
+    {
+        #if UNITY_EDITOR
+        if(m_unlockInEditor)
+        {
+            return true;
+        }
+        #endif
+        
+        if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
+        {
+            return true;
+        }
+        else
+        {
+            bool allPipisodesBought = true;
+            
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes");
+            
+            foreach(DataRow pipisode in dt.Rows)
+            {
+                if(pipisode["publishable"] != null && pipisode["publishable"].ToString() == "t" && !m_boughtPipisodes.Contains(Convert.ToInt32(pipisode["id"])))
+                {
+                    allPipisodesBought = false;
+                    break;
+                }
+            }
+            
+            //Debug.Log("allBooksBought: " + allBooksBought);
+            
+            return allPipisodesBought;
+        }
+    }
+
+    public void SetPipisodePurchased(int pipisodeId)
+    {
+        m_boughtPipisodes.Add(pipisodeId);
+        Save();
+    }
+
+    public void SetAllPipisodesPurchased()
+    {
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes");
+
+        Debug.Log(String.Format("Unlocking all {0} pipisodes", dt.Rows.Count));
+
+        foreach(DataRow pipisode in dt.Rows)
+        {
+            if(pipisode["publishable"] != null && pipisode["publishable"].ToString() == "t")
+            {
+                m_boughtPipisodes.Add(Convert.ToInt32(pipisode["id"]));
+                break;
+            }
+        }
+    }
+    
     public bool IsBookBought(int bookId)
     {
 #if UNITY_EDITOR
@@ -251,7 +324,7 @@ public class BuyInfo : Singleton<BuyInfo>
         else
         {
             //Debug.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
-            return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought();
+            return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought() && AreAllPipisodesBought();
         }
     }
 
@@ -278,6 +351,13 @@ public class BuyInfo : Singleton<BuyInfo>
             }
             
             m_boughtGames = br.ReadBoolean();
+
+            int numPipisodes = br.ReadInt32();
+            for(int i = 0; i < numPipisodes; ++i)
+            {
+                int pipisodeId = br.ReadInt32();
+                m_boughtPipisodes.Add(pipisodeId);
+            }
         }
         
         br.Close();
@@ -303,6 +383,12 @@ public class BuyInfo : Singleton<BuyInfo>
         }
         
         bw.Write(m_boughtGames);
+        
+        bw.Write(m_boughtPipisodes.Count);
+        foreach (int i in m_boughtPipisodes)
+        {
+            bw.Write(i);
+        }
         
         
         ds.Save(newData);

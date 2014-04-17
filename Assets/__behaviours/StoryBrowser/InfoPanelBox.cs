@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using Wingrove;
 
+// TODO: Delete this class after checking for safety
 public class InfoPanelBox : Singleton<InfoPanelBox> 
 {
 	[SerializeField]
@@ -55,7 +56,7 @@ public class InfoPanelBox : Singleton<InfoPanelBox>
 			m_buyButton.gameObject.SetActive(false);
 		}
 
-		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked || BuyAllButton.Instance.HasBoughtAll())
+		if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)// || BuyAllButton.Instance.HasBoughtAll())
 		{
 			m_buyButton.gameObject.SetActive(false);
 			m_buyAllButton.gameObject.SetActive(false);

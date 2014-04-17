@@ -79,10 +79,18 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     {
         Debug.Log("OnClickPlayButton()");
 #if UNITY_ANDROID || UNITY_IPHONE
-        if(PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["video_filename"] != null)
+        if(PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["pipisode_title"] != null)
         {
-            Handheld.PlayFullScreenMovie(String.Format("{0}/{1}.mp4", m_relativePathMp4, m_currentPipisode["video_filename"]),
+            string filename = m_currentPipisode["pipisode_title"].ToString().ToLower().Replace(" ", "_");
+            Debug.Log("filename: " + filename);
+
+            Handheld.PlayFullScreenMovie(String.Format("{0}/{1}.mp4", m_relativePathMp4, filename),
                                          Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+        }
+        else
+        {
+            Debug.Log("Unlocked: " + PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_currentPipisode["id"])));
+            Debug.Log("hasTitle: " + m_currentPipisode["pipisode_title"] != null);
         }
 #endif
     }
