@@ -66,9 +66,9 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         m_color = ColorInfo.GetPipColor(click.GetString());
 
-        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
+        DestroyGameButtons();
 
-        StartCoroutine(DestroyGameButtons(0));
+        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
 
         SpawnGameButtons();
     }
@@ -89,33 +89,59 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 
                 // Get and set all the data associated with the color
+                GameManager.Instance.ClearData();
+
+                DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + (int)m_color);
+                foreach(DataRow set in setsTable.Rows)
+                {
+                    GameManager.Instance.AddData("phonemes", DataHelpers.GetSetData(set, "setphonemes", "phonemes"));
+
+                    GameManager.Instance.AddData("words", DataHelpers.GetSetData(set, "setwords", "words"));
+
+                    GameManager.Instance.AddData("keywords", DataHelpers.GetSetData(set, "setkeywords", "words"));
+
+                    GameManager.Instance.AddData("sillywords", DataHelpers.GetSetData(set, "setsillywords", "words"));
+                }
+
+                /*
+                List<DataRow> phonemes = GameManager.Instance.GetData("phonemes");
+                Debug.Log("LOG PHONEMES");
+                foreach(DataRow phoneme in phonemes)
+                {
+                    Debug.Log(phoneme["phoneme"].ToString());
+                }
+                */
+
+                GameManager.Instance.StartGames();
             }
         }
     }
 
-    IEnumerator DestroyGameButtons(float delay)
+    IEnumerator DestroyGameButtonsCo(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        Transform grid = m_gameGrid.transform;
+        DestroyGameButtons();
+    }
 
+    void DestroyGameButtons()
+    {
+        Transform grid = m_gameGrid.transform;
+        
         int gameCount = grid.childCount;
         for (int i = gameCount - 1; i > -1; --i)
         {
-            Destroy(grid.GetChild(i));
+            Destroy(grid.GetChild(i).gameObject);
         }
     }
 
     void SpawnGameButtons()
     {
-        // TODO: Adding 1 should be done in ColorInfo
-        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoin WHERE colour=" + (int)m_color); 
-
-        List<DataRow> games = new List<DataRow>();
+        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + (int)m_color); 
 
         foreach (DataRow join in joinTable.Rows)
         {
-            DataTable gameTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE id=" + System.Convert.ToInt32(join["game"]));
+            DataTable gameTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE id=" + System.Convert.ToInt32(join["game_id"]));
 
             if(gameTable.Rows.Count > 0)
             {
@@ -128,9 +154,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                     GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
                     newButton.GetComponent<ClickEvent>().SetData(game);
                     newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
+                    newButton.GetComponentInChildren<UILabel>().text = game["name"].ToString();
                 }
             }
         }
+
+        m_gameGrid.Reposition();
     }
 
     void OnClickBack(ClickEvent click)
@@ -142,7 +171,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         else if (TransformHelpers.ApproxPos(m_camera, m_gameMenu))
         {
             StartCoroutine(MoveCamera(m_gameMenu, m_colorMenu));
-            StartCoroutine(DestroyGameButtons(m_cameraTweenDuration));
+            StartCoroutine(DestroyGameButtonsCo(m_cameraTweenDuration));
         }
     }
 

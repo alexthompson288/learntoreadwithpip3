@@ -9,7 +9,7 @@ public class NavMenu : Singleton<NavMenu>
 	[SerializeField]
 	private TweenOnOffBehaviour m_roomMoveable;
 	[SerializeField]
-	private TweenOnOffBehaviour m_userMoveable;
+	private TweenOnOffBehaviour m_buyMoveable;
 	[SerializeField]
 	private GameObject m_callButton;
 	[SerializeField]
@@ -59,7 +59,7 @@ public class NavMenu : Singleton<NavMenu>
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
 			m_mainMoveable.Off();
 			m_roomMoveable.Off();
-			m_userMoveable.Off();
+			m_buyMoveable.Off();
 		}
 		else
 		{
@@ -74,13 +74,13 @@ public class NavMenu : Singleton<NavMenu>
 		CallMoveable(m_roomMoveable);
 	}
 
-	public void CallUserMoveable()
+	public void CallBuyMoveable()
 	{
-		Debug.Log("CallUserMoveable(): - isOn: " + m_userMoveable.IsOn());
+		Debug.Log("CallUserMoveable(): - isOn: " + m_buyMoveable.IsOn());
 
 		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
-		CallMoveable(m_userMoveable);
+		CallMoveable(m_buyMoveable);
 	}
 
 	public void CallMoveable(TweenOnOffBehaviour moveable)

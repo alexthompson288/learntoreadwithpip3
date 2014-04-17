@@ -111,6 +111,11 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void SetData(Dictionary<DataRow, string> data)
+    {
+        m_data = data;
+    }
+
     public List<DataRow> GetData(string type)
     {
         List<DataRow> typeMatches = new List<DataRow>();

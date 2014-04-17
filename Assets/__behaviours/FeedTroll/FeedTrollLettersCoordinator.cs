@@ -154,7 +154,6 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		int i = 0;
 		foreach(KeyValuePair<string, DataRow> kvp in lettersToSpawn)
 		{
-			Debug.Log(locators[i].name);
 			GameObject newLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggableLabelPrefab, locators[i]);
 			++i;
 			
@@ -171,8 +170,6 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		{
             UserStats.Activity.IncrementNumAnswers();
 
-			Debug.Log("draggableText: " + draggable.GetText());
-			Debug.Log("currentLetter: " + m_currentLetterData["phoneme"].ToString());
 			if(draggable.GetText() == m_currentLetterData["phoneme"].ToString())
 			{
 				StartCoroutine(OnCorrectAnswer(draggable));

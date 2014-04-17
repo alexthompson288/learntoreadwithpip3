@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
+// TODO: Deprecate this class
 public class PipisodeInfo : Singleton<PipisodeInfo> 
 {
 	[SerializeField]

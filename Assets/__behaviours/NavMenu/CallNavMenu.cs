@@ -12,7 +12,7 @@ public class CallNavMenu : MonoBehaviour
 	{
 		Main,
 		Room,
-		User
+		Buy
 	}
 
 	void Start()
@@ -48,8 +48,8 @@ public class CallNavMenu : MonoBehaviour
 				NavMenu.Instance.CallRoomMoveable();
 				break;
 
-			case MenuType.User:
-				NavMenu.Instance.CallUserMoveable();
+			case MenuType.Buy:
+				NavMenu.Instance.CallBuyMoveable();
 				break;
 			}
 		}
