@@ -138,6 +138,22 @@ public class GameManager : Singleton<GameManager>
         return typeMatches;
     }
 
+    public DataRow GetSingleData(string type)
+    {
+        DataRow typeMatch = null;
+
+        foreach (KeyValuePair<DataRow, string> kvp in m_data)
+        {
+            if(kvp.Value == type)
+            {
+                typeMatch = kvp.Key;
+                break;
+            }
+        }
+
+        return typeMatch;
+    }
+
     string m_defaultReturnScene;
     string m_returnScene;
     

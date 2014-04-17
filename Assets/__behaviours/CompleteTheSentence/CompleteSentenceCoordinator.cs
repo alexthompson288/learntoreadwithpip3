@@ -62,6 +62,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+        /*
 		int sectionId = 1420;
 
 		if(Game.session == Game.Session.Premade)
@@ -96,111 +97,110 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 				Debug.Log("Found book, sectionId= " + sectionId);
 			}
 		}
+        */
+
+        List<DataRow> stories = GameManager.Instance.GetData("stories");
+        if (stories.Count > 0 && stories [0] ["section_id"] != null)
+        {
+            int sectionId = Convert.ToInt32(stories[0]["section_id"]);
+
+            Debug.Log("sectionId: " + sectionId);
+    		
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE section_id=" + sectionId);
+            List<DataRow> rows = dt.Rows;
+
+            Debug.Log("There are " + dt.Rows.Count + " sentences");
 
 
-		Debug.Log("sectionId: " + sectionId);
-		
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE section_id=" + sectionId);
-		List<DataRow> rows = dt.Rows;
+            if (Game.session == Game.Session.Premade)
+            {
+                foreach (DataRow row in rows)
+                {
+                    if (row ["is_target_sentence"].ToString() == "t")
+                    {
+                        m_sentences [0] = row ["text"].ToString();
+                    } else
+                    {
+                        m_imageNames [0] = row ["text"].ToString();
+                    }
+                }
+            } 
+            else
+            {
+                foreach (DataRow row in rows)
+                {
+                    int linkingIndex = Convert.ToInt32(row ["linking_index"]);
+    				
+                    if (row ["is_target_sentence"].ToString() == "t")
+                    {
+                        m_sentences [linkingIndex] = row ["text"].ToString();
+                    } else
+                    {
+                        m_imageNames [linkingIndex] = row ["text"].ToString();
+                    }
+                }
+            }
 
-		Debug.Log("There are " + dt.Rows.Count + " sentences");
+            if (m_targetScore > m_sentences.Count)
+            {
+                m_targetScore = m_sentences.Count;
+            }
 
+            Debug.Log("m_targetScore: " + m_targetScore);
 
-		if(Game.session == Game.Session.Premade)
-		{
-			foreach(DataRow row in rows)
-			{
-				if(row["is_target_sentence"].ToString() == "t")
-				{
-					m_sentences[0] = row["text"].ToString();
-				}
-				else
-				{
-					m_imageNames[0] = row["text"].ToString();
-				}
-			}
-		}
-		else
-		{
-			foreach(DataRow row in rows)
-			{
-				int linkingIndex = Convert.ToInt32(row["linking_index"]);
-				
-				if(row["is_target_sentence"].ToString() == "t")
-				{
-					m_sentences[linkingIndex] = row["text"].ToString();
-				}
-				else
-				{
-					m_imageNames[linkingIndex] = row["text"].ToString();
-				}
-			}
-		}
-
-
-
-		if(m_targetScore > m_sentences.Count)
-		{
-			m_targetScore = m_sentences.Count;
-		}
-
-		Debug.Log("m_targetScore: " + m_targetScore);
-
-		if(m_targetScore > 1)
-		{
-			m_scoreBar.SetStarsTarget(m_targetScore);
-		}
-		else
-		{
-			m_scoreBar.gameObject.SetActive(false);
-		}
+            if (m_targetScore > 1)
+            {
+                m_scoreBar.SetStarsTarget(m_targetScore);
+            } else
+            {
+                m_scoreBar.gameObject.SetActive(false);
+            }
 
 
-		dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-		rows = dt.Rows;
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
+            rows = dt.Rows;
 
-		Debug.Log("There are " + dt.Rows.Count + " words");
+            Debug.Log("There are " + dt.Rows.Count + " words");
 
-		if(Game.session == Game.Session.Premade)
-		{
-			m_words[0] = new List<DataRow>();
-			foreach(DataRow row in rows)
-			{
-				m_words[0].Add(row);
-			}
-		}
-		else
-		{
-			foreach(DataRow row in rows)
-			{
-				int linkingIndex = Convert.ToInt32(row["linking_index"]);
-				
-				if(!m_words.ContainsKey(linkingIndex))
-				{
-					m_words[linkingIndex] = new List<DataRow>();
-				}
-				
-				m_words[linkingIndex].Add(row);
-			}
-		}
+            if (Game.session == Game.Session.Premade)
+            {
+                m_words [0] = new List<DataRow>();
+                foreach (DataRow row in rows)
+                {
+                    m_words [0].Add(row);
+                }
+            } else
+            {
+                foreach (DataRow row in rows)
+                {
+                    int linkingIndex = Convert.ToInt32(row ["linking_index"]);
+    				
+                    if (!m_words.ContainsKey(linkingIndex))
+                    {
+                        m_words [linkingIndex] = new List<DataRow>();
+                    }
+    				
+                    m_words [linkingIndex].Add(row);
+                }
+            }
 
-		
-		m_textureParent.transform.localScale = Vector3.zero;
-		m_sentenceLabelParent.transform.localScale = Vector3.zero;
+    		
+            m_textureParent.transform.localScale = Vector3.zero;
+            m_sentenceLabelParent.transform.localScale = Vector3.zero;
 
-		Debug.Log("m_sentences.Count: " + m_sentences.Count);
-		Debug.Log("m_words.Count: " + m_sentences.Count);
-	
-		if(m_sentences.Count > 0 && m_words.Count > 0)
-		{
-			StartCoroutine(AskQuestion());
-		}
-		else
-		{
-			Debug.Log("Could not find data, switching scenes");
+            Debug.Log("m_sentences.Count: " + m_sentences.Count);
+            Debug.Log("m_words.Count: " + m_sentences.Count);
+    	
+            if (m_sentences.Count > 0 && m_words.Count > 0)
+            {
+                StartCoroutine(AskQuestion());
+            } else
+            {
+                Debug.Log("Could not find data, switching scenes");
 
-			OnGameFinish();
-		}
+                OnGameFinish();
+            }
+        }
 	}
 
 	IEnumerator AskQuestion()

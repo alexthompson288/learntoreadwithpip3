@@ -64,6 +64,17 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 		NavMenu.Instance.MoveCallButtonToRight();
 
+
+
+        int m_storyId = 1;
+
+        List<DataRow> stories = GameManager.Instance.GetData("stories");
+
+        if (stories.Count > 0)
+        {
+            m_storyId = System.Convert.ToInt32(stories[0]["id"]);
+        }
+/*
 #if UNITY_EDITOR
 		if(!m_useDebugStory)
 		{
@@ -96,6 +107,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			m_storyID = SessionInformation.Instance.GetBookId();
 		}
 #endif
+*/
 
 		UserStats.Activity.SetStoryId (m_storyID);
 
