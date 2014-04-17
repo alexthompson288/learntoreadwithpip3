@@ -59,8 +59,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
                 
                 button.GetComponentInChildren<UILabel>().text = (i + 1).ToString();
 
-                // TODO: Deprecate PipisodeInfo, use BuyInfo instead
-                if (PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_pipisodes[i]["id"])))
+                if (BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_pipisodes[i]["id"])))
                 {
                     button.GetComponentInChildren<UITexture>().gameObject.SetActive(false);
                 }
@@ -79,7 +78,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     {
         Debug.Log("OnClickPlayButton()");
 #if UNITY_ANDROID || UNITY_IPHONE
-        if(PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["pipisode_title"] != null)
+        if(BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["pipisode_title"] != null)
         {
             string filename = m_currentPipisode["pipisode_title"].ToString().ToLower().Replace(" ", "_");
             Debug.Log("filename: " + filename);
@@ -89,7 +88,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         }
         else
         {
-            Debug.Log("Unlocked: " + PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(m_currentPipisode["id"])));
+            Debug.Log("Unlocked: " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_currentPipisode["id"])));
             Debug.Log("hasTitle: " + m_currentPipisode["pipisode_title"] != null);
         }
 #endif
@@ -125,12 +124,10 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         {
             m_overviewLabel.text = pipisode["pipisode_overview"].ToString();    
         }
-        
-        // TODO: Deprecate PipisodeInfo, use BuyInfo instead
 
-        Debug.Log("id: " + pipisode ["id"].ToString() + " - " + PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(pipisode ["id"])));
+        Debug.Log("id: " + pipisode ["id"].ToString() + " - " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"])));
 
-        bool isUnlocked = PipisodeInfo.Instance.IsUnlocked(Convert.ToInt32(pipisode ["id"]));
+        bool isUnlocked = BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"]));
         
         Vector3 playScale = isUnlocked ? Vector3.one : Vector3.zero;
         iTween.ScaleTo(m_playButton.gameObject, playScale, m_buttonTweenDuration);
