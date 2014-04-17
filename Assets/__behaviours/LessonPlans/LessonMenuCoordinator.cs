@@ -49,9 +49,16 @@ public class LessonMenuCoordinator : MonoBehaviour
         GameManager.Instance.SetScenes(LessonInfo.Instance.GetScenes().ToArray());
 
         GameManager.Instance.ClearAllData();
+
         GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData(Game.Data.Phonemes));
+        GameManager.Instance.AddTargetData("phonemes", LessonInfo.Instance.GetTargetData(Game.Data.Phonemes));
+
         GameManager.Instance.AddData("words", LessonInfo.Instance.GetData(Game.Data.Words));
+        GameManager.Instance.AddTargetData("words", LessonInfo.Instance.GetTargetData(Game.Data.Words));
+
         GameManager.Instance.AddData("keywords", LessonInfo.Instance.GetData(Game.Data.Keywords));
+        GameManager.Instance.AddTargetData("keywords", LessonInfo.Instance.GetTargetData(Game.Data.Keywords));
+
         GameManager.Instance.AddData("stories", LessonInfo.Instance.GetData(Game.Data.Stories));
 
         GameManager.Instance.StartGames();

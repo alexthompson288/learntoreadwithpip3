@@ -104,6 +104,7 @@ public class VoyageGameButton : MonoBehaviour
             if(dt.Rows.Count > 0)
             {
                 GameManager.Instance.AddData("phonemes", dt.Rows);
+                GameManager.Instance.AddTargetData("phonemes", dt.Rows.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
             }
 
             // Words/Keywords
@@ -112,9 +113,11 @@ public class VoyageGameButton : MonoBehaviour
             {
                 List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
                 GameManager.Instance.AddData("words", words);
+                GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
 
                 List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
                 GameManager.Instance.AddData("keywords", keywords);
+                GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }
 
             GameManager.Instance.StartGames();
