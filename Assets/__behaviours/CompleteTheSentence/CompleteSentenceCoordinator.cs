@@ -54,6 +54,8 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	
 	List<DraggableLabel> m_spawnedDraggables = new List<DraggableLabel>();
 	List<CompleteSentenceWord> m_spawnedSentenceWords = new List<CompleteSentenceWord>();
+
+    bool m_askOneQuestion = false;
 	
 	// Use this for initialization
 	IEnumerator Start () 
@@ -111,15 +113,18 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
             Debug.Log("There are " + dt.Rows.Count + " sentences");
 
+            m_askOneQuestion = rows.FindIndex(x => x["is_target_sentence"] == null) == -1;
 
-            if (Game.session == Game.Session.Premade)
+            //if (Game.session == Game.Session.Premade)
+            if (m_askOneQuestion)
             {
                 foreach (DataRow row in rows)
                 {
                     if (row ["is_target_sentence"].ToString() == "t")
                     {
                         m_sentences [0] = row ["text"].ToString();
-                    } else
+                    } 
+                    else
                     {
                         m_imageNames [0] = row ["text"].ToString();
                     }
@@ -140,7 +145,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
                     }
                 }
             }
-
+            
             if (m_targetScore > m_sentences.Count)
             {
                 m_targetScore = m_sentences.Count;
@@ -162,14 +167,16 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
             Debug.Log("There are " + dt.Rows.Count + " words");
 
-            if (Game.session == Game.Session.Premade)
+            //if (Game.session == Game.Session.Premade)
+            if(m_askOneQuestion)
             {
                 m_words [0] = new List<DataRow>();
                 foreach (DataRow row in rows)
                 {
                     m_words [0].Add(row);
                 }
-            } else
+            } 
+            else
             {
                 foreach (DataRow row in rows)
                 {
