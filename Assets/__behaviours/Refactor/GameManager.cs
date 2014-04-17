@@ -115,6 +115,13 @@ public class GameManager : Singleton<GameManager>
         AddData(type, newTargetData, m_targetData);
     }
 
+    public void AddTargetData(string type, DataRow target)
+    {
+        List<DataRow> newTargetData = new List<DataRow>();
+        newTargetData.Add(target);
+        AddData(type, newTargetData, m_targetData);
+    }
+
     void AddData(string type, List<DataRow> newData, Dictionary<DataRow, string> data)
     {
         foreach (DataRow newDatum in newData)
