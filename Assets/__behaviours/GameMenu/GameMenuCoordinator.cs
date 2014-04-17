@@ -154,7 +154,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                     GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
                     newButton.GetComponent<ClickEvent>().SetData(game);
                     newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
-                    newButton.GetComponentInChildren<UILabel>().text = game["name"].ToString();
+                    //newButton.GetComponentInChildren<UILabel>().text = game["name"].ToString();
+                    newButton.GetComponent<ChooseGameButton>().SetUp(game);
                 }
             }
         }
