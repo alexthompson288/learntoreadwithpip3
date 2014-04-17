@@ -19,6 +19,11 @@ public class LessonInfo : Singleton<LessonInfo>
 	private bool m_overwriteLessons;
 #endif
 
+    public List<string> GetScenes()
+    {
+        return m_currentLesson != null ? m_currentLesson.GetGames() : new List<string>();
+    }
+
 	public string GetSceneName(int index)
 	{
 		return index < m_currentLesson.GetNumGames () ? m_currentLesson.GetGame (index) : "";
@@ -161,7 +166,7 @@ public class LessonInfo : Singleton<LessonInfo>
 			m_games.RemoveAll(System.String.IsNullOrEmpty);
 		}
 		
-		public List<string> GetGames() // TODO: Check whether this is actually used for non-debugging purposes
+		public List<string> GetGames()
 		{
 			return m_games;
 		}

@@ -42,6 +42,18 @@ public class LessonMenuCoordinator : MonoBehaviour
 
 		EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
 		LessonInfo.Instance.SetCurrentLesson(lessonIndex);
-		SessionManager.Instance.OnChooseSession (SessionManager.ST.Lesson);
+		//SessionManager.Instance.OnChooseSession (SessionManager.ST.Lesson);
+
+        GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+
+        GameManager.Instance.SetScenes(LessonInfo.Instance.GetScenes().ToArray());
+
+        GameManager.Instance.ClearData();
+        GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData(Game.Data.Phonemes));
+        GameManager.Instance.AddData("words", LessonInfo.Instance.GetData(Game.Data.Words));
+        GameManager.Instance.AddData("keywords", LessonInfo.Instance.GetData(Game.Data.Keywords));
+        GameManager.Instance.AddData("stories", LessonInfo.Instance.GetData(Game.Data.Stories));
+
+        GameManager.Instance.StartGames();
 	}
 }
