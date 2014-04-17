@@ -89,7 +89,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 
                 // Get and set all the data associated with the color
-                GameManager.Instance.ClearData();
+                GameManager.Instance.ClearAllData();
 
                 DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + (int)m_color);
                 foreach(DataRow set in setsTable.Rows)

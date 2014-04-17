@@ -130,7 +130,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 		if (BuyInfo.Instance.IsBookBought(bookId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
 		{
 			//SessionInformation.Instance.SelectBookId(bookId);
-            GameManager.Instance.ClearData();
+            GameManager.Instance.ClearAllData();
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + bookId);
             if(dt.Rows.Count > 0)
             {

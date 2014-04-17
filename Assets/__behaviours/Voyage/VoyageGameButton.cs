@@ -94,7 +94,7 @@ public class VoyageGameButton : MonoBehaviour
             // TODO: Set data type
 
             // Set data
-            GameManager.Instance.ClearData();
+            GameManager.Instance.ClearAllData();
 
             int sessionId = VoyageSessionBoard.Instance.sessionId;
 

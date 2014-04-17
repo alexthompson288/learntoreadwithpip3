@@ -97,30 +97,57 @@ public class GameManager : Singleton<GameManager>
 
 
     Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
+    Dictionary<DataRow, string> m_targetData = new Dictionary<DataRow, string>();
 
-    public void ClearData()
+    public void ClearAllData()
     {
         m_data.Clear();
+        m_targetData.Clear();
     }
 
-    public void AddData(string type, List<DataRow> data)
+    public void AddData(string type, List<DataRow> newData)
     {
-        foreach (DataRow datum in data)
+        AddData(type, newData, m_data);
+    }
+
+    public void AddTargetData(string type, List<DataRow> newTargetData)
+    {
+        AddData(type, newTargetData, m_targetData);
+    }
+
+    void AddData(string type, List<DataRow> newData, Dictionary<DataRow, string> data)
+    {
+        foreach (DataRow newDatum in newData)
         {
-            m_data[datum] = type;
+            data[newDatum] = type;
         }
     }
 
-    public void SetData(Dictionary<DataRow, string> data)
+    public void SetData(Dictionary<DataRow, string> newData)
     {
-        m_data = data;
+        m_data = newData;
+    }
+
+    public void SetTargetData(Dictionary<DataRow, string> newTargetData)
+    {
+        m_targetData = newTargetData;
     }
 
     public List<DataRow> GetData(string type)
     {
+        return GetData(type, m_data);
+    }
+
+    public List<DataRow> GetTargetData(string type)
+    {
+        return GetData(type, m_targetData);
+    }
+
+    List<DataRow> GetData(string type, Dictionary<DataRow, string> data)
+    {
         List<DataRow> typeMatches = new List<DataRow>();
 
-        foreach (KeyValuePair<DataRow, string> kvp in m_data)
+        foreach (KeyValuePair<DataRow, string> kvp in data)
         {
             if(kvp.Value == type)
             {
@@ -140,9 +167,19 @@ public class GameManager : Singleton<GameManager>
 
     public DataRow GetSingleData(string type)
     {
-        DataRow typeMatch = null;
+        return GetSingleData(type, m_data);
+    }
 
-        foreach (KeyValuePair<DataRow, string> kvp in m_data)
+    public DataRow GetSingleTargetData(string type)
+    {
+        return GetSingleData(type, m_targetData);
+    }
+
+    DataRow GetSingleData(string type, Dictionary<DataRow, string> data)
+    {
+        DataRow typeMatch = null;
+        
+        foreach (KeyValuePair<DataRow, string> kvp in data)
         {
             if(kvp.Value == type)
             {
@@ -150,7 +187,7 @@ public class GameManager : Singleton<GameManager>
                 break;
             }
         }
-
+        
         return typeMatch;
     }
 
