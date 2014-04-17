@@ -65,6 +65,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 	public override void RefreshBuyButton()
 	{
+        Debug.Log("m_currentBook: " + m_currentBook);
         bool bookIsLocked = !BuyInfo.Instance.IsBookBought(Convert.ToInt32(m_currentBook.storyData["id"]));
 		m_buyButton.collider.enabled = bookIsLocked;
 

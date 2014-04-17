@@ -86,9 +86,14 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
             int sessionId = Convert.ToInt32(m_currentSession["id"]);
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId);
             Debug.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, sessionId));
-            if(dt.Rows.Count > 0)
+
+            for(int i = 0; i < m_gameButtons.Length; ++i)
             {
-                for(int i = 0; i < dt.Rows.Count && i < m_gameButtons.Length; ++i)
+                bool hasData = (i < dt.Rows.Count);
+
+                m_gameButtons[i].gameObject.SetActive(hasData);
+
+                if(hasData)
                 {
                     m_gameButtons[i].On(dt.Rows[i], color);
                 }

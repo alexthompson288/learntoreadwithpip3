@@ -22,6 +22,11 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 
 	List<GameObject> m_spawnedPictures = new List<GameObject>();
 
+    void Awake()
+    {
+        m_tweenBehaviour.gameObject.SetActive(true);
+    }
+
 	void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.N))

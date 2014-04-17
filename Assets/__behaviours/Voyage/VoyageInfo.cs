@@ -158,6 +158,15 @@ public class VoyageInfo : Singleton<VoyageInfo>
             return m_sectionSessions;
         }
 
+        public void LogSectionSessions()
+        {
+            Debug.Log("Logging sectionSessions for " + m_module);
+            foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
+            {
+                Debug.Log(kvp.Value + " - " + kvp.Key);
+            }
+        }
+
         public ProgressTracker (int module)
         {
             m_module = module;
@@ -215,10 +224,14 @@ public class VoyageInfo : Singleton<VoyageInfo>
     // TODO: Integrate HasCompletedSession and NearlyCompletedSession into single method
     public bool HasCompletedSession(int sessionNum)
     {
+        //Debug.Log("Checking completion for " + sessionNum);
+
         bool hasCompleted = false;
 
         foreach (ProgressTracker tracker in m_trackers)
         {
+            //Debug.Log(tracker.GetModule() + " - " + tracker.GetNumSectionsComplete(sessionNum));
+            //tracker.LogSectionSessions();
             if(tracker.GetNumSectionsComplete(sessionNum) >= m_sectionsInSession)
             {
                 hasCompleted = true;

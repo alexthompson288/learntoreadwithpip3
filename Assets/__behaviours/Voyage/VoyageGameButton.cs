@@ -122,6 +122,5 @@ public class VoyageGameButton : MonoBehaviour
 
             GameManager.Instance.StartGames();
         }
-
     }
 }
