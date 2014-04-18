@@ -73,7 +73,7 @@ public class VoyageMap : MonoBehaviour
 
     void Start()
     {
-        GameObject newMedal = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_medalPrefab, m_medalParent);
+        //GameObject newMedal = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_medalPrefab, m_medalParent);
     }
 
 	void OnClickWorldMapButton(ClickEvent click)

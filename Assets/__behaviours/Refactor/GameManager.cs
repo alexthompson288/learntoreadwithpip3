@@ -177,9 +177,16 @@ public class GameManager : Singleton<GameManager>
         return GetSingleData(type, m_data);
     }
 
-    public DataRow GetSingleTargetData(string type)
+    public DataRow GetSingleTargetData(string type, bool guaranteeData = false)
     {
-        return GetSingleData(type, m_targetData);
+        DataRow data = GetSingleData(type, m_targetData);
+
+        if (data == null && guaranteeData)
+        {
+            data = GetSingleData(type, m_data);
+        }
+
+        return data;
     }
 
     DataRow GetSingleData(string type, Dictionary<DataRow, string> data)
