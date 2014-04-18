@@ -39,30 +39,34 @@ public class FlashcardCoordinator : MonoBehaviour
 
 	public IEnumerator RefreshPipPad()
 	{
-		string word = m_wordPool[m_currentIndex]["word"].ToString();
-		
-		Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
-		float tweenDuration = 0.3f;
-		if(tex != null)
-		{
-			TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.one);
-		}
-		else
-		{
-			TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.zero);
-		}
-		
-		yield return new WaitForSeconds(0.5f);
-		
-		Debug.Log("RefreshPipPad()");
+        Debug.Log("currentIndex: " + m_currentIndex);
+        Debug.Log("wordPool.Count: " + m_wordPool.Count);
+        if (m_wordPool.Count > 0)
+        {
+            string word = m_wordPool [m_currentIndex] ["word"].ToString();
+    		
+            Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
+            float tweenDuration = 0.3f;
+            if (tex != null)
+            {
+                TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.one);
+            } else
+            {
+                TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.zero);
+            }
+    		
+            yield return new WaitForSeconds(0.5f);
+    		
+            Debug.Log("RefreshPipPad()");
 
-		PipPadBehaviour.Instance.Show(word);
-		
-		PipPadBehaviour.Instance.EnableButtons(false);
-		PipPadBehaviour.Instance.EnableSayWholeWordButton(false);
-		m_buttonsActive = false;
-		
-		EnableClickEventColliders(true);
+            PipPadBehaviour.Instance.Show(word);
+    		
+            PipPadBehaviour.Instance.EnableButtons(false);
+            PipPadBehaviour.Instance.EnableSayWholeWordButton(false);
+            m_buttonsActive = false;
+    		
+            EnableClickEventColliders(true);
+        }
 	}
 	
 	void OnLeftArrowClick(ClickEvent clickBehaviour)

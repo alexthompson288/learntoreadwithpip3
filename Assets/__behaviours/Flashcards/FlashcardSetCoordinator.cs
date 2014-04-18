@@ -50,7 +50,11 @@ public class FlashcardSetCoordinator : MonoBehaviour
 	void OnChooseSet(ClickEvent click)
 	{
 		int setNum = click.GetInt();
-		SkillProgressInformation.Instance.SetCurrentLevel(setNum);
+		//SkillProgressInformation.Instance.SetCurrentLevel(setNum);
+
+        GameManager.Instance.ClearAllData();
+        GameManager.Instance.AddData("words", DataHelpers.GetSetData(setNum, "setwords", "words"));
+
 		m_flashcardCoordinator.RefreshWordPool();
 
 		iTween.MoveTo(m_camera, m_flashcardCoordinator.transform.position, m_cameraTweenDuration);
