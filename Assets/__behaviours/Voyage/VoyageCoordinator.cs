@@ -99,7 +99,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     IEnumerator ReturnToWorldMapCo()
     {
-        iTween.MoveTo(m_movingCamera, m_worldMapLocation.position, m_cameraTweenDuration);
+        TweenCamera(m_worldMapLocation.position);
 
         yield return new WaitForSeconds(m_cameraTweenDuration + 0.1f);
 
@@ -147,7 +147,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     
     IEnumerator MoveToModuleMapCo()
     {
-        iTween.MoveTo(m_movingCamera, m_moduleMapLocation.position, m_cameraTweenDuration);
+        TweenCamera(m_moduleMapLocation.position);
         
         yield return new WaitForSeconds(m_cameraTweenDuration);
         
@@ -185,5 +185,19 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
 
         return correctMap;
+    }
+
+    void TweenCamera(Vector3 newPosition)
+    {
+        /*
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", newPosition);
+        tweenArgs.Add("time", m_cameraTweenDuration);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+
+        iTween.MoveTo(m_movingCamera, tweenArgs);
+        */
+
+        iTween.MoveTo(m_movingCamera, newPosition, m_cameraTweenDuration * 2);
     }
 }
