@@ -115,7 +115,11 @@ public class SessionCompleteCoordinator : MonoBehaviour
         //iTween.ScaleTo(m_collectable, Vector3.one * 1.2f, largeScaleDuration);
         iTween.ShakePosition(m_collectable, Vector3.one * 0.1f, m_collector.GetDuration());
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+
         yield return new WaitForSeconds(m_collector.GetDuration() + 0.2f);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
 
         float smallScaleDuration = 0.8f;
 
@@ -125,6 +129,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
         yield return new WaitForSeconds(smallScaleDuration + 0.5f);
 
         iTween.MoveTo(m_collector.gameObject, m_collectorEndLocation.position, 0.6f);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
 
         GameManager.Instance.CompleteGame();
     }
