@@ -11,12 +11,9 @@ public class ChooseUserButton : MonoBehaviour
 	// Use this for initialization
 	public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
 	{
-		m_label.text = userName;
+        Debug.Log("imageName: " + imageName);
 
-		if(UserInfo.Instance.GetCurrentUser() == userName)
-		{
-			StartCoroutine(StartOn());
-		}
+		m_label.text = userName;
 
 		Texture2D image = Resources.Load<Texture2D>("userPictures/" + imageName);
 
@@ -28,15 +25,9 @@ public class ChooseUserButton : MonoBehaviour
 		GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;
 	}
 
-	IEnumerator StartOn()
-	{
-		yield return new WaitForSeconds(0.5f);
-		ChooseUserCoordinator.Instance.SelectButton(gameObject);
-	}
-
 	void OnClick()
 	{
 		UserInfo.Instance.SetCurrentUser(m_label.text);
-		ChooseUserCoordinator.Instance.SelectButton(gameObject);
+        TransitionScreen.Instance.ChangeLevel("NewVoyage", true);
 	}
 }

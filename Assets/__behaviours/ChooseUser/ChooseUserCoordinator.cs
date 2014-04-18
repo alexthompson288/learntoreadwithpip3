@@ -38,36 +38,37 @@ public class ChooseUserCoordinator : Singleton<ChooseUserCoordinator>
 
 	public void CreateUser(string user, string imageName)
 	{
-		GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_ChooseUserButtonPrefab, m_grid.transform);
-		newButton.GetComponent<ChooseUserButton>().SetUp(user, imageName, m_draggablePanel);
-
-		m_grid.Reposition();
+        StartCoroutine(CreateUserCo(user, imageName));
 	}
+
+    IEnumerator CreateUserCo(string user, string imageName)
+    {
+        GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_ChooseUserButtonPrefab, m_grid.transform);
+        newButton.GetComponent<ChooseUserButton>().SetUp(user, imageName, m_draggablePanel);
+        
+        m_grid.Reposition();
+
+        yield return new WaitForEndOfFrame();
+        
+        m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
+    }
 
 	public void SelectButton (GameObject button)
 	{
+        /*
 		Debug.Log("SelectButton()");
 		if(button != m_selectedButton)
 		{
 			Debug.Log("button != m_selectButton");
 			if(m_selectedButton != null)
 			{
-				/*
-				ThrobGUIElement oldThrobBehaviour = m_selectedButton.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
-
-				if(throbBehaviour != null)
-				{
-					Destroy(throbBehaviour);
-				}
-				*/
-
 				m_selectedButton.GetComponent<ThrobGUIElement>().Off();
 			}
 
 			m_selectedButton = button;
 
 			m_selectedButton.GetComponent<ThrobGUIElement>().On();
-			//ThrobGUIElement newThrobBehaviour = m_selectedButton.AddComponent<ThrobGUIElement>() as ThrobGUIElement;
 		}
+        */      
 	}
 }

@@ -9,7 +9,6 @@ public class ChoosePictureButton : MonoBehaviour
 	// Use this for initialization
 	public void SetUp (Texture2D texture, UIDraggablePanel draggablePanel) 
 	{
-		Debug.Log("ChoosePicture - texture: " + texture);
 		m_picture.mainTexture = texture;
 		
 		GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;

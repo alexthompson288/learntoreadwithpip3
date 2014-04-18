@@ -74,6 +74,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 
 		if(createUser && !UserInfo.Instance.HasUser(m_inputLabel.text))
 		{
+            Debug.Log("Creating imageName: " + m_imageName);
 			UserInfo.Instance.CreateUser(m_inputLabel.text, m_imageName);
 			ChooseUserCoordinator.Instance.CreateUser(m_inputLabel.text, m_imageName);
 		}
@@ -108,5 +109,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 			m_selectedPictureButton = button;
 			m_selectedPictureButton.GetComponent<ThrobGUIElement>().On();
 		}
+
+        Debug.Log("imageName: " + m_imageName);
 	}
 }

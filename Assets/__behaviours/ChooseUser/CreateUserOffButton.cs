@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CreateUserOffButton : MonoBehaviour {
+public class CreateUserOffButton : MonoBehaviour 
+{
 	[SerializeField]
 	private bool m_createUser;
 
