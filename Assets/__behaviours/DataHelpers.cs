@@ -522,6 +522,14 @@ public static class DataHelpers
         return (wordData["nonsense"].ToString() == "t");
     }
 
+    public static string textAttribute
+    {
+        get
+        {
+            return GetTextAttribute(GameManager.Instance.dataType);
+        }
+    }
+
     public static string GetTextAttribute(string dataType)
     {
         dataType = dataType.ToLower();
@@ -558,6 +566,43 @@ public static class DataHelpers
         }
         
         return attributeName;
+    }
+
+    public static string setAttribute
+    {
+        get
+        {
+            return GetSetAttribute(GameManager.Instance.dataType);
+        }
+    }
+
+    public static string GetSetAttribute(string dataType)
+    {
+        dataType = dataType.ToLower();
+
+        string attributeName = "setphonemes";
+
+        switch (dataType)
+        {
+            case "words":
+                attributeName = "setwords";
+                break;
+            case "keywords":
+                attributeName = "setkeywords";
+                break;
+            default:
+                break;
+        }
+
+        return attributeName;
+    }
+
+    public static string tableName
+    {
+        get
+        {
+            return GetTable(GameManager.Instance.dataType);
+        }
     }
 
     public static string GetTable(string dataType)

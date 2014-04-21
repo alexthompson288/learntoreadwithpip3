@@ -26,6 +26,8 @@ public class ColorInfo : Singleton<ColorInfo>
         Orange = 6
     }
 
+    public class NoColor : System.Exception {}
+
     // Methods are static to reduce typing required in other classes
 
     public static Color GetColor(string color)
@@ -107,9 +109,25 @@ public class ColorInfo : Singleton<ColorInfo>
                 return PipColor.Orange;
                 break;
             default:
-                return PipColor.Pink;
+                throw new NoColor();
                 break;
         }
+    }
+
+    public static int GetColorIndex(string color)
+    {
+        int index = -1;
+
+        try
+        {
+            index = (int)(GetPipColor(color));
+        }
+        catch
+        {
+            index = -1;
+        }
+
+        return index;
     }
 
     // Used for stories where strings are used because we may have other options (eg. Classics)

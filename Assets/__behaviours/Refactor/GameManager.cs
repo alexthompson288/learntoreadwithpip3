@@ -214,7 +214,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    string m_dataType;
+    string m_dataType = "";
 
     public string dataType
     {
