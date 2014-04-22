@@ -82,12 +82,11 @@ public class BankButton : MonoBehaviour
         {
             if (isAlphabet)
             {
-                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_labelText) ? "level_choice_earth_a" : "level_choice_castle_a";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_labelText) ? "correct" : "incorrect";
             } 
             else
             {
-                //m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(id) ? "bank_correct" : "bank_incorrect";
-                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id) ? "level_choice_earth_a" : "level_choice_castle_a";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id) ? "correct" : "incorrect";
             }
         }
     }

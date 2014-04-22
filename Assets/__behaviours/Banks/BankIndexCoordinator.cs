@@ -21,6 +21,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     private GameObject m_wordPrefab;
     [SerializeField]
     private ClickEvent m_nextButton;
+    [SerializeField]
+    private ClickEvent m_clearButton;
 
     List<DataRow> m_data = new List<DataRow>();
 
@@ -28,7 +30,10 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     IEnumerator Start()
     {
+        m_clearButton.OnSingleClick += ClearAnswers;
         m_nextButton.OnSingleClick += OnClickBankButton;
+
+        NavMenu.Instance.HideCallButton();
 
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
@@ -164,5 +169,11 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         }
 
         BankCamera.Instance.MoveToShow();
+    }
+
+    void ClearAnswers(ClickEvent click)
+    {
+        BankInfo.Instance.ClearAnswers();
+        RefreshButtons();
     }
 }
