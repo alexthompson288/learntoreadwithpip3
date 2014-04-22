@@ -7,17 +7,69 @@ using System;
 
 public class BankInfo : Singleton<BankInfo> 
 {
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_overwrite;
+#endif
+
+    void Start()
+    {
+#if UNITY_EDITOR
+        if(m_overwrite)
+        {
+            Save();
+        }
+#endif
+
+        Load();
+    }
+
     // Answer string stores both id and datatype, they need to be stored in a single string because ids are shared between tables and so keys would not be unique if they were kept separate
     Dictionary<string, bool> m_answers = new Dictionary<string, bool>();
 
-    public void newAnswer(int id, bool isCorrect)
+    public void NewAnswer(string s, bool isCorrect)
     {
-        newAnswer(id, GameManager.Instance.dataType, isCorrect);
+        m_answers [s] = isCorrect;
+        Save();
     }
 
-    public void newAnswer(int id, string dataType, bool isCorrect)
+    public void NewAnswer(int id, bool isCorrect)
+    {
+        NewAnswer(id, GameManager.Instance.dataType, isCorrect);
+        Save();
+    }
+
+    public void NewAnswer(int id, string dataType, bool isCorrect)
     {
         m_answers [id.ToString() + "_" + dataType] = isCorrect;
+        Save();
+    }
+
+    // This is used for only for alphabet
+    public bool IsAnswer(string s)
+    {
+        foreach (KeyValuePair<string, bool> kvp in m_answers)
+        {
+            if(s == kvp.Key)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool IsCorrect(string s)
+    {
+        foreach (KeyValuePair<string, bool> kvp in m_answers)
+        {
+            if(s == kvp.Key && kvp.Value)
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public bool IsAnswer(int id)
@@ -30,7 +82,9 @@ public class BankInfo : Singleton<BankInfo>
         foreach(KeyValuePair<string, bool> kvp in m_answers)
         {
             string idString = Regex.Match(kvp.Key, @"\d+").Value;
+
             string dataString = Regex.Replace(kvp.Key, @"[\d-]", string.Empty);
+            dataString = dataString.Replace("_", "");
             
             Debug.Log(String.Format("{0} - {1}", idString, dataString));
             
@@ -53,16 +107,20 @@ public class BankInfo : Singleton<BankInfo>
         foreach(KeyValuePair<string, bool> kvp in m_answers)
         {
             string idString = Regex.Match(kvp.Key, @"\d+").Value;
+
             string dataString = Regex.Replace(kvp.Key, @"[\d-]", string.Empty);
+            dataString = dataString.Replace("_", "");
 
             Debug.Log(String.Format("{0} - {1}", idString, dataString));
             
             if(dataString == dataType && idString == id.ToString())
             {
+                Debug.Log("IsAnswer returning value");
                 return kvp.Value;
             }
         }
 
+        Debug.Log("IsAnswer returning default");
         return false;
     }
 

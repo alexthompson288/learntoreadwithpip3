@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System;
 using Wingrove;
 
-public class BankIndexCoordinator : MonoBehaviour 
+public class BankIndexCoordinator : Singleton<BankIndexCoordinator> 
 {
+    public delegate void MoveToShow(DataRow data, string s);
+    public event MoveToShow OnMoveToShow;
+
     [SerializeField]
     private UIDraggablePanel m_draggablePanel;
     [SerializeField]
@@ -16,6 +19,8 @@ public class BankIndexCoordinator : MonoBehaviour
     private GameObject m_phonemePrefab;
     [SerializeField]
     private GameObject m_wordPrefab;
+    [SerializeField]
+    private ClickEvent m_nextButton;
 
     List<DataRow> m_data = new List<DataRow>();
 
@@ -23,25 +28,46 @@ public class BankIndexCoordinator : MonoBehaviour
 
     IEnumerator Start()
     {
-        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
-            GameManager.Instance.SetDataType("words");
+            GameManager.Instance.SetDataType("alphabet");
         }
+
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_data = GameManager.Instance.GetData(GameManager.Instance.dataType);
 
-        Array.Sort(m_colorButtons, SortByColor);
-
-        foreach (ClickEvent click in m_colorButtons)
+        if (GameManager.Instance.dataType != "alphabet")
         {
-            click.OnSingleClick += ChangeColor;
-            click.GetComponentInChildren<UISprite>().color = ColorInfo.GetColor(click.GetString());
-        }
+            Array.Sort(m_colorButtons, SortByColor);
 
-        // Start on the first color
-        ChangeColor(m_colorButtons [0]);
+            foreach (ClickEvent click in m_colorButtons)
+            {
+                click.OnSingleClick += ChangeColor;
+                click.GetComponentInChildren<UISprite>().color = ColorInfo.GetColor(click.GetString());
+            }
+
+            // Start on the first color
+            ChangeColor(m_colorButtons [0]);
+        } 
+        else
+        {
+            foreach(ClickEvent click in m_colorButtons)
+            {
+                click.gameObject.SetActive(false);
+            }
+
+            for (char i = 'a'; i <= 'z'; ++i)
+            {
+                GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemePrefab, m_grid.transform);
+                newButton.GetComponent<BankButton>().SetUp(i.ToString());
+                newButton.GetComponent<ClickEvent>().SetString(i.ToString());
+                newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickBankButton;
+                newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
+            }
+            
+            m_grid.Reposition();
+        }
     }
 
     int SortByColor(ClickEvent x, ClickEvent y)
@@ -71,12 +97,21 @@ public class BankIndexCoordinator : MonoBehaviour
         }
     }
 
+    public void RefreshButtons()
+    {
+        BankButton[] bankButtons = UnityEngine.Object.FindObjectsOfType(typeof(BankButton)) as BankButton[];
+        foreach (BankButton button in bankButtons)
+        {
+            button.Refresh();
+        }
+    }
+
     void ChangeColor(ClickEvent click)
     {
         if (click != m_currentColor)
         {
             GameManager.Instance.ClearAllData();
-
+            
             int childCount = m_grid.transform.childCount;
             for(int i = childCount - 1; i > -1; --i)
             {
@@ -104,6 +139,7 @@ public class BankIndexCoordinator : MonoBehaviour
         {
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_grid.transform);
             newButton.GetComponent<BankButton>().SetUp(row);
+            newButton.GetComponent<ClickEvent>().SetData(row);
             newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickBankButton;
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
         }
@@ -115,6 +151,11 @@ public class BankIndexCoordinator : MonoBehaviour
 
     void OnClickBankButton(ClickEvent click)
     {
+        if (OnMoveToShow != null)
+        {
+            OnMoveToShow(click.GetData(), click.GetString());
+        }
 
+        BankCamera.Instance.MoveToShow();
     }
 }

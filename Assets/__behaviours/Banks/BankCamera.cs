@@ -16,8 +16,15 @@ public class BankCamera : Singleton<BankCamera>
 
     void Awake()
     {
-        m_toIndexButton.OnSingleClick += OnClickMoveToIndex;
-        m_toShowButton.OnSingleClick += OnClickMoveToShow;
+        if (m_toIndexButton != null)
+        {
+            m_toIndexButton.OnSingleClick += OnClickMoveToIndex;
+        }
+
+        if (m_toShowButton != null)
+        {
+            m_toShowButton.OnSingleClick += OnClickMoveToShow;
+        }
     }
 
     void OnClickMoveToIndex(ClickEvent click)

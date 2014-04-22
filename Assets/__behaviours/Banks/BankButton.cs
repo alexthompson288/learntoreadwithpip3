@@ -12,17 +12,20 @@ public class BankButton : MonoBehaviour
     [SerializeField]
     private UISprite m_scoreSprite;
 
+    //DataRow m_data;
 
-    DataRow m_data;
+    int m_id = -1;
+    string m_labelText = "";
 
     public void SetUp(DataRow data)
     {
-        m_data = data;
+        //m_data = data;
 
         bool isPhoneme = GameManager.Instance.dataType == "phonemes";
 
-        string labelText = isPhoneme ? "phoneme" : "word";
-        m_label.text = data[labelText].ToString();
+        string labelTextAttribute = isPhoneme ? "phoneme" : "word";
+        m_labelText = data [labelTextAttribute].ToString();
+        m_label.text = m_labelText;
 
         if (m_texture != null)
         {
@@ -47,24 +50,45 @@ public class BankButton : MonoBehaviour
             m_texture.gameObject.SetActive(hasSetTexture);
         }
 
-        CheckCorrect(System.Convert.ToInt32(m_data ["id"]));
+        m_id = System.Convert.ToInt32(data ["id"]);
+
+        Refresh();
     }
 
-    public void SetUp(int id, string labelText)
+    public void SetUp(string labelText)
     {
-        m_label.text = labelText;
+        m_texture.gameObject.SetActive(false);
 
-        CheckCorrect(id);
+        m_labelText = labelText;
+        m_label.text = m_labelText;
+
+        Refresh();
     }
 
-    public void CheckCorrect(int id)
+    public void Refresh()
     {
-        m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(id));
+        bool isAlphabet = GameManager.Instance.dataType == "alphabet";
+
+        if (isAlphabet)
+        {
+            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_labelText));
+        } 
+        else
+        {
+            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_id));
+        }
 
         if (m_scoreSprite.gameObject.activeInHierarchy)
         {
-            //m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(id) ? "bank_correct" : "bank_incorrect";
-            m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(id) ? "level_choice_earth_a" : "level_choice_farm_a";
+            if (isAlphabet)
+            {
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_labelText) ? "level_choice_earth_a" : "level_choice_castle_a";
+            } 
+            else
+            {
+                //m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(id) ? "bank_correct" : "bank_incorrect";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id) ? "level_choice_earth_a" : "level_choice_castle_a";
+            }
         }
     }
 }
