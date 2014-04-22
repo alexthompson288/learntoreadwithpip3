@@ -79,6 +79,8 @@ public class BankLettersCoordinator : MonoBehaviour
 
     void ShowNew()
     {
+        Debug.Log("ShowNew()");
+
         Debug.Log("count: " + m_phonemePool.Count);
         Debug.Log("currentIndex: " + m_currentIndex);
 

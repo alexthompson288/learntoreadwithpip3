@@ -28,6 +28,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     IEnumerator Start()
     {
+        m_nextButton.OnSingleClick += OnClickBankButton;
+
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
             GameManager.Instance.SetDataType("alphabet");
@@ -127,8 +129,13 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(query);
 
+        //Debug.Log("Found " + setsTable.Rows.Count + " sets");
+        //Debug.Log("setAttribute: " + DataHelpers.setAttribute);
+        //Debug.Log("tableName: " + DataHelpers.tableName);
+
         foreach(DataRow set in setsTable.Rows)
         {
+            //Debug.Log("setId: " + set["id"].ToString());
             GameManager.Instance.AddData(GameManager.Instance.dataType, DataHelpers.GetSetData(set, DataHelpers.setAttribute, DataHelpers.tableName));
         }
 

@@ -86,7 +86,7 @@ public class BankInfo : Singleton<BankInfo>
             string dataString = Regex.Replace(kvp.Key, @"[\d-]", string.Empty);
             dataString = dataString.Replace("_", "");
             
-            Debug.Log(String.Format("{0} - {1}", idString, dataString));
+            //Debug.Log(String.Format("{0} - {1}", idString, dataString));
             
             if(dataString == dataType && idString == id.ToString())
             {
@@ -111,7 +111,7 @@ public class BankInfo : Singleton<BankInfo>
             string dataString = Regex.Replace(kvp.Key, @"[\d-]", string.Empty);
             dataString = dataString.Replace("_", "");
 
-            Debug.Log(String.Format("{0} - {1}", idString, dataString));
+            //Debug.Log(String.Format("{0} - {1}", idString, dataString));
             
             if(dataString == dataType && idString == id.ToString())
             {
