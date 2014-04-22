@@ -18,8 +18,8 @@ public class BankWordCoordinator : MonoBehaviour
     private ClickEvent m_showPictureButton;
     [SerializeField]
     private ClickEvent m_backToIndexButton;
-
-    bool m_showSounds;
+    [SerializeField]
+    private GameObject m_allCorrectNotice;
 
     List<DataRow> m_wordPool = new List<DataRow>();
 
@@ -32,7 +32,7 @@ public class BankWordCoordinator : MonoBehaviour
     {
         BankIndexCoordinator.Instance.OnMoveToShow += RefreshWordPool;
 
-        m_showSounds = GameManager.Instance.dataType != "Keywords";
+        m_showButtonsButton.gameObject.SetActive(GameManager.Instance.dataType != "keywords");
 
         m_backToIndexButton.OnSingleClick += OnClickBackToIndex;
         m_correctButton.OnSingleClick += OnClickCorrect;
@@ -45,11 +45,19 @@ public class BankWordCoordinator : MonoBehaviour
 
     void RefreshWordPool(DataRow word, string s)
     {
-        m_wordPool = DataHelpers.GetWords();
+        m_wordPool = GameManager.Instance.dataType == "words" ? DataHelpers.GetWords() : DataHelpers.GetKeywords();
 
         m_currentIndex = word == null ? 0 : m_wordPool.IndexOf(word);
 
-        StartCoroutine(RefreshPipPad());
+        if (word == null && AllAnswersCorrect())
+        {
+            ToggleAllCorrectNotice(true);
+        } 
+        else
+        {
+            ToggleAllCorrectNotice(false);
+            StartCoroutine(RefreshPipPad());
+        }
     }
 
     IEnumerator RefreshPipPad()
@@ -65,7 +73,8 @@ public class BankWordCoordinator : MonoBehaviour
             if (tex != null)
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.one);
-            } else
+            } 
+            else
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.zero);
             }
@@ -111,6 +120,14 @@ public class BankWordCoordinator : MonoBehaviour
         }
     }
 
+    void ToggleAllCorrectNotice(bool allCorrect)
+    {
+        m_allCorrectNotice.SetActive(allCorrect);
+        m_showButtonsButton.gameObject.SetActive(!allCorrect);
+        m_showPictureButton.gameObject.SetActive(!allCorrect);
+        EnableClickEventColliders(!allCorrect);
+    }
+
     void OnClickBackToIndex(ClickEvent click)
     {
         BankIndexCoordinator.Instance.RefreshButtons();
@@ -141,8 +158,34 @@ public class BankWordCoordinator : MonoBehaviour
     
     void OnArrowClick(int direction)
     {
-        m_currentIndex += direction;
+        EnableClickEventColliders(false);
         
+        PipPadBehaviour.Instance.Hide();
+        
+        PipPadBehaviour.Instance.HideAllBlackboards();
+        m_pictureActive = false;
+
+        if (AllAnswersCorrect())
+        {
+            ToggleAllCorrectNotice(true);
+        } 
+        else
+        {
+            m_currentIndex += direction;
+            ClampCurrentIndex();
+
+            while(BankInfo.Instance.IsCorrect(System.Convert.ToInt32(m_wordPool[m_currentIndex]["id"])))
+            {
+                m_currentIndex += direction;
+                ClampCurrentIndex();
+            }
+
+            StartCoroutine(RefreshPipPad());
+        }
+    }
+
+    void ClampCurrentIndex()
+    {
         if(m_currentIndex < 0)
         {
             m_currentIndex = m_wordPool.Count - 1;
@@ -151,15 +194,6 @@ public class BankWordCoordinator : MonoBehaviour
         {
             m_currentIndex = 0;
         }
-        
-        EnableClickEventColliders(false);
-        
-        PipPadBehaviour.Instance.Hide();
-        
-        PipPadBehaviour.Instance.HideAllBlackboards();
-        m_pictureActive = false;
-        
-        StartCoroutine(RefreshPipPad());
     }
 
     void EnableClickEventColliders(bool enable)
@@ -170,5 +204,20 @@ public class BankWordCoordinator : MonoBehaviour
         m_rightArrow.EnableCollider(enable);
         m_showButtonsButton.EnableCollider(enable);
         m_showPictureButton.EnableCollider(enable);
+    }
+
+    bool AllAnswersCorrect()
+    {
+        bool allCorrect = true;
+        
+        foreach (DataRow word in m_wordPool)
+        {
+            if(!BankInfo.Instance.IsCorrect(System.Convert.ToInt32(word["id"])))
+            {
+                allCorrect = false;
+            }
+        }
+
+        return allCorrect;
     }
 }

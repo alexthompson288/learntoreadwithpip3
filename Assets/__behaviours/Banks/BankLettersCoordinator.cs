@@ -23,6 +23,8 @@ public class BankLettersCoordinator : MonoBehaviour
     private UITexture m_mnemonicTexture;
     [SerializeField]
     private AudioSource m_audioSource;
+    [SerializeField]
+    private GameObject m_allCorrectNotice;
     
     List<DataRow> m_phonemePool = new List<DataRow>();
     List<string> m_letterPool = new List<string>();
@@ -37,7 +39,7 @@ public class BankLettersCoordinator : MonoBehaviour
     void Start()
     {
 #if UNITY_EDITOR
-        m_isAlphabet = GameManager.Instance.dataType == "alphabet" || System.String.IsNullOrEmpty(GameManager.Instance.dataType);
+        m_isAlphabet = GameManager.Instance.dataType == "alphabet";// || System.String.IsNullOrEmpty(GameManager.Instance.dataType);
 #else
         m_isAlphabet = GameManager.Instance.dataType == "alphabet";
 #endif
@@ -64,17 +66,40 @@ public class BankLettersCoordinator : MonoBehaviour
     
     void Refresh(DataRow phoneme, string s)
     {
+        bool passedTarget = false;
+
         if (m_isAlphabet)
         {
             m_currentIndex = System.String.IsNullOrEmpty(s) ? 0 : m_letterPool.IndexOf(s);
+
+            passedTarget = System.String.IsNullOrEmpty(s);
         } 
         else
         {
             m_phonemePool = DataHelpers.GetLetters();
             m_currentIndex = phoneme == null ? 0 : m_phonemePool.IndexOf(phoneme);
+
+            passedTarget = phoneme != null;
         }
 
-        ShowNew();
+        if (passedTarget || !AllAnswersCorrect())
+        {
+            ToggleAllCorrectNotice(false);
+            ShowNew();
+        } 
+        else
+        {
+            ToggleAllCorrectNotice(true);
+        }
+    }
+
+    void ToggleAllCorrectNotice(bool allCorrect)
+    {
+        m_allCorrectNotice.SetActive(allCorrect);
+        m_mnemonicTexture.gameObject.SetActive(!m_isAlphabet && !allCorrect);
+        m_label.gameObject.SetActive(!allCorrect);
+        m_soundButton.gameObject.SetActive(!allCorrect);
+        EnableClickEventColliders(!allCorrect);
     }
 
     void ShowNew()
@@ -155,22 +180,52 @@ public class BankLettersCoordinator : MonoBehaviour
     
     void OnArrowClick(int direction)
     {
-        m_currentIndex += direction;
+        if (AllAnswersCorrect())
+        {
+            ToggleAllCorrectNotice(true);
+        } 
+        else
+        {
+            m_currentIndex += direction;
+            ClampCurrentIndex();
 
+            //int collectionCount = m_isAlphabet ? m_letterPool.Count : m_phonemePool.Count;
+
+            if(m_isAlphabet)
+            {
+                while(BankInfo.Instance.IsCorrect(m_letterPool[m_currentIndex]))
+                {
+                    m_currentIndex += direction;
+                    ClampCurrentIndex();
+                }
+            }
+            else
+            {
+                while(BankInfo.Instance.IsCorrect(System.Convert.ToInt32(m_phonemePool[m_currentIndex]["id"])))
+                {
+                    m_currentIndex += direction;
+                    ClampCurrentIndex();
+                }
+            }
+
+            //EnableClickEventColliders(false);
+            
+            ShowNew();
+        }
+    }
+
+    void ClampCurrentIndex()
+    {
         int collectionCount = m_isAlphabet ? m_letterPool.Count : m_phonemePool.Count;
 
-        if(m_currentIndex < 0)
+        if (m_currentIndex < 0)
         {
             m_currentIndex = collectionCount - 1;
-        }
-        else if(m_currentIndex >= collectionCount)
+        } 
+        else if (m_currentIndex >= collectionCount)
         {
             m_currentIndex = 0;
         }
-        
-        //EnableClickEventColliders(false);
-
-        ShowNew();
     }
     
     void EnableClickEventColliders(bool enable)
@@ -180,5 +235,28 @@ public class BankLettersCoordinator : MonoBehaviour
         m_leftArrow.EnableCollider(enable);
         m_rightArrow.EnableCollider(enable);
         m_soundButton.EnableCollider(enable);
+    }
+
+    bool AllAnswersCorrect()
+    {
+        bool allCorrect = true;
+
+        foreach (DataRow phoneme in m_phonemePool)
+        {
+            if(!BankInfo.Instance.IsCorrect(System.Convert.ToInt32(phoneme["id"])))
+            {
+                allCorrect = false;
+            }
+        }
+
+        foreach (string letter in m_letterPool)
+        {
+            if(!BankInfo.Instance.IsCorrect(letter))
+            {
+                allCorrect = false;
+            }
+        }
+
+        return allCorrect;
     }
 }

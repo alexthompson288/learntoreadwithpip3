@@ -23,22 +23,35 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     private ClickEvent m_nextButton;
     [SerializeField]
     private ClickEvent m_clearButton;
+    [SerializeField]
+    private GameObject m_songButton;
 
     List<DataRow> m_data = new List<DataRow>();
 
     ClickEvent m_currentColor = null;
 
+    Vector3 m_gridStartPosition;
+
     IEnumerator Start()
     {
+        m_gridStartPosition = m_grid.transform.localPosition;
+
+        Debug.Log("gridStartPos: " + m_gridStartPosition);
+
         m_clearButton.OnSingleClick += ClearAnswers;
         m_nextButton.OnSingleClick += OnClickBankButton;
 
         NavMenu.Instance.HideCallButton();
 
+
+#if UNITY_EDITOR
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
-            GameManager.Instance.SetDataType("alphabet");
+            GameManager.Instance.SetDataType("phonemes");
         }
+#endif
+
+        m_songButton.SetActive(GameManager.Instance.dataType == "alphabet");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -117,35 +130,43 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     {
         if (click != m_currentColor)
         {
-            GameManager.Instance.ClearAllData();
-            
-            int childCount = m_grid.transform.childCount;
-            for(int i = childCount - 1; i > -1; --i)
-            {
-                Destroy(m_grid.transform.GetChild(i).gameObject);
-            }
+            m_currentColor = click;
+
+            StartCoroutine(ChangeColorCo(click.GetString()));
         }
+    }
 
-        m_currentColor = click;
+    IEnumerator ChangeColorCo(string color)
+    {
+        GameManager.Instance.ClearAllData();
+        
+        int childCount = m_grid.transform.childCount;
+        for(int i = childCount - 1; i > -1; --i)
+        {
+            Destroy(m_grid.transform.GetChild(i).gameObject);
+        }
+        
+        m_grid.transform.localPosition = m_gridStartPosition;
+        
 
-        string query = click.GetString() == "All" ? 
+        string query = color == "All" ? 
             "select * from phonicssets" :
                 ("select * from phonicssets WHERE programmodule_id=" + ColorInfo.GetColorIndex(m_currentColor.GetString()));
-
+        
         DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(query);
-
+        
         //Debug.Log("Found " + setsTable.Rows.Count + " sets");
         //Debug.Log("setAttribute: " + DataHelpers.setAttribute);
         //Debug.Log("tableName: " + DataHelpers.tableName);
-
+        
         foreach(DataRow set in setsTable.Rows)
         {
             //Debug.Log("setId: " + set["id"].ToString());
             GameManager.Instance.AddData(GameManager.Instance.dataType, DataHelpers.GetSetData(set, DataHelpers.setAttribute, DataHelpers.tableName));
         }
-
+        
         GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
-
+        
         List<DataRow> data = GameManager.Instance.GetData(GameManager.Instance.dataType);
         foreach (DataRow row in data)
         {
@@ -155,12 +176,15 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickBankButton;
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
         }
-
+        
         Debug.Log("data.Count: " + data.Count);
-
+        
+        yield return new WaitForSeconds(0.1f);
+        
         m_grid.Reposition();
     }
-
+    
+    
     void OnClickBankButton(ClickEvent click)
     {
         if (OnMoveToShow != null)

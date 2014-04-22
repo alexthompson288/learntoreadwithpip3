@@ -115,12 +115,10 @@ public class BankInfo : Singleton<BankInfo>
             
             if(dataString == dataType && idString == id.ToString())
             {
-                Debug.Log("IsAnswer returning value");
                 return kvp.Value;
             }
         }
 
-        Debug.Log("IsAnswer returning default");
         return false;
     }
 

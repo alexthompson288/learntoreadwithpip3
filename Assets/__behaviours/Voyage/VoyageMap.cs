@@ -49,7 +49,7 @@ public class VoyageMap : MonoBehaviour
         {
             GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
 
-            string sessionNumString = System.String.Format("{0}00{1}0", (int)m_moduleColor, i + 1);
+            string sessionNumString = i < 10 ? System.String.Format("{0}00{1}0", (int)m_moduleColor, i + 1) : System.String.Format("{0}0{1}0", (int)m_moduleColor, i + 1);
             int sessionNum = System.Convert.ToInt32(sessionNumString);
             newSessionButton.GetComponent<VoyageSessionButton>().SetUp(m_moduleColor,  sessionNum, dataType);
         }

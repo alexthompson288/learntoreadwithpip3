@@ -17,6 +17,8 @@ public class BankButton : MonoBehaviour
     int m_id = -1;
     string m_labelText = "";
 
+    bool m_isUpper;
+
     public void SetUp(DataRow data)
     {
         //m_data = data;
@@ -60,9 +62,25 @@ public class BankButton : MonoBehaviour
         m_texture.gameObject.SetActive(false);
 
         m_labelText = labelText;
-        m_label.text = m_labelText;
+        m_label.text = m_labelText.ToUpper();
+
+        m_isUpper = true;
+
+        if (GameManager.Instance.dataType == "alphabet")
+        {
+            Vector3 labelPos = m_label.transform.localPosition;
+            labelPos.x = 20;
+            m_label.transform.localPosition = labelPos;
+        }
 
         Refresh();
+    }
+
+    public void ToggleCase()
+    {
+        m_label.text = m_isUpper ? m_label.text.ToLower() : m_label.text.ToUpper();
+
+        m_isUpper = !m_isUpper;
     }
 
     public void Refresh()

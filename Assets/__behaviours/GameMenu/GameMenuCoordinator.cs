@@ -59,6 +59,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         m_isTwoPlayer = click.GetInt() == 2;
 
+        SessionInformation.Instance.SetNumPlayers(click.GetInt());
+
         StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu));
     }
 
