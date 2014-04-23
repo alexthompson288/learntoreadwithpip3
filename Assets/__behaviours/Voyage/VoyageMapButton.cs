@@ -13,8 +13,8 @@ public class VoyageMapButton : MonoBehaviour
     {
         if (m_spline != null)
         {
-            //int numFootprints = VoyageInfo.Instance.GetNumSessionsComplete((int)m_color);
-            int numFootprints = 16;
+            int numFootprints = VoyageInfo.Instance.GetNumSessionsComplete((int)m_color);
+            //int numFootprints = 16;
 
             int numPairs = Mathf.CeilToInt((float)numFootprints / 2f); // Round up numPairs if numFootprints is odd
             int maxNumPairs = Mathf.CeilToInt((float)VoyageInfo.sessionsInModule / 2); // Round up maxNumPairs if max number of footprints is odd

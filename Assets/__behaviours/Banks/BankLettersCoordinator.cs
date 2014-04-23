@@ -18,9 +18,15 @@ public class BankLettersCoordinator : MonoBehaviour
     [SerializeField]
     private ClickEvent m_soundButton;
     [SerializeField]
-    private UILabel m_label;
+    private UILabel m_graphemeLabel;
     [SerializeField]
     private UITexture m_mnemonicTexture;
+    [SerializeField]
+    private UILabel m_mnemonicLabel;
+    [SerializeField]
+    private string m_mainColorString;
+    [SerializeField]
+    private string m_highlightColorString;
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
@@ -97,7 +103,8 @@ public class BankLettersCoordinator : MonoBehaviour
     {
         m_allCorrectNotice.SetActive(allCorrect);
         m_mnemonicTexture.gameObject.SetActive(!m_isAlphabet && !allCorrect);
-        m_label.gameObject.SetActive(!allCorrect);
+        m_mnemonicLabel.gameObject.SetActive(!m_isAlphabet && !allCorrect);
+        m_graphemeLabel.gameObject.SetActive(!allCorrect);
         m_soundButton.gameObject.SetActive(!allCorrect);
         EnableClickEventColliders(!allCorrect);
     }
@@ -110,23 +117,57 @@ public class BankLettersCoordinator : MonoBehaviour
         Debug.Log("currentIndex: " + m_currentIndex);
 
         string labelText = m_isAlphabet ? m_letterPool [m_currentIndex] : m_phonemePool [m_currentIndex] ["phoneme"].ToString();
-        m_label.text = labelText;
+        m_graphemeLabel.text = labelText;
 
         // Mnemonic Picture
         if (!m_isAlphabet)
         {
+            DataRow phoneme = m_phonemePool[m_currentIndex];
+
             Texture2D tex = Resources.Load<Texture2D>(System.String.Format("Images/mnemonics_images_png_250/{0}_{1}",
-                                                      m_phonemePool[m_currentIndex]["phoneme"],
-                                                      m_phonemePool[m_currentIndex]["mneumonic"].ToString().Replace(" ", "_")));
+                                                                           phoneme["phoneme"],
+                                                                           phoneme["mneumonic"].ToString().Replace(" ", "_")));
 
             m_mnemonicTexture.gameObject.SetActive(tex != null);
             m_mnemonicTexture.mainTexture = tex;
+
+            // mnemonic label
+            string colorReplace = phoneme["phoneme"].ToString();
+            string mnemonic = phoneme["mneumonic"].ToString();
+
+            string finalletter = m_mainColorString + mnemonic.Replace(colorReplace, m_highlightColorString + colorReplace + m_mainColorString);
+            // do some mad logic to replace splits
+            if (colorReplace.Contains("-") && colorReplace.Length == 3)
+            {
+                int startIndex = 0;
+                while (finalletter.IndexOf(colorReplace[0], startIndex) != -1)
+                {
+                    startIndex = finalletter.IndexOf(colorReplace[0], startIndex);
+                    if (startIndex < finalletter.Length + 2)
+                    {
+                        if (finalletter[startIndex + 2] == colorReplace[2])
+                        {
+                            finalletter = finalletter.Insert(startIndex + 3, m_mainColorString);
+                            finalletter = finalletter.Insert(startIndex + 2, m_highlightColorString);
+                            finalletter = finalletter.Insert(startIndex + 1, m_mainColorString);
+                            finalletter = finalletter.Insert(startIndex + 0, m_highlightColorString);
+                            startIndex += m_mainColorString.Length * 2 + m_highlightColorString.Length * 2;
+                        }
+                    }
+                    
+                    startIndex++;
+                }
+            }
+
+            m_mnemonicLabel.text = finalletter;
         }
     }
 
     void OnClickSoundButton(ClickEvent click)
     {
-        AudioClip clip = m_isAlphabet ? AudioBankManager.Instance.GetAudioClip("lettername_" + m_letterPool[m_currentIndex]) : LoaderHelpers.LoadMnemonic(m_phonemePool[m_currentIndex]);
+        //AudioClip clip = m_isAlphabet ? AudioBankManager.Instance.GetAudioClip("lettername_" + m_letterPool[m_currentIndex]) : LoaderHelpers.LoadMnemonic(m_phonemePool[m_currentIndex]);
+        AudioClip clip = m_isAlphabet ? AudioBankManager.Instance.GetAudioClip("lettername_" + m_letterPool[m_currentIndex]) : 
+                                        AudioBankManager.Instance.GetAudioClip(m_phonemePool[m_currentIndex]["grapheme"].ToString());
 
         if(clip != null)
         {

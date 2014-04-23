@@ -6,11 +6,16 @@ public class CharacterPopper : MonoBehaviour {
     [SerializeField]
     private AnimationClip[] m_anims;
 
-    public void PopCharacter()
+    public void PopCharacter(int index = -1)
     {
         if (!animation.isPlaying)
         {
-            animation.Play(m_anims[Random.Range(0, m_anims.Length)].name);
+            if(index == -1)
+            {
+                index = Random.Range(0, m_anims.Length);
+            }
+
+            animation.Play(m_anims[index].name);
         }
 		else
 		{

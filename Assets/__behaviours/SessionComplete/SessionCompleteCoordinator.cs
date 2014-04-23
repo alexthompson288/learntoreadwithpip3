@@ -106,6 +106,30 @@ public class SessionCompleteCoordinator : MonoBehaviour
         StartCoroutine(CompleteGame());
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            CharacterPopper popper = Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
+            popper.PopCharacter(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+        {
+            CharacterPopper popper = Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
+            popper.PopCharacter(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.O))
+        {
+            CharacterPopper popper = Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
+            popper.PopCharacter(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            CharacterPopper popper = Object.FindObjectOfType(typeof(CharacterPopper)) as CharacterPopper;
+            popper.PopCharacter(3);
+        }
+    }
+
     IEnumerator CompleteGame()
     {
         m_collector.On();
@@ -132,7 +156,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
 
-        GameManager.Instance.CompleteGame();
+        //GameManager.Instance.CompleteGame();
     }
 
     void OnButtonClick(ClickEvent click)

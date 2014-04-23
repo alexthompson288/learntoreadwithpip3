@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Blackboard : MonoBehaviour {
+public class Blackboard : MonoBehaviour 
+{
 	public delegate void BoardClick(Blackboard blackboard);
 	public event BoardClick OnBoardClick;
 	

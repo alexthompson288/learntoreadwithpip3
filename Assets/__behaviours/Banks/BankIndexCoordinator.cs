@@ -10,6 +10,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     public event MoveToShow OnMoveToShow;
 
     [SerializeField]
+    private UIPanel m_gridPanel;
+    [SerializeField]
     private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private UIGrid m_grid;
@@ -25,15 +27,22 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     private ClickEvent m_clearButton;
     [SerializeField]
     private GameObject m_songButton;
+    [SerializeField]
+    private TweenOnOffBehaviour m_noDataSign;
+    [SerializeField]
+    private UISprite m_currentColorSprite;
 
     List<DataRow> m_data = new List<DataRow>();
 
     ClickEvent m_currentColor = null;
+    ThrobGUIElement m_currentColorThrob;
 
     Vector3 m_gridStartPosition;
 
     IEnumerator Start()
     {
+        m_gridPanel.alpha = 0;
+
         m_gridStartPosition = m_grid.transform.localPosition;
 
         Debug.Log("gridStartPos: " + m_gridStartPosition);
@@ -131,13 +140,33 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         if (click != m_currentColor)
         {
             m_currentColor = click;
-
+            StartCoroutine(MoveCurrentColorSprite(click));
             StartCoroutine(ChangeColorCo(click.GetString()));
         }
     }
 
+    IEnumerator MoveCurrentColorSprite(ClickEvent click)
+    {
+        float scaleTweenDuration = 0.3f;
+        
+        TweenScale.Begin(m_currentColorSprite.gameObject, scaleTweenDuration, Vector3.one * 0.8f);
+        
+        yield return new WaitForSeconds(scaleTweenDuration);
+
+        m_currentColorSprite.transform.position = click.transform.position;
+        m_currentColorSprite.color = ColorInfo.GetColor(click.GetString());
+        
+        TweenScale.Begin(m_currentColorSprite.gameObject, scaleTweenDuration, Vector3.one * 1.2f);
+    }
+
     IEnumerator ChangeColorCo(string color)
     {
+        float alphaTweenDuration = 0.2f;
+
+        TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 0);
+
+        yield return new WaitForSeconds(alphaTweenDuration);
+
         GameManager.Instance.ClearAllData();
         
         int childCount = m_grid.transform.childCount;
@@ -168,6 +197,18 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
         
         List<DataRow> data = GameManager.Instance.GetData(GameManager.Instance.dataType);
+
+        if (data.Count == 0)
+        {
+            Debug.Log("No Data!");
+            m_noDataSign.On();
+        }
+        else if(m_noDataSign.IsOn())
+        {
+            Debug.Log("Dismiss no data sign");
+            m_noDataSign.Off();
+        }
+
         foreach (DataRow row in data)
         {
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_grid.transform);
@@ -182,6 +223,10 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         yield return new WaitForSeconds(0.1f);
         
         m_grid.Reposition();
+
+        yield return new WaitForSeconds(0.1f);
+
+        TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 1); 
     }
     
     

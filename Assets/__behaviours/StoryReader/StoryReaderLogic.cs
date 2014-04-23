@@ -499,6 +499,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 					ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
 					bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ","").Replace("?", ""));
 
+                    showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
+
+                    /*
 					if(storyType == "Reception" || storyType == "Year 1")
 					{
 						showPipPadForWord.SetUp(newWord, wordSize, (!isOnDecodeList && m_currentLanguage == "text"));
@@ -507,6 +510,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 					{
 						showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
 					}
+                    */               
 
 					// Highlight if word is on the decode list
 					if(isOnDecodeList) 
