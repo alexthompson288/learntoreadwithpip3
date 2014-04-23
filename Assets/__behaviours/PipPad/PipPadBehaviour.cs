@@ -36,6 +36,10 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	private TweenOnOffBehaviour m_pipWordNotFound;
 	[SerializeField]
 	private float m_postPhonemeSpeakDelay = 0.4f;
+    [SerializeField]
+    private Color m_highFrequencyColor;
+    [SerializeField]
+    private Color m_trickyColor;
 	
 	Vector3 m_offPosition;
 	
@@ -190,7 +194,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 				{
 					List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
 					
-					bool areStarsActive = (((row["tricky"] != null && row["tricky"].ToString() == "t") || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
+                    bool areStarsActive = (((row["tricky"] != null && row["tricky"].ToString() == "t") || (row["highfrequencyword"] != null && row["highfrequencyword"].ToString() == "t"))
 					                       && (row["nonsense"] == null || row["nonsense"].ToString() == "f"));
 					
 					if (areStarsActive || m_currentLanguage != "word")
@@ -204,6 +208,20 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 						pbi.m_positionIndex = 0;
 						pbi.m_fullPhonemeId = -1;
 						pbiList.Add(pbi);
+
+                        m_trickyStars.SetActive(areStarsActive);
+
+                        Color starColor = (row["tricky"] != null && row["tricky"].ToString() == "t") ? m_trickyColor : m_highFrequencyColor;
+
+                        UISprite[] starSprites = m_trickyStars.GetComponentsInChildren<UISprite>(true) as UISprite[];
+
+                        Debug.Log("Found " + starSprites.Length + " star sprites");
+
+                        foreach(UISprite star in starSprites)
+                        {
+                            star.color = starColor;
+                        }
+
 						m_trickyStars.SetActive(areStarsActive);
 					}
 					else

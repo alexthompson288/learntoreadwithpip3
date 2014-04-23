@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterPopper : MonoBehaviour {
-
+public class CharacterPopper : MonoBehaviour 
+{
     [SerializeField]
     private AnimationClip[] m_anims;
 

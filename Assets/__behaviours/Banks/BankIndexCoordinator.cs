@@ -56,7 +56,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 #if UNITY_EDITOR
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
-            GameManager.Instance.SetDataType("phonemes");
+            GameManager.Instance.SetDataType("keywords");
         }
 #endif
 
