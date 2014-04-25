@@ -14,6 +14,17 @@ public class VoyageMapButton : MonoBehaviour
         if (m_spline != null)
         {
             int numFootprints = VoyageInfo.Instance.GetNumSessionsComplete((int)m_color);
+
+            /*
+            if(m_color == ColorInfo.PipColor.Pink)
+            {
+                numFootprints = 8;
+            }
+            else if(m_color == ColorInfo.PipColor.Red)
+            {
+                numFootprints = 16;
+            }
+            */
             //int numFootprints = 16;
 
             int numPairs = Mathf.CeilToInt((float)numFootprints / 2f); // Round up numPairs if numFootprints is odd

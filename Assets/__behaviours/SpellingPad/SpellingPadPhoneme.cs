@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SpellingPadPhoneme : MonoBehaviour {
-
+public class SpellingPadPhoneme : MonoBehaviour 
+{
 	[SerializeField]
 	private GameObject m_singleButton;
 	[SerializeField]

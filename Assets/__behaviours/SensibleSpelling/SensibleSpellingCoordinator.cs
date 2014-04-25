@@ -35,8 +35,6 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 	// Use this for initialization
 	IEnumerator Start () 
 	{
-
-
 		// always pip, always winner
 		SessionInformation.Instance.SetPlayerIndex(0, 3);
 		SessionInformation.Instance.SetWinner(0);
@@ -204,6 +202,8 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 		{
 			Debug.Log("Correct");
 
+            ///////////////////////////////////////////////////////
+            // TODO: This should go in SpellingPadBehaviour
 			spellingPadPhoneme.MakeLabelVisible();
 
 			m_draggables.Remove(currentDraggable);
@@ -213,6 +213,7 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 			currentDraggable.TweenToPos(spellingPadPhoneme.transform.position);
 			currentDraggable.ChangeToOnTexture();
+            /////////////////////////////////////////////////////
 			
 			++m_correctLetters;
 			
