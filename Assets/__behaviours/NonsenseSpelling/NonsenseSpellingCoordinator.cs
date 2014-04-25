@@ -195,7 +195,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 		if(spellingPadPhoneme != null)
 		{
-			spellingPadPhoneme.MakeLabelVisible();
+			spellingPadPhoneme.ChangeState(SpellingPadPhoneme.State.Answered);
 
 			m_draggables.Remove(currentDraggable);
 			currentDraggable.SetCanDrag(false);

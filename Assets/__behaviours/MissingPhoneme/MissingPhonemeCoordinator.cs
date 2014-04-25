@@ -183,8 +183,6 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		string currentWord = m_currentWordData["word"].ToString();
 
         UserStats.Activity.AddWord(m_currentWordData);
-
-		//string[] phonemeIds = m_currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 		
 		Debug.Log("currentWord: " + currentWord);
 
@@ -274,8 +272,10 @@ public class MissingPhonemeCoordinator : MonoBehaviour
             UserStats.Activity.AddPhoneme(m_currentPhonemeData);
         }
 
-		SpellingPadBehaviour.Instance.MakeAllVisibleExceptTarget(targetPhoneme, true);
-		SpellingPadBehaviour.Instance.DisableAllCollidersExceptTarget(targetPhoneme, true);
+        // TODO: Test that these SpellingPadBehaviour calls work
+        SpellingPadBehaviour.Instance.ChangeStateAll(SpellingPadPhoneme.State.Answered, targetPhoneme, true);
+        SpellingPadBehaviour.Instance.DisableTriggersAll(targetPhoneme, true);
+
 
 		if(answerPhonemes.Count == 0 || targetPhoneme == null)
 		{
@@ -396,10 +396,14 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	
 	IEnumerator OnQuestionEnd(DraggableLabel currentDraggable)
 	{
-		SpellingPadBehaviour.Instance.MakeAllLabelsVisible();
+        // TODO: Check that this works
+        SpellingPadBehaviour.Instance.ChangeStateAll(SpellingPadPhoneme.State.Answered);
 
-		float alphaTweenDuration = SpellingPadBehaviour.Instance.TweenAllBackgroundsAlpha(0);
-		TweenAlpha.Begin(currentDraggable.gameObject, alphaTweenDuration, 0);
+        // TODO: Make this script interface with the changes in SpellingPadBehaviour.
+		//float alphaTweenDuration = SpellingPadBehaviour.Instance.TweenAllBackgroundsAlpha(0);
+        float alphaTweenDuration = 0.5f;
+
+        TweenAlpha.Begin(currentDraggable.gameObject, alphaTweenDuration, 0);
 
 		yield return new WaitForSeconds(alphaTweenDuration);
 

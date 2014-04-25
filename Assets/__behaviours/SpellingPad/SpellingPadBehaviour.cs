@@ -248,9 +248,9 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		SayAll();
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
-			if(!Mathf.Approximately(createdPhoneme.GetComponent<SpellingPadPhoneme>().GetLabelTransparency(), 1))
+            if(createdPhoneme.GetComponent<SpellingPadPhoneme>().state != SpellingPadPhoneme.State.Answered)
 			{
-				createdPhoneme.GetComponent<SpellingPadPhoneme>().MakeLabelTransparent();
+				createdPhoneme.GetComponent<SpellingPadPhoneme>().ChangeState(SpellingPadPhoneme.State.Hint);
 			}
 		}
 
@@ -267,9 +267,9 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		{
 			SpellingPadPhoneme phonemeBehaviour = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
 
-			if(!Mathf.Approximately(phonemeBehaviour.GetLabelTransparency(), 1))
+			if(phonemeBehaviour.state != SpellingPadPhoneme.State.Answered)
 			{
-				phonemeBehaviour.MakeLabelInvisible();
+				phonemeBehaviour.ChangeState(SpellingPadPhoneme.State.Unanswered);
 			}
 		}
 	}
@@ -280,58 +280,52 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme phonemeBehaviour = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
-			if(Mathf.Approximately(phonemeBehaviour.GetLabelTransparency(), 0))
+			if(phonemeBehaviour.state == SpellingPadPhoneme.State.Unanswered)
 			{
-				phonemeBehaviour.MakeLabelTransparent();
+				phonemeBehaviour.ChangeState(SpellingPadPhoneme.State.Hint);
 				phonemeBehaviour.PlayAudio();
 				break;
 			}
 		}
 	}
 
-	public void MakeAllVisibleExceptTarget(string targetPhoneme, bool singleTarget)
+	public void ChangeStateAll(SpellingPadPhoneme.State newState, string exceptionPhoneme = "", bool singleException = true)
 	{
-		bool foundTarget = false;
+        // Don't change the state of the exceptionPhoneme
+        // if singleException is true, after the first exceptionPhoneme ALL subsequent phonemes will change state
 
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 
-			if(targetPhoneme != spellingPadPhoneme.GetPhoneme())
+            if(exceptionPhoneme != spellingPadPhoneme.GetPhoneme())
 			{
-				spellingPadPhoneme.MakeLabelTransparent();
+				spellingPadPhoneme.ChangeState(newState);
 			}
-			else if(singleTarget && foundTarget)
-			{
-				spellingPadPhoneme.MakeLabelTransparent();
-			}
-			else
-			{
-				foundTarget = true;
-			}
+            else if(singleException)
+            {
+                exceptionPhoneme = null;
+            }
 		}
 	}
 
-	public void DisableAllCollidersExceptTarget(string targetPhoneme, bool singleTarget)
+    public void DisableTriggersAll(string exceptionPhoneme, bool singleException)
 	{
-		bool foundTarget = false;
+        // Don't disable the collider of the exceptionPhoneme
+        // if singleException is true, after the first exceptionPhoneme ALL subsequent phonemes will disable their collider
 
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 			
-			if(targetPhoneme != spellingPadPhoneme.GetPhoneme())
-			{
-				spellingPadPhoneme.collider.enabled = false;
-			}
-			else if(singleTarget && foundTarget)
-			{
-				spellingPadPhoneme.collider.enabled = false;
-			}
-			else
-			{
-				foundTarget = true;
-			}
+            if(exceptionPhoneme != spellingPadPhoneme.GetPhoneme())
+            {
+                spellingPadPhoneme.EnableTrigger(false);
+            }
+            else if(singleException)
+            {
+                exceptionPhoneme = null;
+            }
 		}
 	}
 
@@ -345,17 +339,6 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			{
 				return spellingPadPhoneme;
 			}
-			/*
-			else
-			{
-				Debug.Log("SpellingPadPhoneme.CheckLetters()");
-				Debug.Log("1-Fail: " + spellingPadPhoneme.GetPhoneme());
-				Debug.Log("2-isOther: " + (draggable == spellingPadPhoneme.GetOther()));
-				Debug.Log("3-isPhoneme: " + (phoneme == spellingPadPhoneme.GetPhoneme()));
-				Debug.Log("padPhoneme: " + spellingPadPhoneme.GetPhoneme());
-				Debug.Log("draggablePhoneme: " + phoneme);
-			}
-			*/
 		}
 
 		return null;
@@ -383,31 +366,6 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		draggableLabel.SetCanDrag(false);
 
 		return newWord;
-	}
-
-	public float TweenAllBackgroundsAlpha(float newAlpha)
-	{
-		if(m_createdPhonemeButtons.Count > 0)
-		{
-			float tweenInvisibleDuration = 0;
-			foreach(GameObject button in m_createdPhonemeButtons)
-			{
-				tweenInvisibleDuration = button.GetComponent<SpellingPadPhoneme>().TweenBackgroundAlpha(newAlpha);
-			}
-			return tweenInvisibleDuration;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	public void MakeAllLabelsVisible()
-	{
-		foreach(GameObject button in m_createdPhonemeButtons)
-		{
-			button.GetComponent<SpellingPadPhoneme>().MakeLabelVisible();
-		}
 	}
 }
  

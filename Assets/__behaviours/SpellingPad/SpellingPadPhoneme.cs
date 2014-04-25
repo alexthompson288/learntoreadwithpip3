@@ -21,7 +21,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 	private UISprite m_background;
 	[SerializeField]
 	private string[] m_backgroundNames;
-
 	
 	float m_width;
 	private GameObject m_linkedObject = null;
@@ -32,6 +31,23 @@ public class SpellingPadPhoneme : MonoBehaviour
 	private string m_phoneme;
 
 	private Collider m_other = null;
+
+    public enum State
+    {
+        Unanswered,
+        Hint,
+        Answered
+    }
+
+    private State m_state;
+    public State state
+    {
+        get
+        {
+            return m_state;
+        }
+    }
+
 
 	void Awake()
 	{
@@ -71,7 +87,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 		if (pbi.m_displayString.Length == 1)
 		{
 			m_singleButton.SetActive(true);
-			//m_width = 80;
 			m_width = 100;
 		}
 		else if (pbi.m_displayString.Length == 2)
@@ -107,10 +122,8 @@ public class SpellingPadPhoneme : MonoBehaviour
 
 	public void Activate()
 	{
-		//Debug.Log("Activate(): " + m_phoneme);
 		if (!m_isActive)
 		{
-			//Debug.Log("Playing: " + m_phoneme);
 			if (m_linkedObject != null)
 			{
 				m_linkedObject.GetComponent<SpellingPadPhoneme>().ActivateFinal();
@@ -128,8 +141,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 	
 	IEnumerator HighlightAndPlay()
 	{
-		//Debug.Log("SpellingPadPhoneme.HighlightAndPlay(): " + m_phoneme);
-
 		foreach (AtoBPressButton abs in m_pressButtons)
 		{
 			abs.ManualActivate(true);
@@ -138,7 +149,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 		
 		float t = 0;
 		while(t < 0.5f)
-		//while (t < 1.5f)
 		{
 			t += Time.deltaTime;
 			m_highlight.enabled = true;
@@ -156,35 +166,29 @@ public class SpellingPadPhoneme : MonoBehaviour
 		}
 		m_highlight.enabled = false;
 		m_isActive = false;
-
-		//Debug.Log("Setting m_isActive false: " + m_phoneme);
 	}
 
-	public float GetLabelTransparency()
-	{
-		return m_label.alpha;
-	}
+	public void ChangeState(State newState, bool useLock = false)
+    {
+        // if useLock is true, m_state will not change to a lower state 
+        if (!useLock || newState > m_state)
+        {
+            float alphaTweenDuration = 0.25f;
 
-	public void MakeLabelInvisible()
-	{
-		m_label.alpha = 0;
-	}
-
-	public void MakeLabelTransparent()
-	{
-		m_label.alpha = 0.4f;
-	}
-
-	public void MakeLabelVisible()
-	{
-		m_label.alpha = 1;
-	}
-
-	public float TweenBackgroundAlpha(float newAlpha)
-	{
-		TweenAlpha.Begin(m_background.gameObject, 0.2f, newAlpha);
-		return 0.2f;
-	}
+            switch(m_state)
+            {
+                case State.Unanswered:
+                    TweenAlpha.Begin(m_label.gameObject, alphaTweenDuration, 0);
+                    break;
+                case State.Hint:
+                    TweenAlpha.Begin(m_label.gameObject, alphaTweenDuration, 0.5f);
+                    break;
+                case State.Answered:
+                    TweenAlpha.Begin(m_label.gameObject, alphaTweenDuration, 1);
+                    break;
+            }
+        }
+    }
 
 	public void PlayAudio()
 	{
@@ -198,6 +202,11 @@ public class SpellingPadPhoneme : MonoBehaviour
 	{
 		return m_other;
 	}
+
+    public void EnableTrigger(bool enable)
+    {
+        collider.enabled = false;
+    }
 
 	void OnTriggerEnter(Collider other)
 	{

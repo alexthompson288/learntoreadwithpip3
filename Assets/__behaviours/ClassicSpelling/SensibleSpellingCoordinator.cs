@@ -204,7 +204,7 @@ public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator
 
             ///////////////////////////////////////////////////////
             // TODO: This should go in SpellingPadBehaviour
-			spellingPadPhoneme.MakeLabelVisible();
+			spellingPadPhoneme.ChangeState(SpellingPadPhoneme.State.Answered);
 
 			m_draggables.Remove(currentDraggable);
 			currentDraggable.SetCanDrag(false);

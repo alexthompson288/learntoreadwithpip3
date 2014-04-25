@@ -120,7 +120,7 @@ public class SpellingPadGreenCoordinator : MonoBehaviour
 		
 		if(spellingPadPhoneme != null)
 		{
-			spellingPadPhoneme.MakeLabelVisible();
+			spellingPadPhoneme.ChangeState(SpellingPadPhoneme.State.Answered);
 			
 			currentDraggable.SetCanDrag(false);
 			
