@@ -79,12 +79,16 @@ public class GameWidget : MonoBehaviour
         SetUp(labelText, newData, changeBackgroundWidth);
     }
 
-    public void SetUp(string labelText, DataRow newData, string iconSpritename, bool changeBackgroundWidth = false)
+    public void SetUp(string labelText, DataRow newData, UIAtlas iconAtlas, string iconSpritename, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
         {
             UISprite iconSprite = m_icon as UISprite;
-            iconSprite.spriteName = iconSpritename;
+            if(iconSprite != null)
+            {
+                iconSprite.atlas = iconAtlas;
+                iconSprite.spriteName = iconSpritename;
+            }
         }
 
         SetUp(labelText, newData, changeBackgroundWidth);

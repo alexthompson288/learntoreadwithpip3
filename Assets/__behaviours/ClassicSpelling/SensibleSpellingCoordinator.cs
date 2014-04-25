@@ -5,7 +5,7 @@ using Wingrove;
 using WingroveAudio;
 using System.Linq;
 
-public class SensibleSpellingCoordinator : Singleton<SensibleSpellingCoordinator> 
+public class SensibleSpellingCoordinator : MonoBehaviour 
 {
 	[SerializeField]
 	private bool m_nonsenseWords;

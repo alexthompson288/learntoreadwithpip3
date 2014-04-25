@@ -302,7 +302,19 @@ public static class DataHelpers
         
         return wordData;
         */
+
+#if UNITY_EDITOR
+        List<DataRow> wordData = GameManager.Instance.GetData("words");
+
+        if(wordData.Count == 0)
+        {
+            wordData = GetSetData(1, "setwords", "words");
+        }
+
+        return wordData;
+#else
         return GameManager.Instance.GetData("words");
+#endif
     }
     
     public static List<DataRow> GetKeywords(bool inclusiveSets = false)

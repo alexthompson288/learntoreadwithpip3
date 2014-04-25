@@ -331,9 +331,20 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	public SpellingPadPhoneme CheckLetters(string phoneme, Collider draggable)
 	{
+        Debug.Log("Checking for: " + phoneme);
+
 		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
+
+            if(draggable == spellingPadPhoneme.GetOther())
+            {
+                Debug.Log("Collider is inside " + spellingPadPhoneme.GetPhoneme());
+            }
+            else if(spellingPadPhoneme.GetOther() != null)
+            {
+                Debug.Log("PadPhoneme has different: " + spellingPadPhoneme.GetOther());
+            }
 
 			if(draggable == spellingPadPhoneme.GetOther() && phoneme == spellingPadPhoneme.GetPhoneme())
 			{
@@ -343,6 +354,22 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 		return null;
 	}
+
+    public SpellingPadPhoneme GetFirstNonAnsweredPhoneme()
+    {
+        SpellingPadPhoneme padPhoneme = null;
+
+        foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+        {
+            if(createdPhoneme.GetComponent<SpellingPadPhoneme>().state != SpellingPadPhoneme.State.Answered)
+            {
+                padPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
+                break;
+            }
+        }
+
+        return padPhoneme;
+    }
 
 	public GameObject DetachWord()
 	{

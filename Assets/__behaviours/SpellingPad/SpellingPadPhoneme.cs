@@ -32,6 +32,15 @@ public class SpellingPadPhoneme : MonoBehaviour
 
 	private Collider m_other = null;
 
+    private int m_positionIndex;
+    public int positionIndex
+    {
+        get
+        {
+            return m_positionIndex;
+        }
+    }
+
     public enum State
     {
         Unanswered,
@@ -101,6 +110,9 @@ public class SpellingPadPhoneme : MonoBehaviour
 		}
 
 		m_phoneme = pbi.m_fullPhoneme;
+        m_positionIndex = pbi.m_positionIndex;
+
+        Debug.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
 	}
 
 	void OnDestroy()
@@ -173,6 +185,8 @@ public class SpellingPadPhoneme : MonoBehaviour
         // if useLock is true, m_state will not change to a lower state 
         if (!useLock || newState > m_state)
         {
+            m_state = newState;
+
             float alphaTweenDuration = 0.25f;
 
             switch(m_state)
@@ -214,7 +228,7 @@ public class SpellingPadPhoneme : MonoBehaviour
 		{
 			m_other = other;
 		}
-		Debug.Log("m_other: " + m_other);
+		Debug.Log("Enter - m_other: " + m_other);
 	}
 
 	void OnTriggerExit(Collider other)
@@ -223,7 +237,7 @@ public class SpellingPadPhoneme : MonoBehaviour
 		{
 			m_other = null;
 		}
-		Debug.Log("m_other: " + m_other);
+		Debug.Log("Enter - m_other: " + m_other);
 	}
 
 	public string GetPhoneme()
