@@ -20,13 +20,19 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     [SerializeField]
     private ProgressScoreBar m_scoreBar;
     [SerializeField]
+    private ScoreCatapault m_scoreCatapult;
+    [SerializeField]
     private AudioSource m_audioSource;
+    [SerializeField]
+    private UIPanel m_picturePanel;
+    [SerializeField]
+    private UITexture m_pictureTexture;
     
     int m_score;
     
     List<DataRow> m_wordsPool = new List<DataRow>();
-    
-    string m_currentWord;
+
+    DataRow m_currentWord;
     Dictionary<int, string> m_currentPhonemes = new Dictionary<int, string>();
     
     List<GameWidget> m_draggables = new List<GameWidget>();
@@ -51,7 +57,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             m_targetScore = m_wordsPool.Count;
         }
         
-        m_scoreBar.SetStarsTarget(m_targetScore);
+        //m_scoreBar.SetStarsTarget(m_targetScore);
+        m_scoreCatapult.SetTargetScore(m_targetScore);
+
         
         yield return new WaitForSeconds(0.5f);
         
@@ -61,13 +69,13 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
-            EndGame();
+            StartCoroutine(CompleteGame());
         }
     }
     
     public void SpeakCurrentWord()
     {
-        AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWord);
+        AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWord["word"].ToString());
         if(loadedAudio != null)
         {
             GetComponent<AudioSource>().clip = loadedAudio;
@@ -77,13 +85,13 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator SpawnQuestion ()
     {
-        DataRow currentWordData = m_wordsPool[Random.Range(0, m_wordsPool.Count)];
-        
-        m_wordsPool.Remove(currentWordData);
-        
-        m_currentWord = currentWordData["word"].ToString();
-        
-        string[] phonemeIds = currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        m_currentWord = m_wordsPool[Random.Range(0, m_wordsPool.Count)];
+  
+        m_wordsPool.Remove(m_currentWord);
+
+        SetPicture();
+  
+        string[] phonemeIds = m_currentWord["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 
         for(int i = 0; i < phonemeIds.Length; ++i)
         {
@@ -97,7 +105,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         m_targetCorrectLetters = m_currentPhonemes.Count;
         
-        SpellingPadBehaviour.Instance.DisplayNewWord(m_currentWord);
+        SpellingPadBehaviour.Instance.DisplayNewWord(m_currentWord["word"].ToString());
         
         List<Transform> locators = m_locators.ToList();
         
@@ -119,9 +127,32 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         yield return null;
     }
-    
-    void EndGame ()
+
+    void SetPicture()
     {
+        Texture2D tex = null;
+        if(m_currentWord["image"] != null)
+        {
+            tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_currentWord["image"].ToString());
+        }
+        if(tex == null)
+        {
+            tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_currentWord["word"].ToString());
+        }
+        Debug.Log("tex: " + tex);
+
+        m_pictureTexture.mainTexture = tex;
+        m_pictureTexture.gameObject.SetActive(tex != null);
+        float picturePanelAlpha = tex != null ? 1 : 0;
+        TweenAlpha.Begin(m_picturePanel.gameObject, 0.25f, picturePanelAlpha);
+    }
+    
+    IEnumerator CompleteGame ()
+    {
+        m_scoreCatapult.On();
+
+        yield return new WaitForSeconds(2.5f);
+
         GameHelpers.SetDefaultPlayerVar();
         GameManager.Instance.CompleteGame();
     }
@@ -151,7 +182,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
-            EndGame();
+            StartCoroutine(CompleteGame());
         }
     }
     
@@ -200,8 +231,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             if(m_correctLetters >= m_targetCorrectLetters)
             {
                 ++m_score;
-                m_scoreBar.SetStarsCompleted(m_score);
-                m_scoreBar.SetScore(m_score);
+                //m_scoreBar.SetStarsCompleted(m_score);
+                //m_scoreBar.SetScore(m_score);
+                m_scoreCatapult.IncrementScore();
                 
                 StartCoroutine(OnQuestionEnd());
             }

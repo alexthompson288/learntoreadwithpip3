@@ -69,7 +69,7 @@ public class ScoreCatapault : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        SetScore(m_debugTargetScore);
+        SetTargetScore(m_debugTargetScore);
 #endif
     }
 
@@ -115,7 +115,7 @@ public class ScoreCatapault : MonoBehaviour
         }
     }
 
-    public void SetScore(int targetScore)
+    public void SetTargetScore(int targetScore)
     {
         m_targetScore = targetScore;
 
@@ -139,7 +139,7 @@ public class ScoreCatapault : MonoBehaviour
         TweenRigidbody(); 
     }
 
-    public void TweenRigidbody()
+    void TweenRigidbody()
     {
         Debug.Log("ScoreCatapault Tween");
 
@@ -168,26 +168,25 @@ public class ScoreCatapault : MonoBehaviour
 
             if(m_autoLaunch)
             {
-                StartCoroutine(WaitForAutoLaunch());
-                //LaunchRigidbody();
+                StartCoroutine(OnCo());
             }
         }
     }
 
-    IEnumerator WaitForAutoLaunch()
+    public IEnumerator OnCo()
     {
         yield return null;
         if (Mathf.Approximately(m_rigidbody.transform.position.y, m_target.position.y) || m_rigidbody.transform.position.y < m_target.position.y)
         {
-            LaunchRigidbody();
+            On();
         } 
         else
         {
-            StartCoroutine(WaitForAutoLaunch());
+            StartCoroutine(OnCo());
         }
     }
     
-    public void LaunchRigidbody()
+    public void On()
     {
         if(OnLaunch != null)
         {
