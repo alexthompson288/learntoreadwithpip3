@@ -43,9 +43,9 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 
-        yield return new WaitForSeconds(1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_INSTRUCTION");
-        yield return new WaitForSeconds(3.0f);
+        //yield return new WaitForSeconds(1.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_INSTRUCTION");
+        //yield return new WaitForSeconds(3.0f);
 
 		for(int i = m_wordSelection.Count - 1; i > -1; --i)
 		{
@@ -129,11 +129,17 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 
             newImage.transform.localPosition = posB;
 
-            newText.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
-            newImage.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
+            //newText.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
+            //newImage.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
 
-            newText.transform.localScale = Vector3.zero;
-            newImage.transform.localScale = Vector3.zero;
+            newText.GetComponent<JoinableLineDraw>().SetUp(null, selectedWord);
+            newText.GetComponent<JoinableLineDraw>().JoinableReleaseEventHandler += OnJoinableRelease;
+
+            newImage.GetComponent<JoinableLineDraw>().SetUp(null, selectedWord);
+            newImage.GetComponent<JoinableLineDraw>().JoinableReleaseEventHandler += OnJoinableRelease;
+
+            //newText.transform.localScale = Vector3.zero;
+            //newImage.transform.localScale = Vector3.zero;
 
             m_spawnedObjects.Add(newText);
             m_spawnedObjects.Add(newImage);
@@ -216,6 +222,36 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
                 {
 					WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
                     PipPadBehaviour.Instance.Show(a.IsPicture() ? b.GetWord() : a.GetWord());
+                    PipPadBehaviour.Instance.SayAll(1.5f);
+                }
+            }
+        }
+    }
+
+    void OnJoinableRelease(JoinableLineDraw a, JoinableLineDraw b)
+    {
+        if (a != b)
+        {
+            if (a.isPicture != b.isPicture)
+            {
+                if (a.word == b.word)
+                {
+                    StartCoroutine(SpeakWellDone(a.word));
+                    
+                    a.Off(a.transform.position.x < b.transform.position.x ? m_leftOff : m_rightOff);
+                    b.Off(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
+                    m_spawnedObjects.Remove(a.gameObject);
+                    m_spawnedObjects.Remove(b.gameObject);
+                    
+                    if (m_spawnedObjects.Count == 0)
+                    {                        
+                        StartCoroutine(AddPoint());
+                    }
+                }
+                else
+                {
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
+                    PipPadBehaviour.Instance.Show(a.isPicture ? b.word : a.word);
                     PipPadBehaviour.Instance.SayAll(1.5f);
                 }
             }

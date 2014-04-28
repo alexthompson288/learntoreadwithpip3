@@ -42,14 +42,17 @@ public class LineDraw : MonoBehaviour
 
     protected virtual void OnPress(bool pressed)
     {
-        m_input = pressed ? UICamera.currentTouch : null;
-        m_camera = pressed ? UICamera.currentCamera : null;
-
-        // Only create the line if this object is not from a derived class
-        // Derived types handle their own line creation because they might want to use a range of different materials
-        if (pressed && this.GetType().Name == "LineDraw") 
+        if (pressed) 
         {
-            CreateLine(m_material);
+            m_input = UICamera.currentTouch;
+            m_camera = UICamera.currentCamera;
+
+            // Only create the line if this object is not from a derived class
+            // Derived types handle their own line creation because they might want to use a range of different materials
+            if(this.GetType().Name == "LineDraw")
+            {
+                CreateLine(m_material);
+            }
         }
 
         if (!pressed && LineReleaseEventHandler != null)
@@ -68,7 +71,14 @@ public class LineDraw : MonoBehaviour
 
     protected void CreateLine(Material mat)
     {
-        LineDrawManager.Instance.CreateLine(this, mat);
+        if (mat != null)
+        {
+            LineDrawManager.Instance.CreateLine(this, mat);
+        } 
+        else
+        {
+            LineDrawManager.Instance.CreateLine(this);
+        }
         
         if(LineCreateEventHandler != null)
         {

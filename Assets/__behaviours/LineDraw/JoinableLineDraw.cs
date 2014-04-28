@@ -13,6 +13,14 @@ public class JoinableLineDraw : LineDraw
     [SerializeField]
     private UILabel m_label;
 
+    public bool isPicture
+    {
+        get
+        {
+            return m_isPicture;
+        }
+    }
+
     DataRow m_data;
     public DataRow data
     {
@@ -74,13 +82,9 @@ public class JoinableLineDraw : LineDraw
                     JoinableReleaseEventHandler(this, other.GetComponent<JoinableLineDraw>());
                 }
             }
-        }
-    }
 
-    IEnumerator DestroyLine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        LineDrawManager.Instance.DestroyLine(this);
+            LineDrawManager.Instance.DestroyLine(this);
+        }
     }
 
     public void Off(Transform targetPosition)
