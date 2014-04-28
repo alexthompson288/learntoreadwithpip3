@@ -69,17 +69,20 @@ public class LineDraw : MonoBehaviour
         }
     }
 
-    protected void CreateLine(Material mat)
+    protected void CreateLine(Material mat = null)
     {
-        if (mat != null)
-        {
-            LineDrawManager.Instance.CreateLine(this, mat);
-        } 
-        else
-        {
-            LineDrawManager.Instance.CreateLine(this);
-        }
+        LineDrawManager.Instance.CreateLine(this, mat);
         
+        if(LineCreateEventHandler != null)
+        {
+            LineCreateEventHandler(this);
+        }
+    }
+
+    protected void CreateLine(Material mat, Color startCol, Color endCol)
+    {
+        LineDrawManager.Instance.CreateLine(this, mat, startCol, endCol);
+
         if(LineCreateEventHandler != null)
         {
             LineCreateEventHandler(this);
