@@ -3,8 +3,24 @@ using System.Collections;
 
 public class LineDraw : MonoBehaviour 
 {
-    public delegate void LineDragEvent(LineDraw line, Vector2 delta);
-    public event LineDragEvent LineDragEventHandler;
+    public delegate void LineEvent(LineDraw line);
+    public event LineEvent LineCreateEventHandler;
+    public event LineEvent LineDragEventHandler;
+    public event LineEvent LineReleaseEventHandler;
+
+
+    [SerializeField]
+    private int m_maxNumPositions = -1;
+    [SerializeField]
+    protected Material m_material;
+
+    public int maxNumPositions
+    {
+        get
+        {
+            return m_maxNumPositions;
+        }
+    }
 
     UICamera.MouseOrTouch m_input;
     public UICamera.MouseOrTouch input
@@ -29,17 +45,34 @@ public class LineDraw : MonoBehaviour
         m_input = pressed ? UICamera.currentTouch : null;
         m_camera = pressed ? UICamera.currentCamera : null;
 
-        if (pressed)
+        // Only create the line if this object is not from a derived class
+        // Derived types handle their own line creation because they might want to use a range of different materials
+        if (pressed && this.GetType().Name == "LineDraw") 
         {
-            LineDrawManager.Instance.CreateLine(this);
-        } 
+            CreateLine(m_material);
+        }
+
+        if (!pressed && LineReleaseEventHandler != null)
+        {
+            LineReleaseEventHandler(this);
+        }
     }
 
     void OnDrag(Vector2 delta)
     {
         if (LineDragEventHandler != null)
         {
-            LineDragEventHandler(this, delta);
+            LineDragEventHandler(this);
+        }
+    }
+
+    protected void CreateLine(Material mat)
+    {
+        LineDrawManager.Instance.CreateLine(this, mat);
+        
+        if(LineCreateEventHandler != null)
+        {
+            LineCreateEventHandler(this);
         }
     }
 }
