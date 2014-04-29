@@ -26,13 +26,13 @@ public class VoyageInfo : Singleton<VoyageInfo>
     }
 #endif
 
-    static int m_sectionsInSession = 4;
-    static int m_sessionsInModule = 16;
-    public static int sessionsInModule
+    static int m_sectionsPerSession = 4;
+    static int m_sessionsPerModule = 16;
+    public static int sessionsPerModule
     {
         get
         {
-            return m_sessionsInModule;
+            return m_sessionsPerModule;
         }
     }
   
@@ -134,7 +134,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
             foreach (KeyValuePair<int, int> kvp in m_sectionSessions)
             {
-                if(GetNumSectionsComplete(kvp.Value) >= m_sectionsInSession)
+                if(GetNumSectionsComplete(kvp.Value) >= m_sectionsPerSession)
                 {
                     completedSessions.Add(kvp.Value);
                 }
@@ -232,7 +232,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         {
             //Debug.Log(tracker.GetModule() + " - " + tracker.GetNumSectionsComplete(sessionNum));
             //tracker.LogSectionSessions();
-            if(tracker.GetNumSectionsComplete(sessionNum) >= m_sectionsInSession)
+            if(tracker.GetNumSectionsComplete(sessionNum) >= m_sectionsPerSession)
             {
                 hasCompleted = true;
                 break;
@@ -248,7 +248,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         
         foreach (ProgressTracker tracker in m_trackers)
         {
-            if(tracker.GetNumSectionsComplete(sessionNum) == m_sectionsInSession - 1)
+            if(tracker.GetNumSectionsComplete(sessionNum) == m_sectionsPerSession - 1)
             {
                 nearlyCompleted = true;
                 break;

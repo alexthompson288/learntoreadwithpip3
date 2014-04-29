@@ -8,14 +8,87 @@ public class VoyageMapButton : MonoBehaviour
     private ColorInfo.PipColor m_color;
     [SerializeField]
     private Spline m_spline;
+    [SerializeField]
+    private LineRenderer m_completeLine;
+    [SerializeField]
+    private LineRenderer m_incompleteLine;
 
+    void Start()
+    {
+        if (m_spline != null)
+        {
+            Color opaqueCol = ColorInfo.GetColor(m_color);
+            Color transparentCol = opaqueCol;
+            transparentCol.a = 0.5f;
+
+            int numSessionsComplete = VoyageInfo.Instance.GetNumSessionsComplete((int)m_color);
+
+            if(m_color == ColorInfo.PipColor.Pink)
+            {
+                numSessionsComplete = 8;
+            }
+            else if(m_color == ColorInfo.PipColor.Red)
+            {
+                numSessionsComplete = 16;
+            }
+            else if(m_color == ColorInfo.PipColor.Yellow)
+            {
+                numSessionsComplete = 12;
+            }
+
+            numSessionsComplete = 10;
+
+
+            int numVerticesPerSession = 5;
+
+            int numCompleteVertices = numSessionsComplete * numVerticesPerSession;
+            int numIncompleteVertices = (VoyageInfo.sessionsPerModule - numSessionsComplete) * numVerticesPerSession;
+            int numVertices = numCompleteVertices + numIncompleteVertices;
+
+            int splineIndex = 0;
+            if(m_completeLine != null)
+            {
+                m_completeLine.SetColors(opaqueCol, opaqueCol);
+                m_completeLine.SetWidth(0.06f, 0.06f);
+                m_completeLine.SetVertexCount(numCompleteVertices);
+
+                for(; splineIndex < numCompleteVertices; ++splineIndex)
+                {
+                    //Vector3 pos = m_spline.GetPositionOnSpline((float) splineIndex / (numVertices - 1));
+                    Vector3 pos = m_spline.GetPositionOnSpline((float) splineIndex / (numVertices));
+                    pos.z = -0.25f;
+
+                    m_completeLine.SetPosition(splineIndex, pos);
+                }
+            }
+
+
+            if(m_incompleteLine != null)
+            {
+                //float greyLightness = 0.7f;
+                //m_incompleteLine.SetColors(new Color(greyLightness, greyLightness, greyLightness, 1f), new Color(greyLightness, greyLightness, greyLightness, 1f));
+                m_incompleteLine.SetColors(transparentCol, transparentCol);
+                m_incompleteLine.SetVertexCount(numIncompleteVertices);
+                m_incompleteLine.SetWidth(0.015f, 0.015f);
+
+                for(int i = 0; i < numIncompleteVertices; ++i, ++splineIndex)
+                {
+                    Vector3 pos = m_spline.GetPositionOnSpline((float) splineIndex / (numVertices));
+                    pos.z = -0.25f;
+                    
+                    m_incompleteLine.SetPosition(i, pos);
+                }
+            }
+        }
+    }
+
+    /*
     void Start()
     {
         if (m_spline != null)
         {
             int numFootprints = VoyageInfo.Instance.GetNumSessionsComplete((int)m_color);
 
-            /*
             if(m_color == ColorInfo.PipColor.Pink)
             {
                 numFootprints = 8;
@@ -24,11 +97,11 @@ public class VoyageMapButton : MonoBehaviour
             {
                 numFootprints = 16;
             }
-            */
-            //int numFootprints = 16;
+
+            numFootprints = 8;
 
             int numPairs = Mathf.CeilToInt((float)numFootprints / 2f); // Round up numPairs if numFootprints is odd
-            int maxNumPairs = Mathf.CeilToInt((float)VoyageInfo.sessionsInModule / 2); // Round up maxNumPairs if max number of footprints is odd
+            int maxNumPairs = Mathf.CeilToInt((float)VoyageInfo.sessionsPerModule / 2); // Round up maxNumPairs if max number of footprints is odd
 
             float offsetDistance = 0.2f;
             
@@ -60,6 +133,7 @@ public class VoyageMapButton : MonoBehaviour
             }
         }
     }
+    */
 
     /*
     void Start()
