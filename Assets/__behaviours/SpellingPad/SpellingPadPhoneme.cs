@@ -17,10 +17,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 	private AudioSource m_audioSource;
 	[SerializeField]
 	private UISprite m_highlight;
-	[SerializeField]
-	private UISprite m_background;
-	[SerializeField]
-	private string[] m_backgroundNames;
 	
 	float m_width;
 	private GameObject m_linkedObject = null;
@@ -57,15 +53,6 @@ public class SpellingPadPhoneme : MonoBehaviour
         }
     }
 
-
-	void Awake()
-	{
-		if(m_backgroundNames.Length > 0)
-		{
-			m_background.spriteName = m_backgroundNames[Random.Range(0, m_backgroundNames.Length)];
-		}
-	}
-
 	public void SetUpPhoneme(SpellingPadBehaviour.PhonemeBuildInfo pbi)
 	{
 		Resources.UnloadUnusedAssets();
@@ -89,7 +76,6 @@ public class SpellingPadPhoneme : MonoBehaviour
 			width = 80;
 		}
 		m_highlight.width = width;
-		m_background.width = width;
 		BoxCollider col = collider as BoxCollider;
 		col.size = new Vector3(width, col.size.y, col.size.z);
 

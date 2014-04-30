@@ -35,8 +35,8 @@ public class LineDrawManager : Singleton<LineDrawManager>
             
             m_positions.Add(firstPoint);
             
-            //m_maxNumPositions = maxNumPositions;
-            m_maxNumPositions = 60;
+            m_maxNumPositions = maxNumPositions;
+            //m_maxNumPositions = 60;
 
             m_startColor = startColor;
             m_endColor = endColor;
@@ -71,10 +71,6 @@ public class LineDrawManager : Singleton<LineDrawManager>
                 int index = m_positions.Count - 1;
                 m_renderer.SetPosition(index, m_positions[index]);
             }
-
-
-            //int index = m_positions.Count - 1;
-            //m_renderer.SetPosition(index, m_positions[index]);
         }
 
         public IEnumerator Off(float totalFadeTime = 0.25f)

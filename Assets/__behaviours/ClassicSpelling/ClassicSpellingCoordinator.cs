@@ -20,7 +20,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     [SerializeField]
     private ProgressScoreBar m_scoreBar;
     [SerializeField]
-    private ScoreCatapault m_scoreCatapult;
+    private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
@@ -33,7 +33,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     List<DataRow> m_wordsPool = new List<DataRow>();
 
     DataRow m_currentWord;
-    Dictionary<int, string> m_currentPhonemes = new Dictionary<int, string>();
+    Dictionary<int, DataRow> m_currentPhonemes = new Dictionary<int, DataRow>();
     
     List<GameWidget> m_draggables = new List<GameWidget>();
     
@@ -58,7 +58,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         
         //m_scoreBar.SetStarsTarget(m_targetScore);
-        m_scoreCatapult.SetTargetScore(m_targetScore);
+        m_scoreKeeper.SetTargetScore(m_targetScore);
 
         
         yield return new WaitForSeconds(0.5f);
@@ -99,7 +99,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             if(dt.Rows.Count > 0)
             {
-                m_currentPhonemes.Add(i, dt.Rows[0]["phoneme"].ToString());
+                m_currentPhonemes.Add(i, dt.Rows[0]);
             }
         }
         
@@ -116,7 +116,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             
             locators.RemoveAt(locatorIndex);
 
-            newDraggable.SetUp(m_currentPhonemes[i], null, true);
+            newDraggable.SetUp("phonemes", m_currentPhonemes[i], true);
 
             m_draggables.Add(newDraggable);
             
@@ -149,7 +149,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator CompleteGame ()
     {
-        m_scoreCatapult.On();
+        StartCoroutine(m_scoreKeeper.On());
 
         yield return new WaitForSeconds(2.5f);
 
@@ -192,7 +192,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         Debug.Log("first attempt: " + spellingPadPhoneme);
 
-        bool foundPhoneme = currentDraggable.labelText == m_currentPhonemes.First().Value || spellingPadPhoneme != null;
+        bool foundPhoneme = currentDraggable.data == m_currentPhonemes.First().Value || spellingPadPhoneme != null;
 
         if(foundPhoneme)
         {
@@ -233,7 +233,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
                 ++m_score;
                 //m_scoreBar.SetStarsCompleted(m_score);
                 //m_scoreBar.SetScore(m_score);
-                m_scoreCatapult.IncrementScore();
+                m_scoreKeeper.UpdateScore();
                 
                 StartCoroutine(OnQuestionEnd());
             }

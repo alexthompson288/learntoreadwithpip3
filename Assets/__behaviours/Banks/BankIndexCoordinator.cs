@@ -81,6 +81,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         } 
         else
         {
+            m_currentColorSprite.gameObject.SetActive(false);
+
             foreach(ClickEvent click in m_colorButtons)
             {
                 click.gameObject.SetActive(false);
@@ -96,6 +98,10 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             }
             
             m_grid.Reposition();
+
+            float alphaTweenDuration = 0.2f;
+            
+            TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 1);
         }
     }
 

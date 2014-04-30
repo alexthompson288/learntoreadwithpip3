@@ -168,6 +168,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     public void CreateBookmark(int sectionId)
     {
+        EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.moduleColor));
         VoyageInfo.Instance.CreateBookmark((int)(m_currentModuleMap.moduleColor), VoyageSessionBoard.Instance.sessionNum, sectionId);
     }
 

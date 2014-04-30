@@ -4,13 +4,13 @@ using System.Collections;
 public class Catapultable : MonoBehaviour 
 {
     [SerializeField]
-    private ScoreCatapault m_catapault;
-
+    private ScoreCatapult m_catapult;
+    
     void OnTriggerExit(Collider other)
     {
-        if (other.tag == "ScoreCatapaultOrigin")
+        if (other.tag == "ScoreCatapultOrigin")
         {
-            m_catapault.ReleaseLineEnd();
+            m_catapult.ReleaseLineEnd();
         }
     }
 }

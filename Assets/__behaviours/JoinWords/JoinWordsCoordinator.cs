@@ -85,11 +85,13 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 
     IEnumerator SetUpNext()
     {
-        HashSet<string> words = new HashSet<string>();
+        //HashSet<string> words = new HashSet<string>();
+        HashSet<DataRow> words = new HashSet<DataRow>();
 
         while (words.Count < m_pairsToShowAtOnce)
         {
-            words.Add(m_wordSelection[Random.Range(0, m_wordSelection.Count)]["word"].ToString());
+            //words.Add(m_wordSelection[Random.Range(0, m_wordSelection.Count)]["word"].ToString());
+            words.Add(m_wordSelection[Random.Range(0, m_wordSelection.Count)]);
             yield return null;
         }
 
@@ -110,12 +112,12 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
                         );
         }
 
-        foreach (string selectedWord in words)
+        foreach (DataRow selectedWord in words)
         {
             GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordBoxPrefab,
                 m_spawnTransform);
             GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pictureBoxPrefab,
-    m_spawnTransform);
+                m_spawnTransform);
 
             int posIndex = Random.Range(0, positions.Count);
             Vector3 posA = positions[posIndex];
@@ -132,11 +134,11 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
             //newText.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
             //newImage.GetComponent<WordPictureJoinableDrag>().SetUp(selectedWord);
 
-            newText.GetComponent<JoinableLineDraw>().SetUp(null, selectedWord);
-            newText.GetComponent<JoinableLineDraw>().JoinableReleaseEventHandler += OnJoinableRelease;
+            newText.GetComponent<JoinableLineDraw>().SetUp("words", selectedWord);
+            newText.GetComponent<JoinableLineDraw>().JoinableJoinEventHandler += OnJoinableRelease;
 
-            newImage.GetComponent<JoinableLineDraw>().SetUp(null, selectedWord);
-            newImage.GetComponent<JoinableLineDraw>().JoinableReleaseEventHandler += OnJoinableRelease;
+            newImage.GetComponent<JoinableLineDraw>().SetUp("words", selectedWord);
+            newImage.GetComponent<JoinableLineDraw>().JoinableJoinEventHandler += OnJoinableRelease;
 
             //newText.transform.localScale = Vector3.zero;
             //newImage.transform.localScale = Vector3.zero;
@@ -234,12 +236,12 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
         {
             if (a.isPicture != b.isPicture)
             {
-                if (a.word == b.word)
+                if (a.data == b.data)
                 {
-                    StartCoroutine(SpeakWellDone(a.word));
+                    StartCoroutine(SpeakWellDone(a.data["word"].ToString()));
                     
-                    a.Off(a.transform.position.x < b.transform.position.x ? m_leftOff : m_rightOff);
-                    b.Off(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
+                    a.TransitionOff(a.transform.position.x < b.transform.position.x ? m_leftOff : m_rightOff);
+                    b.TransitionOff(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
                     m_spawnedObjects.Remove(a.gameObject);
                     m_spawnedObjects.Remove(b.gameObject);
                     
@@ -251,7 +253,7 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
                 else
                 {
                     WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
-                    PipPadBehaviour.Instance.Show(a.isPicture ? b.word : a.word);
+                    PipPadBehaviour.Instance.Show(a.isPicture ? b.data["word"].ToString() : a.data["word"].ToString());
                     PipPadBehaviour.Instance.SayAll(1.5f);
                 }
             }

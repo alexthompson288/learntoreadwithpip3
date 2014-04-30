@@ -6,11 +6,11 @@ public class EnviroManager : Singleton<EnviroManager>
 	public enum Environment
 	{
 		Forest,
+        Farm,
+        Castle,
 		Underwater,
-		Castle,
-		Farm,
-		School,
-		Space
+		Market,
+		Mountains
 	}
 	
 	Environment m_environment;
@@ -19,6 +19,11 @@ public class EnviroManager : Singleton<EnviroManager>
 	{
 		m_environment = environment;
 	}
+
+    public void SetEnvironment(int environmentIndex)
+    {
+        m_environment = (Environment)environmentIndex;
+    }
 	
 	public Environment GetEnvironment()
 	{

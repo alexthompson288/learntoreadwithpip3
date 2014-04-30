@@ -13,7 +13,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 	[SerializeField]
 	private GameObject m_sentenceLabelParent;
 	[SerializeField]
-	private UITexture m_sentenceBackground;
+	private UISprite m_sentenceBackground;
 	[SerializeField]
 	private UITexture m_targetWordBackground;
 	[SerializeField]
@@ -102,6 +102,9 @@ public class CompleteSentenceCoordinator : MonoBehaviour
         */
 
         List<DataRow> stories = GameManager.Instance.GetData("stories");
+        DataTable tempDt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=52");
+        stories = tempDt.Rows;
+
         if (stories.Count > 0 && stories [0] ["section_id"] != null)
         {
             int sectionId = Convert.ToInt32(stories[0]["section_id"]);

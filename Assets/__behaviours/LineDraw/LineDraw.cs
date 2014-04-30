@@ -8,7 +8,6 @@ public class LineDraw : MonoBehaviour
     public event LineEvent LineDragEventHandler;
     public event LineEvent LineReleaseEventHandler;
 
-
     [SerializeField]
     private int m_maxNumPositions = -1;
     [SerializeField]

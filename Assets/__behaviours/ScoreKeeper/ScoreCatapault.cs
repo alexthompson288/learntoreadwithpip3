@@ -30,11 +30,21 @@ public class ScoreCatapault : MonoBehaviour
     [SerializeField]
     private LineRenderer[] m_lineRenderers;
     [SerializeField]
-    private Transform m_lineEnd;
+    private Transform[] m_lineEnds;
     [SerializeField]
     private Transform m_lineEndDefaultPos;
     [SerializeField]
     private bool m_isFinalPullLinear;
+    [SerializeField]
+    private Transform m_patch;
+    [SerializeField]
+    private UITexture m_hand;
+    [SerializeField]
+    private Transform m_handFollowLocation;
+    [SerializeField]
+    private Texture2D m_handReleaseTexture;
+
+    float m_initialPatchPosY;
 
     public bool isFinalPullLinear
     {
@@ -53,6 +63,8 @@ public class ScoreCatapault : MonoBehaviour
 
     void Awake()
     {
+        m_initialPatchPosY = m_patch.position.y;
+
         m_launchForce.z = 0;
 
         for (int i = 0; i < m_lineOrigins.Length && i < m_lineRenderers.Length; ++i)
@@ -63,7 +75,7 @@ public class ScoreCatapault : MonoBehaviour
             pos.z = -0.3f;
             m_lineRenderers[i].SetPosition(0, pos);
 
-            pos = m_lineEnd.position;
+            pos = m_lineEnds[i].position;
             pos.z = -0.3f;
             m_lineRenderers[i].SetPosition(1, pos);
         }
@@ -82,7 +94,7 @@ public class ScoreCatapault : MonoBehaviour
     {
         for (int i = 0; i < m_lineOrigins.Length && i < m_lineRenderers.Length; ++i)
         {
-            Vector3 pos = m_lineEnd.position;
+            Vector3 pos = m_lineEnds[i].position;
             pos.z = -0.3f;
             m_lineRenderers[i].SetPosition(1, pos);
         }
@@ -97,21 +109,46 @@ public class ScoreCatapault : MonoBehaviour
             IncrementScore();
         }
 #endif
+
+        if (!m_hasLaunched)
+        {
+            m_hand.transform.position = m_handFollowLocation.position;
+            //m_hand.mainTexture = m_handReleaseTexture;
+        } 
+        else
+        {
+            m_hand.mainTexture = m_handReleaseTexture;
+        }
     }
 
     public void ReleaseLineEnd()
     {
         if (m_hasLaunched)
         {
-            m_lineEnd.parent = m_lineEndDefaultPos;
+            //m_hand.transform.parent = transform;
+            //m_hand.mainTexture = m_handReleaseTexture;
 
             Hashtable tweenArgs = new Hashtable();
-
-            tweenArgs.Add("position", m_lineEndDefaultPos);
+            //tweenArgs.Add("position", new Vector3(lineEnd.position.x, m_lineEndDefaultPos.position.y, lineEnd.position.z));
             tweenArgs.Add("speed", m_elasticTweenSpeed);
             tweenArgs.Add("easetype", iTween.EaseType.easeOutElastic);
 
-            iTween.MoveTo(m_lineEnd.gameObject, tweenArgs);
+            foreach(Transform lineEnd in m_lineEnds)
+            {
+                lineEnd.parent = m_lineEndDefaultPos;
+
+                tweenArgs["position"] = new Vector3(lineEnd.position.x, m_lineEndDefaultPos.position.y, lineEnd.position.z);
+                //Hashtable tweenArgs = new Hashtable();
+                //tweenArgs.Add("position", new Vector3(lineEnd.position.x, m_lineEndDefaultPos.position.y, lineEnd.position.z));
+                //tweenArgs.Add("speed", m_elasticTweenSpeed);
+                //tweenArgs.Add("easetype", iTween.EaseType.easeOutElastic);
+
+                iTween.MoveTo(lineEnd.gameObject, tweenArgs);
+            }
+
+            //tweenArgs["position"] = new Vector3(m_patch.position.x, m_initialPatchPosY, m_patch.position.z);
+            //m_patch.parent = m_lineEndDefaultPos;
+            //iTween.MoveTo(m_patch.gameObject, tweenArgs);
         }
     }
 
@@ -119,20 +156,20 @@ public class ScoreCatapault : MonoBehaviour
     {
         m_targetScore = targetScore;
 
-        Debug.Log("targetScore: " + m_targetScore);
+        //Debug.Log("targetScore: " + m_targetScore);
 
         float delta = Mathf.Abs((m_target.position - m_origin.position).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
 
-        Debug.Log("origin: " + m_origin.position);
-        Debug.Log("target: " + m_target.position);
-        Debug.Log("delta: " + delta);
-        Debug.Log("pointDistance: " + m_pointDistance);
+        //Debug.Log("origin: " + m_origin.position);
+        //Debug.Log("target: " + m_target.position);
+        //Debug.Log("delta: " + delta);
+        //Debug.Log("pointDistance: " + m_pointDistance);
     }
 
     public void IncrementScore(int scoreIncrement = 1)
     {
-        Debug.Log("IncrementScore");
+        //Debug.Log("IncrementScore");
         m_score += scoreIncrement;
         m_score = Mathf.Clamp(m_score, 0, m_targetScore);
 

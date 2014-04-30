@@ -35,12 +35,11 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		public string m_fullPhoneme;
 	}
 
+    /*
 	void Start()
 	{
 		EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
 		SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
-
-		//SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>("SpellingPad/Space_SpellingPad");
 
 		if(padEnviro != null)
 		{
@@ -48,6 +47,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			m_background.mainTexture = tex;
 		}
 	}
+    */
 
 	int SortPhonemes(PhonemeBuildInfo a, PhonemeBuildInfo b)
 	{
@@ -199,12 +199,12 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			if (width > 512)
 			{
 				m_textPosition.transform.localScale = new Vector3(0.8f, 1, 1);
-				m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) * 0.8f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
+				//m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) * 0.8f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
 			}
 			else
 			{
-				m_textPosition.transform.localPosition = new Vector3(-width / 2.0f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
-				m_textPosition.transform.localScale = Vector3.one;
+                m_textPosition.transform.localScale = Vector3.one;
+				//m_textPosition.transform.localPosition = new Vector3(-width / 2.0f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
 			}
 		}
 	}

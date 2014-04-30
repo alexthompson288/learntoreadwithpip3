@@ -132,7 +132,7 @@ public static class DataHelpers
         List<DataRow> dataList = new List<DataRow>();
         
         DataTable setTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
-        
+
         if(setTable.Rows.Count > 0)
         {
             if(setTable.Rows[0][columnName] != null)
@@ -192,6 +192,35 @@ public static class DataHelpers
         return dataList;
     }
 
+    public static List<DataRow> GetData(string dataType)
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
+
+        if (dataPool.Count == 0)
+        {
+            switch(dataType)
+            {
+                case "phonemes":
+                    dataPool = GetLetters();
+                    break;
+                case "words":
+                    dataPool = GetWords();
+                    break;
+                case "keywords":
+                    dataPool = GetKeywords();
+                    break;
+                case "nonsensewords":
+                    dataPool = GetNonsenseWords();
+                    break;
+                case "sentences":
+                    dataPool = GetSentences();
+                    break;
+            }
+        }
+
+        return dataPool;
+    }
+
     public static List<DataRow> GetSentences()
     {
         return GameManager.Instance.GetData("sentences");
@@ -249,7 +278,14 @@ public static class DataHelpers
         return letterData;
         */
 
-        return GameManager.Instance.GetData("phonemes");
+        List<DataRow> dataPool = GameManager.Instance.GetData("phonemes");
+
+        if(dataPool.Count == 0)
+        {
+            dataPool = GetSetData(1, "setphonemes", "phonemes");
+        }
+
+        return dataPool;
     }
     
     public static List<DataRow> GetWords(bool inclusiveSets = false)
@@ -561,6 +597,17 @@ public static class DataHelpers
         return attributeName;
     }
 
+    public static string GetLabelText(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+
+        string textAttribute = GetTextAttribute(dataType);
+
+        string labelText = data [textAttribute] != null ? data [textAttribute].ToString() : "";
+
+        return labelText;
+    }
+
     public static string GetTargetAttribute(string dataType)
     {
         dataType = dataType.ToLower();
@@ -672,5 +719,175 @@ public static class DataHelpers
         }
         
         return linkingAttribute;
+    }
+
+    public static string GetContainerNameA(string dataType)
+    {
+        string containerName = "phoneme_a";
+
+        switch (dataType.ToLower())
+        {
+            case "words":
+            case "keywords":
+                containerName = "word";
+                break;
+            case "sentences":
+                containerName = "sentence";
+                break;
+        }
+
+        return containerName;
+    }
+
+    public static string GetContainerNameB(string dataType)
+    {
+        string containerName = "phoneme_b";
+
+        switch (dataType.ToLower())
+        {
+            case "words":
+            case "keywords":
+                containerName = "word";
+                break;
+            case "sentences":
+                containerName = "sentence";
+                break;
+        }
+        
+        return containerName;
+    }
+
+    public static string GetPicturePath(string dataType)
+    {
+        dataType = dataType.ToLower();
+
+        string picturePath = "Images/mnemonics_images_png_250/";
+
+        switch (dataType)
+        {
+            case "words":
+            case "keywords":
+                picturePath = "Images/word_images_png_350/_";
+                break;
+        }
+
+        return picturePath;
+    }
+
+    public static string GetFullPicturePath(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+
+        string fullPicturePath = "";
+
+        switch (dataType)
+        {
+            case "phonemes":
+                if(data["phoneme"] != null && data["mneumonic"] != null)
+                {
+                    fullPicturePath = String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]);
+                }
+                break;
+            case "words":
+            case "keywords":
+                if(data["word"] != null)
+                {
+                    fullPicturePath = String.Format("Images/word_images_png_350/_{0}", data["word"]);
+                }
+                break;
+        }
+
+        return fullPicturePath;
+    }
+
+    public static Texture2D GetPicture(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+
+        Texture2D tex = null;
+
+        switch (dataType)
+        {
+            case "phonemes":
+                if(data["phoneme"] != null && data["mneumonic"] != null)
+                {
+                    Debug.Log("Checking Picture for " + data["id"].ToString());
+                    tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
+                }
+                break;
+            case "words":
+            case "keywords":
+                if(data["word"] != null)
+                {
+                    tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
+                }
+                break;
+        }
+
+        return tex;
+    }
+
+    public static AudioClip GetLongAudio(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+
+        AudioClip clip = null;
+
+        switch (dataType)
+        {
+            case "phonemes":
+                clip = LoaderHelpers.LoadMnemonic(data);
+                break;
+            case "words":
+            case "keywords":
+                if(data["word"] != null)
+                {
+                    LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                }
+                break;
+        }
+
+        return clip;
+    }
+
+    public static AudioClip GetShortAudio(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+        
+        AudioClip clip = null;
+        
+        switch (dataType)
+        {
+            case "phonemes":
+                if(data["grapheme"] != null)
+                {
+                    clip = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
+                }
+                break;
+            case "words":
+            case "keywords":
+                if(data["word"] != null)
+                {
+                    LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                }
+                break;
+        }
+        
+        return clip;
+    }
+
+    public static List<DataRow> OnlyPictureData(string dataType, List<DataRow> dataPool)
+    {
+        List<DataRow> hasPictureDataPool = new List<DataRow>();
+
+        for (int i = 0; i < dataPool.Count; ++i)
+        {
+            if(GetPicture(dataType, dataPool[i]) != null)
+            {
+                hasPictureDataPool.Add(dataPool[i]);
+            }
+        }
+
+        return hasPictureDataPool;
     }
 }

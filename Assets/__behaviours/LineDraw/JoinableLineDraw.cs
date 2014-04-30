@@ -3,8 +3,11 @@ using System.Collections;
 
 public class JoinableLineDraw : LineDraw 
 {
-    public delegate void JoinableEvent(JoinableLineDraw self, JoinableLineDraw other);
-    public event JoinableEvent JoinableReleaseEventHandler;
+    public delegate void JoinableJoinedEvent(JoinableLineDraw self, JoinableLineDraw other);
+    public event JoinableJoinedEvent JoinableJoinEventHandler;
+
+    public delegate void JoinableEvent(JoinableLineDraw self);
+    public event JoinableEvent JoinableClickEventHandler;
 
     [SerializeField]
     private bool m_isPicture;
@@ -30,33 +33,22 @@ public class JoinableLineDraw : LineDraw
         }
     }
 
-    string m_word;
-    public string word
-    {
-        get
-        {
-            return m_word;
-        }
-    }
-
     void Start()
     {
         iTween.ScaleFrom(gameObject, Vector3.zero, 0.3f);
     }
 
-    public void SetUp(DataRow myData, string myWord)
+    public void SetUp(string dataType, DataRow myData)
     {
         m_data = myData;
-        m_word = myWord;
 
         if (m_isPicture)
         {
-            Texture2D wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + word);
-            m_pictureTexture.mainTexture = wordImage;
-        }
+            m_pictureTexture.mainTexture = DataHelpers.GetPicture(dataType, m_data);
+        } 
         else
         {
-            m_label.text = word;
+            m_label.text = DataHelpers.GetLabelText(dataType, m_data);
         }
     }
 
@@ -77,9 +69,9 @@ public class JoinableLineDraw : LineDraw
             if (Physics.Raycast(camPos, out hit, 1 << gameObject.layer))
             {
                 GameObject other = hit.collider.gameObject;
-                if (JoinableReleaseEventHandler != null && other.GetComponent<JoinableLineDraw>() != null)
+                if (JoinableJoinEventHandler != null && other.GetComponent<JoinableLineDraw>() != null)
                 {
-                    JoinableReleaseEventHandler(this, other.GetComponent<JoinableLineDraw>());
+                    JoinableJoinEventHandler(this, other.GetComponent<JoinableLineDraw>());
                 }
             }
 
@@ -87,7 +79,15 @@ public class JoinableLineDraw : LineDraw
         }
     }
 
-    public void Off(Transform targetPosition)
+    void OnClick()
+    {
+        if (JoinableClickEventHandler != null)
+        {
+            JoinableClickEventHandler(this);
+        }
+    }
+
+    public void TransitionOff(Transform targetPosition)
     {
         StartCoroutine(TweenToPos(targetPosition));
     }
@@ -100,6 +100,14 @@ public class JoinableLineDraw : LineDraw
         yield return new WaitForSeconds(1.0f);
         iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
         yield return new WaitForSeconds(1.0f);
+        Destroy(gameObject);
+    }
+
+    public IEnumerator DestroyJoinable()
+    {
+        iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+        yield return new WaitForSeconds(0.9f);
         Destroy(gameObject);
     }
 }

@@ -17,6 +17,7 @@ public class JoinLettersCoordinator : Singleton<JoinLettersCoordinator>
 	private AudioSource m_audioSource;
 	[SerializeField]
 	bool m_waitForBoth;
+
 	int m_numWaitForPlayers;
 	
 	int m_numFinishedPlayers;

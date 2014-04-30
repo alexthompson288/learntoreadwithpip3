@@ -54,32 +54,18 @@ public class GameWidget : MonoBehaviour
 
     int m_backgroundIndex;
 
-    void Start()
-    {
-        transform.localScale = Vector3.one;
-        iTween.ScaleFrom(gameObject, Vector3.zero, 0.5f);
 
-        if(m_backgroundsStateA.Length > 0)
-        {
-            m_background.spriteName = m_backgroundsStateA[Random.Range(0, m_backgroundsStateA.Length)];
-        }
-        else
-        {
-            m_background.spriteName = EnviroLoader.Instance.GetContainerOffName();
-        }
-    }
-
-    public void SetUp(string labelText, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
+    public void SetUp(string dataType, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
         {
             m_icon.mainTexture = iconTexture;
         }
 
-        SetUp(labelText, newData, changeBackgroundWidth);
+        SetUp(dataType, newData, changeBackgroundWidth);
     }
 
-    public void SetUp(string labelText, DataRow newData, UIAtlas iconAtlas, string iconSpritename, bool changeBackgroundWidth = false)
+    public void SetUp(string dataType, DataRow newData, UIAtlas iconAtlas, string iconSpritename, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
         {
@@ -91,18 +77,18 @@ public class GameWidget : MonoBehaviour
             }
         }
 
-        SetUp(labelText, newData, changeBackgroundWidth);
+        SetUp(dataType, newData, changeBackgroundWidth);
     }
 
-    public void SetUp(string labelText, DataRow newData, bool changeBackgroundWidth)
+    public void SetUp(string dataType, DataRow newData, bool changeBackgroundWidth)
     {
-        m_labelText = labelText;
+        m_labelText = DataHelpers.GetLabelText(dataType, newData);
         if (m_label != null)
         {
             m_label.text = m_labelText;
         }
 
-        m_data = data;
+        m_data = newData;
 
         if(changeBackgroundWidth && m_label != null)
         {
@@ -117,6 +103,30 @@ public class GameWidget : MonoBehaviour
         if(m_collider != null && m_background != null)
         {
             m_collider.size = m_background.localSize;
+        }
+
+        transform.localScale = Vector3.one;
+        iTween.ScaleFrom(gameObject, Vector3.zero, 0.5f);
+
+        if (m_backgroundsStateA.Length == 0)
+        {
+            m_backgroundsStateA = new string[1];
+            m_backgroundsStateA[0] = DataHelpers.GetContainerNameA(dataType);
+        }
+
+        if (m_backgroundsStateB.Length == 0)
+        {
+            m_backgroundsStateB = new string[1];
+            m_backgroundsStateB[0] = DataHelpers.GetContainerNameB(dataType);
+        }
+        
+        if(m_backgroundsStateA.Length > 0)
+        {
+            m_background.spriteName = m_backgroundsStateA[Random.Range(0, m_backgroundsStateA.Length)];
+        }
+        else
+        {
+            m_background.spriteName = EnviroLoader.Instance.GetContainerOffName();
         }
     }
 
