@@ -39,8 +39,6 @@ public class ScorePotion : ScoreKeeper
 
     public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
     {
-        Debug.Log("ScorePotion.UpdateScore Coroutine");
-
         targetGo.transform.parent = m_cauldron.transform;
         targetGo.layer = m_cauldron.gameObject.layer;
 
@@ -53,8 +51,6 @@ public class ScorePotion : ScoreKeeper
         yield return null;
 
         Hashtable tweenArgs = new Hashtable();
-
-
         tweenArgs.Add("position", m_cauldron.transform.position);
         tweenArgs.Add("speed", m_cauldronTweenSpeed);
         tweenArgs.Add("easetype", m_easeType);
@@ -62,7 +58,7 @@ public class ScorePotion : ScoreKeeper
        
         float cauldronTweenDuration = Mathf.Abs(((m_cauldron.transform.position - targetGo.transform.position).magnitude) / m_cauldronTweenSpeed);
 
-        Debug.Log("cauldronTweenDuration: " + cauldronTweenDuration);
+        //Debug.Log("cauldronTweenDuration: " + cauldronTweenDuration);
 
         yield return new WaitForSeconds(cauldronTweenDuration);
 

@@ -39,10 +39,10 @@ public class GlideTarget : Target
     {
         yield return new WaitForSeconds(Random.Range(m_durationOff.x, m_durationOff.y));
 
-        rigidbody.velocity = Vector3.zero;
-
-        yield return new WaitForSeconds(Time.fixedDeltaTime * 2); // Experimental bug fix: There was an error when we allegedly tried to move a kinematic rigidbody. 
-                                                                  // After setting velocity, wait for a minimum of 1 FixedUpdate to execute before setting the rigidbody kinematic
+        if (!rigidbody.isKinematic)
+        {
+            rigidbody.velocity = Vector3.zero;
+        } 
         
         rigidbody.isKinematic = true;
         transform.position = m_startLocation.position;
