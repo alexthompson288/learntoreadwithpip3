@@ -24,7 +24,7 @@ public class ScorePotion : ScoreKeeper
     {
         base.SetTargetScore(targetScore);
 
-        float delta = Mathf.Abs((m_target.position - m_liquidBody.transform.position).magnitude);
+        float delta = Mathf.Abs((m_target.localPosition - m_liquidBody.transform.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
         UpdatePotionLevel();
     }
@@ -57,7 +57,8 @@ public class ScorePotion : ScoreKeeper
         Hashtable topTweenArgs = new Hashtable();
         topTweenArgs.Add("time", m_potionTweenDuration);
         topTweenArgs.Add("easetype", m_easeType);
-        topTweenArgs.Add("position", new Vector3(m_liquidTop.position.x, m_liquidBody.transform.position.y + (m_pointDistance * m_score), m_liquidTop.position.z));
+        topTweenArgs.Add("position", new Vector3(m_liquidTop.localPosition.x, m_liquidBody.transform.localPosition.y + (m_pointDistance * m_score), m_liquidTop.localPosition.z));
+        topTweenArgs.Add("islocal", true);
 
         iTween.MoveTo(m_liquidTop.gameObject, topTweenArgs);
 
@@ -71,4 +72,22 @@ public class ScorePotion : ScoreKeeper
 
         iTween.ScaleTo(m_liquidBody.gameObject, bodyTweenArgs);
     }
+
+#if UNITY_EDITOR
+    void Update()
+    {   
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            UpdateScore(-1);
+        } 
+        else if(Input.GetKeyDown(KeyCode.P))
+        {
+            UpdateScore();
+        }
+        else if(Input.GetKeyDown(KeyCode.I))
+        {
+            StartCoroutine(On());
+        }
+    }
+#endif
 }

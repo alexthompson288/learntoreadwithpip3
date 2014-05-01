@@ -142,6 +142,15 @@ public class ScoreCatapult : ScoreKeeper
             m_lineRenderers[i].SetPosition(1, pos);
         }
         
+        if (!m_hasLaunched)
+        {
+            m_hand.transform.position = m_handFollowLocation.position;
+        } 
+        else
+        {
+            m_hand.mainTexture = m_handReleaseTexture;
+        }
+
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.O))
         {
@@ -156,15 +165,6 @@ public class ScoreCatapult : ScoreKeeper
             StartCoroutine(On());
         }
         #endif
-        
-        if (!m_hasLaunched)
-        {
-            m_hand.transform.position = m_handFollowLocation.position;
-        } 
-        else
-        {
-            m_hand.mainTexture = m_handReleaseTexture;
-        }
     }
 }
 
