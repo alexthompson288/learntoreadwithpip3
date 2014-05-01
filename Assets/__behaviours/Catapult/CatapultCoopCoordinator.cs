@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class CannonMixedCoordinator : MonoBehaviour 
+public class CatapultCoopCoordinator : MonoBehaviour 
 {
     [SerializeField]
     private Game.Data m_dataType;
@@ -16,82 +16,72 @@ public class CannonMixedCoordinator : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
-    private Target[] m_botTargets;
-    [SerializeField]
     private Target[] m_leftTargets;
     [SerializeField]
     private Target[] m_rightTargets;
     [SerializeField]
     private Target[] m_topTargets;
-    [SerializeField]
-    private CannonPop m_pop;
-    [SerializeField]
-    private bool m_areBallsSingleUse;
-    [SerializeField]
-    private bool m_isAnswerAlwaysCorrect;
-    
+
     int m_score = 0;
-    
+
     List<DataRow> m_dataPool = new List<DataRow>();
     DataRow m_currentData;
     
     Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
-    
+
     void Awake()
     {
-        float targetOffDistance = 700;
+        float targetOffDistance = 500;
 
-        foreach (Target target in m_botTargets)
-        {
-            target.SetOffPosition(Vector3.down, targetOffDistance);
-        }
-        
         foreach (Target target in m_leftTargets)
         {
             target.SetOffPosition(Vector3.left, targetOffDistance);
         }
-        
+
         foreach (Target target in m_rightTargets)
         {
             target.SetOffPosition(Vector3.right, targetOffDistance);
         }
-        
+
         foreach (Target target in m_topTargets)
         {
             target.SetOffPosition(Vector3.up, targetOffDistance);
         }
     }
-    
+
     IEnumerator Start()
     {
-        CannonBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CannonBehaviour)) as CannonBehaviour;
-        cannonBehaviour.MoveToMultiplayerLocation(0);
+        CatapultBehaviour[] cannons = Object.FindObjectsOfType(typeof(CatapultBehaviour)) as CatapultBehaviour[];
+        for (int i = 0; i < cannons.Length; ++i)
+        {
+            cannons[i].MoveToMultiplayerLocation(i);
+        }
 
         m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
-        
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-        
+
         switch (m_dataType)
         {
-        case Game.Data.Phonemes:
-            m_dataPool = DataHelpers.GetLetters();
-            break;
-        case Game.Data.Words:
-            m_dataPool = DataHelpers.GetWords();
-            break;
-        case Game.Data.Keywords:
-            m_dataPool = DataHelpers.GetKeywords();
-            break;
+            case Game.Data.Phonemes:
+                m_dataPool = DataHelpers.GetLetters();
+                break;
+            case Game.Data.Words:
+                m_dataPool = DataHelpers.GetWords();
+                break;
+            case Game.Data.Keywords:
+                m_dataPool = DataHelpers.GetKeywords();
+                break;
         }
-        
+
         if (m_dataPool.Count > 0)
         {
             foreach (DataRow data in m_dataPool)
             {
                 if (m_dataType == Game.Data.Phonemes)
                 {
-                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
+                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data ["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
                 } 
                 else
@@ -101,8 +91,10 @@ public class CannonMixedCoordinator : MonoBehaviour
             }
             
             m_currentData = DataHelpers.FindTargetData(m_dataPool, m_dataType);
-            
-            InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
+
+            InitializeTargets(m_leftTargets);
+            InitializeTargets(m_rightTargets);
+            InitializeTargets(m_topTargets);
             
             PlayShortAudio();
         } 
@@ -111,22 +103,20 @@ public class CannonMixedCoordinator : MonoBehaviour
             StartCoroutine(OnGameComplete());
         }
     }
-    
+
     void InitializeTargets(Target[] targets)
     {
-        Debug.Log("targets.Length: " + targets.Length);
-
         foreach(Target target in targets)
         {
             target.OnTargetHit += OnTargetHit;
             target.OnCompleteMove += SetTargetData;
             
             SetTargetData(target);
-            
+
             StartCoroutine(target.On(Random.Range(1f, 4f)));
         }
     }
-    
+
     void SetTargetData(Target target)
     {
         DataRow targetData = m_currentData;
@@ -137,22 +127,18 @@ public class CannonMixedCoordinator : MonoBehaviour
                 targetData = m_dataPool [Random.Range(0, m_dataPool.Count)];
             }
         }
-        
+
         target.SetData(targetData, m_dataType);
     }
-    
+
     void OnTargetHit(Target target, Collider ball)
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
-        
-        if (target.data == m_currentData || target.isAlwaysCorrect || m_isAnswerAlwaysCorrect)
+        if (target.data == m_currentData)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
 
-            target.DetachableOn(m_pop.transform);
-            
             target.ApplyHitForce(ball.transform);
-            
+
             if(m_changeCurrentData)
             {
                 m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
@@ -163,28 +149,25 @@ public class CannonMixedCoordinator : MonoBehaviour
             
             if(m_score >= m_targetScore)
             {
-                StartCoroutine(OnGameComplete());
+                OnGameComplete();
             }
         } 
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
-            
-            //target.Off();
-            //StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
-        }
 
-        if (m_areBallsSingleUse)
-        {
-            ball.GetComponent<CannonBall>().Explode();
+            target.Off();
+            StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
         }
+        
+        ball.GetComponent<CatapultAmmo>().Explode();
     }
-    
+
     IEnumerator OnGameComplete()
     {
         yield return null;
     }
-    
+
     void PlayLongAudio()
     {
         m_audioSource.clip = m_longAudio [m_currentData];
@@ -205,10 +188,5 @@ public class CannonMixedCoordinator : MonoBehaviour
         {
             m_audioSource.Play();
         }
-    }
-
-    void OnGUI()
-    {
-        GUILayout.Label("Score: " + m_score);
     }
 }

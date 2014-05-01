@@ -8,7 +8,7 @@ public class ScaleTarget : Target
 	[SerializeField]
 	private Vector2 m_durationOff = new Vector2(1.1f, 2.5f);
 	[SerializeField]
-	private float m_tweenDuration = 0.15f;
+	private float m_tweenDuration = 0.3f;
 
     void Awake()
     {

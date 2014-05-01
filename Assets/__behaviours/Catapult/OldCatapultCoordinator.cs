@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class OldCannonCoordinator : MonoBehaviour
+public class OldCatapultCoordinator : MonoBehaviour
 {
     [SerializeField]
     private Game.Data m_dataType;
@@ -125,7 +125,7 @@ public class OldCannonCoordinator : MonoBehaviour
             }
         } 
 
-        CannonTarget targetBehaviour = newTarget.GetComponent<CannonTarget>() as CannonTarget;
+        CatapultTarget targetBehaviour = newTarget.GetComponent<CatapultTarget>() as CatapultTarget;
 
         targetBehaviour.SetUp(targetData, m_dataType);
         targetBehaviour.OnTargetHit += OnTargetHit;
@@ -141,7 +141,7 @@ public class OldCannonCoordinator : MonoBehaviour
         }
     }
 
-    void OnDestroyTarget(CannonTarget target)
+    void OnDestroyTarget(CatapultTarget target)
     {
         if (m_spawnedTargets.Contains(target.transform))
         {
@@ -149,7 +149,7 @@ public class OldCannonCoordinator : MonoBehaviour
         }
     }
 
-    void OnTargetHit(CannonTarget target, Collider ball)
+    void OnTargetHit(CatapultTarget target, Collider ball)
     {
         if (target.data == m_currentData)
         {
@@ -169,7 +169,7 @@ public class OldCannonCoordinator : MonoBehaviour
             target.ApplyHitForce(ball.transform);
         }
 
-        ball.GetComponent<CannonBall>().Explode();
+        ball.GetComponent<CatapultAmmo>().Explode();
     }
 
     void PlayLongAudio()

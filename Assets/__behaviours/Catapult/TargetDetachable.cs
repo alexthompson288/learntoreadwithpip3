@@ -6,7 +6,7 @@ public class TargetDetachable : MonoBehaviour
     [SerializeField]
     private UILabel m_label;
     [SerializeField]
-    private bool m_doesTweenUseDuration;
+    private bool m_useTweenDuration;
     [SerializeField]
     private float m_moveTweenDuration;
     [SerializeField]
@@ -28,8 +28,6 @@ public class TargetDetachable : MonoBehaviour
         }
     }
 
-
-
     public void On(Transform target)
     {
         m_target = target;
@@ -46,7 +44,7 @@ public class TargetDetachable : MonoBehaviour
         moveArgs.Add("position", m_target);
         moveArgs.Add("easetype", iTween.EaseType.linear);
 
-        if (m_doesTweenUseDuration)
+        if (m_useTweenDuration)
         {
             moveArgs.Add("time", m_moveTweenDuration);
         } 
@@ -58,7 +56,7 @@ public class TargetDetachable : MonoBehaviour
 
         iTween.MoveTo(gameObject, moveArgs);
 
-        if (m_doesTweenUseDuration)
+        if (m_useTweenDuration)
         {
             yield return new WaitForSeconds(m_moveTweenDuration);
             OnTweenComplete();

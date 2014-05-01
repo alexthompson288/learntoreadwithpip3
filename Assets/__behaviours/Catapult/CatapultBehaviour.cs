@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class CannonBehaviour : Singleton<CannonBehaviour> 
+public class CatapultBehaviour : Singleton<CatapultBehaviour> 
 {
 	[SerializeField]
 	private GameObject m_cannonBallPrefab;
@@ -30,9 +30,9 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     [SerializeField]
     private bool m_lineRendererUseWorld;
 
-	List<CannonBall> m_spawnedBalls = new List<CannonBall>();
+	List<CatapultAmmo> m_spawnedBalls = new List<CatapultAmmo>();
 
-    CannonBall m_currentBall = null;
+    CatapultAmmo m_currentBall = null;
 
 	void Awake()
 	{
@@ -63,8 +63,8 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
 
     void Update()
     {
-        List<CannonBall> ballsToDestroy = m_spawnedBalls.FindAll(IsBallBelowThreshold);
-        foreach (CannonBall ball in ballsToDestroy)
+        List<CatapultAmmo> ballsToDestroy = m_spawnedBalls.FindAll(IsBallBelowThreshold);
+        foreach (CatapultAmmo ball in ballsToDestroy)
         {
             m_spawnedBalls.Remove(ball);
             Destroy(ball.gameObject);
@@ -96,7 +96,7 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
         MoveLineOrigins();
     }
 
-	public void OnBallRelease(CannonBall ball)
+	public void OnBallRelease(CatapultAmmo ball)
 	{
 		if ((m_ballCentre.position - ball.rigidbody.transform.position).magnitude < m_pullRange.x) 
 		{
@@ -141,19 +141,19 @@ public class CannonBehaviour : Singleton<CannonBehaviour>
     {
         Debug.Log("SpawnBall");
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
-        newBall.GetComponent<CannonBall>().SetUp(this);
-        m_spawnedBalls.Add(newBall.GetComponent<CannonBall>() as CannonBall);
+        newBall.GetComponent<CatapultAmmo>().SetUp(this);
+        m_spawnedBalls.Add(newBall.GetComponent<CatapultAmmo>() as CatapultAmmo);
         
-        m_currentBall = newBall.GetComponent<CannonBall>() as CannonBall;
+        m_currentBall = newBall.GetComponent<CatapultAmmo>() as CatapultAmmo;
     }
 
 
-    bool IsBallBelowThreshold(CannonBall ball)
+    bool IsBallBelowThreshold(CatapultAmmo ball)
     {
         return ball.transform.position.y < m_ballDestroyLocation.position.y;
     }
 
-    public void OnBallDestroy(CannonBall ball)
+    public void OnBallDestroy(CatapultAmmo ball)
     {
         m_spawnedBalls.Remove(ball);
     }

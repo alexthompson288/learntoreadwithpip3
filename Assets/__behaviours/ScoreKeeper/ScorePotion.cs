@@ -12,11 +12,12 @@ public class ScorePotion : ScoreKeeper
     [SerializeField]
     private float m_potionTweenDuration = 0.3f;
     [SerializeField]
-    private float m_cauldronTweenDuration = 0.5f;
+    private float m_cauldronTweenSpeed = 2f;
     [SerializeField]
     private iTween.EaseType m_easeType = iTween.EaseType.linear;
     [SerializeField]
     private UISprite m_cauldron;
+
 
     float m_pointDistance;
 
@@ -38,14 +39,32 @@ public class ScorePotion : ScoreKeeper
 
     public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
     {
+        Debug.Log("ScorePotion.UpdateScore Coroutine");
+
+        targetGo.transform.parent = m_cauldron.transform;
+        targetGo.layer = m_cauldron.gameObject.layer;
+
         base.UpdateScore(delta);
 
         float tweenDuration = 0.3f;
 
-        iTween.MoveTo(targetGo, m_cauldron.transform.position, m_cauldronTweenDuration);
-        iTween.ScaleTo(targetGo, Vector3.zero, m_cauldronTweenDuration);
+        iTween.Stop(targetGo);
 
-        yield return new WaitForSeconds(m_cauldronTweenDuration);
+        yield return null;
+
+        Hashtable tweenArgs = new Hashtable();
+
+
+        tweenArgs.Add("position", m_cauldron.transform.position);
+        tweenArgs.Add("speed", m_cauldronTweenSpeed);
+        tweenArgs.Add("easetype", m_easeType);
+        iTween.MoveTo(targetGo, tweenArgs);
+       
+        float cauldronTweenDuration = Mathf.Abs(((m_cauldron.transform.position - targetGo.transform.position).magnitude) / m_cauldronTweenSpeed);
+
+        Debug.Log("cauldronTweenDuration: " + cauldronTweenDuration);
+
+        yield return new WaitForSeconds(cauldronTweenDuration);
 
         Destroy(targetGo);
 

@@ -2,7 +2,7 @@
 using System.Collections;
 using Wingrove;
 
-public class CannonPop : MonoBehaviour 
+public class CatapultPop : MonoBehaviour 
 {
     [SerializeField]
     private Transform m_scaleable;

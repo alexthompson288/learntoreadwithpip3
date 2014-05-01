@@ -2,7 +2,7 @@
 using System.Collections;
 using Wingrove;
 
-public class CannonBall : MonoBehaviour 
+public class CatapultAmmo : MonoBehaviour 
 {
     [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
@@ -17,7 +17,7 @@ public class CannonBall : MonoBehaviour
     [SerializeField]
     UISprite m_sprite;
     
-    CannonBehaviour m_cannon = null;
+    CatapultBehaviour m_cannon = null;
     
     #if UNITY_EDITOR
     [SerializeField]
@@ -51,7 +51,7 @@ public class CannonBall : MonoBehaviour
     {
         if (m_hasLaunched && other.collider.tag == "BallExitTrigger")
         {
-            CannonBehaviour.Instance.ResetLineRenderersPos();
+            CatapultBehaviour.Instance.ResetLineRenderersPos();
         }
     }
     
@@ -82,7 +82,7 @@ public class CannonBall : MonoBehaviour
 
     public Vector3 FindOppositePosition(Transform lineEnd)
     {
-        Vector3 ballCentrePos = CannonBehaviour.Instance.ballCentrePos;
+        Vector3 ballCentrePos = CatapultBehaviour.Instance.ballCentrePos;
         Vector3 ballCentreLocal = transform.InverseTransformPoint(ballCentrePos);
         
         Vector3 delta = transform.localPosition - ballCentreLocal;
@@ -92,7 +92,7 @@ public class CannonBall : MonoBehaviour
         return transform.TransformPoint(localPos); 
     }
     
-    public void SetUp(CannonBehaviour cannon, DataRow data = null)
+    public void SetUp(CatapultBehaviour cannon, DataRow data = null)
     {
         m_cannon = cannon;
         m_data = data;

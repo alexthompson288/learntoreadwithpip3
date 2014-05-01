@@ -61,10 +61,13 @@ public class Target : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "CannonBall" && !other.GetComponent<CannonBall>().canDrag && OnTargetHit != null)
+        //Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
+        CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
+
+        if (ammoBehaviour != null && !ammoBehaviour.canDrag && OnTargetHit != null)
         {
             OnTargetHit(this, other);
-        }
+        } 
     }
     
     void OnDestroy()
@@ -101,12 +104,23 @@ public class Target : MonoBehaviour
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
     }
 
+    /*
     public void DetachableOn(Transform detachableTarget)
     {
         GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
 
         newDetachable.GetComponent<TargetDetachable>().SetUp(m_data);
         newDetachable.GetComponent<TargetDetachable>().On(detachableTarget);
+    }
+    */
+
+    public GameObject SpawnDetachable()
+    {
+        GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
+        
+        newDetachable.GetComponent<TargetDetachable>().SetUp(m_data);
+
+        return newDetachable;
     }
 
     public virtual IEnumerator On(float initialDelay) { yield break; }

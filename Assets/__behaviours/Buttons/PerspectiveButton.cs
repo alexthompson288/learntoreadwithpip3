@@ -21,6 +21,8 @@ public class PerspectiveButton : MonoBehaviour
     [SerializeField]
     private UISprite[] m_sprites;
     [SerializeField]
+    private SimpleSpriteAnim[] m_spriteAnims;
+    [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
     private string m_unpressedAudio = "BUTTON_UNPRESS";
@@ -107,6 +109,11 @@ public class PerspectiveButton : MonoBehaviour
             string spriteName = sprite.spriteName.Substring(0, sprite.spriteName.Length - 1);
             spriteName += "b";
             sprite.spriteName = spriteName;
+        }
+
+        foreach (SimpleSpriteAnim spriteAnim in m_spriteAnims)
+        {
+            spriteAnim.PlayAnimation("ON");
         }
 
         WingroveAudio.WingroveRoot.Instance.PostEvent(m_unpressedAudio);

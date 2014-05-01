@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CannonTarget : MonoBehaviour 
+public class CatapultTarget : MonoBehaviour 
 {
     [SerializeField]
     private UILabel m_label;
@@ -16,10 +16,10 @@ public class CannonTarget : MonoBehaviour
         Continuous,
     }
 
-    public delegate void TargetHit(CannonTarget target, Collider ball);
+    public delegate void TargetHit(CatapultTarget target, Collider ball);
     public event TargetHit OnTargetHit;
 
-    public delegate void DestroyGo(CannonTarget target);
+    public delegate void DestroyGo(CatapultTarget target);
     public event DestroyGo OnDestroyGo;
 
     private DataRow m_data;
@@ -51,7 +51,7 @@ public class CannonTarget : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "CannonBall" && !other.GetComponent<CannonBall>().canDrag && OnTargetHit != null)
+        if(other.tag == "CatapultAmmo" && !other.GetComponent<CatapultAmmo>().canDrag && OnTargetHit != null)
         {
             OnTargetHit(this, other);
         }
