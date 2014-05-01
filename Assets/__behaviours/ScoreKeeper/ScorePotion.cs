@@ -10,9 +10,13 @@ public class ScorePotion : ScoreKeeper
     [SerializeField]
     private Transform m_target;
     [SerializeField]
-    private float m_tweenDuration = 0.3f;
+    private float m_potionTweenDuration = 0.3f;
+    [SerializeField]
+    private float m_cauldronTweenDuration = 0.5f;
     [SerializeField]
     private iTween.EaseType m_easeType = iTween.EaseType.linear;
+    [SerializeField]
+    private UISprite m_cauldron;
 
     float m_pointDistance;
 
@@ -32,10 +36,26 @@ public class ScorePotion : ScoreKeeper
         UpdatePotionLevel(); 
     }
 
+    public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
+    {
+        base.UpdateScore(delta);
+
+        float tweenDuration = 0.3f;
+
+        iTween.MoveTo(targetGo, m_cauldron.transform.position, m_cauldronTweenDuration);
+        iTween.ScaleTo(targetGo, Vector3.zero, m_cauldronTweenDuration);
+
+        yield return new WaitForSeconds(m_cauldronTweenDuration);
+
+        Destroy(targetGo);
+
+        UpdatePotionLevel();
+    }
+
     void UpdatePotionLevel()
     {
         Hashtable topTweenArgs = new Hashtable();
-        topTweenArgs.Add("time", m_tweenDuration);
+        topTweenArgs.Add("time", m_potionTweenDuration);
         topTweenArgs.Add("easetype", m_easeType);
         topTweenArgs.Add("position", new Vector3(m_liquidTop.position.x, m_liquidBody.transform.position.y + (m_pointDistance * m_score), m_liquidTop.position.z));
 
@@ -43,7 +63,7 @@ public class ScorePotion : ScoreKeeper
 
 
         Hashtable bodyTweenArgs = new Hashtable();
-        bodyTweenArgs.Add("time", m_tweenDuration);
+        bodyTweenArgs.Add("time", m_potionTweenDuration);
         bodyTweenArgs.Add("easetype", m_easeType);
 
         float newScaleY = (m_target.localPosition.y - m_liquidBody.transform.localPosition.y) / m_liquidBody.height * m_score / m_targetScore;

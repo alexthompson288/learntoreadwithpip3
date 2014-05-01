@@ -17,5 +17,7 @@ public class ScoreKeeper : MonoBehaviour
         m_score = Mathf.Clamp(m_score, 0, m_targetScore);
     }
 
-    public virtual IEnumerator On() { yield return null;}
+    public virtual IEnumerator UpdateScore(GameObject targetGo, int delta = 1) { yield return null; }
+
+    public virtual IEnumerator On() { yield return null; }
 }

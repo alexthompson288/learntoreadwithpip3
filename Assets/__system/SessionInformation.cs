@@ -570,7 +570,7 @@ public class SessionInformation : Singleton<SessionInformation>
 
     public int GetNumPlayers()
     {
-        //return 2;
+        return 2;
         return m_currentlySelectedNumPlayers;
     }
 

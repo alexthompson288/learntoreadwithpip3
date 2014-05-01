@@ -22,7 +22,7 @@ public class ScoreCatapult : ScoreKeeper
     [SerializeField]
     private Transform[] m_lineEnds;
     [SerializeField]
-    private Transform m_lineEndDefaultPos;
+    private Transform m_lineEndDefaultLocation;
     [SerializeField]
     private UITexture m_hand;
     [SerializeField]
@@ -34,7 +34,7 @@ public class ScoreCatapult : ScoreKeeper
     
     bool m_hasLaunched = false;
     
-    void Awake()
+    void Start()
     {
         m_launchForce.z = 0;
         
@@ -79,7 +79,9 @@ public class ScoreCatapult : ScoreKeeper
         m_hasLaunched = true;
         iTween.Stop(m_rigidbody.gameObject);
         m_rigidbody.isKinematic = false;
-        m_rigidbody.AddForce(m_launchForce, ForceMode.VelocityChange);
+        m_rigidbody.AddForce(m_rigidbody.transform.TransformDirection(m_launchForce), ForceMode.VelocityChange);
+
+        yield return new WaitForSeconds(2f);
     }
 
     void TweenRigidbody()
@@ -99,20 +101,26 @@ public class ScoreCatapult : ScoreKeeper
     
     public void ReleaseLineEnd()
     {
+        Debug.Log("ReleaseLineEnd()");
+
         if (m_hasLaunched)
         {
+            Debug.Log("Releasing");
+
             Hashtable tweenArgs = new Hashtable();
             
-            tweenArgs.Add("speed", m_tweenSpeed);
+            //tweenArgs.Add("speed", m_tweenSpeed);
+            tweenArgs.Add("time", 0.6f);
             tweenArgs.Add("easetype", iTween.EaseType.easeOutElastic);
-            
-            foreach(Transform lineEnd in m_lineEnds)
+            tweenArgs.Add("islocal", true);
+
+            for(int i = 0; i < m_lineEnds.Length; ++i)
             {
-                lineEnd.parent = m_lineEndDefaultPos;
+                tweenArgs["position"] = new Vector3(m_lineEnds[i].localPosition.x, m_lineEndDefaultLocation.localPosition.y, m_lineEnds[i].localPosition.z);
+
+                m_lineEnds[i].parent = m_lineEndDefaultLocation;
                 
-                tweenArgs["position"] = new Vector3(lineEnd.position.x, m_lineEndDefaultPos.position.y, lineEnd.position.z);
-                
-                iTween.MoveTo(lineEnd.gameObject, tweenArgs);
+                iTween.MoveTo(m_lineEnds[i].gameObject, tweenArgs);
             }
         }
     }
@@ -142,6 +150,10 @@ public class ScoreCatapult : ScoreKeeper
         else if(Input.GetKeyDown(KeyCode.P))
         {
             UpdateScore();
+        }
+        else if(Input.GetKeyDown(KeyCode.I))
+        {
+            StartCoroutine(On());
         }
         #endif
         

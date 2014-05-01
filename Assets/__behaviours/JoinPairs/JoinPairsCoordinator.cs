@@ -204,9 +204,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         yield return new WaitForSeconds(1f);
 
-        m_gamePlayers [winningIndex].OnWin();
-
-        yield return new WaitForSeconds(2.5f);
+        yield return StartCoroutine(m_gamePlayers [winningIndex].OnWin());
         
         CompleteGame();
     }

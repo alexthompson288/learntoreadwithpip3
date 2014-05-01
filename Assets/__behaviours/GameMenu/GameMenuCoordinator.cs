@@ -41,9 +41,10 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             click.OnSingleClick += OnClickBack;
         }
 
-        foreach (ClickEvent click in m_numPlayerButtons)
+        for (int i = 0; i < m_numPlayerButtons.Length; ++i)
         {
-            click.OnSingleClick += OnChooseNumPlayers;
+            m_numPlayerButtons[i].SetInt(i + 1);
+            m_numPlayerButtons[i].OnSingleClick += OnChooseNumPlayers;
         }
 
         foreach (ClickEvent click in m_colorButtons)
@@ -61,7 +62,10 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
         SessionInformation.Instance.SetNumPlayers(click.GetInt());
 
-        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu));
+        PerspectiveButton button = click.GetComponent<PerspectiveButton>() as PerspectiveButton;
+        float buttonTweenDuration = button != null ? button.tweenDuration : 0.5f;
+
+        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu, buttonTweenDuration + 0.4f));
     }
 
     void OnChooseColor(ClickEvent click)
@@ -178,8 +182,10 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         }
     }
 
-    IEnumerator MoveCamera(GameObject from, GameObject to)
+    IEnumerator MoveCamera(GameObject from, GameObject to, float delay = 0)
     {
+        yield return new WaitForSeconds(delay);
+
         to.SetActive(true);
         iTween.MoveTo(m_camera, to.transform.position, m_cameraTweenDuration);
         

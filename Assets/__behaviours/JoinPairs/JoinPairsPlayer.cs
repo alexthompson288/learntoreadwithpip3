@@ -8,7 +8,7 @@ public class JoinPairsPlayer : GamePlayer
     [SerializeField]
     private int m_playerIndex;
     [SerializeField]
-    private ScoreCatapault m_scoreCatapult;
+    private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private Transform m_lowCorner;
     [SerializeField]
@@ -81,7 +81,7 @@ public class JoinPairsPlayer : GamePlayer
 
     public void SetUp(int targetScore)
     {
-        m_scoreCatapult.SetTargetScore(targetScore);
+        m_scoreKeeper.SetTargetScore(targetScore);
     }
 
     public IEnumerator SetUpNext()
@@ -196,7 +196,7 @@ public class JoinPairsPlayer : GamePlayer
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
         
         m_score++;
-        m_scoreCatapult.IncrementScore();
+        m_scoreKeeper.UpdateScore();
         
         if (m_score == JoinPairsCoordinator.Instance.targetScore)
         {
@@ -220,9 +220,9 @@ public class JoinPairsPlayer : GamePlayer
         }
     }
 
-    public void OnWin()
+    public IEnumerator OnWin()
     {
-        m_scoreCatapult.On();
+        yield return StartCoroutine(m_scoreKeeper.On());
     }
 
     void PlayJoinableShortAudio(JoinableLineDraw joinable)
