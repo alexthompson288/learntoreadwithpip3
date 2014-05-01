@@ -26,6 +26,8 @@ public class PerspectiveButton : MonoBehaviour
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
     private string m_unpressedAudio = "BUTTON_UNPRESS";
+    [SerializeField]
+    private float m_resetDelay = -1;
 
     private Transform m_unpressedLocation;
 
@@ -79,6 +81,7 @@ public class PerspectiveButton : MonoBehaviour
         }
 
         m_isMoving = true;
+        collider.enabled = false;
 
         m_tweenArgs["position"] = m_pressedLocation;
 
@@ -88,6 +91,7 @@ public class PerspectiveButton : MonoBehaviour
 
         yield return new WaitForSeconds(m_tweenDuration);
 
+        collider.enabled = true;
         m_isMoving = false;
     }
 
@@ -97,7 +101,8 @@ public class PerspectiveButton : MonoBehaviour
         {
             yield return null;
         }
-        
+
+        collider.enabled = false;
         m_isMoving = true;
 
         m_tweenArgs["position"] = m_unpressedLocation;
@@ -119,12 +124,41 @@ public class PerspectiveButton : MonoBehaviour
         WingroveAudio.WingroveRoot.Instance.PostEvent(m_unpressedAudio);
         
         yield return new WaitForSeconds(m_tweenDuration);
-        
+
+        collider.enabled = true;
         m_isMoving = false;
     }
 
     void OnGUI()
     {
         GUILayout.Label("isMoving: " + m_isMoving);
+    }
+
+    public void Reset()
+    {
+        foreach (UISprite sprite in m_sprites)
+        {
+            string spriteName = sprite.spriteName.Substring(0, sprite.spriteName.Length - 1);
+            spriteName += "a";
+            sprite.spriteName = spriteName;
+        }
+        
+        foreach (SimpleSpriteAnim spriteAnim in m_spriteAnims)
+        {
+            spriteAnim.PlayAnimation("OFF");
+        }
+    }
+
+    IEnumerator AutoReset()
+    {
+        if (m_resetDelay > 0)
+        {
+            yield return new WaitForSeconds(m_resetDelay);
+            Reset();
+        } 
+        else
+        {
+            yield break;
+        }
     }
 }

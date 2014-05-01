@@ -30,19 +30,6 @@ public class SplineFollower : MonoBehaviour
             CurrTime += Time.deltaTime * m_speedModifier;
             transform.position = Path.GetPositionOnSpline(CurrTime / TotalTime);
             transform.right = -Path.GetTangentToSpline(CurrTime / TotalTime);
-
-            /*
-            Vector3 rot = transform.right;
-            rot.x += m_RotationModifier.x;
-            rot.y += m_RotationModifier.y;
-            rot.z += m_RotationModifier.z;
-            transform.right = rot;
-
-            if(!Mathf.Approximately(transform.rotation.x, 0) || !Mathf.Approximately(transform.rotation.y, 0))
-            {
-                Debug.LogError("ROTATION_X - Y: " + transform.rotation.x + " - " + transform.rotation.y);
-            }
-            */
             
             if(CurrTime > TotalTime)
             {

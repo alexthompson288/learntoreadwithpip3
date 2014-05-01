@@ -66,6 +66,13 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         float buttonTweenDuration = button != null ? button.tweenDuration : 0.5f;
 
         StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu, buttonTweenDuration + 0.4f));
+        StartCoroutine(ResetChooseNumPlayersButton(button, buttonTweenDuration + 0.4f + m_cameraTweenDuration));
+    }
+
+    IEnumerator ResetChooseNumPlayersButton(PerspectiveButton button, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        button.Reset();
     }
 
     void OnChooseColor(ClickEvent click)
