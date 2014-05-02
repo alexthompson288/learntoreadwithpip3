@@ -74,6 +74,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
             }
             
             m_currentData = DataHelpers.FindTargetData(m_dataPool, m_dataType);
+
+            m_pictureDisplay.On(m_currentData);
             
             InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
             

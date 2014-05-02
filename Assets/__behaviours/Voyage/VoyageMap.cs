@@ -45,6 +45,7 @@ public class VoyageMap : MonoBehaviour
         string dataType = m_moduleData ["modulereward"].ToString();
         Debug.Log("module dataType: " + dataType);
 
+
         for (int i = 0; i < 16; ++i)
         {
             GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
@@ -53,6 +54,15 @@ public class VoyageMap : MonoBehaviour
             int sessionNum = System.Convert.ToInt32(sessionNumString);
             newSessionButton.GetComponent<VoyageSessionButton>().SetUp(m_moduleColor,  sessionNum, dataType);
         }
+
+        /*
+        DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + (int)m_moduleColor + " ORDER BY number");
+        foreach (DataRow session in sessionsTable.Rows)
+        {
+            GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
+            newSessionButton.GetComponent<VoyageSessionButton>().SetUp(session, m_moduleColor, dataType);
+        }
+        */
     }
 
     void Awake()
