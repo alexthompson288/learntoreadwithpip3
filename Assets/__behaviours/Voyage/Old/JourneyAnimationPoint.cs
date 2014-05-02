@@ -46,9 +46,9 @@ public class JourneyAnimationPoint : MonoBehaviour
 					Debug.Log("Playing " + m_videoName + ".mp4");
 					Handheld.PlayFullScreenMovie(m_videoName + ".mp4", Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
 #else
-                    VideoCoordinator.SetVideoName(m_videoName);
-                    Game.SetSession(Game.Session.Single);
-                    TransitionScreen.Instance.ChangeLevel("NewVideo", true);
+                    //VideoCoordinator.SetVideoName(m_videoName);
+                    //Game.SetSession(Game.Session.Single);
+                    //TransitionScreen.Instance.ChangeLevel("NewVideo", true);
 #endif
 				}
 			}

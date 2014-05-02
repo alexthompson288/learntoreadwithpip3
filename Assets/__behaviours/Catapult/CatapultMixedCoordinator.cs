@@ -23,6 +23,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private bool m_areBallsSingleUse;
     [SerializeField]
     private bool m_isAnswerAlwaysCorrect;
+    [SerializeField]
+    private PictureDisplay m_pictureDisplay;
     
     int m_score = 0;
     
