@@ -139,18 +139,164 @@ public class BuyManager : Singleton<BuyManager>
     [SerializeField]
     public string m_androidPublicKey;
 
-#if UNITY_ANDROID
 
+#if UNITY_IPHONE
+    IEnumerator Start()
+    {
+        if(m_logProductRequests)
+            Debug.Log("PRODUCTLIST: Waiting for db");
+        
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+        StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
+
+
+        if(m_logProductRequests)
+            Debug.Log("PRODUCTLIST: Building");
+
+        string[] productIdentifiers = FindAllProductIdentifiers();
+
+
+        if(m_logProductRequests)
+            Debug.Log("PRODUCTLIST: Requesting");
+
+        StoreKitBinding.requestProductData(productIdentifiers);
+        
+        while(!m_productListResolved)
+        {
+            yield return null;
+        }
+        
+        StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+        StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
+        
+        if(m_logProductRequests)
+            Debug.Log("PRODUCTLIST: Finished");
+    }
+
+    void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
+    {
+        Debug.Log("PRODUCTLIST: Received " + productList.Count);
+        foreach(StoreKitProduct product in productList)
+        {
+            Debug.Log(product.productIdentifier);
+        }
+        
+        m_productListResolved = true;
+    }
+    
+    void StoreKitManager_productListFailedEvent(string s)
+    {
+        Debug.Log("PRODUCTLIST: Failed");
+        Debug.Log("Failed Message: " + s);
+        
+        m_productListResolved = true;
+    }
+
+	IEnumerator AttemptPurchase()
+	{
+		Debug.Log("BuyManager.AttemptPurchase()");
+		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
+		
+		Debug.Log("Attempting purchase on " + m_productIdentifier);
+		m_purchaseIsResolved = false;
+		StoreKitBinding.purchaseProduct(m_productIdentifier, 1);
+		
+        NGUIHelpers.EnableUICams(false);
+		
+		float pcTimeOut = 0;
+		while (!m_purchaseIsResolved)
+		{
+			pcTimeOut += Time.deltaTime;
+			#if UNITY_EDITOR
+			if (pcTimeOut > 3.0f)
+			{
+				Debug.Log("PURCHASE TIMED OUT");
+				UnlockOnTimeOut();
+				m_purchaseIsResolved = true;
+			}
+			#endif
+			yield return null;
+		}
+		
+        NGUIHelpers.EnableUICams(false);
+
+        RefreshAll();
+
+        // TODO: Call RefreshBuyButton on BuyCoordinator
+		
+		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
+	}
+
+    void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
+    {
+        Debug.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
+        
+        UnlockProduct(obj.productIdentifier);
+        
+        m_purchaseIsResolved = true;
+    }
+
+	void StoreKitManager_purchaseCancelledEvent(string obj)
+	{
+		Debug.Log("PURCHASE CANCELLED - " + m_productIdentifier);
+		Debug.Log("Cancelled Message: " + obj);
+		m_purchaseIsResolved = true;
+	}
+
+    public IEnumerator RestorePurchases(float restoreTime)
+    {
+        Debug.Log("RestorePurchases - Opening processes");
+        
+        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
+        StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        
+        NGUIHelpers.EnableUICams(false);
+        
+        // Restore
+        Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
+        StoreKitBinding.restoreCompletedTransactions();
+        
+        Debug.Log("RestorePurchases - Waiting for " + restoreTime);
+        yield return new WaitForSeconds(restoreTime);
+        
+        Debug.Log("RestorePurchases - Closing processes");
+        
+        NGUIHelpers.EnableUICams(false);
+        
+        RefreshBuyAllButtons();
+        RefreshBooks();
+        RefreshMaps();
+        RefreshGames();
+        
+        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
+        StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+        StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
+    }
+
+    void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
+    {
+        Debug.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
+        
+        UnlockProduct(obj.productIdentifier);
+    }
+#else
     IEnumerator Start()
     {
         yield break;
     }
-
+    
     IEnumerator AttemptPurchase()
     {
         yield break;
     }
-
+    
     public IEnumerator RestorePurchases(float restoreTime)
     {
         yield break;
@@ -321,154 +467,6 @@ public class BuyManager : Singleton<BuyManager>
         }
     }
     */
-#elif UNITY_IPHONE
- 
-    IEnumerator Start()
-    {
-        if(m_logProductRequests)
-            Debug.Log("PRODUCTLIST: Waiting for db");
-        
-        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-        StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-        StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
-
-
-        if(m_logProductRequests)
-            Debug.Log("PRODUCTLIST: Building");
-
-        string[] productIdentifiers = FindAllProductIdentifiers();
-
-
-        if(m_logProductRequests)
-            Debug.Log("PRODUCTLIST: Requesting");
-
-        StoreKitBinding.requestProductData(productIdentifiers);
-        
-        while(!m_productListResolved)
-        {
-            yield return null;
-        }
-        
-        StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-        StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
-        
-        if(m_logProductRequests)
-            Debug.Log("PRODUCTLIST: Finished");
-    }
-
-    void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
-    {
-        Debug.Log("PRODUCTLIST: Received " + productList.Count);
-        foreach(StoreKitProduct product in productList)
-        {
-            Debug.Log(product.productIdentifier);
-        }
-        
-        m_productListResolved = true;
-    }
-    
-    void StoreKitManager_productListFailedEvent(string s)
-    {
-        Debug.Log("PRODUCTLIST: Failed");
-        Debug.Log("Failed Message: " + s);
-        
-        m_productListResolved = true;
-    }
-
-	IEnumerator AttemptPurchase()
-	{
-		Debug.Log("BuyManager.AttemptPurchase()");
-		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-		
-		Debug.Log("Attempting purchase on " + m_productIdentifier);
-		m_purchaseIsResolved = false;
-		StoreKitBinding.purchaseProduct(m_productIdentifier, 1);
-		
-        NGUIHelpers.EnableUICams(false);
-		
-		float pcTimeOut = 0;
-		while (!m_purchaseIsResolved)
-		{
-			pcTimeOut += Time.deltaTime;
-			#if UNITY_EDITOR
-			if (pcTimeOut > 3.0f)
-			{
-				Debug.Log("PURCHASE TIMED OUT");
-				UnlockOnTimeOut();
-				m_purchaseIsResolved = true;
-			}
-			#endif
-			yield return null;
-		}
-		
-        NGUIHelpers.EnableUICams(false);
-
-        RefreshAll();
-
-        // TODO: Call RefreshBuyButton on BuyCoordinator
-		
-		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
-	}
-
-    void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
-    {
-        Debug.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
-        
-        UnlockProduct(obj.productIdentifier);
-        
-        m_purchaseIsResolved = true;
-    }
-
-	void StoreKitManager_purchaseCancelledEvent(string obj)
-	{
-		Debug.Log("PURCHASE CANCELLED - " + m_productIdentifier);
-		Debug.Log("Cancelled Message: " + obj);
-		m_purchaseIsResolved = true;
-	}
-
-    public IEnumerator RestorePurchases(float restoreTime)
-    {
-        Debug.Log("RestorePurchases - Opening processes");
-        
-        StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-        StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        
-        NGUIHelpers.EnableUICams(false);
-        
-        // Restore
-        Debug.Log("RestorePurchases - Calling restoreCompletedTransactions");
-        StoreKitBinding.restoreCompletedTransactions();
-        
-        Debug.Log("RestorePurchases - Waiting for " + restoreTime);
-        yield return new WaitForSeconds(restoreTime);
-        
-        Debug.Log("RestorePurchases - Closing processes");
-        
-        NGUIHelpers.EnableUICams(false);
-        
-        RefreshBuyAllButtons();
-        RefreshBooks();
-        RefreshMaps();
-        RefreshGames();
-        
-        StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-        StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-    }
-
-    void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
-    {
-        Debug.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
-        
-        UnlockProduct(obj.productIdentifier);
-    }
-
 #endif
 
 #if UNITY_EDITOR
