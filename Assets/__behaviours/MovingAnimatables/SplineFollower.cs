@@ -86,6 +86,7 @@ public class SplineFollower : MonoBehaviour
                 if(m_destroyOnComplete)
                 {
                     Destroy(gameObject);
+                    Destroy(m_path.gameObject);
                 }
                 else
                 {

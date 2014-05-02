@@ -26,17 +26,14 @@ public class SequencedRotator : MonoBehaviour
         [SerializeField]
         public iTween.EaseType m_easeType = iTween.EaseType.linear;
         [SerializeField]
-        public float m_postTweenDelay;
+        public Vector2 m_postTweenDelayRange;
     }
     
     // Use this for initialization
-    IEnumerator Start () 
+    void Start () 
     {
         m_tweenArgs.Add("oncomplete", "OnComplete");
         m_tweenArgs.Add("oncompletetarget", gameObject);
-
-        
-        yield return null;
         
         if (m_index < m_sequences.Length)
         {
@@ -53,7 +50,7 @@ public class SequencedRotator : MonoBehaviour
     
     IEnumerator OnCompleteCo()
     {
-        float delay = m_sequences[m_index].m_postTweenDelay;
+        float delay = Random.Range(m_sequences[m_index].m_postTweenDelayRange.x, m_sequences[m_index].m_postTweenDelayRange.y);
         
         yield return new WaitForSeconds(delay);
         

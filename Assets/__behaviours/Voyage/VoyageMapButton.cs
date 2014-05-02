@@ -173,6 +173,12 @@ public class VoyageMapButton : MonoBehaviour
 	void OnClick()
     {
         Debug.Log("Clicked map: " + m_color + " - " + (int)m_color);
+        StartCoroutine(OnClickCo());
+    }
+
+    IEnumerator OnClickCo()
+    {
+        yield return new WaitForSeconds(GetComponent<PerspectiveButton>().tweenDuration + 0.3f);
         VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
     }
 }
