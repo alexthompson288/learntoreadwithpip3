@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Wingrove;
 
 public class VoyageCoordinator : Singleton<VoyageCoordinator> 
@@ -43,33 +44,84 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     }
 
     VoyageMap m_currentModuleMap = null;
+    public ColorInfo.PipColor currentColor
+    {
+        get
+        {
+            return m_currentModuleMap != null ? m_currentModuleMap.color : ColorInfo.PipColor.Pink;
+        }
+    }
+
+    int m_sessionId;
+    public void SetSessionId(int sessionId)
+    {
+        Debug.Log("SetSessionId: " + sessionId);
+        m_sessionId = sessionId;
+    }
+
+    int m_sectionId;
+    public void SetSectionId(int sectionId)
+    {
+        m_sectionId = sectionId;
+    }
 
     IEnumerator Start()
     {
-        Debug.Log("Pink: " + (int)ColorInfo.PipColor.Pink);
+        System.Array.Sort(m_moduleMapPrefabs, CompareModuleMapColor);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+        // When debugging in editor, we don't always want to spawn a map
         bool spawnMap = true;
 
 #if UNITY_EDITOR
         spawnMap = !m_debugNoSpawn;
 #endif
 
+        // spawnMap is always true outside the editor
         if (spawnMap)
         {
+            bool hasSpawnedModuleMap = false;
+
             if (VoyageInfo.Instance.hasBookmark)
             {
                 Debug.Log("Instantiate module map");
-                m_movingCamera.transform.position = m_moduleMapLocation.position;
-                InstantiateModuleMap(VoyageInfo.Instance.currentModule);
 
-                if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionNum))
+                int moduleId = VoyageInfo.Instance.currentModuleId;
+
+                for(int i = 0; i < m_moduleMapPrefabs.Length; ++i)
                 {
-                    VoyageSessionBoard.Instance.On(m_currentModuleMap.moduleColor, VoyageInfo.Instance.currentSessionNum);
+                    if(m_moduleMapPrefabs[i].GetComponent<VoyageMap>().moduleId == moduleId)
+                    {
+                        m_movingCamera.transform.position = m_moduleMapLocation.position;
+                        InstantiateModuleMap(i);
+                        hasSpawnedModuleMap = true;
+
+                        // If we have not completed the current session then call the SessionBoard
+                        if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionId))
+                        {
+                            Debug.Log("Session Not Complete");
+
+                            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id=" + VoyageInfo.Instance.currentSessionId);
+                            if(dt.Rows.Count > 0)
+                            {
+                                VoyageSessionBoard.Instance.On(dt.Rows[0]);
+                            }
+                            else
+                            {
+                                Debug.LogError("Could not find sessions with id: " + VoyageInfo.Instance.currentSessionId);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Session Complete");
+                        }
+                    }
                 }
             } 
-            else
+
+            // If we have not spawned a module map then spawn the world map instead
+            if(!hasSpawnedModuleMap)
             {
                 Debug.Log("Instantiate world map");
                 InstantiateWorldMap();
@@ -77,7 +129,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
             VoyageInfo.Instance.DestroyBookmark();
         }
-
     }
 
     void InstantiateWorldMap()
@@ -109,15 +160,16 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-    void InstantiateModuleMap(int moduleNumber)
+    void InstantiateModuleMap(int mapIndex)
     {
-        GameObject mapPrefab = FindModuleMap(moduleNumber);
+        GameObject mapPrefab = FindModuleMapPrefab(mapIndex);
 
         if (mapPrefab != null)
         {
+            // If we already have a current module map, we decide whether to spawn the new map to the left or right of the current one
             if (m_currentModuleMap != null)
             {
-                int modifier = moduleNumber < (int)(m_currentModuleMap.moduleColor) ? -1 : 1;
+                int modifier = mapIndex < (int)(m_currentModuleMap.color) ? -1 : 1;
                 
                 Vector3 locationParentPos = m_mapLocationParent.localPosition;
                 locationParentPos.x += (m_horizontalMapDistance * modifier);
@@ -125,22 +177,19 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 m_mapLocationParent.localPosition = locationParentPos;
             }
 
-
-            //GameObject newMapPrefab = FindModuleMap(
+            // Spawn the newMap
             GameObject newMap = SpawningHelpers.InstantiateUnderWithIdentityTransforms(mapPrefab, m_moduleMapParent);
             newMap.transform.position = m_moduleMapLocation.position;
             
             m_currentModuleMap = newMap.GetComponent<VoyageMap>() as VoyageMap;
-            
-            m_currentModuleMap.SetUp();
         }
     }
 
-    public void MoveToModuleMap(int moduleNumber)
+    public void MoveToModuleMap(int mapIndex)
     {
-        if (FindModuleMap(moduleNumber) != null)
+        if (FindModuleMapPrefab(mapIndex) != null)
         {
-            InstantiateModuleMap(moduleNumber);
+            InstantiateModuleMap(mapIndex);
             StartCoroutine(MoveToModuleMapCo());
         }
     }
@@ -166,19 +215,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-    public void CreateBookmark(int sectionId)
-    {
-        EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.moduleColor));
-        VoyageInfo.Instance.CreateBookmark((int)(m_currentModuleMap.moduleColor), VoyageSessionBoard.Instance.sessionNum, sectionId);
-    }
-
-    GameObject FindModuleMap(int programmoduleId)
+    GameObject FindModuleMapPrefab(int mapIndex)
     {
         GameObject correctMap = null;
 
         foreach (GameObject map in m_moduleMapPrefabs)
         {
-            if((int)(map.GetComponent<VoyageMap>().moduleColor) == programmoduleId)
+            if((int)(map.GetComponent<VoyageMap>().color) == mapIndex)
             {
                 correctMap = map;
                 break;
@@ -190,15 +233,86 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     void TweenCamera(Vector3 newPosition)
     {
-        /*
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("position", newPosition);
-        tweenArgs.Add("time", m_cameraTweenDuration);
-        tweenArgs.Add("easetype", iTween.EaseType.linear);
-
-        iTween.MoveTo(m_movingCamera, tweenArgs);
-        */
-
         iTween.MoveTo(m_movingCamera, newPosition, m_cameraTweenDuration * 2);
+    }
+
+    public void StartGame(DataRow section)
+    {
+        m_sectionId = System.Convert.ToInt32(section ["id"]);
+
+        EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
+        VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, m_sectionId);
+
+        DataRow game = DataHelpers.FindGameForSection(section);
+
+        if (game != null)
+        {
+            string dbGameName = game["name"].ToString();
+            string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
+            
+            // Set scenes
+            if(VoyageInfo.Instance.NearlyCompletedSession(m_sectionId) || VoyageInfo.Instance.HasCompletedSession(m_sectionId))
+            {
+                Debug.Log("Nearly Complete");
+                GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
+            }
+            else
+            {
+                Debug.Log("Not Complete");
+                GameManager.Instance.SetScenes(sceneName);
+            }
+            
+            
+            // Set return scene
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+            
+            // TODO: Set data type
+            
+            // Set data
+            GameManager.Instance.ClearAllData();
+            
+            
+            // Phonemes
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                GameManager.Instance.AddData("phonemes", dt.Rows);
+                GameManager.Instance.AddTargetData("phonemes", dt.Rows.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
+            }
+            
+            // Words/Keywords
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
+                GameManager.Instance.AddData("words", words);
+                GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+                
+                List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+                GameManager.Instance.AddData("keywords", keywords);
+                GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+            }
+            
+            GameManager.Instance.StartGames();
+        }
+    }
+
+    int CompareModuleMapColor(GameObject a, GameObject b)
+    {
+        VoyageMap mapA = a.GetComponent<VoyageMap>() as VoyageMap;
+        VoyageMap mapB = b.GetComponent<VoyageMap>() as VoyageMap;
+
+        if (mapA.color < mapB.color)
+        {
+            return -1;
+        } 
+        else if (mapA.color > mapB.color)
+        {
+            return 1;
+        } 
+        else
+        {
+            return 0;
+        }
     }
 }

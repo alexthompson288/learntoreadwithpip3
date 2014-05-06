@@ -106,11 +106,8 @@ public class TweenOnOffBehaviour : MonoBehaviour
     
     public void On(bool enableColliders = true)
     {
-        Debug.Log("ON");
-
         if (!m_isOn)
         {
-            Debug.Log("TWEENING");
             StartCoroutine(PostAudioOn());
             
             List<GoTween> existing = Go.tweensWithTarget(transform);

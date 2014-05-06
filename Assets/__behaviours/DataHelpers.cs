@@ -890,4 +890,36 @@ public static class DataHelpers
 
         return hasPictureDataPool;
     }
+
+    public static DataRow GetModule(ColorInfo.PipColor pipColor)
+    {
+        DataRow module = null;
+        
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery(System.String.Format("select * from programmodules WHERE colour='{0}' AND programmename='{1}'", 
+                                                                                               ColorInfo.GetColorString(pipColor), GameManager.currentProgramme));
+
+        if (dt.Rows.Count > 0)
+        {
+            module = dt.Rows[0];
+        }
+
+        if (module == null)
+        {
+            Debug.LogError(String.Format("Could not find module for programmename {0} - colour {1}", GameManager.currentProgramme, pipColor));
+        }
+        
+        return module;
+    }
+    
+    public static int GetModuleId(ColorInfo.PipColor pipColor)
+    {
+        DataRow module = GetModule(pipColor);
+
+        if (module == null)
+        {
+            Debug.LogError(String.Format("Could not find module for programmename {0} - colour {1}", GameManager.currentProgramme, pipColor));
+        }
+        
+        return module != null ? System.Convert.ToInt32(module["id"]) : -1;
+    }
 }

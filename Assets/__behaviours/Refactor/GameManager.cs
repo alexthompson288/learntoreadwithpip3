@@ -5,7 +5,20 @@ using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
 {
-    // TODO: Move these methods back to the middle of the class. I put them at the top because they are the most complex and the last thing written.
+    string m_currentProgramme = "Reading1";
+    public static string currentProgramme
+    {
+        get
+        {
+            return Instance.m_currentProgramme;
+        }
+    }
+    
+    public void SetCurrentProgramme(string newProgramme)
+    {
+        m_currentProgramme = newProgramme;
+    }
+
     void Start()
     {
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;

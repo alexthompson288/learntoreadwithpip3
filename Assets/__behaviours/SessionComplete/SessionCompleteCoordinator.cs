@@ -36,30 +36,30 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        int sessionNum = VoyageInfo.Instance.hasBookmark ? VoyageInfo.Instance.currentSessionNum : -1;
-
-        for (int i = 0; i < m_spriteNames.Length; ++i)
-        {
-            GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionCompleteButtonPrefab, m_grid.transform);
-            newButton.GetComponent<ClickEvent>().OnSingleClick += OnButtonClick;
-            newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
-            newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
-
-            if(VoyageInfo.Instance.GetSessionBackground(sessionNum) == m_spriteNames[i])
-            {
-                m_currentThrobBehaviour = newButton.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
-                m_currentThrobBehaviour.On();
-
-                m_collectableBackground.spriteName = m_spriteNames[i];
-            }
-        }
-
         bool hasSetLabel = false;
         bool hasSetIcon = false;
 
         if (VoyageInfo.Instance.hasBookmark)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + VoyageInfo.Instance.currentModule);
+            int sessionId = VoyageInfo.Instance.currentSessionId;
+            
+            for (int i = 0; i < m_spriteNames.Length; ++i)
+            {
+                GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionCompleteButtonPrefab, m_grid.transform);
+                newButton.GetComponent<ClickEvent>().OnSingleClick += OnButtonClick;
+                newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
+                newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
+                
+                if(VoyageInfo.Instance.GetSessionBackground(sessionId) == m_spriteNames[i])
+                {
+                    m_currentThrobBehaviour = newButton.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
+                    m_currentThrobBehaviour.On();
+                    
+                    m_collectableBackground.spriteName = m_spriteNames[i];
+                }
+            }
+
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + VoyageInfo.Instance.currentModuleId);
 
             if(dt.Rows.Count > 0 && dt.Rows[0]["modulereward"] != null)
             {
@@ -67,23 +67,14 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
                 if(moduleReward == "Phonemes")
                 {
-                    dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE number=" + VoyageInfo.Instance.currentSessionNum);
+                    dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
 
-                    Debug.Log("sessionNum: " + VoyageInfo.Instance.currentSessionNum);
-
-                    if(dt.Rows.Count > 0)
+                    foreach (DataRow phoneme in dt.Rows)
                     {
-                        int sessionId = System.Convert.ToInt32(dt.Rows[0]["id"]);
-
-                        dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
-
-                        foreach (DataRow phoneme in dt.Rows)
+                        if (phoneme["is_target_phoneme"] != null && phoneme ["is_target_phoneme"].ToString() == "t")
                         {
-                            if (phoneme["is_target_phoneme"] != null && phoneme ["is_target_phoneme"].ToString() == "t")
-                            {
-                                m_collectableLabel.text = phoneme["phoneme"].ToString();
-                                hasSetLabel = true;
-                            }
+                            m_collectableLabel.text = phoneme["phoneme"].ToString();
+                            hasSetLabel = true;
                         }
                     }
                 }
@@ -156,7 +147,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
 
-        //GameManager.Instance.CompleteGame();
+        GameManager.Instance.CompleteGame();
     }
 
     void OnButtonClick(ClickEvent click)
@@ -173,8 +164,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         if (VoyageInfo.Instance.hasBookmark)
         {
-            Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionNum + " - " + click.GetString());
-            VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionNum, click.GetString());
+            Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
+            VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
         }
     }
 }

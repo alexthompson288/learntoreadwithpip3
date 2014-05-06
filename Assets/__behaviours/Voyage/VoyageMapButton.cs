@@ -12,9 +12,13 @@ public class VoyageMapButton : MonoBehaviour
     private LineRenderer m_completeLine;
     [SerializeField]
     private LineRenderer m_incompleteLine;
+    [SerializeField]
+    private ClickEvent m_click;
 
     void Start()
     {
+        m_click.OnSingleClick += OnSingleClick;
+
         if (m_spline != null)
         {
             Color opaqueCol = ColorInfo.GetColor(m_color);
@@ -80,6 +84,18 @@ public class VoyageMapButton : MonoBehaviour
                 }
             }
         }
+    }
+
+    void OnSingleClick(ClickEvent click)
+    {
+        Debug.Log("Clicked map: " + m_color + " " + (int)m_color);
+        StartCoroutine(OnSingleClickCo());
+    }
+    
+    IEnumerator OnSingleClickCo()
+    {
+        yield return new WaitForSeconds(GetComponentInChildren<PerspectiveButton>().tweenDuration + 0.3f);
+        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
     }
 
     /*
@@ -169,16 +185,4 @@ public class VoyageMapButton : MonoBehaviour
         }
     }
     */
-
-	void OnClick()
-    {
-        Debug.Log("Clicked map: " + m_color + " - " + (int)m_color);
-        StartCoroutine(OnClickCo());
-    }
-
-    IEnumerator OnClickCo()
-    {
-        yield return new WaitForSeconds(GetComponent<PerspectiveButton>().tweenDuration + 0.3f);
-        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
-    }
 }

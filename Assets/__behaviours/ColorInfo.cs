@@ -18,18 +18,17 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public enum PipColor
     {
-        Pink = 1,
-        Red = 2,
-        Yellow = 3,
-        Blue = 4,
-        Green = 5,
-        Orange = 6
+        Pink,
+        Red,
+        Yellow,
+        Blue,
+        Green,
+        Orange
     }
 
     public class NoColor : System.Exception {}
 
     // Methods are static to reduce typing required in other classes
-
     public static Color GetColor(string color)
     {
         switch (color)
