@@ -44,7 +44,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
         m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-        
+
+        //m_pictureDisplay.SetDataType(m_dataType);
+        Debug.Log("Coordinator dataType: " + m_dataType);
+        m_pictureDisplay.SetDataType(Game.GetDataTypeString(m_dataType));
+
         switch (m_dataType)
         {
         case Game.Data.Phonemes:
@@ -57,6 +61,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
             m_dataPool = DataHelpers.GetKeywords();
             break;
         }
+
+        m_dataPool = DataHelpers.OnlyPictureData(Game.GetDataTypeString(m_dataType), m_dataPool);
         
         if (m_dataPool.Count > 0)
         {

@@ -86,4 +86,31 @@ public static class Game
             return attributeName;
         }
     }
+
+    public static string GetDataTypeString(Data dataType)
+    {
+        string dataString = "";
+
+        Debug.Log("dataType: " + dataType);
+
+        switch(dataType)
+        {
+            case Data.Keywords:
+            case Data.Words:
+                Debug.Log("Setting dataString to words");
+                dataString = "words";
+                break;
+            case Data.Phonemes:
+                Debug.Log("Setting dataString to phonemes");
+                dataString = "phonemes";
+                break;
+            default:
+                break;
+        }
+
+
+        Debug.Log("dataString: " + dataString);
+
+        return dataString;
+    }
 }
