@@ -26,63 +26,68 @@ public class LearnPhonemeCoordinator : Singleton<LearnPhonemeCoordinator>
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		int sectionId = SessionManager.Instance.GetCurrentSectionId();
-		//int sectionId = 1446;
+        bool hasFoundWords = false;
 
-		Debug.Log("sectionId: " + sectionId);
+        if (VoyageInfo.Instance.hasBookmark)
+        {
+            int sectionId = VoyageInfo.Instance.currentSectionId;
 
-		DataTable dtp = GameDataBridge.Instance.GetDatabase().
-			ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
+            DataTable dtp = GameDataBridge.Instance.GetDatabase().
+    			ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
 
-		AudioClip phonemeAudio = null;
+            AudioClip phonemeAudio = null;
 
-		if(dtp.Rows.Count > 0)
-		{
-			DataRow phonemeData = dtp.Rows[0];
+            if (dtp.Rows.Count > 0)
+            {
+                DataRow phonemeData = dtp.Rows [0];
 
-			m_graphemeLabel.text = phonemeData["phoneme"].ToString();
+                m_graphemeLabel.text = phonemeData ["phoneme"].ToString();
 
-			string imageFilename =
-				string.Format("Images/mnemonics_images_png_250/{0}_{1}",
-				              phonemeData["phoneme"],
-				              phonemeData["mneumonic"].ToString().Replace(" ", "_"));
+                string imageFilename =
+    				string.Format("Images/mnemonics_images_png_250/{0}_{1}",
+    				              phonemeData ["phoneme"],
+    				              phonemeData ["mneumonic"].ToString().Replace(" ", "_"));
 
-			Texture2D mnemonicTexture = (Texture2D)Resources.Load(imageFilename);
-			if(mnemonicTexture != null)
-			{
-				m_mnemonic.mainTexture = mnemonicTexture;
-			}
-			
-			phonemeAudio = AudioBankManager.Instance.GetAudioClip(phonemeData["grapheme"].ToString());
-			AudioClip mnemonicAudio = LoaderHelpers.LoadMnemonic(phonemeData);
+                Texture2D mnemonicTexture = (Texture2D)Resources.Load(imageFilename);
+                if (mnemonicTexture != null)
+                {
+                    m_mnemonic.mainTexture = mnemonicTexture;
+                }
+    			
+                phonemeAudio = AudioBankManager.Instance.GetAudioClip(phonemeData ["grapheme"].ToString());
+                AudioClip mnemonicAudio = LoaderHelpers.LoadMnemonic(phonemeData);
 
-			m_learnPhonemeLetter.SetUp(phonemeAudio, mnemonicAudio);
+                m_learnPhonemeLetter.SetUp(phonemeAudio, mnemonicAudio);
 
-			m_letterButton.SetUp(dtp.Rows[0], false);
-			m_letterButton.SetUseBlocker(false);
-			m_letterButton.SetTweenPosition(false);
-			//m_letterButton.SetMethods( m_letterButton.PlayPhonemeAudio , new LetterButton.MyMethod[] { m_letterButton.PlayMnemonicAudio, m_letterButton.TweenLarge } );
-			m_letterButton.SetMethods( m_letterButton.PlayPhonemeAudio , m_letterButton.PlayMnemonicAudio );
-		}
+                m_letterButton.SetUp(dtp.Rows [0], false);
+                m_letterButton.SetUseBlocker(false);
+                m_letterButton.SetTweenPosition(false);
+                //m_letterButton.SetMethods( m_letterButton.PlayPhonemeAudio , new LetterButton.MyMethod[] { m_letterButton.PlayMnemonicAudio, m_letterButton.TweenLarge } );
+                m_letterButton.SetMethods(m_letterButton.PlayPhonemeAudio, m_letterButton.PlayMnemonicAudio);
+            }
 
-		DataTable dtw = DataHelpers.GetSectionWords(sectionId);
-		List<DataRow> wordData = new List<DataRow>();
+            DataTable dtw = DataHelpers.GetSectionWords(sectionId);
+            List<DataRow> wordData = new List<DataRow>();
 
-		if(dtw.Rows.Count > 0)
-		{
-			wordData.AddRange(dtw.Rows);
-			for(int i = 0; i < wordData.Count && i < m_locators.Length; ++i)
-			{
-				Debug.Log(wordData[i]["word"].ToString());
-				GameObject newWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, m_locators[i]);
-				m_words.Add(newWord.GetComponent<LearnPhonemeWord>());
-				newWord.GetComponent<LearnPhonemeWord>().SetUp(wordData[i], phonemeAudio);
-			}
-		}
-		else
-		{
-			GameManager.Instance.CompleteGame();
-		}
+            if (dtw.Rows.Count > 0)
+            {
+                hasFoundWords = true;
+
+                wordData.AddRange(dtw.Rows);
+                for (int i = 0; i < wordData.Count && i < m_locators.Length; ++i)
+                {
+                    Debug.Log(wordData [i] ["word"].ToString());
+                    GameObject newWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, m_locators [i]);
+                    m_words.Add(newWord.GetComponent<LearnPhonemeWord>());
+                    newWord.GetComponent<LearnPhonemeWord>().SetUp(wordData [i], phonemeAudio);
+                }
+            } 
+        }
+
+        if(!hasFoundWords)
+        {
+            GameManager.Instance.CompleteGame();
+        }
 	}
 
 	public void CheckForEnd()

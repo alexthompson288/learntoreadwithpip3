@@ -36,15 +36,6 @@ public class ScoreScreen : MonoBehaviour {
 		SessionInformation.Instance.SetHasWonRecently(true);
 		SessionInformation.Instance.SetHasEverWonCoin(true);
 
-		//TTInformation.Instance.SetGoldCoins(TTInformation.Instance.GetGoldCoins() + 1);
-
-		Debug.Log("Just about to increment skill progress");
-		SkillProgressInformation.Instance.IncrementCurrentStarSkillProgress();
-		
-        //yield return new WaitForSeconds(1.0f);
-
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
-
         yield return new WaitForSeconds(1.0f);
 
         if (SessionInformation.Instance.GetNumPlayers() == 2)
