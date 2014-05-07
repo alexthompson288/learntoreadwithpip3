@@ -134,8 +134,6 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 		m_currentEnglishWord = editedWord;
 
-		UserStoriesStats.Instance.OnPipPadCall(editedWord);
-
 		DisplayWord(editedWord, postEvent);
 
 		m_mainHierarchyTransform.gameObject.SetActive(true);

@@ -58,7 +58,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 	// Use this for initialization
     IEnumerator Start() 
     {
-		UserStoriesStats.Instance.ClearPipPadCalls();
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
