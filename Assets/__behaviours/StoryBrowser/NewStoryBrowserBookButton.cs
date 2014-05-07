@@ -13,10 +13,6 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     [SerializeField]
     private GameObject[] m_stars;
     [SerializeField]
-    private GameObject m_buyButton;
-    [SerializeField]
-    private GameObject m_wordsButton;
-    [SerializeField]
     private GameObject m_padlockHierarchy;
 
     [SerializeField]
@@ -55,19 +51,15 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     {
 		m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
 
-		m_buyButton.SetActive(false);
-
         int bookId = Convert.ToInt32(m_storyData["id"]);
         if (BuyInfo.Instance.IsBookBought(bookId))
 		{
             m_padlockHierarchy.SetActive(false);
-            //m_wordsButton.SetActive(true);
             m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
         }
         else
         {
             m_padlockHierarchy.SetActive(true);
-            m_wordsButton.SetActive(false);
             m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 1.0f);
         }
     }
