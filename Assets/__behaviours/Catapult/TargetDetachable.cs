@@ -20,12 +20,9 @@ public class TargetDetachable : MonoBehaviour
 
     Transform m_target;
 
-    public void SetUp(DataRow data)
+    public void SetUp(string labelText)
     {
-        if (data [Game.textAttribute] != null)
-        {
-            m_label.text = data [Game.textAttribute].ToString();
-        }
+        m_label.text = labelText;
     }
 
     public void On(Transform target)

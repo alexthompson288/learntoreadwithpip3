@@ -51,11 +51,14 @@ public class Target : MonoBehaviour
         }
     }
 
-    public void SetData(DataRow data, string dataType)
+    string m_dataType;
+
+    public void SetData(DataRow newData, string dataType)
     {
-        m_data = data;
+        m_data = newData;
+        m_dataType = dataType;
        
-        m_label.text = DataHelpers.GetLabelText(dataType, data);
+        m_label.text = DataHelpers.GetLabelText(m_dataType, m_data);
     }
     
     void OnTriggerEnter(Collider other)
@@ -117,7 +120,7 @@ public class Target : MonoBehaviour
     {
         GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
         
-        newDetachable.GetComponent<TargetDetachable>().SetUp(m_data);
+        newDetachable.GetComponent<TargetDetachable>().SetUp(m_label.text);
 
         return newDetachable;
     }
