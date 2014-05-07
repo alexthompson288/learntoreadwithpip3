@@ -51,12 +51,11 @@ public class Target : MonoBehaviour
         }
     }
 
-    public void SetData(DataRow data, Game.Data dataType)
+    public void SetData(DataRow data, string dataType)
     {
         m_data = data;
-
-        string attributeName = dataType == Game.Data.Phonemes ? "phoneme" : "word";
-        m_label.text = m_data [attributeName].ToString();
+       
+        m_label.text = DataHelpers.GetLabelText(dataType, data);
     }
     
     void OnTriggerEnter(Collider other)

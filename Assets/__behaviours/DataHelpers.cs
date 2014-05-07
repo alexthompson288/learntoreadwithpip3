@@ -20,41 +20,9 @@ public static class DataHelpers
 		}
 	}
 
-    public static DataRow FindTargetData(List<DataRow> dataPool, Game.Data dataType)
+    public static DataRow GetSingleTargetData(string dataType, bool guaranteeData = false)
     {
-        DataRow currentData = null;
-
-        bool isLetterData = (dataType == Game.Data.Phonemes);
-
-        string attribute = isLetterData ? "phoneme" : "word";
-
-        if(Game.session == Game.Session.Premade)
-        {
-            string sessionTargetAttribute = isLetterData ? "is_target_phoneme" : "is_target_word";
-
-            foreach(DataRow letter in dataPool)
-            {
-                if(letter[sessionTargetAttribute] != null && letter[sessionTargetAttribute].ToString() == "t")
-                {
-                    Debug.Log("Found target: " + letter[attribute].ToString());
-                    currentData = letter;
-                    break;
-                }
-            }
-        }
-        else if(Game.session == Game.Session.Custom)
-        {
-            currentData = LessonInfo.Instance.GetTargetData(dataType);
-        }
-        
-        if(currentData == null)
-        {
-            int selectedIndex = UnityEngine.Random.Range(0, dataPool.Count);
-            currentData = dataPool[selectedIndex];
-            Debug.Log("Random target: " + currentData[attribute].ToString());
-        }
-
-        return currentData;
+        return GameManager.Instance.GetSingleTargetData(dataType, guaranteeData);
     }
 
     public static DataTable GetSectionWords(int sectionId = -1)
@@ -284,17 +252,9 @@ public static class DataHelpers
         return dataPool;
     }
     
-    public static bool SetContainsData(DataRow set, string setAttribute, string dataType)
+    public static bool DoesSetContainData(DataRow set, string setAttribute, string dataType)
     {
         string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
-        
-        /*
-        Debug.Log("ids.Length: " + ids.Length);
-        foreach(string id in ids)
-        {
-            Debug.Log(id);
-        }
-        */
         
         return (ids.Length > 0);
     }

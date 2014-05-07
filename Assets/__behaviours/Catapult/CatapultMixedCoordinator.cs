@@ -6,7 +6,7 @@ using Wingrove;
 public class CatapultMixedCoordinator : MonoBehaviour 
 {
     [SerializeField]
-    private Game.Data m_dataType;
+    private string m_dataType;
     [SerializeField]
     private bool m_changeCurrentData;
     [SerializeField]
@@ -45,30 +45,21 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        //m_pictureDisplay.SetDataType(m_dataType);
-        Debug.Log("Coordinator dataType: " + m_dataType);
-        m_pictureDisplay.SetDataType(Game.GetDataTypeString(m_dataType));
-
-        switch (m_dataType)
+        if (System.String.IsNullOrEmpty(m_dataType))
         {
-        case Game.Data.Phonemes:
-            m_dataPool = DataHelpers.GetLetters();
-            break;
-        case Game.Data.Words:
-            m_dataPool = DataHelpers.GetWords();
-            break;
-        case Game.Data.Keywords:
-            m_dataPool = DataHelpers.GetKeywords();
-            break;
+            m_dataType = GameManager.Instance.dataType;
         }
+        
+        m_dataPool = DataHelpers.GetData(m_dataType);
+        m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
 
-        m_dataPool = DataHelpers.OnlyPictureData(Game.GetDataTypeString(m_dataType), m_dataPool);
+        m_pictureDisplay.SetDataType(m_dataType);
         
         if (m_dataPool.Count > 0)
         {
             foreach (DataRow data in m_dataPool)
             {
-                if (m_dataType == Game.Data.Phonemes)
+                if (m_dataType == "phonemes")
                 {
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
@@ -79,7 +70,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 }
             }
             
-            m_currentData = DataHelpers.FindTargetData(m_dataPool, m_dataType);
+            m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
 
             m_pictureDisplay.On(m_currentData);
             

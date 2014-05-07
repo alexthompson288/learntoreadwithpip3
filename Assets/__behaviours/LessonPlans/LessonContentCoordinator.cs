@@ -91,7 +91,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 			int lowestSetNum = -1;
 			for(int i = 0; i < sets.Count; ++i)
 			{
-				if(DataHelpers.SetContainsData(sets[i], m_setAttribute, m_contentAttribute))
+				if(DataHelpers.DoesSetContainData(sets[i], m_setAttribute, m_contentAttribute))
 				{
 					GameObject newSetButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_setButtonPrefab, m_setGrid);
 					newSetButton.GetComponentInChildren<UILabel>().text = String.Format("Set {0}", sets[i]["number"].ToString());
