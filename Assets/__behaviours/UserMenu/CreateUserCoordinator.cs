@@ -18,7 +18,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	
 	string m_imageName;
 
-	ChoosePictureButton m_selectedPictureButton;
+	UserPictureButton m_selectedPictureButton;
 
 	List<GameObject> m_spawnedPictures = new List<GameObject>();
 
@@ -55,7 +55,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 				GameObject newPicture = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_choosePictureButtonPrefab, m_grid.transform);
 				m_spawnedPictures.Add(newPicture);
 
-				newPicture.GetComponent<ChoosePictureButton>().SetUp((Texture2D)texture, m_draggablePanel);
+				newPicture.GetComponent<UserPictureButton>().SetUp((Texture2D)texture, m_draggablePanel);
 			}
 
 			m_grid.Reposition();
@@ -76,7 +76,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 		{
             Debug.Log("Creating imageName: " + m_imageName);
 			UserInfo.Instance.CreateUser(m_inputLabel.text, m_imageName);
-			ChooseUserCoordinator.Instance.CreateUser(m_inputLabel.text, m_imageName);
+			UserMenuCoordinator.Instance.CreateUser(m_inputLabel.text, m_imageName);
 		}
 
 		m_tweenBehaviour.Off();
@@ -95,7 +95,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 		m_spawnedPictures.Clear();
 	}
 
-	public void OnPictureChoose (ChoosePictureButton button)
+	public void OnPictureChoose (UserPictureButton button)
 	{
 		if(m_selectedPictureButton != button)
 		{

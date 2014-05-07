@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ChoosePictureButton : MonoBehaviour 
+public class UserPictureButton : MonoBehaviour 
 {
 	[SerializeField]
 	UITexture m_picture;

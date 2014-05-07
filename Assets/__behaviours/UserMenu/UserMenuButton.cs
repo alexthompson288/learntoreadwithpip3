@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ChooseUserButton : MonoBehaviour 
+public class UserMenuButton : MonoBehaviour 
 {
 	[SerializeField]
 	UILabel m_label;

@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class ChooseUserCoordinator : Singleton<ChooseUserCoordinator> 
+public class UserMenuCoordinator : Singleton<UserMenuCoordinator> 
 {
 	[SerializeField]
-	private GameObject m_ChooseUserButtonPrefab;
+	private GameObject m_UserMenuButtonPrefab;
 	[SerializeField]
 	private UIGrid m_grid;
 	[SerializeField]
@@ -24,8 +24,8 @@ public class ChooseUserCoordinator : Singleton<ChooseUserCoordinator>
 		foreach(KeyValuePair<string, string> kvp in users)
 		{
 			Debug.Log(kvp.Key + " - " + kvp.Value);
-			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_ChooseUserButtonPrefab, m_grid.transform);
-			newButton.GetComponent<ChooseUserButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
+			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
+			newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
 			//++i;
 		}
 
@@ -43,8 +43,8 @@ public class ChooseUserCoordinator : Singleton<ChooseUserCoordinator>
 
     IEnumerator CreateUserCo(string user, string imageName)
     {
-        GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_ChooseUserButtonPrefab, m_grid.transform);
-        newButton.GetComponent<ChooseUserButton>().SetUp(user, imageName, m_draggablePanel);
+        GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
+        newButton.GetComponent<UserMenuButton>().SetUp(user, imageName, m_draggablePanel);
         
         m_grid.Reposition();
 
