@@ -100,25 +100,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			
 			m_keywordAudio[myPh] = LoaderHelpers.LoadAudioForWord(audioFilename);
         }
-		
-        /*
-		if(Game.session == Game.Session.Premade)
-		{
-			foreach(DataRow letter in lettersPool)
-			{
-				if(letter["is_target_word"] != null && letter["is_target_word"].ToString() == "t")
-				{
-					Debug.Log("Found target: " + letter["word"].ToString());
-					m_currentLetterData = letter;
-					break;
-				}
-			}
-		}
-		else if(Game.session == Game.Session.Custom)
-		{
-			m_currentLetterData = LessonInfo.Instance.GetTargetData("keywords");
-		}
-        */
 
         m_currentLetterData = GameManager.Instance.GetSingleTargetData("keywords");
 		

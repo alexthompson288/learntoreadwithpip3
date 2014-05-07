@@ -86,45 +86,9 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		}
 
 		List<DataRow> lettersPool = DataHelpers.GetPhonemes();
-		//List<DataRow> lettersPool = DataHelpers.GetSectionLetters(1405);
 
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);
 
-		/*
-			int[] sectionIds = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
-			int difficulty = SessionInformation.Instance.GetDifficulty();
-			int endIndex = sectionIds.Length - 2 + difficulty;
-			
-			for(int index = 0; index < endIndex; ++index)
-			{
-				int sectionId = sectionIds[index];
-				DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-				lettersPool.AddRange(dt.Rows);
-			}
-			*/
-
-		/*
-		List<DataRow> lettersPool = new List<DataRow>();
-
-		if(Game.session == Game.Session.Premade)
-		{
-			int sectionId = SessionManager.Instance.GetCurrentSectionId();
-			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-			lettersPool.AddRange(dt.Rows);
-		}
-		else if(ContentInformation.Instance.UseCustom())
-		{
-			lettersPool = ContentInformation.Instance.GetLetters();
-		}
-		else
-		{
-
-
-			int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-
-			lettersPool.AddRange(DataHelpers.GetInclusiveSetData(setNum, "setphonemes", "phonemes"));
-		}
-		*/
 
         foreach (DataRow myPh in lettersPool)
         {
@@ -147,23 +111,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		if(lettersPool.Count > 0)
 		{
-            /*
-			if(Game.session == Game.Session.Premade)
-			{
-				foreach(DataRow letter in lettersPool)
-				{
-					if(letter["is_target_phoneme"] != null && letter["is_target_phoneme"].ToString() == "t")
-					{
-						m_currentLetterData = letter;
-						break;
-					}
-				}
-			}
-			else if(Game.session == Game.Session.Custom)
-			{
-				m_currentLetterData = LessonInfo.Instance.GetTargetData("phonemes");
-			}
-            */
             m_currentLetterData = GameManager.Instance.GetSingleTargetData("phonemes");
 
 			if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme

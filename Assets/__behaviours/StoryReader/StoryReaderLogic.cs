@@ -74,40 +74,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
         {
             m_storyId = System.Convert.ToInt32(stories[0]["id"]);
         }
-/*
-#if UNITY_EDITOR
-		if(!m_useDebugStory)
-		{
-			if(Game.session == Game.Session.Custom)
-			{
-				List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
-				
-				if(storyData.Count > 0)
-				{
-					m_storyID = System.Convert.ToInt32(storyData[0]["id"]);
-				}
-			}
-			else
-			{
-				m_storyID = SessionInformation.Instance.GetBookId();
-			}
-		}
-#else
-		if(Game.session == Game.Session.Custom)
-		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
-
-			if(storyData.Count > 0)
-			{
-				m_storyID = System.Convert.ToInt32(storyData[0]["id"]);
-			}
-		}
-		else
-		{
-			m_storyID = SessionInformation.Instance.GetBookId();
-		}
-#endif
-*/
 
 		UserStats.Activity.SetStoryId (m_storyID);
 
