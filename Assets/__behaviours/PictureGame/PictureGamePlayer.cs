@@ -208,32 +208,6 @@ public class PictureGamePlayer : GamePlayer
 			}
 		}
 
-		/*
-		foreach(DataRow word in m_allWords)
-		{
-			Debug.Log("word: " + word["word"].ToString());
-			Texture2D tex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + word["word"].ToString());
-
-			Debug.Log("tex: " + tex);
-			if(tex != null)
-			{
-				++m_maxSpawn;
-			}
-			else
-			{
-				if(m_remainingWords.Contains(word))
-				{
-					m_remainingWords.Remove(word);
-				}
-				if(m_allWords.Contains(word))
-				{
-					m_allWords.Remove(word);
-				}
-			}
-			Resources.UnloadUnusedAssets();
-		}
-		*/
-
 		Resources.UnloadUnusedAssets();
 
 		if(m_maxSpawn > m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()])

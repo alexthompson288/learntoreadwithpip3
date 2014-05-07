@@ -96,8 +96,6 @@ public class SessionManager : Singleton<SessionManager>
 		m_timeSessionStarted = Time.time;
 		m_sections.Clear ();
 
-		new UserStats.Session(m_st, LessonInfo.Instance.GetName());
-
 		PlayNextActivity(LessonInfo.Instance.GetSceneName (m_activitiesComplete));
 	}
 
@@ -161,8 +159,6 @@ public class SessionManager : Singleton<SessionManager>
 				}
 
 				m_activitiesComplete = 0;
-
-				new UserStats.Session(m_st, sessionId, m_sessionNum);
 
 				PlayNextActivity(FindNextActivity());
 			}

@@ -12,11 +12,10 @@ public class UserStats : Singleton<UserStats>
 
 	Dictionary<string, string> m_dataAttributes = new Dictionary<string, string>();
 	
+    // TODO: Subscribe to GameManager events
 	void Start()
 	{
-        //Debug.Log("UserStats.Start()");
-		SessionManager.Instance.OnSessionComplete += OnSessionComplete;
-		SessionManager.Instance.OnSessionCancel += OnSessionCancel;
+		
 	}
 	
 	// Called every time a new level is loaded
@@ -60,15 +59,6 @@ public class UserStats : Singleton<UserStats>
 
 			m_modelName = "activity";
 			m_url = "www.learntoreadwithpip.com/activities";
-
-			if(Game.session == Game.Session.Single)
-			{
-				m_setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-			}
-			else
-			{
-				m_sectionId = SessionManager.Instance.GetCurrentSectionId();
-			}
 
 			m_current = this;
 		}
@@ -229,8 +219,6 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-        // TODO: Create AddData and AddIncorrectData methods that infer dataType from Game.data
-
 		public static void AddPhoneme(int phonemeId)
 		{
             if (m_current != null)
@@ -332,8 +320,6 @@ public class UserStats : Singleton<UserStats>
 		int m_sessionId = 0;
 		int m_sessionNum = 0;
 
-		SessionManager.ST m_sessionType;
-
 		List<string> m_scenes = new List<string> ();
 
 		List<int> m_letters = new List<int> ();
@@ -346,12 +332,12 @@ public class UserStats : Singleton<UserStats>
 		int m_targetKeyword = 0;
 
 		// Voyage/Pipisode Constructor
-		public Session(SessionManager.ST sessionType, int sessionId, int sessionNum) : base()
+		public Session(int sessionId, int sessionNum) : base()
 		{
 			m_sessionId = sessionId;
 			m_sessionNum = sessionNum;
 
-			JointConstructor(sessionType);
+            JointSetUp() ;
 
 #if UNITY_EDITOR
 			//Debug.Log("new Session(): Voyage/Pipisode");
@@ -360,7 +346,7 @@ public class UserStats : Singleton<UserStats>
 		}
 
 		// Lesson Constructor
-		public Session(SessionManager.ST sessionType, string sessionName) : base()
+		public Session(string sessionName) : base()
 		{
 			m_sessionName = sessionName;
 
@@ -373,7 +359,7 @@ public class UserStats : Singleton<UserStats>
 			m_keywords = LessonInfo.Instance.GetDataIds ("keywords");
 			m_targetKeyword = LessonInfo.Instance.GetTargetId ("keywords");
 
-			JointConstructor(sessionType);
+            JointSetUp() ;
 
 #if UNITY_EDITOR
 			//Debug.Log("new Session(): Lesson");
@@ -382,10 +368,8 @@ public class UserStats : Singleton<UserStats>
 		}
 
 		// Set anything here that needs to be set in both constructors
-		void JointConstructor(SessionManager.ST sessionType) 
+		void JointSetUp() 
 		{
-			m_sessionType = sessionType;
-
 			m_modelName = "learningsession";
 			m_url = "www.learntoreadwithpip.com/learningsessions";
 			BuildSessionIdentifier();
@@ -406,7 +390,7 @@ public class UserStats : Singleton<UserStats>
 
 		void BuildSessionIdentifier()
 		{
-			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.accountUsername, m_sessionId, GetTrimmedStartTime(), m_sessionType.ToString() });
+			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.accountUsername, m_sessionId, GetTrimmedStartTime() });
 		}
 
 		public static string OnNewGame(string scene)
@@ -485,7 +469,6 @@ public class UserStats : Singleton<UserStats>
                 form.AddField (m_modelName + "[session_name]", m_sessionName);
                 form.AddField (m_modelName + "[session_id]" , m_sessionId);
                 form.AddField (m_modelName + "[session_num]" , m_sessionNum);
-                form.AddField (m_modelName + "[session_type]", m_sessionType.ToString ());
                 form.AddField (m_modelName + "[scenes]", CollectionHelpers.ConcatList (m_scenes));
                 
                 form.AddField (m_modelName + "[phoneme_ids]", CollectionHelpers.ConcatList (m_letters));

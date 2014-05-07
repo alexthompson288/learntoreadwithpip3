@@ -55,32 +55,15 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		m_wordPool.AddRange(DataHelpers.GetWords());
-		
-		/*
-		int sectionId = 797;
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
-		m_wordPool = dt.Rows;
-		*/
-
-		/*
-		for(int i = m_wordPool.Count - 1; i > -1; --i)
-		{
-			if(m_wordPool[i]["is_target_word"] != null && m_wordPool[i]["is_target_word"].ToString() != "t")
-			{
-				m_wordPool.RemoveAt(i);
-			}
-		}
-		*/
-
-		List<DataRow> letterPool = new List<DataRow>();
-
 		if(Game.session == Game.Session.Premade && m_wordPool[0]["linking_index"] != null)
 		{
 			m_useLinkingIndices = true;
 		}
 
-		letterPool = DataHelpers.GetPhonemes();
+        m_wordPool = DataHelpers.GetWords();
+        
+        List<DataRow> letterPool = DataHelpers.GetPhonemes();
+
 
 		foreach(DataRow letter in letterPool)
 		{
@@ -283,99 +266,6 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			SpawnQuestion();
 		}
 	}
-
-
-
-	/*
-	IEnumerator SpawnQuestion ()
-	{
-		m_currentWordData = m_wordPool[Random.Range(0, m_wordPool.Count)];
-		string currentWord = m_currentWordData["word"].ToString();
-		
-		Debug.Log("currentWord: " + currentWord);
-
-		if(Game.session == Game.Session.Premade)
-		{
-			DataRow targetLetter = null;
-
-			foreach(DataRow letter in m_targetLetterPool)
-			{
-				if(letter["linking_index"].ToString() == currentWord["linking_index"].ToString())
-				{
-					targetLetter = letter;
-					break;
-				}
-			}
-
-			List<DataRow> dummyLetters = new List<DataRow>();
-			foreach(DataRow letter in m_dummyLetterPool)
-			{
-				if(letter["linking_index"].ToString() == currentWord["linking_index"].ToString())
-				{
-					dummyLetters.AddRange(letter);
-				}
-			}
-
-			string[] phonemeIds = m_currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
-			List<string> phonemes = new List<string>();
-			for(int i = 0; i < phonemeIds.Length; ++i)
-			{
-				phonemes.Add(GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes where id='" + phonemeIds[i] + "'").Rows[0]["phoneme"].ToString());
-			}
-
-			for(int i = phonemes.Count - 1; i > -1; --i)
-			{
-
-			}
-		}
-		else
-		{
-			string[] phonemeIds = m_currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
-			List<string> phonemes = new List<string>();
-			for(int i = 0; i < phonemeIds.Length; ++i)
-			{
-				phonemes.Add(GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes where id='" + phonemeIds[i] + "'").Rows[0]["phoneme"].ToString());
-			}
-			
-			int targetPhonemeIndex = Random.Range(0, phonemes.Count);
-			string targetPhoneme = phonemes[targetPhonemeIndex];
-			phonemes.RemoveAt(targetPhonemeIndex);
-			
-			SpeakCurrentWord();
-			
-			SpellingPadBehaviour.Instance.DisplayNewWord(currentWord);
-			
-			HashSet<string> answerPhonemes = new HashSet<string>();
-			answerPhonemes.Add(targetPhoneme);
-			
-			while(answerPhonemes.Count < m_numAnswers)
-			{
-				answerPhonemes.Add(m_targetLetterPool[Random.Range(0, m_targetLetterPool.Count)]["phoneme"].ToString());
-			}
-			
-			foreach(string answerPhoneme in answerPhonemes)
-			{
-				DraggableLabel newDraggable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggablePrefab, m_spawnedDraggableParent).GetComponent<DraggableLabel>() as DraggableLabel;
-				newDraggable.SetUp(answerPhoneme.ToString());
-				m_draggables.Add(newDraggable);
-				
-				newDraggable.OnRelease += OnRelease;
-				
-				newDraggable.transform.localPosition = new Vector3(Random.Range(m_draggableSpawnLow.localPosition.x, m_draggableSpawnHigh.localPosition.x),
-				                                                   Random.Range(m_draggableSpawnLow.localPosition.y, m_draggableSpawnHigh.localPosition.y),
-				                                                   newDraggable.transform.localPosition.z);
-			}
-			
-			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-			
-			SpellingPadBehaviour.Instance.MakeAllVisibleExceptTarget(targetPhoneme);
-			SpellingPadBehaviour.Instance.DisableAllCollidersExceptTarget(targetPhoneme);
-		}
-
-		
-		yield return null;
-	}
-	*/
 	
 	void EndGame ()
 	{

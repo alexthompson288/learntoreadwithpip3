@@ -184,18 +184,11 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 		}
 		else
 		{
-			if(Game.session == Game.Session.Premade)
+			yield return new WaitForSeconds(1.5f);
+			int numPlayers = SessionInformation.Instance.GetNumPlayers();
+			for (int index = 0; index < numPlayers; ++index)
 			{
-				GameManager.Instance.CompleteGame(false);
-			}
-			else
-			{
-				yield return new WaitForSeconds(1.5f);
-				int numPlayers = SessionInformation.Instance.GetNumPlayers();
-				for (int index = 0; index < numPlayers; ++index)
-				{
-					m_gamePlayers[index].ShowRetryPrompt();
-				}
+				m_gamePlayers[index].ShowRetryPrompt();
 			}
 		}
 	}
