@@ -71,6 +71,7 @@ public class SoundButtonToWordCoordinator : MonoBehaviour
 			m_numDummies = m_dummyPhonemes.Count;
 		}
 		
+        /*
 		if(m_targetPhonemes.Count == 1) // If there is only 1 target phoneme then spawn the LetterButton 
 		{
 			yield return new WaitForSeconds(0.5f);
@@ -107,6 +108,7 @@ public class SoundButtonToWordCoordinator : MonoBehaviour
 			
 			yield return new WaitForSeconds(smallTweenDuration);
 		}
+        */      
 		
 		m_scoreBar.SetStarsTarget(m_targetScore);
 		

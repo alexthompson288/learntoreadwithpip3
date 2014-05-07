@@ -74,6 +74,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 				}
 			}
 
+            /*
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_letterButtonPrefab, m_letterButtonStartPosition);
 
 			LetterButton letterButton = newButton.GetComponent<LetterButton>() as LetterButton;
@@ -94,6 +95,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 			iTween.MoveTo( newButton, m_letterButtonEndPosition.position, smallTweenDuration );
 
 			yield return new WaitForSeconds(smallTweenDuration);
+            */         
 		}
 
 		m_scoreBar.SetStarsTarget(m_targetScore);
