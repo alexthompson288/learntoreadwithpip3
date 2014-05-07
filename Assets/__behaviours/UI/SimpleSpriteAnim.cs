@@ -224,7 +224,6 @@ public class SimpleSpriteAnim : MonoBehaviour
 					{
 						if(OnAnimFinish != null)
 						{
-                            Debug.Log("FINISHED ANIM");
 							OnAnimFinish(m_availableAnimations[m_currentAnimation].m_name);
 						}
 						

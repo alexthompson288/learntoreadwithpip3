@@ -50,7 +50,6 @@ public class VoyageGameButton : MonoBehaviour
         } 
         else
         {
-            Debug.LogError("Could not find game for section_id: " + m_section["id"].ToString());
             gameObject.SetActive(false);
         }
     }

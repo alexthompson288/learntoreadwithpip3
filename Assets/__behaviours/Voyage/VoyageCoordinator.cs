@@ -27,21 +27,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     private GameObject m_worldMap;
     [SerializeField]
     private int m_horizontalMapDistance = 1024;
-    [SerializeField]
-    private GameObject m_footprintPrefab;
 
 #if UNITY_EDITOR
     [SerializeField]
     private bool m_debugNoSpawn;
 #endif
-
-    public GameObject footprintPrefab
-    {
-        get
-        {
-            return m_footprintPrefab;
-        }
-    }
 
     VoyageMap m_currentModuleMap = null;
     public ColorInfo.PipColor currentColor
@@ -65,8 +55,28 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         m_sectionId = sectionId;
     }
 
+    int CompareModuleMapColor(GameObject a, GameObject b)
+    {
+        VoyageMap mapA = a.GetComponent<VoyageMap>() as VoyageMap;
+        VoyageMap mapB = b.GetComponent<VoyageMap>() as VoyageMap;
+        
+        if (mapA.color < mapB.color)
+        {
+            return -1;
+        } 
+        else if (mapA.color > mapB.color)
+        {
+            return 1;
+        } 
+        else
+        {
+            return 0;
+        }
+    }
+
     IEnumerator Start()
     {
+        // Sort the module maps by color. When moving between module maps, we move by array index
         System.Array.Sort(m_moduleMapPrefabs, CompareModuleMapColor);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -83,6 +93,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             bool hasSpawnedModuleMap = false;
 
+            // If VoyageInfo has a bookmark then we might want to spawn in a module map instead of the world map
             if (VoyageInfo.Instance.hasBookmark)
             {
                 Debug.Log("Instantiate module map");
@@ -131,6 +142,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
+    void TweenCamera(Vector3 newPosition)
+    {
+        iTween.MoveTo(m_movingCamera, newPosition, m_cameraTweenDuration * 2);
+    }
+
     void InstantiateWorldMap()
     {
         if (m_worldMap != null) // Defensive check: Should NEVER execute
@@ -166,7 +182,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         if (mapPrefab != null)
         {
-            // If we already have a current module map, we decide whether to spawn the new map to the left or right of the current one
+            // If we already have a current module map, the new map must spawn either to the left or right of the current one
             if (m_currentModuleMap != null)
             {
                 int modifier = mapIndex < (int)(m_currentModuleMap.color) ? -1 : 1;
@@ -231,11 +247,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         return correctMap;
     }
 
-    void TweenCamera(Vector3 newPosition)
-    {
-        iTween.MoveTo(m_movingCamera, newPosition, m_cameraTweenDuration * 2);
-    }
-
     public void StartGame(DataRow section)
     {
         m_sectionId = System.Convert.ToInt32(section ["id"]);
@@ -251,15 +262,14 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
             
             // Set scenes
-            if(VoyageInfo.Instance.NearlyCompletedSession(m_sectionId) || VoyageInfo.Instance.HasCompletedSession(m_sectionId))
+            // If the player has more than one section remaining in this session, then they will not have completed at the end of the game
+            if(VoyageInfo.Instance.GetNumRemainingSections(m_sessionId) > 1)
             {
-                Debug.Log("Nearly Complete");
-                GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
+                GameManager.Instance.SetScenes(sceneName);
             }
             else
             {
-                Debug.Log("Not Complete");
-                GameManager.Instance.SetScenes(sceneName);
+                GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
             }
             
             
@@ -294,25 +304,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             }
             
             GameManager.Instance.StartGames();
-        }
-    }
-
-    int CompareModuleMapColor(GameObject a, GameObject b)
-    {
-        VoyageMap mapA = a.GetComponent<VoyageMap>() as VoyageMap;
-        VoyageMap mapB = b.GetComponent<VoyageMap>() as VoyageMap;
-
-        if (mapA.color < mapB.color)
-        {
-            return -1;
-        } 
-        else if (mapA.color > mapB.color)
-        {
-            return 1;
-        } 
-        else
-        {
-            return 0;
         }
     }
 }

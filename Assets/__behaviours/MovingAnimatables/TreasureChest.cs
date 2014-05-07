@@ -34,7 +34,6 @@ public class TreasureChest : MonoBehaviour
 
     void OnAnimFinish(string animName)
     {
-        Debug.Log("TreasureChest.OnAnimFinish");
         if (animName == "OPEN")
         {
             StartCoroutine(Close());
