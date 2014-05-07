@@ -248,7 +248,7 @@ public class PictureGamePlayer : GamePlayer
 
 		if(m_allWords.Count == 0)
 		{
-			GameHelpers.SetDefaultPlayerVar();
+			SessionInformation.SetDefaultPlayerVar();
 			GameManager.Instance.CompleteGame();
 		}
 
@@ -315,7 +315,7 @@ public class PictureGamePlayer : GamePlayer
             }
 			else if(m_remainingWords.Count == 0)
 			{
-				GameHelpers.SetDefaultPlayerVar();
+				SessionInformation.SetDefaultPlayerVar();
 				GameManager.Instance.CompleteGame();
 			}
         }

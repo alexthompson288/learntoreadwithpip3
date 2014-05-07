@@ -179,7 +179,7 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 		if (winningIndex != -1)
 		{
-			GameHelpers.SetDefaultPlayerVar();
+			SessionInformation.SetDefaultPlayerVar();
 			GameManager.Instance.CompleteGame();
 		}
 		else

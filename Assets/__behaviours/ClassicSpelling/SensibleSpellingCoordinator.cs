@@ -135,7 +135,7 @@ public class SensibleSpellingCoordinator : MonoBehaviour
 	
 	void EndGame ()
 	{
-		GameHelpers.SetDefaultPlayerVar();
+		SessionInformation.SetDefaultPlayerVar();
 		GameManager.Instance.CompleteGame();
 	}
 	

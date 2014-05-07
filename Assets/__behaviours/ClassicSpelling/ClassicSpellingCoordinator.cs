@@ -153,7 +153,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        GameHelpers.SetDefaultPlayerVar();
+        SessionInformation.SetDefaultPlayerVar();
         GameManager.Instance.CompleteGame();
     }
     

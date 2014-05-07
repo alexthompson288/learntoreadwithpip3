@@ -44,6 +44,13 @@ public class SessionInformation : Singleton<SessionInformation>
 
 //    WebCamTexture m_intialisedWebCamTexture;
 
+    public static void SetDefaultPlayerVar()
+    {
+        SessionInformation.Instance.SetNumPlayers(1);
+        SessionInformation.Instance.SetWinner(0);
+        SessionInformation.Instance.SetPlayerIndex(0, 3);
+    }
+
     void Awake()
     {
         m_retryScene = "NewGameMenu";

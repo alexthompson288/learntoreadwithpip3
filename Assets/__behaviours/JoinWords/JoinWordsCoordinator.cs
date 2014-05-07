@@ -176,7 +176,7 @@ public class JoinWordsCoordinator : Singleton<JoinWordsCoordinator>
 
 	void FinishGame()
 	{
-		GameHelpers.SetDefaultPlayerVar();
+		SessionInformation.SetDefaultPlayerVar();
 		GameManager.Instance.CompleteGame();
 	}
 
