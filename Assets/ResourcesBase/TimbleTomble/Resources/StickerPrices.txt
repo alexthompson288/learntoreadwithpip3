@@ -1,6 +1,0 @@
-clown_hat
-1
-crown
-2
-mexican_hat
-1

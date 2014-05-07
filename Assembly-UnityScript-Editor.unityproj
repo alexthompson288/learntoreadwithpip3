@@ -70,7 +70,6 @@
      <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBChromaKey.shader" />
      <None Include="Assets\_textures\Font\pipfont_108pt.txt" />
      <None Include="Assets\__system\GameNames.txt" />
-     <None Include="Assets\ResourcesBase\TimbleTomble\Resources\BackgroundPrices.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader (SoftClip).shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\ColorCorrectionCurves.shader" />
@@ -93,7 +92,6 @@
      <None Include="Assets\MobileMovieTexture\Instructions.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\SSAA.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\RadialBlur.shader" />
-     <None Include="Assets\ResourcesBase\TimbleTomble\Resources\StickerPrices.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldDX11.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (AlphaClip).shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored Desat.shader" />
