@@ -64,20 +64,11 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//Game.SetSession(Game.Session.Custom);
-
         SessionInformation.Instance.SetNumPlayers(1);
         SessionInformation.Instance.SetPlayerIndex(0, 3);
         SessionInformation.Instance.SetWinner(0);
 
 		m_wordList.AddRange(DataHelpers.GetWords());
-
-		/*
-        int sillySectionId = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_nonsenseDatabaseIds
-                    [SessionInformation.Instance.GetDifficulty()];
-        DataTable dtNonsense = DataHelpers.GetSectionWords(sillySectionId);
-        m_sillyWords = dtNonsense.Rows;
-		*/
 
 		m_sillyWords.AddRange(DataHelpers.GetSillyWords());
 
@@ -289,13 +280,6 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 
 	void FinishGame()
 	{
-		if(Game.session == Game.Session.Premade)
-		{
-			GameManager.Instance.CompleteGame();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+		GameManager.Instance.CompleteGame();
 	}
 }
