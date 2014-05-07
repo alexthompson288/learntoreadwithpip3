@@ -33,14 +33,7 @@ public class EyeSpyAlliterationCoordinator : Singleton<EyeSpyAlliterationCoordin
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//int sectionId = SessionManager.Instance.GetCurrentSectionId();
-		int sectionId = 414;
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-		m_wordPool.AddRange(dt.Rows);
-
-		//m_wordPool.AddRange(DataHelpers.GetWords());
-
-		//Debug.Log("pre m_wordPool.Count: " + m_wordPool.Count);
+        m_wordPool = DataHelpers.GetWords();
 
 		m_targetScore = m_locators.Length;
 
@@ -49,12 +42,8 @@ public class EyeSpyAlliterationCoordinator : Singleton<EyeSpyAlliterationCoordin
 			m_wordPool.RemoveAt(Random.Range(0, m_wordPool.Count));
 		}
 
-		//Debug.Log("post m_wordPool.Count: " + m_wordPool.Count);
-
 		for(int i = 0; i < m_wordPool.Count; ++i)
 		{
-			//Debug.Log("word: " + m_wordPool[i]["word"].ToString());
-
 			GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerPrefab, m_locators[i]);
 
 			Vector3 fromPos = new Vector3(newAnswer.transform.position.x + Random.Range(-5f, 5f), newAnswer.transform.position.x + Random.Range(-3f, 3f), newAnswer.transform.position.z);
@@ -64,21 +53,16 @@ public class EyeSpyAlliterationCoordinator : Singleton<EyeSpyAlliterationCoordin
 
 			AudioClip phonemeAudio = null;
 
-			dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + phonemeIds[0] + "'");
+			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + phonemeIds[0] + "'");
 			if(dt.Rows.Count > 0)
 			{
 				phonemeAudio = AudioBankManager.Instance.GetAudioClip(dt.Rows[0]["grapheme"].ToString());
 				m_phonemeAudio[dt.Rows[0]["phoneme"].ToString()] = phonemeAudio;
-
-				//Debug.Log("phoneme: " + dt.Rows[0]["phoneme"].ToString());
-				//Debug.Log("phonemeAudio: " + phonemeAudio);
 			}
 
 			newAnswer.GetComponent<EyeSpyWord>().SetUp(m_wordPool[i], phonemeAudio);
 			newAnswer.GetComponent<EyeSpyWord>().OnWordClick += OnWordClick;
 		}
-
-		//yield return new WaitForSeconds(0.5f);
 
 		yield return new WaitForSeconds(2);
 

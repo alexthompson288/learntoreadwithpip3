@@ -84,7 +84,7 @@ public class LetterButton : MonoBehaviour
 	{
 		m_data = data;
 
-		string spriteName = AlphabetBookInformation.Instance.GetTexture(System.Convert.ToInt32(m_data["id"]));
+        string spriteName = "icon_circle_white";
 		if(spriteName != null)
 		{
 			m_background.spriteName = spriteName;

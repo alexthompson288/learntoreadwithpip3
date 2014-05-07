@@ -45,10 +45,7 @@ public class EyeSpyBlendingCoordinator : Singleton<EyeSpyBlendingCoordinator>
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		int sectionId = SessionManager.Instance.GetCurrentSectionId();
-		//int sectionId = 1392;
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-		m_wordPool.AddRange(dt.Rows);
+        m_wordPool = DataHelpers.GetWords();
 		
 		m_targetScore = m_locators.Length;
 		
@@ -74,12 +71,10 @@ public class EyeSpyBlendingCoordinator : Singleton<EyeSpyBlendingCoordinator>
 
 			foreach(string id in phonemeIds)
 			{
-				dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
+				DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
 				if(dt.Rows.Count > 0)
 				{
 					phonemeAudioList.Add(AudioBankManager.Instance.GetAudioClip(dt.Rows[0]["grapheme"].ToString()));
-					
-					//Debug.Log("phoneme: " + dt.Rows[0]["phoneme"].ToString());
 				}
 			}
 

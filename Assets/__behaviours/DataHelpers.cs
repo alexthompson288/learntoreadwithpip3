@@ -25,25 +25,15 @@ public static class DataHelpers
         return GameManager.Instance.GetSingleTargetData(dataType, guaranteeData);
     }
 
-    public static DataTable GetSectionWords(int sectionId = -1)
+    public static DataTable GetSectionWords(int sectionId)
     {
-        if (sectionId == -1)
-        {
-            sectionId = SessionManager.Instance.GetCurrentSectionId();
-        }
-
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId.ToString() + " GROUP BY words.id");
         
         return dt;
     }
     
-    public static List<DataRow> GetSectionLetters(int sectionId = -1)
+    public static List<DataRow> GetSectionLetters(int sectionId)
     {
-        if(sectionId == -1)
-        {
-            sectionId = SessionManager.Instance.GetCurrentSectionId();
-        }
-        
         List<DataRow> letters = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId + " GROUP BY phonemes.id");
@@ -56,13 +46,8 @@ public static class DataHelpers
         return letters;
     }
     
-    public static List<DataRow> GetSectionSentences(int sectionId = -1)
+    public static List<DataRow> GetSectionSentences(int sectionId)
     {
-        if(sectionId == -1)
-        {
-            sectionId = SessionManager.Instance.GetCurrentSectionId();
-        }
-        
         List<DataRow> sentenceData = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE section_id =" + sectionId);
