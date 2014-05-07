@@ -83,27 +83,7 @@ public class SillySensibleLetterCoordinator : Singleton<SillySensibleLetterCoord
 		
 		m_blackBoard.MoveWidgets();
 		
-		int[] sectionIds = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
-		int difficulty = SessionInformation.Instance.GetDifficulty();
-		int endIndex = sectionIds.Length - 2 + difficulty;
-		
-		for(int index = 0; index < endIndex; ++index)
-		{
-			int sectionId = sectionIds[index];
-			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-			m_lettersPool.AddRange(dt.Rows);
-		}
-		
-		/*
-		int difficulty = SessionInformation.Instance.GetDifficulty() + 1;
-		
-		for(int index = 0; index < difficulty; ++index)
-		{
-			int sectionId = m_difficultySections[index];
-			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-			m_lettersPool.AddRange(dt.Rows);
-		}
-		*/
+        m_lettersPool = DataHelpers.GetPhonemes();
 
         foreach (DataRow myPh in m_lettersPool)
         {

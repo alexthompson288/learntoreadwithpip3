@@ -401,21 +401,6 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	
 	public void BlackBoardClicked(ImageBlackboard clickedBlackboard)
 	{
-		if (WordBankGrid.Instance != null)
-		{
-			if ( clickedBlackboard == m_imageBlackboard )
-			{
-				WordBankGrid.Instance.WordClicked(0, clickedBlackboard);
-			}
-			else if (clickedBlackboard == m_additionalImageBlackboards[0] )
-			{
-				WordBankGrid.Instance.WordClicked(1, clickedBlackboard);
-			}
-			else if (clickedBlackboard == m_additionalImageBlackboards[1])
-			{
-				WordBankGrid.Instance.WordClicked(2, clickedBlackboard);
-			}
-		}
 		if (CorrectPictureGameCoordinator.Instance != null)
 		{
 			if (clickedBlackboard == m_imageBlackboard)
