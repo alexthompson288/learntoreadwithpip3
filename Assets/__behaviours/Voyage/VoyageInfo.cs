@@ -81,6 +81,14 @@ public class VoyageInfo : Singleton<VoyageInfo>
         }
     }
 
+    public int currentSectionId
+    {
+        get
+        {
+            return m_bookmark.GetSectionId();
+        }
+    }
+
     // Session Backgrounds. Saved between app launches
     Dictionary<int, string> m_sessionBackgrounds = new Dictionary<int, string>();
 
