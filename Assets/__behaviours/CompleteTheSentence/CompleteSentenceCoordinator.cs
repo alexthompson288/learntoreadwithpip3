@@ -118,7 +118,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
             m_askOneQuestion = rows.FindIndex(x => x["is_target_sentence"] == null) == -1;
 
-            //if (Game.session == Game.Session.Premade)
             if (m_askOneQuestion)
             {
                 foreach (DataRow row in rows)
@@ -170,7 +169,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
             Debug.Log("There are " + dt.Rows.Count + " words");
 
-            //if (Game.session == Game.Session.Premade)
             if(m_askOneQuestion)
             {
                 m_words [0] = new List<DataRow>();

@@ -78,46 +78,6 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 
 		List<DataRow> words = DataHelpers.GetWords();
 
-		/*
-		List<DataRow> words = new List<DataRow>();
-
-		if(Game.session == Game.Session.Premade)
-		{
-			words = DataHelpers.GetWords();
-			//words = DataHelpers.GetSectionWords(1455).Rows;
-		}
-		else
-		{
-			words = DataHelpers.GetSectionWords(1455).Rows;
-		}
-		*/
-
-		//Debug.Log("preCount: " + words.Count);
-		/*
-		for(int i = words.Count - 1; i > -1; --i)
-		{
-			Texture2D image = null;
-			if ((words[i]["image"] != null) && (!string.IsNullOrEmpty(words[i]["image"].ToString())))
-			{
-				image = (Texture2D)Resources.Load("Images/word_images_png_350/_" + words[i]["image"].ToString());
-			}
-
-			if(image == null)
-			{
-				image = (Texture2D)Resources.Load("Images/word_images_png_350/_" + words[i]["word"].ToString());
-			}
-
-			if(image == null)
-			{
-				words.RemoveAt(i);
-			}
-
-			Resources.UnloadUnusedAssets();
-		}
-
-		Debug.Log("postCount: " + words.Count);
-		*/
-
 		foreach(DataRow word in words)
 		{
 			if(word["is_dummy_word"] != null && word["is_dummy_word"].ToString() == "t")
@@ -175,7 +135,7 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		}
 		else
 		{
-			StartCoroutine(OnGameFinish());
+			StartCoroutine(OnGameComplete());
 		}
 	}
 
@@ -343,23 +303,17 @@ public class CorrectPathOralBlendingCoordinator : MonoBehaviour
 		}
 		else
 		{
-			StartCoroutine(OnGameFinish());
+			StartCoroutine(OnGameComplete());
 		}
 
 		yield return null;
 	}
 
-	IEnumerator OnGameFinish()
+	IEnumerator OnGameComplete()
 	{
 		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
-		if(Game.session == Game.Session.Premade)
-		{
-			GameManager.Instance.CompleteGame();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+
+		GameManager.Instance.CompleteGame();
 	}
 
 	void OnBennyClick(ClickEvent behaviour)
