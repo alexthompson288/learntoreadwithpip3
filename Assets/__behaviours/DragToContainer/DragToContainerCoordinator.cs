@@ -75,7 +75,7 @@ public class DragToContainerCoordinator : MonoBehaviour
 
 		if(m_dataType == DataType.phonemes)
 		{
-			data = DataHelpers.GetLetters();
+			data = DataHelpers.GetPhonemes();
 			m_textAttribute = "phoneme";
 			targetAttribute = "is_target_phoneme";
 		}

@@ -80,7 +80,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			m_useLinkingIndices = true;
 		}
 
-		letterPool = DataHelpers.GetLetters();
+		letterPool = DataHelpers.GetPhonemes();
 
 		foreach(DataRow letter in letterPool)
 		{

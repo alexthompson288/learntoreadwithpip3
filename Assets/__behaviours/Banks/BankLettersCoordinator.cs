@@ -82,7 +82,7 @@ public class BankLettersCoordinator : MonoBehaviour
         } 
         else
         {
-            m_phonemePool = DataHelpers.GetLetters();
+            m_phonemePool = DataHelpers.GetPhonemes();
             m_currentIndex = phoneme == null ? 0 : m_phonemePool.IndexOf(phoneme);
 
             passedTarget = phoneme != null;

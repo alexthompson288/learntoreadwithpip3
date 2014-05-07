@@ -69,7 +69,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 		yield return new WaitForSeconds(0.5f);
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_WHAT_WANT");
 
-		m_lettersPool.AddRange(DataHelpers.GetLetters());
+		m_lettersPool.AddRange(DataHelpers.GetPhonemes());
 
         foreach (DataRow myPh in m_lettersPool)
         {

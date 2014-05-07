@@ -169,7 +169,7 @@ public static class DataHelpers
             switch(dataType)
             {
                 case "phonemes":
-                    dataPool = GetLetters();
+                    dataPool = GetPhonemes();
                     break;
                 case "words":
                     dataPool = GetWords();
@@ -194,7 +194,7 @@ public static class DataHelpers
         return GameManager.Instance.GetData("sentences");
     }
     
-    public static List<DataRow> GetLetters(bool inclusiveSets = false)
+    public static List<DataRow> GetPhonemes(bool inclusiveSets = false)
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("phonemes");
 

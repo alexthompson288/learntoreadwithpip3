@@ -76,7 +76,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		
 		m_blackBoard.MoveWidgets();
 
-		m_lettersPool = DataHelpers.GetLetters();
+		m_lettersPool = DataHelpers.GetPhonemes();
 		//m_lettersPool = DataHelpers.GetSectionLetters(1405);
 
 		m_numSpawn = m_lettersPool.Count;

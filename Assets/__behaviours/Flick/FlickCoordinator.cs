@@ -52,7 +52,7 @@ public class FlickCoordinator : MonoBehaviour
 		switch (m_dataType)
 		{
 		case "phonemes":
-			m_dataPool = DataHelpers.GetLetters();
+			m_dataPool = DataHelpers.GetPhonemes();
 			break;
 		case "keywords":
 			m_dataPool = DataHelpers.GetKeywords();

@@ -355,7 +355,7 @@ public class BubbleCoordinator : MonoBehaviour
 			m_dataPool.AddRange(DataHelpers.GetKeywords(inclusive));
 			break;
 		case "phonemes":
-			m_dataPool.AddRange(DataHelpers.GetLetters(inclusive));
+			m_dataPool.AddRange(DataHelpers.GetPhonemes(inclusive));
 			break;
 		default:
 			Debug.Log("Getting word data");

@@ -85,7 +85,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			m_numWaitForPlayers = 1;
 		}
 
-		List<DataRow> lettersPool = DataHelpers.GetLetters();
+		List<DataRow> lettersPool = DataHelpers.GetPhonemes();
 		//List<DataRow> lettersPool = DataHelpers.GetSectionLetters(1405);
 
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);

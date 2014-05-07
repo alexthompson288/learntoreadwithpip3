@@ -47,7 +47,7 @@ public class SoundButtonsToWordCoordinator : MonoBehaviour
 		//DataTable dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
 		//m_wordPool = dt.Rows; 
 
-		List<DataRow> phonemes = DataHelpers.GetLetters();
+		List<DataRow> phonemes = DataHelpers.GetPhonemes();
 		DataRow targetPhoneme = null;
 
 		foreach(DataRow phoneme in phonemes)
