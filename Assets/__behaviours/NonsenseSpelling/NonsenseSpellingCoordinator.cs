@@ -7,7 +7,7 @@ using System.Linq;
 
 public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator> {
 	[SerializeField]
-	private bool m_nonsenseWords;
+	private bool m_useSillyWords;
 	[SerializeField]
 	private int m_targetScore;
 	[SerializeField]
@@ -48,15 +48,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		if(m_nonsenseWords)
-		{
-			m_wordsPool = DataHelpers.GetNonsenseWords();
-			Debug.Log("m_wordsPool.Count: " + m_wordsPool.Count);
-		}
-		else
-		{
-			m_wordsPool = DataHelpers.GetWords();
-		}
+        m_wordsPool = m_useSillyWords ? DataHelpers.GetSillyWords() : DataHelpers.GetWords();
 
 		if(m_targetScore > m_wordsPool.Count)
 		{

@@ -209,8 +209,8 @@ public static class DataHelpers
                 case "keywords":
                     dataPool = GetKeywords();
                     break;
-                case "nonsensewords":
-                    dataPool = GetNonsenseWords();
+                case "sillywords":
+                    dataPool = GetSillyWords();
                     break;
                 case "sentences":
                     dataPool = GetSentences();
@@ -226,63 +226,13 @@ public static class DataHelpers
         return GameManager.Instance.GetData("sentences");
     }
     
-    public static List<DataRow> GetLetters(bool inclusiveSets = true)
+    public static List<DataRow> GetLetters(bool inclusiveSets = false)
     {
-        /*
-        List<DataRow> letterData = new List<DataRow>();
-        
-        switch(Game.session)
-        {
-            case Game.Session.Premade:
-                int sectionId = SessionManager.Instance.GetCurrentSectionId();
-                Debug.Log("sectionId: " + sectionId);
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-                if(dt.Rows.Count > 0)
-                {
-                    letterData.AddRange(dt.Rows);
-                }
-                else
-                {
-                    Debug.Log("No phonemes for sectionId: " + sectionId);
-                }
-                break;
-                
-            case Game.Session.Custom:
-                letterData.AddRange(LessonInfo.Instance.GetData(Game.Data.Phonemes));
-                break;
-                
-            case Game.Session.Single:
-                int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-                //Debug.Log("setNum: " + setNum);
-                if(inclusiveSets)
-                {
-                    letterData = GetInclusiveSetData(setNum, "setphonemes", "phonemes");
-                }
-                else
-                {
-                    letterData = GetSetData(setNum, "setphonemes", "phonemes");
-                }
-                break;
-        }
-        
-        if(letterData.Count == 0)
-        {
-            int sectionId = 1407;
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId);
-            if(dt.Rows.Count > 0)
-            {
-                letterData.AddRange(dt.Rows);
-            }
-        }
-        
-        return letterData;
-        */
-
         List<DataRow> dataPool = GameManager.Instance.GetData("phonemes");
 
         if(dataPool.Count == 0)
         {
-            dataPool = GetSetData(1, "setphonemes", "phonemes");
+            dataPool = inclusiveSets ? GetInclusiveSetData(1, "setphonemes", "phonemes") : GetSetData(1, "setphonemes", "phonemes");
         }
 
         return dataPool;
@@ -290,224 +240,48 @@ public static class DataHelpers
     
     public static List<DataRow> GetWords(bool inclusiveSets = false)
     {
-        /*
-        List<DataRow> wordData = new List<DataRow>();
-        
-        switch(Game.session)
-        {
-            case Game.Session.Premade:
-                int sectionId = SessionManager.Instance.GetCurrentSectionId();
-                Debug.Log("sectionId: " + sectionId);
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-                if(dt.Rows.Count > 0)
-                {
-                    wordData.AddRange(dt.Rows);
-                }
-                break;
-                
-            case Game.Session.Custom:
-                //Debug.Log("ContentInformation.Instance: " + ContentInformation.Instance);
-                wordData.AddRange(LessonInfo.Instance.GetData(Game.Data.Words));
-                break;
-                
-            case Game.Session.Single:
-                int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-                if(inclusiveSets)
-                {
-                    wordData.AddRange(GetInclusiveSetData(setNum, "setwords", "words"));
-                }
-                else
-                {
-                    wordData.AddRange(GetSetData(setNum, "setwords", "words"));
-                }
-                break;
-        }
-        
-        for(int i = wordData.Count - 1; i > -1; --i)
-        {
-            if(WordIsKeyword(wordData[i]) || WordIsNonsense(wordData[i]) || String.IsNullOrEmpty(wordData[i]["word"].ToString()))
-            {
-                wordData.RemoveAt(i);
-            }
-        }
-        
-        if(wordData.Count == 0)
-        {
-            wordData = GetSectionWords(1509).Rows;
-        }
-        
-        return wordData;
-        */
+        List<DataRow> dataPool = GameManager.Instance.GetData("words");
 
-#if UNITY_EDITOR
-        List<DataRow> wordData = GameManager.Instance.GetData("words");
-
-        if(wordData.Count == 0)
+        if(dataPool.Count == 0)
         {
-            wordData = GetSetData(1, "setwords", "words");
+            dataPool = inclusiveSets ? GetInclusiveSetData(1, "setwords", "words") : GetSetData(1, "setwords", "words");
         }
 
-        return wordData;
-#else
-        return GameManager.Instance.GetData("words");
-#endif
+        return dataPool;
     }
     
     public static List<DataRow> GetKeywords(bool inclusiveSets = false)
     {
-        /*
-        List<DataRow> keywordData = new List<DataRow>();
-        
-        switch(Game.session)
-        {
-            case Game.Session.Premade:
-                int sectionId = SessionManager.Instance.GetCurrentSectionId();
-                Debug.Log("sectionId: " + sectionId);
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-                if(dt.Rows.Count > 0)
-                {
-                    keywordData.AddRange(dt.Rows);
-                }
-                break;
-                
-            case Game.Session.Custom:
-                keywordData.AddRange(LessonInfo.Instance.GetData(Game.Data.Keywords));
-                break;
-                
-            case Game.Session.Single:
-                int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-                while(keywordData.Count == 0)
-                {
-                    Debug.Log("SetNum: " + setNum);
-                    if(inclusiveSets)
-                    {
-                        keywordData.AddRange(GetInclusiveSetData(setNum, "setkeywords", "words"));
-                    }
-                    else
-                    {
-                        keywordData.AddRange(GetSetData(setNum, "setkeywords", "words"));
-                    }
-                    
-                    ++setNum;
-                }
-                break;
-        }
-        
-        Debug.Log("keywordData.Count: " + keywordData.Count);
-        
-        foreach(DataRow row in keywordData)
-        {
-            Debug.Log(row["word"].ToString());
-        }
-        
-        if(keywordData.Count == 0)
-        {
-            keywordData = GetSectionWords(1414).Rows;
-        }
-        
-        return keywordData;
-        */
+        List<DataRow> dataPool =  GameManager.Instance.GetData("keywords");
 
-        return GameManager.Instance.GetData("keywords");
+        if(dataPool.Count == 0)
+        {
+            dataPool = inclusiveSets ? GetInclusiveSetData(1, "setkeywords", "words") : GetSetData(1, "setkeywords", "words");
+        }
+        
+        return dataPool;
     }
     
-    public static List<DataRow> GetNonsenseWords()
+    public static List<DataRow> GetSillyWords()
     {
         Debug.Log("GetNonsenseWords()");
         
-        List<DataRow> nonsenseData = new List<DataRow>();
+        List<DataRow> dataPool = GameManager.Instance.GetData("sillywords");
         
-        switch(Game.session)
+        for(int i = dataPool.Count - 1; i > -1; --i)
         {
-            case Game.Session.Premade:
-                int sectionId = SessionManager.Instance.GetCurrentSectionId();
-                Debug.Log("sectionId: " + sectionId);
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE section_id=" + sectionId);
-                if(dt.Rows.Count > 0)
-                {
-                    nonsenseData.AddRange(dt.Rows);
-                }
-                break;
-                
-            case Game.Session.Custom:
-                List<DataRow> realWords = ContentInformation.Instance.GetWords();
-                
-                Debug.Log("realWords.Count: " + realWords.Count);
-                foreach(DataRow word in realWords)
-                {
-                    Debug.Log(word["word"].ToString());
-                }
-                
-                DataTable dtSets = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets ORDER BY number DESC");
-                
-                int highestSetNum = 1;
-                
-                if(dtSets.Rows.Count > 0)
-                {
-                    foreach(DataRow set in dtSets.Rows)
-                    {
-                        string[] wordIds = set["setwords"].ToString().Replace("[", "").Replace("]", "").Split(',');
-                        
-                        foreach(string id in wordIds)
-                        {
-                            DataTable dtWords = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE id='" + id + "'");
-                            
-                            if(dtWords.Rows.Count > 0 && realWords.Contains(dtWords.Rows[0]) && System.Convert.ToInt32(set["number"]) > highestSetNum)
-                            {
-                                highestSetNum = System.Convert.ToInt32(set["number"]);
-                            }
-                        }
-                    }
-                }
-                
-                Debug.Log("highestSetNum: " + highestSetNum);
-                
-                foreach(DataRow set in dtSets.Rows)
-                {
-                    if(System.Convert.ToInt32(set["number"]) == highestSetNum)
-                    {
-                        string[] wordIds = set["setsillywords"].ToString().Replace("[", "").Replace("]", "").Split(',');
-                        
-                        foreach(string id in wordIds)
-                        {
-                            DataTable dtWords = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE id='" + id + "'");
-                            
-                            Debug.Log("Found highest set");
-                            foreach(DataRow word in dtWords.Rows)
-                            {
-                                Debug.Log(word["word"].ToString());
-                            }
-                            
-                            if(dtWords.Rows.Count > 0)
-                            {
-                                nonsenseData.AddRange(dtWords.Rows);
-                            }
-                        }
-                    }
-                }
-                break;
-                
-            case Game.Session.Single:
-                int setNum = SkillProgressInformation.Instance.GetCurrentLevel();
-                Debug.Log("setNum: " + setNum);
-                nonsenseData = GetSetData(setNum, "setsillywords", "words");
-                break;
-        }
-        
-        for(int i = nonsenseData.Count - 1; i > -1; --i)
-        {
-            if(!WordIsNonsense(nonsenseData[i]))
+            if(!WordIsNonsense(dataPool[i]))
             {
-                nonsenseData.RemoveAt(i);
+                dataPool.RemoveAt(i);
             }
         }
         
-        if(nonsenseData.Count == 0)
+        if(dataPool.Count == 0)
         {
-            nonsenseData = GetSectionWords(1395).Rows;
+            dataPool = GetSectionWords(1395).Rows;
         }
         
-        return nonsenseData;
+        return dataPool;
     }
     
     public static bool SetContainsData(DataRow set, string setAttribute, string dataType)

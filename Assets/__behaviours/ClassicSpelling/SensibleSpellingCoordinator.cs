@@ -8,7 +8,7 @@ using System.Linq;
 public class SensibleSpellingCoordinator : MonoBehaviour 
 {
 	[SerializeField]
-	private bool m_nonsenseWords;
+	private bool m_useSillyWords;
 	[SerializeField]
 	private int m_targetScore;
 	[SerializeField]
@@ -41,38 +41,7 @@ public class SensibleSpellingCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		/*
-		int[] sectionIds;
-		
-		if(m_nonsenseWords)
-		{
-			sectionIds =((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_nonsenseDatabaseIds;
-		}
-		else
-		{
-			sectionIds =((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_difficultyDatabaseIds;
-		}
-		
-		int difficulty = SessionInformation.Instance.GetDifficulty();
-		m_wordsPool = DataHelpers.GetSectionWords(sectionIds[difficulty]).Rows;
-		*/
-
-		if(m_nonsenseWords)
-		{
-			m_wordsPool = DataHelpers.GetNonsenseWords();
-		}
-		else
-		{
-			m_wordsPool = DataHelpers.GetWords();
-			//m_wordsPool = DataHelpers.GetSectionWords(1414).Rows; // Keywords
-			//m_wordsPool = DataHelpers.GetSectionWords(1392).Rows; // Words
-
-			//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='pat'");
-			//if(dt.Rows.Count > 0)
-			//{
-				//m_wordsPool = dt.Rows;
-			//}
-		}
+        m_wordsPool = m_useSillyWords ? DataHelpers.GetSillyWords() : DataHelpers.GetWords();
 
 		if(m_targetScore > m_wordsPool.Count)
 		{

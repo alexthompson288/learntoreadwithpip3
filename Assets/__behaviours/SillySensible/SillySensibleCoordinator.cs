@@ -79,7 +79,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
         m_sillyWords = dtNonsense.Rows;
 		*/
 
-		m_sillyWords.AddRange(DataHelpers.GetNonsenseWords());
+		m_sillyWords.AddRange(DataHelpers.GetSillyWords());
 
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 
