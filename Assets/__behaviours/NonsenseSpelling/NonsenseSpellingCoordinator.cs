@@ -139,14 +139,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 	{
 		yield return new WaitForSeconds(1.5f);
 
-		if(Game.session == Game.Session.Premade)
-		{
-			GameManager.Instance.CompleteGame();
-		}
-		else
-		{
-			TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-		}
+        GameManager.Instance.CompleteGame();
 	}
 
 	IEnumerator OnQuestionEnd()

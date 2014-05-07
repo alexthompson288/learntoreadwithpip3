@@ -76,10 +76,13 @@ public class BubbleCoordinator : MonoBehaviour
 	{
 		m_celebrationOn = m_levelUp.transform.position;
 
-		m_currentLevel = SkillProgressInformation.Instance.GetCurrentLevel();
-		Debug.Log("Starting Level: " + m_currentLevel);
-		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        if (System.String.IsNullOrEmpty(m_dataType))
+        {
+            m_dataType = GameManager.Instance.dataType;
+        }
+
 		AddToDataPool(true);
 
 		if(m_dataType == "words" || m_dataType == "keywords")
@@ -336,13 +339,6 @@ public class BubbleCoordinator : MonoBehaviour
 		++m_expToLevelUp;
 
 		++m_currentLevel;
-		
-		if(Game.session == Game.Session.Single)
-		{
-			Debug.Log("New Level: " + m_currentLevel);
-			SkillProgressInformation.Instance.SetCurrentLevel(m_currentLevel);
-			AddToDataPool(false);
-		}
 
 		StartCoroutine(CelebrationCoordinator.Instance.LevelUp(m_currentLevel));
 	}
@@ -402,50 +398,8 @@ public class BubbleCoordinator : MonoBehaviour
 			yield return null;
 		}
 
-		if(BubbleMapCoordinator.isStandalone)
-		{
-			Debug.Log("Previous Best Level: " + SkillProgressInformation.Instance.GetCurrentSkill());
-			Debug.Log("Current Level: " + m_currentLevel);
-
-			string highScoreKey = BubbleMapCoordinator.GetBubbleGame(); // Safer to set the string in a variable than use multiple string literals
-			if(!PlayerPrefs.HasKey(highScoreKey) || m_score > PlayerPrefs.GetInt(highScoreKey))
-			{
-				PlayerPrefs.SetInt(highScoreKey, m_score);
-
-				if(m_score != 0)
-				{
-					BubbleMapCoordinator.SetNewHighScore(true);
-					StartCoroutine(CelebrationCoordinator.Instance.NewHighScore(m_score));
-					yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLetters());
-				}
-			}
-
-			Debug.Log("Current Level: " + m_currentLevel);
-			Debug.Log("Previous Best: " + SkillProgressInformation.Instance.GetCurrentSkillProgress());
-
-			if(m_currentLevel > SkillProgressInformation.Instance.GetCurrentSkillProgress() + 1) // level is one-based, progress is zero-based
-			{
-				SkillProgressInformation.Instance.SetProgress(SkillProgressInformation.Instance.GetCurrentSkill(), m_currentLevel - 1); // level is one-based, progress is zero-based
-				BubbleMapCoordinator.SetLeveledUp(true);
-			}
-
-			TransitionScreen.Instance.ChangeLevel("NewBubblePopMap", false);
-		}
-		else
-		{
-			if(Game.session == Game.Session.Premade)
-			{
-				GameManager.Instance.CompleteGame();
-			}
-			else
-			{
-				// always Pip, always winner
-				SessionInformation.Instance.SetPlayerIndex(0, 3);
-				SessionInformation.Instance.SetWinner(0);
-
-				TransitionScreen.Instance.ChangeLevel("NewScoreDanceScene", false);
-			}
-		}
+        SessionInformation.SetDefaultPlayerVar();
+        GameManager.Instance.CompleteGame();
 	}
 	
 	void SayLongAudio()
