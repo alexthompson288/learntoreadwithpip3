@@ -64,43 +64,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        /*
-		int sectionId = 1420;
-
-		if(Game.session == Game.Session.Premade)
-		{
-			sectionId = SessionManager.Instance.GetCurrentSectionId();
-		}
-		else if (Game.session == Game.Session.Custom)
-		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
-
-			if(storyData.Count > 0)
-			{
-				sectionId = Convert.ToInt32(storyData[0]["section_id"]);
-				Debug.Log("Lesson Story sectionId: " + sectionId);
-			}
-			else
-			{
-				Debug.Log("No Lesson Story Data");
-			}
-		}
-		else
-		{
-			Debug.Log("Stories");
-			string bookId = SessionInformation.Instance.GetBookId().ToString();
-			Debug.Log("bookId: " + bookId);
-			DataTable bookTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + bookId);
-
-			if(bookTable.Rows.Count > 0)
-			{
-				DataRow row = bookTable.Rows[0];
-				sectionId = Convert.ToInt32(row["section_id"]);
-				Debug.Log("Found book, sectionId= " + sectionId);
-			}
-		}
-        */
-
         List<DataRow> stories = GameManager.Instance.GetData("stories");
         DataTable tempDt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=52");
         stories = tempDt.Rows;
@@ -411,17 +374,6 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 		Debug.Log("CompleteSentenceCoordinator.OnGameFinish()");
 
 		GameManager.Instance.CompleteGame (true, "NewCompleteSentenceEnd");
-
-		/*
-		if (GameDataBridge.Instance.GetContentType () == Game.Session.Single) 
-		{
-			TransitionScreen.Instance.ChangeLevel("NewCompleteSentenceEnd", false);	
-		} 
-		else 
-		{
-			GameManager.Instance.CompleteGame();
-		}
-		*/
 	}
 	
 	string RemoveTargetFromSentence(string sentence, string target)

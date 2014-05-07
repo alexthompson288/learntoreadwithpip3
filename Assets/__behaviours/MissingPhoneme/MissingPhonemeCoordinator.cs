@@ -6,6 +6,7 @@ using WingroveAudio;
 
 public class MissingPhonemeCoordinator : MonoBehaviour 
 {
+    /*
 	[SerializeField]
 	private SimpleSpriteAnim[] m_flowers;
 	[SerializeField]
@@ -353,5 +354,6 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			SpellingPadBehaviour.Instance.SayAll();
 		}
 	}
+ */   
 }
 
