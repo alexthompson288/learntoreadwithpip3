@@ -1,0 +1,5 @@
+01-12 idle small
+12-18 small/medium
+18-30 idle medium
+30-36 medium/tall
+36-48 idele tall
