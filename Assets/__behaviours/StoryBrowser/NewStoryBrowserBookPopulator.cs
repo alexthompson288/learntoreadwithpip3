@@ -107,17 +107,9 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 		
 		m_productListResolved = true;
 	}
-	
-
 
 	public bool IsBookUnlocked(int bookId)
 	{
 		return m_unlockedBookIds.Contains(bookId);
 	}
-
-    public void JumpToDifficulty(int difficulty)
-    {
-		// TODO
-
-    }
 }
