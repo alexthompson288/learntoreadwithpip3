@@ -591,14 +591,11 @@ public class BuyManager : Singleton<BuyManager>
             book.Refresh();
         }
     }
-    
+
+    // TODO
     void RefreshMaps()
     {
-        JourneyMap[] maps = UnityEngine.Object.FindObjectsOfType(typeof(JourneyMap)) as JourneyMap[];
-        foreach(JourneyMap map in maps)
-        {
-            map.Refresh();
-        }
+
     }
     
     void RefreshGames()

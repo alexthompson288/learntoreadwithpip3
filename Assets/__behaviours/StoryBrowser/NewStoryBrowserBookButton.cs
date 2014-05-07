@@ -18,8 +18,6 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     private GameObject m_wordsButton;
     [SerializeField]
     private GameObject m_padlockHierarchy;
-	[SerializeField]
-	private GameObject m_glowTexture;
 
     [SerializeField]
     private DataRow m_storyData;
@@ -49,17 +47,6 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         {
             m_stars[2].SetActive(true);
         }
-
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE story_id=" + Convert.ToInt32(m_storyData["id"]));
-
-		if(dt.Rows.Count > 0)
-		{
-			int storySessionNum = Convert.ToInt32(dt.Rows[0]["number"]);
-			if(storySessionNum <= JourneyInformation.Instance.GetSessionsCompleted())
-			{
-				m_glowTexture.SetActive(true);
-			}
-		}
 		
         Refresh();
     }

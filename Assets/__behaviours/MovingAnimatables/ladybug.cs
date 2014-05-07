@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// TODO: Make an integrated PathFollower class. It needs to have multiple orientation options
+// TODO: Delete ladybug
 public class ladybug : PathFollower 
 {
 	//public Spline Path;
@@ -12,12 +12,10 @@ public class ladybug : PathFollower
 	private Vector3 m_RotationModifier = Vector3.zero;
 
 	// Use this for initialization
-	protected override void Start () 
+	protected void Start () 
 	{
         //CurrTime = Random.Range(0, TotalTime);
 		CurrTime = 0;
-
-		base.Start();
 	}
 	
 	// Update is called once per frame

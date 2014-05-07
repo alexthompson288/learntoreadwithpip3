@@ -82,7 +82,7 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\GlowConeTap.shader" />
      <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBChromaKey.shader" />
      <None Include="Assets\_textures\font\pipfont_108pt.txt" />
-     <None Include="Assets\__newScenes\NewJourney\GameNames.txt" />
+     <None Include="Assets\__behaviours\GameNames.txt" />
      <None Include="Assets\ResourcesBase\TimbleTomble\Resources\BackgroundPrices.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SunShaftsComposite.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\GUI - Text Shader (SoftClip).shader" />
