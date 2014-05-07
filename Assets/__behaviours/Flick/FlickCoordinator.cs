@@ -6,7 +6,7 @@ using Wingrove;
 public class FlickCoordinator : MonoBehaviour 
 {
 	[SerializeField]
-	private Game.Data m_dataType;
+	private string m_dataType;
 	[SerializeField]
 	private GameObject m_flickablePrefab;
 	[SerializeField]
@@ -51,13 +51,13 @@ public class FlickCoordinator : MonoBehaviour
 		
 		switch (m_dataType)
 		{
-		case Game.Data.Phonemes:
+		case "phonemes":
 			m_dataPool = DataHelpers.GetLetters();
 			break;
-		case Game.Data.Keywords:
+		case "keywords":
 			m_dataPool = DataHelpers.GetKeywords();
 			break;
-		case Game.Data.Words:
+		case "words":
 			m_dataPool = DataHelpers.GetWords();
 			break;
 		}
@@ -144,12 +144,12 @@ public class FlickCoordinator : MonoBehaviour
         if (m_targetData != null)
         {
             Debug.Log("ABM: " + AudioBankManager.Instance);
-            Debug.Log("phonemes: " + (m_dataType == Game.Data.Phonemes));
+            Debug.Log("phonemes: " + (m_dataType == "phonemes"));
             Debug.Log("targetData: " + m_targetData["id"].ToString());
             Debug.Log("isPhoneme: " + (m_targetData["phoneme"] != null));
             Debug.Log("isWord: " + (m_targetData["word"] != null));
 
-            AudioClip clip = m_dataType == Game.Data.Phonemes ? AudioBankManager.Instance.GetAudioClip(m_targetData ["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData ["word"].ToString());
+            AudioClip clip = m_dataType == "phonemes" ? AudioBankManager.Instance.GetAudioClip(m_targetData ["grapheme"].ToString()) : LoaderHelpers.LoadAudioForWord(m_targetData ["word"].ToString());
     		
             if (clip != null)
             {

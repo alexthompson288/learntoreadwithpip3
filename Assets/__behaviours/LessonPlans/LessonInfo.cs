@@ -181,9 +181,9 @@ public class LessonInfo : Singleton<LessonInfo>
 			return m_games.Count;
 		}
 		
-		public string ToggleData(int id, Game.Data dataType)
+		public string ToggleData(int id, string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				if(m_targetLetter == id)
 				{
@@ -202,7 +202,7 @@ public class LessonInfo : Singleton<LessonInfo>
 					return "Add";
 				}
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				if(m_targetWord == id)
 				{
@@ -242,13 +242,13 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 
-		public bool IsTarget(int id, Game.Data dataType)
+		public bool IsTarget(int id, string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				return m_targetLetter == id;
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				return m_targetWord == id;
 			}
@@ -258,17 +258,17 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 
-		public bool HasData(int id, Game.Data dataType)
+		public bool HasData(int id, string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				return m_letters.Contains(id);
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				return m_words.Contains(id);
 			}
-			else if(dataType == Game.Data.Keywords)
+			else if(dataType == "keywords")
 			{
 				return m_keywords.Contains(id);
 			}
@@ -278,17 +278,17 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 		
-		public HashSet<int> GetData(Game.Data dataType)
+		public HashSet<int> GetData(string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				return m_letters;
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				return m_words;
 			}
-			else if(dataType == Game.Data.Keywords)
+			else if(dataType == "keywords")
 			{
 				return m_keywords;
 			}
@@ -299,13 +299,13 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 		
-		public int GetTargetData(Game.Data dataType)
+		public int GetTargetData(string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				return m_targetLetter;
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				return m_targetWord;
 			}
@@ -315,17 +315,17 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 
-		public void AddData(int id, Game.Data dataType)
+		public void AddData(int id, string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				m_letters.Add(id);
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				m_words.Add(id);
 			}
-			else if(dataType == Game.Data.Keywords)
+			else if(dataType == "keywords")
 			{
 				m_keywords.Add(id);
 			}
@@ -336,9 +336,9 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 		
-		public void RemoveData(int id, Game.Data dataType)
+		public void RemoveData(int id, string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				m_letters.Remove(id);
 				
@@ -347,7 +347,7 @@ public class LessonInfo : Singleton<LessonInfo>
 					m_targetLetter = -1;
 				}
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				m_words.Remove(id);
 				
@@ -356,7 +356,7 @@ public class LessonInfo : Singleton<LessonInfo>
 					m_targetWord = -1;
 				}
 			}
-			else if(dataType == Game.Data.Keywords)
+			else if(dataType == "keywords")
 			{
 				m_keywords.Remove(id);
 				
@@ -371,17 +371,17 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 
-		public void ClearData(Game.Data dataType)
+		public void ClearData(string dataType)
 		{
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				m_letters.Clear();
 			}
-			else if(dataType == Game.Data.Words)
+			else if(dataType == "words")
 			{
 				m_words.Clear();
 			}
-			else if(dataType == Game.Data.Keywords)
+			else if(dataType == "keywords")
 			{
 				m_keywords.Clear();
 			}
@@ -422,22 +422,22 @@ public class LessonInfo : Singleton<LessonInfo>
 		m_currentLesson.RemoveGame(index);
 	}
 
-	public string ToggleData(int id, Game.Data dataType)
+	public string ToggleData(int id, string dataType)
 	{
 		return m_currentLesson.ToggleData(id, dataType);
 	}
 
-	public bool IsTarget(int id, Game.Data dataType)
+	public bool IsTarget(int id, string dataType)
 	{
 		return m_currentLesson.IsTarget(id, dataType);
 	}
 
-	public bool HasData(int id, Game.Data dataType)
+	public bool HasData(int id, string dataType)
 	{
 		return m_currentLesson.HasData(id, dataType);
 	}
 
-	public List<DataRow> GetData(Game.Data dataType)
+	public List<DataRow> GetData(string dataType)
 	{
 		Debug.Log("LessonInfo.GetData()");
 
@@ -445,15 +445,15 @@ public class LessonInfo : Singleton<LessonInfo>
 
 		Debug.Log("There are " + ids.Count + " " + dataType);
 		
-		//string dataName = (dataType == Game.Data.Phonemes) ? "phonemes" : "words";
+		//string dataName = (dataType == "phonemes") ? "phonemes" : "words";
 
 		string dataName = "words";
 
-		if(dataType == Game.Data.Phonemes)
+		if(dataType == "phonemes")
 		{
 			dataName = "phonemes";
 		}
-		else if(dataType == Game.Data.Stories)
+		else if(dataType == "stories")
 		{
 			dataName = "stories";
 		}
@@ -477,12 +477,12 @@ public class LessonInfo : Singleton<LessonInfo>
 		return data;
 	}
 
-	public List<int> GetDataIds(Game.Data dataType)
+	public List<int> GetDataIds(string dataType)
 	{
 		return m_currentLesson.GetData(dataType).ToList();
 	}
 	
-	public DataRow GetTargetData(Game.Data dataType)
+	public DataRow GetTargetData(string dataType)
 	{
 		DataRow targetData = null;
 		
@@ -490,7 +490,7 @@ public class LessonInfo : Singleton<LessonInfo>
 		
 		if(id != -1)
 		{
-			string dataName = (dataType == Game.Data.Phonemes) ? "phonemes" : "words";
+			string dataName = (dataType == "phonemes") ? "phonemes" : "words";
 			DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + dataName + " WHERE id=" + id);
 			
 			if(dt.Rows.Count > 0)
@@ -502,22 +502,22 @@ public class LessonInfo : Singleton<LessonInfo>
 		return targetData;
 	}
 
-	public int GetTargetId(Game.Data dataType)
+	public int GetTargetId(string dataType)
 	{
 		return m_currentLesson.GetTargetData(dataType);
 	}
 
-	public void AddData(int id, Game.Data dataType)
+	public void AddData(int id, string dataType)
 	{
 		m_currentLesson.AddData(id, dataType);
 	}
 
-	public void RemoveData(int id, Game.Data dataType)
+	public void RemoveData(int id, string dataType)
 	{
 		m_currentLesson.RemoveData(id, dataType);
 	}
 
-	public void ClearData(Game.Data dataType)
+	public void ClearData(string dataType)
 	{
 		m_currentLesson.ClearData(dataType);
 	}
@@ -545,13 +545,24 @@ public class LessonInfo : Singleton<LessonInfo>
 				
 				for(int j = 0; j < 3; ++j)
 				{
+                    string dataType = "phonemes";
+                    
+                    if(j == 1)
+                    {
+                        dataType = "words";
+                    }
+                    else if(j == 2)
+                    {
+                        dataType = "keywords";
+                    }
+
 					int numData = br.ReadInt32();
 					for(int k = 0; k < numData; ++k)
 					{
-						lesson.ToggleData(br.ReadInt32(), (Game.Data) j); // Cast j to the Game.Data enum
+                        lesson.ToggleData(br.ReadInt32(), dataType); // Cast j to the string enum
 					}
 					
-					lesson.ToggleData(br.ReadInt32(), (Game.Data) j); // Target Data. Set as target because added in above for loop
+                    lesson.ToggleData(br.ReadInt32(), dataType); // Target Data. Set as target because added in above for loop
 				}
 
 				m_lessons.Add(lesson);
@@ -582,14 +593,25 @@ public class LessonInfo : Singleton<LessonInfo>
 			
 			for(int i = 0; i < 3; ++i)
 			{
-				HashSet<int> data = lesson.GetData((Game.Data)i); // Cast i to the Game.Data enum
+                string dataType = "phonemes";
+                
+                if(i == 1)
+                {
+                    dataType = "words";
+                }
+                else if(i == 2)
+                {
+                    dataType = "keywords";
+                }
+
+				HashSet<int> data = lesson.GetData(dataType); // Cast i to the string enum
 				bw.Write(data.Count);
 				foreach(int id in data)
 				{
 					bw.Write(id);
 				}
 				
-				bw.Write(lesson.GetTargetData((Game.Data)i)); // Cast i to the Game.Data enum
+				bw.Write(lesson.GetTargetData(dataType)); // Cast i to the string enum
 			}
 		}
 		

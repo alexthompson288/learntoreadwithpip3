@@ -41,11 +41,11 @@ public class CatapultTarget : MonoBehaviour
         transform.localPosition += m_localMovement;
     }
 
-    public void SetUp(DataRow newData, Game.Data dataType)
+    public void SetUp(DataRow newData, string dataType)
     {
         m_data = newData;
 
-        string attributeName = dataType == Game.Data.Phonemes ? "phoneme" : "word";
+        string attributeName = dataType == "phonemes" ? "phoneme" : "word";
         m_label.text = m_data [attributeName].ToString();
     }
 

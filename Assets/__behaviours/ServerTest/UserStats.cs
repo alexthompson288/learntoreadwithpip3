@@ -10,7 +10,7 @@ public class UserStats : Singleton<UserStats>
     [SerializeField]
     private bool m_debugActivityData;
 
-	Dictionary<Game.Data, string> m_dataAttributes = new Dictionary<Game.Data, string>();
+	Dictionary<string, string> m_dataAttributes = new Dictionary<string, string>();
 	
 	void Start()
 	{
@@ -181,9 +181,9 @@ public class UserStats : Singleton<UserStats>
             }
 		}
 
-		public static void AddData(int dataId, Game.Data dataType)
+		public static void AddData(int dataId, string dataType)
 		{
-			if (dataType == Game.Data.Phonemes)
+			if (dataType == "phonemes")
 			{
 				AddPhoneme(dataId);
 			} 
@@ -193,9 +193,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public static void AddData(DataRow data, Game.Data dataType)
+		public static void AddData(DataRow data, string dataType)
 		{
-			if (dataType == Game.Data.Phonemes)
+			if (dataType == "phonemes")
 			{
 				AddPhoneme(data);
 			} 
@@ -205,9 +205,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public static void AddIncorrectData(int dataId, Game.Data dataType)
+		public static void AddIncorrectData(int dataId, string dataType)
 		{
-			if (dataType == Game.Data.Phonemes)
+			if (dataType == "phonemes")
 			{
 				AddIncorrectPhoneme(dataId);
 			} 
@@ -217,9 +217,9 @@ public class UserStats : Singleton<UserStats>
 			}
 		}
 
-		public static void AddIncorrectData(DataRow data, Game.Data dataType)
+		public static void AddIncorrectData(DataRow data, string dataType)
 		{
-			if (dataType == Game.Data.Phonemes)
+			if (dataType == "phonemes")
 			{
 				AddIncorrectPhoneme(data);
 			} 
@@ -364,14 +364,14 @@ public class UserStats : Singleton<UserStats>
 		{
 			m_sessionName = sessionName;
 
-			m_letters = LessonInfo.Instance.GetDataIds (Game.Data.Phonemes);
-			m_targetLetter = LessonInfo.Instance.GetTargetId (Game.Data.Phonemes);
+			m_letters = LessonInfo.Instance.GetDataIds ("phonemes");
+			m_targetLetter = LessonInfo.Instance.GetTargetId ("phonemes");
 			
-			m_words = LessonInfo.Instance.GetDataIds (Game.Data.Words);
-			m_targetWord = LessonInfo.Instance.GetTargetId (Game.Data.Words);
+			m_words = LessonInfo.Instance.GetDataIds ("words");
+			m_targetWord = LessonInfo.Instance.GetTargetId ("words");
 			
-			m_keywords = LessonInfo.Instance.GetDataIds (Game.Data.Keywords);
-			m_targetKeyword = LessonInfo.Instance.GetTargetId (Game.Data.Keywords);
+			m_keywords = LessonInfo.Instance.GetDataIds ("keywords");
+			m_targetKeyword = LessonInfo.Instance.GetTargetId ("keywords");
 
 			JointConstructor(sessionType);
 

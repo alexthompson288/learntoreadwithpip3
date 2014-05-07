@@ -73,7 +73,7 @@ public class CompleteSentenceCoordinator : MonoBehaviour
 		}
 		else if (Game.session == Game.Session.Custom)
 		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
+			List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
 
 			if(storyData.Count > 0)
 			{

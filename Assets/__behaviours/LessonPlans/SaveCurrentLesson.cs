@@ -25,10 +25,10 @@ public class SaveCurrentLesson : MonoBehaviour
 		}
 		#endif
 		
-		AddMissingData(Game.Data.Phonemes, "setphonemes", "phonemes");
-		AddMissingData(Game.Data.Words, "setwords", "words");
-		AddMissingData(Game.Data.Keywords, "setkeywords", "words");
-		AddMissingData(Game.Data.Stories, "setstories", "stories");
+		AddMissingData("phonemes", "setphonemes", "phonemes");
+		AddMissingData("words", "setwords", "words");
+		AddMissingData("keywords", "setkeywords", "words");
+		AddMissingData("stories", "setstories", "stories");
 
 #if UNITY_IPHONE
 		FlurryBinding.logEventWithParameters("SaveLesson", m_eventParameters, false);
@@ -37,7 +37,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		LessonInfo.Instance.SaveLessons();
 	}
 	
-	void AddMissingData(Game.Data dataType, string columnName, string tableName)
+	void AddMissingData(string dataType, string columnName, string tableName)
 	{
 		List<DataRow> data = LessonInfo.Instance.GetData(dataType);
 		
@@ -57,7 +57,7 @@ public class SaveCurrentLesson : MonoBehaviour
 				++setNum;
 			}
 
-			if(dataType != Game.Data.Stories)
+			if(dataType != "stories")
 			{
 				foreach(DataRow datum in data)
 				{
@@ -75,11 +75,11 @@ public class SaveCurrentLesson : MonoBehaviour
 			#if UNITY_IPHONE
 			string attribute = "word";
 			
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				attribute = "phoneme";
 			}
-			else if(dataType == Game.Data.Stories)
+			else if(dataType == "stories")
 			{
 				attribute = "title";
 			}
@@ -125,15 +125,15 @@ public class SaveCurrentLesson : MonoBehaviour
 		FlurryBinding.logEventWithParameters("Lesson games", gameNamesDictionary, false);
 #endif
 
-		AddMissingData(Game.Data.Phonemes, "setphonemes", "phonemes");
-		AddMissingData(Game.Data.Words, "setwords", "words");
-		AddMissingData(Game.Data.Keywords, "setkeywords", "words");
-		AddMissingData(Game.Data.Stories, "setstories", "stories");
+		AddMissingData("phonemes", "setphonemes", "phonemes");
+		AddMissingData("words", "setwords", "words");
+		AddMissingData("keywords", "setkeywords", "words");
+		AddMissingData("stories", "setstories", "stories");
 
 		LessonInfo.Instance.SaveLessons();
 	}
 
-	void AddMissingData(Game.Data dataType, string columnName, string tableName)
+	void AddMissingData(string dataType, string columnName, string tableName)
 	{
 		List<DataRow> data = LessonInfo.Instance.GetData(dataType);
 		
@@ -155,7 +155,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			
 			foreach(DataRow datum in data)
 			{
-				string attributeName = (dataType == Game.Data.Phonemes) ? "phoneme" : "word";
+				string attributeName = (dataType == "phonemes") ? "phoneme" : "word";
 
 				Debug.Log(datum[attributeName]);
 
@@ -167,11 +167,11 @@ public class SaveCurrentLesson : MonoBehaviour
 #if UNITY_IPHONE
 			string attribute = "word";
 
-			if(dataType == Game.Data.Phonemes)
+			if(dataType == "phonemes")
 			{
 				attribute = "phoneme";
 			}
-			else if(dataType == Game.Data.Stories)
+			else if(dataType == "stories")
 			{
 				attribute = "title";
 			}

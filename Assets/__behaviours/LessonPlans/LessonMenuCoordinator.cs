@@ -50,16 +50,16 @@ public class LessonMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.ClearAllData();
 
-        GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData(Game.Data.Phonemes));
-        GameManager.Instance.AddTargetData("phonemes", LessonInfo.Instance.GetTargetData(Game.Data.Phonemes));
+        GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData("phonemes"));
+        GameManager.Instance.AddTargetData("phonemes", LessonInfo.Instance.GetTargetData("phonemes"));
 
-        GameManager.Instance.AddData("words", LessonInfo.Instance.GetData(Game.Data.Words));
-        GameManager.Instance.AddTargetData("words", LessonInfo.Instance.GetTargetData(Game.Data.Words));
+        GameManager.Instance.AddData("words", LessonInfo.Instance.GetData("words"));
+        GameManager.Instance.AddTargetData("words", LessonInfo.Instance.GetTargetData("words"));
 
-        GameManager.Instance.AddData("keywords", LessonInfo.Instance.GetData(Game.Data.Keywords));
-        GameManager.Instance.AddTargetData("keywords", LessonInfo.Instance.GetTargetData(Game.Data.Keywords));
+        GameManager.Instance.AddData("keywords", LessonInfo.Instance.GetData("keywords"));
+        GameManager.Instance.AddTargetData("keywords", LessonInfo.Instance.GetTargetData("keywords"));
 
-        GameManager.Instance.AddData("stories", LessonInfo.Instance.GetData(Game.Data.Stories));
+        GameManager.Instance.AddData("stories", LessonInfo.Instance.GetData("stories"));
 
         GameManager.Instance.StartGames();
 	}

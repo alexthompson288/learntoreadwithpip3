@@ -33,7 +33,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	[SerializeField]
 	Color m_targetColor;
 
-	Game.Data m_dataType = Game.Data.Phonemes;
+	string m_dataType = "phonemes";
 	string m_setAttribute = "setphonemes";
 	string m_contentAttribute = "phonemes";
 	string m_contentLabelAttribute = "phoneme";
@@ -111,7 +111,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 			m_setGrid.GetComponent<UIGrid>().Reposition();
 
-			if(m_dataType != Game.Data.Stories)
+			if(m_dataType != "stories")
 			{
 				StartCoroutine(FillContentGrid(lowestSetNum));
 			}
@@ -258,12 +258,12 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		Debug.Log("Clicked story " + storyId);
 
-		bool addStory = !LessonInfo.Instance.HasData(storyId, Game.Data.Stories); // If LessonInfo does not have the story then we will add it
+		bool addStory = !LessonInfo.Instance.HasData(storyId, "stories"); // If LessonInfo does not have the story then we will add it
 
 		Debug.Log("addStory: " + addStory);
 
 		// Clear all story data and set the sprites to deselect color. Only one story can be saved at a time
-		LessonInfo.Instance.ClearData(Game.Data.Stories); // m_dataType should be stories, but I hard coded the datatype to be safe
+		LessonInfo.Instance.ClearData("stories"); // m_dataType should be stories, but I hard coded the datatype to be safe
 		
 		int childCount = m_storyGrid.childCount;
 		for(int i = 0; i < childCount; ++i)
@@ -274,11 +274,11 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		if(addStory)
 		{
 			Debug.Log("Adding story");
-			LessonInfo.Instance.AddData(storyId, Game.Data.Stories);
+			LessonInfo.Instance.AddData(storyId, "stories");
 			clickBehaviour.GetComponentInChildren<UISprite>().color = m_selectColor;
 		}
 
-		List<DataRow> stories = LessonInfo.Instance.GetData(Game.Data.Stories);
+		List<DataRow> stories = LessonInfo.Instance.GetData("stories");
 
 
 
@@ -365,7 +365,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		DestroyChildren(m_contentGrid);
 		DestroyChildren(m_storyGrid);
 
-		if(m_dataType != Game.Data.Stories)
+		if(m_dataType != "stories")
 		{
 			StartCoroutine(FillContentGrid(setNum));
 		}
@@ -375,28 +375,28 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		}
 	}
 
-	public void ChangeDataType(Game.Data dataType)
+	public void ChangeDataType(string dataType)
 	{
 		m_dataType = dataType;
 
 		switch(dataType)
 		{
-		case Game.Data.Phonemes:
+		case "phonemes":
 			m_setAttribute = "setphonemes";
 			m_contentAttribute = "phonemes";
 			m_contentLabelAttribute = "phoneme";
 			break;
-		case Game.Data.Words:
+		case "words":
 			m_setAttribute = "setwords";
 			m_contentAttribute = "words";
 			m_contentLabelAttribute = "word";
 			break;
-		case Game.Data.Keywords:
+		case "keywords":
 			m_setAttribute = "setkeywords";
 			m_contentAttribute = "words";
 			m_contentLabelAttribute = "word";
 			break;
-		case Game.Data.Stories:
+		case "stories":
 			m_setAttribute = "setstories";
 			m_contentAttribute = "stories";
 			m_contentLabelAttribute = "title";

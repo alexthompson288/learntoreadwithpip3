@@ -80,7 +80,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		{
 			if(Game.session == Game.Session.Custom)
 			{
-				List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
+				List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
 				
 				if(storyData.Count > 0)
 				{
@@ -95,7 +95,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 #else
 		if(Game.session == Game.Session.Custom)
 		{
-			List<DataRow> storyData = LessonInfo.Instance.GetData(Game.Data.Stories);
+			List<DataRow> storyData = LessonInfo.Instance.GetData("stories");
 
 			if(storyData.Count > 0)
 			{

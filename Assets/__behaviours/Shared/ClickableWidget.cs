@@ -11,7 +11,7 @@ public class ClickableWidget : MonoBehaviour
 	[SerializeField]
 	private UISprite m_background;
 	[SerializeField]
-	private Game.Data m_dataType;
+	private string m_dataType;
 	[SerializeField]
 	private string[] m_offSpriteNames;
 	[SerializeField]
@@ -33,7 +33,7 @@ public class ClickableWidget : MonoBehaviour
 		if(m_data != null)
 		{
 			string labelData = "word";
-			if(m_dataType == Game.Data.Phonemes)
+			if(m_dataType == "phonemes")
 			{
 				labelData = "phoneme";	
 			}
@@ -47,7 +47,7 @@ public class ClickableWidget : MonoBehaviour
 				Debug.LogError("SetUp failed");
 				Debug.Log("data: " + m_data);
 				Debug.Log("id: " + m_data["id"].ToString());
-				if(m_dataType == Game.Data.Phonemes)
+				if(m_dataType == "phonemes")
 				{
 					Debug.Log("phoneme: " + m_data["phoneme"].ToString());
 				}

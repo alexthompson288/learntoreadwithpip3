@@ -161,7 +161,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			}
 			else if(Game.session == Game.Session.Custom)
 			{
-				m_currentLetterData = LessonInfo.Instance.GetTargetData(Game.Data.Phonemes);
+				m_currentLetterData = LessonInfo.Instance.GetTargetData("phonemes");
 			}
             */
             m_currentLetterData = GameManager.Instance.GetSingleTargetData("phonemes");

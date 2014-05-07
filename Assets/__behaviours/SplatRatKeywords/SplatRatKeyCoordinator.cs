@@ -116,7 +116,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		}
 		else if(Game.session == Game.Session.Custom)
 		{
-			m_currentLetterData = LessonInfo.Instance.GetTargetData(Game.Data.Keywords);
+			m_currentLetterData = LessonInfo.Instance.GetTargetData("keywords");
 		}
         */
 

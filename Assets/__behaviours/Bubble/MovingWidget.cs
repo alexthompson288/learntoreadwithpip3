@@ -18,7 +18,7 @@ public class MovingWidget : MonoBehaviour
 	[SerializeField]
 	private UISprite m_background;
 	[SerializeField]
-	private Game.Data m_dataType;
+	private string m_dataType;
 
 	Vector3 m_targetPos;
 	
@@ -33,7 +33,7 @@ public class MovingWidget : MonoBehaviour
 		m_data = data;
 
 		string labelData = "word";
-		if(m_dataType == Game.Data.Phonemes)
+		if(m_dataType == "phonemes")
 		{
 			labelData = "phoneme";	
 		}

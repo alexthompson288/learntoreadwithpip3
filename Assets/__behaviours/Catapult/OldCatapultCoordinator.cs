@@ -6,7 +6,7 @@ using Wingrove;
 public class OldCatapultCoordinator : MonoBehaviour
 {
     [SerializeField]
-    private Game.Data m_dataType;
+    private string m_dataType;
     [SerializeField]
     private Transform[] m_locators;
     [SerializeField]
@@ -48,13 +48,13 @@ public class OldCatapultCoordinator : MonoBehaviour
 
         switch (m_dataType)
         {
-            case Game.Data.Phonemes:
+            case "phonemes":
                 m_dataPool = DataHelpers.GetLetters();
                 break;
-            case Game.Data.Words:
+            case "words":
                 m_dataPool = DataHelpers.GetWords();
                 break;
-            case Game.Data.Keywords:
+            case "keywords":
                 m_dataPool = DataHelpers.GetKeywords();
                 break;
         }
@@ -63,7 +63,7 @@ public class OldCatapultCoordinator : MonoBehaviour
         {
             foreach (DataRow data in m_dataPool)
             {
-                if (m_dataType == Game.Data.Phonemes)
+                if (m_dataType == "phonemes")
                 {
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data ["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);

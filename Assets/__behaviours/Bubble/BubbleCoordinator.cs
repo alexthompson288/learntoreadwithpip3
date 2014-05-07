@@ -22,7 +22,7 @@ public class BubbleCoordinator : MonoBehaviour
 	[SerializeField]
 	private float m_timeRemaining = -1f;
 	[SerializeField]
-	private Game.Data m_dataType;
+	private string m_dataType;
 	[SerializeField]
 	private int m_expToLevelUp;
 	[SerializeField]
@@ -82,7 +82,7 @@ public class BubbleCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		AddToDataPool(true);
 
-		if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
+		if(m_dataType == "words" || m_dataType == "keywords")
 		{
 			PipPadBehaviour.Instance.OnPadHide += OnPipPadHide;
 		}
@@ -266,7 +266,7 @@ public class BubbleCoordinator : MonoBehaviour
 			
 			bool isCorrect = (System.Convert.ToInt32(data["id"]) == System.Convert.ToInt32(m_targetData["id"]));
 
-			if(m_dataType == Game.Data.Phonemes)
+			if(m_dataType == "phonemes")
 			{
 				isCorrect = (m_targetData["grapheme"].ToString() == data["grapheme"].ToString());
 			}
@@ -299,7 +299,7 @@ public class BubbleCoordinator : MonoBehaviour
 					WingroveAudio.WingroveRoot.Instance.PostEvent(burp);
 				}
 
-				if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
+				if(m_dataType == "words" || m_dataType == "keywords")
 				{
 					PipPadBehaviour.Instance.Show(m_targetData["word"].ToString());
 					foreach(Transform bubbleParent in m_bubbleParents)
@@ -351,10 +351,10 @@ public class BubbleCoordinator : MonoBehaviour
 	{
 		switch(m_dataType)
 		{
-		case Game.Data.Keywords:
+		case "keywords":
 			m_dataPool.AddRange(DataHelpers.GetKeywords(inclusive));
 			break;
-		case Game.Data.Phonemes:
+		case "phonemes":
 			m_dataPool.AddRange(DataHelpers.GetLetters(inclusive));
 			break;
 		default:
@@ -388,7 +388,7 @@ public class BubbleCoordinator : MonoBehaviour
 	
 	IEnumerator OnGameFinish()
 	{
-		if(m_dataType == Game.Data.Words || m_dataType == Game.Data.Keywords)
+		if(m_dataType == "words" || m_dataType == "keywords")
 		{
 			while(PipPadBehaviour.Instance.IsShowing())
 			{
@@ -450,7 +450,7 @@ public class BubbleCoordinator : MonoBehaviour
 	
 	void SayLongAudio()
 	{
-		if(m_dataType == Game.Data.Phonemes)
+		if(m_dataType == "phonemes")
 		{
 			AudioClip clip = LoaderHelpers.LoadMnemonic(m_targetData);
 
@@ -470,7 +470,7 @@ public class BubbleCoordinator : MonoBehaviour
 	{
 		AudioClip clip = null;
 		
-		if(m_dataType == Game.Data.Phonemes)
+		if(m_dataType == "phonemes")
 		{
 			clip = AudioBankManager.Instance.GetAudioClip(m_targetData["grapheme"].ToString());
 		}
