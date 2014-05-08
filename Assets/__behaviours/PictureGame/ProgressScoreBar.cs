@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class ProgressScoreBar : MonoBehaviour {
-
+public class ProgressScoreBar : MonoBehaviour 
+{
     [SerializeField]
     private UISlider m_slider;
     [SerializeField]
