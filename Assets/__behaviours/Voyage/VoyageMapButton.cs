@@ -23,7 +23,7 @@ public class VoyageMapButton : MonoBehaviour
         {
             Color opaqueCol = ColorInfo.GetColor(m_color);
             Color transparentCol = opaqueCol;
-            transparentCol.a = 0.5f;
+            transparentCol.a = 0.8f;
 
             int moduleId = DataHelpers.GetModuleId(m_color);
             int numVerticesPerSession = 5;
@@ -46,7 +46,7 @@ public class VoyageMapButton : MonoBehaviour
                 for(int i = 0; i < numVerticesComplete; ++i)
                 {
                     Vector3 pos = m_spline.GetPositionOnSpline((float) i / (numVerticesTotal));
-                    pos.z = -0.25f;
+                    pos.z = -0.45f;
 
                     m_completeLine.SetPosition(i, pos);
                 }
