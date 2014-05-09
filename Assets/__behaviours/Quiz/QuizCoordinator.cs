@@ -26,11 +26,24 @@ public class QuizCoordinator : MonoBehaviour
 
     DataRow m_currentQuestion = null;
 
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_useDebugData;
+#endif
+
     IEnumerator Start()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_dataPool = DataHelpers.GetQuizQuestions();
+
+#if UNITY_EDITOR
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + 48);
+        if(dt.Rows.Count > 0)
+        {
+            m_dataPool = dt.Rows;
+        }
+#endif
 
         if (m_targetScore > m_dataPool.Count)
         {

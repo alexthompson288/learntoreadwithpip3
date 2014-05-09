@@ -302,6 +302,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddData("keywords", keywords);
                 GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }
+
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE programsession_id=" + m_sessionId);
+            GameManager.Instance.AddData("quizquestions", dt.Rows);
             
             GameManager.Instance.StartGames();
         }
