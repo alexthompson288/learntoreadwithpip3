@@ -36,9 +36,11 @@ public class ScoreQuiz : ScoreKeeper
             Destroy(m_spawnedMarkers[i]);
         }
         m_spawnedMarkers.Clear();
-        
+
+        int deltaModifier = m_targetScore > 1 ? 1 : 0;
+
         Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition)
-            / (targetScore - 1);
+            / (targetScore - deltaModifier);
         
         for (int index = 0; index < targetScore; ++index)
         {

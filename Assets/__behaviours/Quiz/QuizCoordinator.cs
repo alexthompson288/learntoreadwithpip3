@@ -50,6 +50,8 @@ public class QuizCoordinator : MonoBehaviour
             m_targetScore = m_dataPool.Count;
         }
 
+        m_scoreKeeper.SetTargetScore(m_targetScore);
+
         if (m_dataPool.Count > 0)
         {
             AskQuestion();
@@ -140,7 +142,7 @@ public class QuizCoordinator : MonoBehaviour
 
     IEnumerator CompleteGame()
     {
-        yield return null;
+        yield return new WaitForSeconds(2f);
 
         GameManager.Instance.CompleteGame();
     }
