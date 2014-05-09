@@ -19,6 +19,14 @@ public class GameManager : Singleton<GameManager>
         m_currentProgramme = newProgramme;
     }
 
+    public static IEnumerator WaitForGameManager()
+    {
+        while (GameManager.Instance == null)
+        {
+            yield return null;
+        }
+    }
+
     void Start()
     {
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;

@@ -15,8 +15,10 @@ public class VoyageMapButton : MonoBehaviour
     [SerializeField]
     private ClickEvent m_click;
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return StartCoroutine(GameManager.WaitForGameManager());
+
         m_click.OnSingleClick += OnSingleClick;
 
         if (m_spline != null)
