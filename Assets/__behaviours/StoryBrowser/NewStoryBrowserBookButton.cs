@@ -115,7 +115,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
             {
                 GameManager.Instance.AddData("stories", dt.Rows);
 
-    			TransitionScreen.Instance.ChangeLevel("NewStartStory", false);
+    			TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
             }
 		}
 		else

@@ -110,8 +110,15 @@ public static class DataHelpers
                 }
             }
         }
-        
-        return dataList;
+
+        if (dataList.Count > 0)
+        {
+            return dataList;
+        } 
+        else
+        {
+            return GetSetData(++setNum, columnName, tableName);
+        }
     }
     
     public static List<DataRow> GetInclusiveSetData(int setNum, string columnName, string tableName)
@@ -168,7 +175,22 @@ public static class DataHelpers
                 case "sentences":
                     dataPool = GetSentences();
                     break;
+                case "stories":
+                    dataPool = GetStories();
+                    break;
             }
+        }
+
+        return dataPool;
+    }
+
+    public static List<DataRow> GetStories()
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData("stories");
+         
+        if (dataPool.Count == 0)
+        {
+            dataPool = GetSetData(1, "setstories", "stories");
         }
 
         return dataPool;

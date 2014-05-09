@@ -23,6 +23,12 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 	[SerializeField]
 	private float m_pageTurnDuration = 0.8f;
 
+    static bool m_showWords = true;
+    public static void SetShowWords(bool showWords)
+    {
+        m_showWords = showWords;
+    }
+
 #if UNITY_EDITOR
 	[SerializeField]
 	private bool m_useDebugStory;
@@ -67,8 +73,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
         int m_storyId = 1;
 
-        List<DataRow> stories = GameManager.Instance.GetData("stories");
-
+        List<DataRow> stories = DataHelpers.GetStories();
         if (stories.Count > 0)
         {
             m_storyId = System.Convert.ToInt32(stories[0]["id"]);
@@ -422,93 +427,93 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
     void SetText(DataRow row)
     {
-		Debug.Log("StoryReaderLogic.SetText()");
-
-        //textposition
-		string textToDisplay = row[m_currentLanguage].ToString().Replace("\\n", "\n");
-
-        string[] lines = textToDisplay.Split('\n');
-        
-        float length = 0;
-        float height = 0;
-
-        int currentIndex = 0;
-        bool ignoreNext = false;
-        float maxWidth = 0;
-        foreach (string line in lines)
+		if (m_showWords)
         {
-            string[] lineWords = line.Split(' ');
-            bool hadValidWord = false;
-            foreach (string newWord in lineWords)
+            //textposition
+            string textToDisplay = row [m_currentLanguage].ToString().Replace("\\n", "\n");
+
+            string[] lines = textToDisplay.Split('\n');
+            
+            float length = 0;
+            float height = 0;
+
+            int currentIndex = 0;
+            bool ignoreNext = false;
+            float maxWidth = 0;
+            foreach (string line in lines)
             {
-                if (!string.IsNullOrEmpty(newWord) && newWord != " ")
+                string[] lineWords = line.Split(' ');
+                bool hadValidWord = false;
+                foreach (string newWord in lineWords)
                 {
-                    hadValidWord = true;
-                    GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
-                        m_textPrefab, m_textAnchors[0]);
+                    if (!string.IsNullOrEmpty(newWord) && newWord != " ")
+                    {
+                        hadValidWord = true;
+                        GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
+                            m_textPrefab, m_textAnchors [0]);
 
-                    m_textObjects.Add(newWordInstance);
+                        m_textObjects.Add(newWordInstance);
 
-                    newWordInstance.GetComponent<UILabel>().text = newWord + " ";
-                    newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                    Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
-                    length += wordSize.x;
-                    maxWidth = Mathf.Max(maxWidth, length);
+                        newWordInstance.GetComponent<UILabel>().text = newWord + " ";
+                        newWordInstance.transform.localPosition = new Vector3(length, height, 0);
+                        Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
+                        length += wordSize.x;
+                        maxWidth = Mathf.Max(maxWidth, length);
 
-					string storyType = SessionInformation.Instance.GetStoryType();
-					if(storyType == "" || storyType == null)
-					{
-						storyType = "Reception";
-					}
+                        string storyType = SessionInformation.Instance.GetStoryType();
+                        if (storyType == "" || storyType == null)
+                        {
+                            storyType = "Reception";
+                        }
 
-					ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
-					bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ","").Replace("?", ""));
+                        ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
+                        bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
 
-                    showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
+                        showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
 
-                    /*
-					if(storyType == "Reception" || storyType == "Year 1")
-					{
-						showPipPadForWord.SetUp(newWord, wordSize, (!isOnDecodeList && m_currentLanguage == "text"));
-					}
-					else if(storyType == "Classic")
-					{
-						showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
-					}
-                    */               
+                        /*
+    					if(storyType == "Reception" || storyType == "Year 1")
+    					{
+    						showPipPadForWord.SetUp(newWord, wordSize, (!isOnDecodeList && m_currentLanguage == "text"));
+    					}
+    					else if(storyType == "Classic")
+    					{
+    						showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
+    					}
+                        */               
 
-					// Highlight if word is on the decode list
-					if(isOnDecodeList) 
-					{
-						showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
-					}
-				}
+                        // Highlight if word is on the decode list
+                        if (isOnDecodeList)
+                        {
+                            showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
+                        }
+                    }
+                }
+                if (hadValidWord)
+                {
+                    length = 0;
+                    height -= 96;
+                }
             }
-            if (hadValidWord)
-            {
-                length = 0;
-                height -= 96;
-            }
-        }
 
-		UpdateAudio(row);
-        //string audioSetting = row["audio"] == null ? null : row["audio"].ToString();
-        //if (!string.IsNullOrEmpty(audioSetting))
-        //{
+            UpdateAudio(row);
+            //string audioSetting = row["audio"] == null ? null : row["audio"].ToString();
+            //if (!string.IsNullOrEmpty(audioSetting))
+            //{
             //m_audioPlayButton.SetActive(true);
             //m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + row["audio"].ToString());
-        //}
+            //}
 
-        if (maxWidth > 850)
-        {
-            float scale = 850 / maxWidth;
-            m_textAnchors[0].transform.localScale = scale * Vector3.one;
+            if (maxWidth > 850)
+            {
+                float scale = 850 / maxWidth;
+                m_textAnchors [0].transform.localScale = scale * Vector3.one;
+            } 
+            else
+            {
+                m_textAnchors [0].transform.localScale = Vector3.one;
+            }
         }
-        else
-        {
-            m_textAnchors[0].transform.localScale = Vector3.one;
-        }
-
     }
 
 	public void SetLanguage(string language)
