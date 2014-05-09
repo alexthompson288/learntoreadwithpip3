@@ -20,6 +20,8 @@ public class VoyageMap : MonoBehaviour
     private GameObject m_sessionButtonPrefab;
     [SerializeField]
     private UIGrid m_sessionButtonGrid;
+    [SerializeField]
+    private SimpleSpriteAnim[] m_delayedSpriteAnims;
 
     // We set the color in the editor instead of the moduleId. This is because of human error: When creating a new map, it is easier to select the correct color from a dropdown menu than to enter the correct moduleId from a wide array of options
 
@@ -39,7 +41,7 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
-    public void Start()
+    public IEnumerator Start()
     {
         DataRow module = DataHelpers.GetModule(m_color);
         string dataType = module != null ? module ["modulereward"].ToString() : "Custom";
@@ -50,6 +52,13 @@ public class VoyageMap : MonoBehaviour
         {
             GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
             newSessionButton.GetComponent<VoyageSessionButton>().SetUp(session, m_color, dataType);
+        }
+
+        yield return new WaitForSeconds(1.5f);
+
+        foreach (SimpleSpriteAnim anim in m_delayedSpriteAnims)
+        {
+            anim.PlayAnimation("ON");
         }
     }
 
