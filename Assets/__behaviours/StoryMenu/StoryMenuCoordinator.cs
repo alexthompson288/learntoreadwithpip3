@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class StoryMenuCoordinator : MonoBehaviour 
 {
@@ -20,7 +21,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     static bool m_isReadingOrPictures;
 
-    void Start()
+    IEnumerator Start()
     {
         m_readButton.OnSingleClick += OnClickReadOrPictures;
         m_quizButton.OnSingleClick += OnClickQuiz;
@@ -29,14 +30,26 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.OnCancel += OnGameCancel;
 
+
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        
         DataRow story = DataHelpers.GetStory();
+
+        bool hasFoundQuizQuestions = false;
 
         if(story != null)
         {
-            m_titleLabel.text = story ["title"].ToString();
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + story ["id"]);
             
+            if (dt.Rows.Count > 0)
+            {
+                hasFoundQuizQuestions = true;
+            }
+
+
             m_authorLabel.text = ("by " + story ["author"].ToString());
-            
+            m_titleLabel.text = story ["title"].ToString();
             Debug.Log("width: " + m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x);
             
             if (m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1400)
@@ -73,6 +86,8 @@ public class StoryMenuCoordinator : MonoBehaviour
             m_authorLabel.gameObject.SetActive(false);
             m_descriptionLabel.gameObject.SetActive(false);
         }
+
+        m_quizButton.gameObject.SetActive(hasFoundQuizQuestions);
     }
 
     void OnClickReadOrPictures(ClickEvent click)
@@ -88,7 +103,19 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         m_isReadingOrPictures = false;
         GameManager.Instance.SetScenes("NewQuiz");
-        StartActivity();
+
+        DataRow story = DataHelpers.GetStory();
+
+        if (story != null)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + story["id"]);
+
+            if(dt.Rows.Count > 0)
+            {
+                GameManager.Instance.AddData("quizquestions", dt.Rows);
+                StartActivity();
+            }
+        }
     }
 
     void OnClickSuggestions(ClickEvent click)
