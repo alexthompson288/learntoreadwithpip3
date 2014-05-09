@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class StoryMenuCoordinator : MonoBehaviour 
 {
@@ -30,12 +29,10 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.OnCancel += OnGameCancel;
 
-        List<DataRow> stories = DataHelpers.GetStories();
+        DataRow story = DataHelpers.GetStory();
 
-        if(stories.Count > 0)
+        if(story != null)
         {
-            DataRow story = stories[0];
-
             m_titleLabel.text = story ["title"].ToString();
             
             m_authorLabel.text = ("by " + story ["author"].ToString());

@@ -184,6 +184,13 @@ public static class DataHelpers
         return dataPool;
     }
 
+    public static DataRow GetStory()
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData("stories");
+
+        return dataPool.Count > 0 ? dataPool [0] : null;
+    }
+
     public static List<DataRow> GetStories()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("stories");

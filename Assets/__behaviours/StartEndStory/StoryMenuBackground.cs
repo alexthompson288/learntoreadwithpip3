@@ -11,20 +11,13 @@ public class StoryMenuBackground : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "' and pageorder='" + 1 + "'");
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories where id='" + SessionInformation.Instance.GetBookId() + "'");
+        DataRow story = DataHelpers.GetStory();
 
-		Debug.Log("bookId: " + SessionInformation.Instance.GetBookId());
+        if(story != null)
+        {
+            Debug.Log("bgImageName: " + story["backgroundart"]);
 
-		if (dt.Rows.Count > 0)
-		{
-			DataRow row = dt.Rows[0];
-
-			Debug.Log("attribute: " + row["backgroundart"]);
-
-			string bgImageName = row["backgroundart"] == null ? "" : row["backgroundart"].ToString().Replace(".png", "");
-
-			Debug.Log("bgImageName: " + bgImageName);
+			string bgImageName = story["backgroundart"] == null ? "" : story["backgroundart"].ToString().Replace(".png", "");
 
 			Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
 
