@@ -45,7 +45,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 	string m_currentLanguage = "text";
 
-	int m_storyID = 85;
+	int m_storyId = 85;
 
 	bool m_hasStoryData = false;
 
@@ -69,19 +69,15 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 		NavMenu.Instance.MoveCallButtonToRight();
 
-
-
-        int m_storyId = 1;
-
-        List<DataRow> stories = DataHelpers.GetStories();
-        if (stories.Count > 0)
+        DataRow story = DataHelpers.GetStory();
+        if (story != null)
         {
-            m_storyId = System.Convert.ToInt32(stories[0]["id"]);
+            m_storyId = System.Convert.ToInt32(story["id"]);
         }
 
-		UserStats.Activity.SetStoryId (m_storyID);
+		UserStats.Activity.SetStoryId (m_storyId);
 
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "'");
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
 		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
 		m_numPages = dt.Rows.Count;
 		Debug.Log("There are " + m_numPages + " pages");
@@ -95,7 +91,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 	public int GetStoryId()
 	{
-		return m_storyID;
+		return m_storyId;
 	}
 
     IEnumerator LoadAssetBundle()
@@ -105,7 +101,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
             //"' ");
 
 		DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
-			"select * from stories where id='"+ m_storyID +
+			"select * from stories where id='"+ m_storyId +
 			"' ");
 
         if ( dataTable.Rows.Count > 0 )
@@ -344,7 +340,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		}
 
 		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "' and pageorder='" + currentPageOneBased + "'");
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyID + "' and pageorder='" + currentPageOneBased + "'");
+		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + currentPageOneBased + "'");
 
         if (dt.Rows.Count > 0)
         {
