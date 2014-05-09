@@ -203,6 +203,13 @@ public static class DataHelpers
         return dataPool;
     }
 
+    public static List<DataRow> GetQuizQuestions()
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData("quizquestions");
+
+        return dataPool;
+    }
+
     public static List<DataRow> GetSentences()
     {
         return GameManager.Instance.GetData("sentences");

@@ -37,12 +37,11 @@ public class GameWidget : MonoBehaviour
         }
     }
 
-    string m_labelText;
     public string labelText
     {
         get
         {
-            return m_labelText;
+            return m_label.text;
         }
     }
 
@@ -82,10 +81,9 @@ public class GameWidget : MonoBehaviour
 
     public void SetUp(string dataType, DataRow newData, bool changeBackgroundWidth)
     {
-        m_labelText = DataHelpers.GetLabelText(dataType, newData);
         if (m_label != null)
         {
-            m_label.text = m_labelText;
+            m_label.text = DataHelpers.GetLabelText(dataType, newData);
         }
 
         m_data = newData;
@@ -127,6 +125,21 @@ public class GameWidget : MonoBehaviour
         else
         {
             m_background.spriteName = EnviroLoader.Instance.GetContainerOffName();
+        }
+    }
+
+    public void SetUp(string labelText, bool changeBackgroundWidth)
+    {
+        m_label.text = labelText;
+
+        if(changeBackgroundWidth && m_label != null)
+        {
+            int newWidth = (int)(m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x*1.3f);
+            
+            if(m_background != null && newWidth > m_background.width)
+            {
+                m_background.width = newWidth;
+            }
         }
     }
 
