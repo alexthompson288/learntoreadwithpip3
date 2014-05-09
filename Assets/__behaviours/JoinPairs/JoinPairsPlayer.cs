@@ -21,6 +21,10 @@ public class JoinPairsPlayer : GamePlayer
     private Transform m_rightOff;
     [SerializeField]
     private CharacterPopper m_characterPopper;
+    [SerializeField]
+    private Material m_lineRendererMaterial;
+    [SerializeField]
+    private Color m_lineRendererColor;
 
     int m_panelDepthIncrement = 1;
 
@@ -138,12 +142,18 @@ public class JoinPairsPlayer : GamePlayer
             newImage.transform.localPosition = posB;
             
             Texture2D texture = JoinPairsCoordinator.Instance.GetPicture(data);
-            
-            newText.GetComponent<JoinableLineDraw>().SetUp(JoinPairsCoordinator.Instance.dataType, data);
-            newText.GetComponent<JoinableLineDraw>().JoinableJoinEventHandler += OnJoin;
 
-            newImage.GetComponent<JoinableLineDraw>().SetUp(JoinPairsCoordinator.Instance.dataType, data);
-            newImage.GetComponent<JoinableLineDraw>().JoinableJoinEventHandler += OnJoin;
+            JoinableLineDraw textLineDraw = newText.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
+            textLineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
+            textLineDraw.SetMaterial(m_lineRendererMaterial);
+            textLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
+            textLineDraw.JoinableJoinEventHandler += OnJoin;
+
+            JoinableLineDraw imageLineDraw = newImage.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
+            imageLineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
+            imageLineDraw.SetMaterial(m_lineRendererMaterial);
+            imageLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
+            imageLineDraw.JoinableJoinEventHandler += OnJoin;
             
             m_spawnedJoinables.Add(newText);
             m_spawnedJoinables.Add(newImage);

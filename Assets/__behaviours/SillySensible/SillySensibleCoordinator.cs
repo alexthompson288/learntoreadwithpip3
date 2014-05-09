@@ -75,10 +75,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 
 
-        yield return new WaitForSeconds(1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_SENSIBLE_INSTRUCTION");
-
-        yield return new WaitForSeconds(5.0f);
+        //yield return new WaitForSeconds(1.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_SENSIBLE_INSTRUCTION");
+        //yield return new WaitForSeconds(5.0f);
 
 		if(m_wordList.Count > 0)
 		{

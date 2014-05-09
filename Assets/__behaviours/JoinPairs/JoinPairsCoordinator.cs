@@ -170,8 +170,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
             m_gamePlayers[index].HideAll();
         }
         
-        WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_LETTERS_INSTRUCTION");
-        yield return new WaitForSeconds(4.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_LETTERS_INSTRUCTION");
+        //yield return new WaitForSeconds(4.0f);
         WingroveAudio.WingroveRoot.Instance.PostEvent("READY_STEADY_GO");
         
         for(int index = 0; index < numPlayers; ++index)

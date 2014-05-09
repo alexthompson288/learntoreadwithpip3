@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayWordSpellingButton : MonoBehaviour {
-
+public class PlayWordSpellingButton : MonoBehaviour 
+{
 	[SerializeField]
 	private AudioSource m_audioSource;
 	[SerializeField]
@@ -20,7 +20,7 @@ public class PlayWordSpellingButton : MonoBehaviour {
 		else
 		{
 			m_hideObject.SetActive(true);
-			m_spriteAnim.PlayAnimation("ON");
+			//m_spriteAnim.PlayAnimation("ON");
 			m_audioSource.clip = loadedAudio;
 			collider.enabled = true;
 		}
@@ -51,7 +51,7 @@ public class PlayWordSpellingButton : MonoBehaviour {
 	{
 		SpellingPadBehaviour.Instance.HighlightWholeWord();
 		collider.enabled = false;
-		m_spriteAnim.PlayAnimation("OFF");
+		//m_spriteAnim.PlayAnimation("OFF");
 		m_audioSource.Play();
 		while (m_audioSource.isPlaying)
 		{
@@ -59,7 +59,7 @@ public class PlayWordSpellingButton : MonoBehaviour {
 		}
 		yield return new WaitForSeconds(0.2f);
 		collider.enabled = true;
-		m_spriteAnim.PlayAnimation("ON");
+		//m_spriteAnim.PlayAnimation("ON");
 		
 	}
 

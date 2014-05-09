@@ -3,7 +3,6 @@ using System.Collections;
 
 public class RetryButton : MonoBehaviour
 {
-
     void OnClick()
     {
         TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));

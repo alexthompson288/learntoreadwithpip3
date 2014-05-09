@@ -50,9 +50,6 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         foreach (ClickEvent click in m_colorButtons)
         {
             click.OnSingleClick += OnChooseColor;
-
-            click.GetComponentInChildren<UISprite>().color = ColorInfo.GetColor(click.GetString());
-            click.GetComponentInChildren<UILabel>().text = click.GetString();
         }
     }
 
@@ -77,11 +74,14 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
     void OnChooseColor(ClickEvent click)
     {
-        m_color = ColorInfo.GetPipColor(click.GetString());
+        m_color = click.GetComponent<PipColorWidgets>().color;
 
         DestroyGameButtons();
 
-        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
+        PerspectiveButton button = click.GetComponent<PerspectiveButton>() as PerspectiveButton;
+        float buttonTweenDuration = button != null ? button.tweenDuration : 0.5f;
+        
+        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu, buttonTweenDuration + 0.4f));
 
         SpawnGameButtons();
     }
@@ -115,15 +115,6 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
                     GameManager.Instance.AddData("sillywords", DataHelpers.GetSetData(set, "setsillywords", "words"));
                 }
-
-                /*
-                List<DataRow> phonemes = GameManager.Instance.GetData("phonemes");
-                Debug.Log("LOG PHONEMES");
-                foreach(DataRow phoneme in phonemes)
-                {
-                    Debug.Log(phoneme["phoneme"].ToString());
-                }
-                */
 
                 GameManager.Instance.StartGames();
             }
@@ -193,11 +184,11 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         yield return new WaitForSeconds(delay);
 
-        to.SetActive(true);
+        //to.SetActive(true);
         iTween.MoveTo(m_camera, to.transform.position, m_cameraTweenDuration);
         
-        yield return new WaitForSeconds(m_cameraTweenDuration);
+        //yield return new WaitForSeconds(m_cameraTweenDuration);
         
-        from.SetActive(false);
+        //from.SetActive(false);
     }  
 }

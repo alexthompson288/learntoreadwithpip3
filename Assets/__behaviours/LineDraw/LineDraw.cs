@@ -9,9 +9,24 @@ public class LineDraw : MonoBehaviour
     public event LineEvent LineReleaseEventHandler;
 
     [SerializeField]
-    private int m_maxNumPositions = -1;
-    [SerializeField]
     protected Material m_material;
+    [SerializeField]
+    protected Color m_startColor = Color.white;
+    [SerializeField]
+    protected Color m_endColor = Color.white;
+    [SerializeField]
+    private int m_maxNumPositions = -1;
+
+    public void SetMaterial(Material newMaterial)
+    {
+        m_material = newMaterial;
+    }
+
+    public void SetColors(Color newStartColor, Color newEndColor)
+    {
+        m_startColor = newStartColor;
+        m_endColor = newEndColor;
+    }
 
     public int maxNumPositions
     {
@@ -50,7 +65,7 @@ public class LineDraw : MonoBehaviour
             // Derived types handle their own line creation because they might want to use a range of different materials
             if(this.GetType().Name == "LineDraw")
             {
-                CreateLine(m_material);
+                CreateLine();
             }
         }
 
@@ -68,19 +83,9 @@ public class LineDraw : MonoBehaviour
         }
     }
 
-    protected void CreateLine(Material mat = null)
+    protected void CreateLine()
     {
-        LineDrawManager.Instance.CreateLine(this, mat);
-        
-        if(LineCreateEventHandler != null)
-        {
-            LineCreateEventHandler(this);
-        }
-    }
-
-    protected void CreateLine(Material mat, Color startCol, Color endCol)
-    {
-        LineDrawManager.Instance.CreateLine(this, mat, startCol, endCol);
+        LineDrawManager.Instance.CreateLine(this, m_material, m_startColor, m_endColor);
 
         if(LineCreateEventHandler != null)
         {

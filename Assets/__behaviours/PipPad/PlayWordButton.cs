@@ -22,7 +22,7 @@ public class PlayWordButton : MonoBehaviour {
         else
         {
             m_hideObject.SetActive(true);
-            m_spriteAnim.PlayAnimation("ON");
+            //m_spriteAnim.PlayAnimation("ON");
 			m_loadedAudio = loadedAudio;
             collider.enabled = true;
         }
@@ -36,11 +36,7 @@ public class PlayWordButton : MonoBehaviour {
 
     void OnClick()
     {
-		Debug.Log("Say whole word clcicked");
-		//if(Application.loadedLevelName != "NewSoundButtonsBasic") // TODO: Make a proper fix for the bug where pressing this button in NewSoundButtonsBasic causes the question to be answered and an error thrown
-		//{
-        	PipPadBehaviour.Instance.SayAll(0.0f);
-		//}
+        PipPadBehaviour.Instance.SayAll(0.0f);
     }
 
 
@@ -55,7 +51,7 @@ public class PlayWordButton : MonoBehaviour {
         PipPadBehaviour.Instance.HighlightWholeWord();
         //PipPadBehaviour.Instance.ReShowWordImage();
         collider.enabled = false;
-        m_spriteAnim.PlayAnimation("OFF");
+       // m_spriteAnim.PlayAnimation("OFF");
 		m_audioSource.clip = m_loadedAudio;
         m_audioSource.Play();
         while (m_audioSource.isPlaying)
@@ -64,8 +60,7 @@ public class PlayWordButton : MonoBehaviour {
         }
         yield return new WaitForSeconds(0.2f);
         collider.enabled = true;
-        m_spriteAnim.PlayAnimation("ON");
-        
+        //m_spriteAnim.PlayAnimation("ON"); 
     }
 
 	public float GetClipLength()

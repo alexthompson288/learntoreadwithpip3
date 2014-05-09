@@ -58,8 +58,7 @@ public class JoinableLineDraw : LineDraw
 
         if (pressed)
         {
-            // TODO: Pass a material from the game player
-            CreateLine(null);
+            CreateLine();
         } 
         else
         {

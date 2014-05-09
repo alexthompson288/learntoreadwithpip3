@@ -15,6 +15,8 @@ public class ColorInfo : Singleton<ColorInfo>
     private Color m_green;
     [SerializeField]
     private Color m_orange;
+    [SerializeField]
+    private Color m_alternateBlue;
 
     public enum PipColor
     {
@@ -23,7 +25,8 @@ public class ColorInfo : Singleton<ColorInfo>
         Yellow,
         Blue,
         Green,
-        Orange
+        Orange,
+        White
     }
 
     public class NoColor : System.Exception {}
@@ -50,6 +53,9 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case "Orange":
                 return Instance.m_orange;
+                break;
+            case "White":
+                return Color.white;
                 break;
             default:
                 return Color.white;
@@ -79,6 +85,9 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.Orange:
                 return Instance.m_orange;
                 break;
+            case PipColor.White:
+                return Color.white;
+                break;
             default:
                 return Color.white;
                 break;
@@ -106,6 +115,9 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case "Orange":
                 return PipColor.Orange;
+                break;
+            case "White":
+                return PipColor.White;
                 break;
             default:
                 throw new NoColor();
@@ -152,8 +164,11 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.Orange:
                 return "Orange";
                 break;
+            case PipColor.White:
+                return "White";
+                break;
             default:
-                return "Pink";
+                return "White";
                 break;
         }
     }

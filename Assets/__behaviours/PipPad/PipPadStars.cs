@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: Delete. This logic is now on the PipPad
 public class PipPadStars : Singleton<PipPadStars> 
 {
     [SerializeField]

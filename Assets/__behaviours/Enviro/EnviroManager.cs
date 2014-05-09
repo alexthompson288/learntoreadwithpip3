@@ -10,7 +10,8 @@ public class EnviroManager : Singleton<EnviroManager>
         Castle,
 		Underwater,
 		Market,
-		Mountains
+		Mountains,
+        Count // Count MUST be last
 	}
 	
 	Environment m_environment;
@@ -23,6 +24,11 @@ public class EnviroManager : Singleton<EnviroManager>
     public void SetEnvironment(int environmentIndex)
     {
         m_environment = (Environment)environmentIndex;
+    }
+
+    public void RandomEnvironment()
+    {
+        SetEnvironment(Random.Range(0, (int)Environment.Count));
     }
 	
 	public Environment GetEnvironment()

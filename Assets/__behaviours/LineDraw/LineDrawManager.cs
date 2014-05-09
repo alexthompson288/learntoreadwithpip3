@@ -107,16 +107,21 @@ public class LineDrawManager : Singleton<LineDrawManager>
 
         if (m_lines.ContainsKey(line))
         {
-            m_lines [line] = new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, m_defaultColor, m_defaultColor);
+            m_lines [line] = new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor);
         } 
         else
         {
-            m_lines.Add(line, new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, m_defaultColor, m_defaultColor));
+            m_lines.Add(line, new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor));
         }
     }
 
     public void CreateLine(LineDraw line, Material mat = null)
     {
+        if (mat == null)
+        {
+            mat = m_defaultMaterial;
+        }
+
         CreateLine(line, mat, m_defaultColor, m_defaultColor);
     }
 

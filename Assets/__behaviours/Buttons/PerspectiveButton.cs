@@ -129,10 +129,12 @@ public class PerspectiveButton : MonoBehaviour
         m_isMoving = false;
     }
 
+#if UNITY_EDITOR
     void OnGUI()
     {
-        GUILayout.Label("isMoving: " + m_isMoving);
+        //GUILayout.Label("isMoving: " + m_isMoving);
     }
+#endif
 
     public void Reset()
     {
