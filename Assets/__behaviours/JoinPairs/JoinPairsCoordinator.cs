@@ -115,6 +115,11 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         int numPlayers = GetNumPlayers();
 
+        if (numPlayers == 2)
+        {
+            m_targetScore = 4;
+        }
+
         for(int index = 0; index < numPlayers; ++index)
         {
             m_gamePlayers[index].SetUp(m_targetScore); 

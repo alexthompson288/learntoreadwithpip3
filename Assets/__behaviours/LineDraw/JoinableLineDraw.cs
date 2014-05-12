@@ -6,8 +6,8 @@ public class JoinableLineDraw : LineDraw
     public delegate void JoinableJoinedEvent(JoinableLineDraw self, JoinableLineDraw other);
     public event JoinableJoinedEvent JoinableJoinEventHandler;
 
-    public delegate void JoinableEvent(JoinableLineDraw self);
-    public event JoinableEvent JoinableClickEventHandler;
+    public delegate void JoinablePressedEvent(JoinableLineDraw self, bool pressed);
+    public event JoinablePressedEvent JoinablePressEventHandler;
 
     [SerializeField]
     private bool m_isPicture;
@@ -56,6 +56,11 @@ public class JoinableLineDraw : LineDraw
     {
         base.OnPress(pressed);
 
+        if (JoinablePressEventHandler != null)
+        {
+            JoinablePressEventHandler(this, pressed);
+        }
+
         if (pressed)
         {
             CreateLine();
@@ -75,14 +80,6 @@ public class JoinableLineDraw : LineDraw
             }
 
             LineDrawManager.Instance.DestroyLine(this);
-        }
-    }
-
-    void OnClick()
-    {
-        if (JoinableClickEventHandler != null)
-        {
-            JoinableClickEventHandler(this);
         }
     }
 

@@ -43,6 +43,46 @@ public class VoyageMap : MonoBehaviour
 
     public IEnumerator Start()
     {
+        yield return new WaitForSeconds(1.5f);
+        
+        // TODO: Randomize these values. The delay is hard-coded so that it looks good for a meeting tomorrow
+        for (int i = 0; i < m_delayedSpriteAnims.Length; ++i)
+        {
+            float delay = 0;
+            
+            if(i == 1)
+            {
+                delay = 3f;
+            }
+            else if(i ==2)
+            {
+                delay = 5f;
+            }
+            
+            StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
+        }
+    }
+
+    /*
+    public IEnumerator Start()
+    {
+        //StartCoroutine(GameDataBridge.WaitForDatabase());
+        //StartCoroutine(ColorInfo.WaitForInstance());
+        //StartCoroutine(GameManager.WaitForInstance());
+
+        m_worldMapButton.OnSingleClick += OnClickWorldMapButton;
+        
+        foreach (ClickEvent click in m_moduleMapButtons)
+        {
+            click.OnSingleClick += OnClickModuleMapButton;
+        }
+        
+        Color color = ColorInfo.GetColor(m_color);
+        foreach (UIWidget widget in m_widgetsToColor)
+        {
+            widget.color = color;
+        }
+
         DataRow module = DataHelpers.GetModule(m_color);
         string dataType = module != null ? module ["modulereward"].ToString() : "Custom";
         Debug.Log("module dataType: " + dataType);
@@ -56,26 +96,36 @@ public class VoyageMap : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        foreach (SimpleSpriteAnim anim in m_delayedSpriteAnims)
+        // TODO: Randomize these values. The delay is hard-coded so that it looks good for a meeting tomorrow
+        for (int i = 0; i < m_delayedSpriteAnims.Length; ++i)
         {
-            anim.PlayAnimation("ON");
+            float delay = 0;
+
+            if(i == 1)
+            {
+                delay = 3f;
+            }
+            else if(i ==2)
+            {
+                delay = 5f;
+            }
+
+            StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
         }
     }
+    */
 
-    void Awake()
+    IEnumerator PlayDelayedAnimation(SimpleSpriteAnim anim, float delay)
     {
-        m_worldMapButton.OnSingleClick += OnClickWorldMapButton;
+        Debug.Log(anim.transform.parent.name + " delay: " + delay);
 
-        foreach (ClickEvent click in m_moduleMapButtons)
-        {
-            click.OnSingleClick += OnClickModuleMapButton;
-        }
+        yield return new WaitForSeconds(delay);
 
-        Color color = ColorInfo.GetColor(m_color);
-        foreach (UIWidget widget in m_widgetsToColor)
-        {
-            widget.color = color;
-        }
+        anim.PlayAnimation("ON");
+
+        yield return new WaitForSeconds(0.2f);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
     }
 
 	void OnClickWorldMapButton(ClickEvent click)

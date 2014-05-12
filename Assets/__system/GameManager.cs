@@ -19,7 +19,7 @@ public class GameManager : Singleton<GameManager>
         m_currentProgramme = newProgramme;
     }
 
-    public static IEnumerator WaitForGameManager()
+    public static IEnumerator WaitForInstance()
     {
         while (GameManager.Instance == null)
         {

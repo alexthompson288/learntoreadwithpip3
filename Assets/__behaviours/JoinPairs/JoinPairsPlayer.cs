@@ -25,6 +25,10 @@ public class JoinPairsPlayer : GamePlayer
     private Material m_lineRendererMaterial;
     [SerializeField]
     private Color m_lineRendererColor;
+    [SerializeField]
+    private Transform[] m_locators;
+
+    ThrobGUIElement m_currentThrobBehaviour = null;
 
     int m_panelDepthIncrement = 1;
 
@@ -96,6 +100,11 @@ public class JoinPairsPlayer : GamePlayer
         HashSet<DataRow> dataPool = new HashSet<DataRow>();
         
         int pairsToShowAtOnce = JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
+
+        if (pairsToShowAtOnce > (m_locators.Length / 2))
+        {
+            pairsToShowAtOnce = m_locators.Length / 2;
+        }
         
         while (dataPool.Count < pairsToShowAtOnce)
         {
@@ -106,7 +115,8 @@ public class JoinPairsPlayer : GamePlayer
             }
             yield return null;
         }
-        
+
+        /*
         List<Vector3> positions = new List<Vector3>();
         Vector3 delta = m_highCorner.transform.localPosition - m_lowCorner.transform.localPosition;
         
@@ -123,23 +133,33 @@ public class JoinPairsPlayer : GamePlayer
                           0)
                 );
         }
-        
+        */
+
+        CollectionHelpers.Shuffle(m_locators);
+
+        int locatorIndex = 0;
         foreach(DataRow data in dataPool)
         {
-            GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_spawnTransform);
-            GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_spawnTransform);
+            GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_locators[locatorIndex]);
+            ++locatorIndex;
+
+            GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_locators[locatorIndex]);
+            ++locatorIndex;
+
+            //GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_spawnTransform);
+            //GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_spawnTransform);
             
-            int posIndex = Random.Range(0, positions.Count);
-            Vector3 posA = positions[posIndex];
-            positions.RemoveAt(posIndex);
+            //int posIndex = Random.Range(0, positions.Count);
+            //Vector3 posA = positions[posIndex];
+            //positions.RemoveAt(posIndex);
             
-            newText.transform.localPosition = posA;
+            //newText.transform.localPosition = posA;
             
-            posIndex = Random.Range(0, positions.Count);
-            Vector3 posB = positions[posIndex];
-            positions.RemoveAt(posIndex);
+            //posIndex = Random.Range(0, positions.Count);
+            //Vector3 posB = positions[posIndex];
+            //positions.RemoveAt(posIndex);
             
-            newImage.transform.localPosition = posB;
+            //newImage.transform.localPosition = posB;
             
             Texture2D texture = JoinPairsCoordinator.Instance.GetPicture(data);
 
@@ -148,12 +168,14 @@ public class JoinPairsPlayer : GamePlayer
             textLineDraw.SetMaterial(m_lineRendererMaterial);
             textLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
             textLineDraw.JoinableJoinEventHandler += OnJoin;
+            textLineDraw.JoinablePressEventHandler += OnJoinablePressed;
 
             JoinableLineDraw imageLineDraw = newImage.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
             imageLineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
             imageLineDraw.SetMaterial(m_lineRendererMaterial);
             imageLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
             imageLineDraw.JoinableJoinEventHandler += OnJoin;
+            imageLineDraw.JoinablePressEventHandler += OnJoinablePressed;
             
             m_spawnedJoinables.Add(newText);
             m_spawnedJoinables.Add(newImage);
@@ -163,6 +185,29 @@ public class JoinPairsPlayer : GamePlayer
 
         
         yield break;
+    }
+
+    void OnJoinablePressed(JoinableLineDraw joinable, bool pressed)
+    {
+        if (pressed)
+        {
+            if(m_currentThrobBehaviour != null)
+            {
+                m_currentThrobBehaviour.Off();
+            }
+
+            m_currentThrobBehaviour = joinable.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
+            m_currentThrobBehaviour.On();
+        } 
+        else
+        {
+            if(m_currentThrobBehaviour != null)
+            {
+                m_currentThrobBehaviour.Off();
+            }
+
+            m_currentThrobBehaviour = null;
+        }
     }
 
     void OnJoin(JoinableLineDraw a, JoinableLineDraw b)

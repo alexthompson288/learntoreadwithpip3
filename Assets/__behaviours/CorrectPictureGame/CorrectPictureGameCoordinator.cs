@@ -85,9 +85,9 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 		Debug.Log("m_remainingWords.Count: " + m_remainingWords.Count);
 
 
-        yield return new WaitForSeconds(1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_PICTURE_INSTRUCTION");
-        yield return new WaitForSeconds(3.0f);
+        //yield return new WaitForSeconds(1.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_PICTURE_INSTRUCTION");
+        //yield return new WaitForSeconds(3.0f);
 
 		Resources.UnloadUnusedAssets();
 

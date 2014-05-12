@@ -141,7 +141,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
     void SpawnGameButtons()
     {
-        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + (int)m_color); 
+        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + DataHelpers.GetModuleId(m_color)); 
 
         foreach (DataRow join in joinTable.Rows)
         {
@@ -153,7 +153,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
                 bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
 
-                if(gameIsMultiplayer == m_isTwoPlayer)
+                if(!m_isTwoPlayer || m_isTwoPlayer && gameIsMultiplayer)
                 {
                     GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
                     newButton.GetComponent<ClickEvent>().SetData(game);

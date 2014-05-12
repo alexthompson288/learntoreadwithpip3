@@ -17,7 +17,7 @@ public class VoyageMapButton : MonoBehaviour
 
     IEnumerator Start()
     {
-        yield return StartCoroutine(GameManager.WaitForGameManager());
+        yield return StartCoroutine(GameManager.WaitForInstance());
 
         m_click.OnSingleClick += OnSingleClick;
 

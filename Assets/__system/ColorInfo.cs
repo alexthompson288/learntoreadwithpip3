@@ -31,6 +31,14 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public class NoColor : System.Exception {}
 
+    public static IEnumerator WaitForInstance()
+    {
+        while (ColorInfo.Instance == null)
+        {
+            yield return null;
+        }
+    }
+
     // Methods are static to reduce typing required in other classes
     public static Color GetColor(string color)
     {

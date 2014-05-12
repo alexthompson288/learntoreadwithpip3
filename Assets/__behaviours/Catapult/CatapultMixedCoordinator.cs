@@ -247,7 +247,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
-        yield return null;
+        yield return new WaitForSeconds(1f);
+        GameManager.Instance.CompleteGame();
     }
     
     void PlayLongAudio(DataRow data = null)

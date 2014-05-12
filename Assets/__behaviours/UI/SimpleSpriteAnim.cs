@@ -218,6 +218,10 @@ public class SimpleSpriteAnim : MonoBehaviour
 				{
 					if(m_availableAnimations[m_currentAnimation].m_loop)
 					{
+                        if(transform.parent.name.Contains("FlowerBlue") && m_availableAnimations[m_currentAnimation].m_name == "ON")
+                        {
+                            Debug.Log("Looping ON");
+                        }
                     	m_currentFrame = 0;
 					}
 					else if(!m_sentEvent)

@@ -15,7 +15,11 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     [SerializeField]
     private GameObject m_pipisodeButtonPrefab;
     [SerializeField]
-    private ClickEvent m_playButton;
+    private ClickEvent m_watchButton;
+    [SerializeField]
+    private ClickEvent m_quizButton;
+    [SerializeField]
+    private GameObject m_playButtons;
     [SerializeField]
     private ClickEvent m_buyButton;
     [SerializeField]
@@ -38,8 +42,9 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
-        m_playButton.OnSingleClick += OnClickPlayButton;
+        m_watchButton.OnSingleClick += OnClickWatchButton;
         m_buyButton.OnSingleClick += OnClickBuyButton;
+        m_quizButton.OnSingleClick += OnClickQuizButton;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -73,8 +78,22 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             spawnGrid.Reposition();
         }
     }
+
+    void OnClickQuizButton(ClickEvent click)
+    {
+        Debug.Log("OnClickQuizButton");
+        List<DataRow> quizQuestions = FindQuizQuestions(m_currentPipisode);
+
+        if (quizQuestions.Count > 0)
+        {
+            GameManager.Instance.AddData("quizquestions", quizQuestions);
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+            GameManager.Instance.SetScenes("NewQuiz");
+            GameManager.Instance.StartGames();
+        }
+    }
     
-    void OnClickPlayButton(ClickEvent click)
+    void OnClickWatchButton(ClickEvent click)
     {
         Debug.Log("OnClickPlayButton()");
 #if UNITY_ANDROID || UNITY_IPHONE
@@ -128,9 +147,17 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         Debug.Log("id: " + pipisode ["id"].ToString() + " - " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"])));
 
         bool isUnlocked = BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"]));
+
+
+        bool hasQuizQuestions = FindQuizQuestions(pipisode).Count > 0;
+        m_quizButton.gameObject.SetActive(hasQuizQuestions);
+        float watchButtonLocalPosX =  hasQuizQuestions ? -90 : 0;
+        m_watchButton.transform.localPosition = new Vector3(watchButtonLocalPosX, 0, 0);
+
+
         
         Vector3 playScale = isUnlocked ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_playButton.gameObject, playScale, m_buttonTweenDuration);
+        iTween.ScaleTo(m_playButtons, playScale, m_buttonTweenDuration);
         
         Vector3 buyScale = isUnlocked ? Vector3.zero : Vector3.one;
         iTween.ScaleTo(m_buyButtons, buyScale, m_buttonTweenDuration);
@@ -138,5 +165,12 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         m_currentPipisode = pipisode;
         
         // Change background texture
+    }
+
+    List<DataRow> FindQuizQuestions(DataRow pipisode)
+    {
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE pipisode_id=" + Convert.ToInt32(pipisode["id"]));
+
+        return dt.Rows;
     }
 }

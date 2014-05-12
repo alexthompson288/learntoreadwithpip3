@@ -57,6 +57,13 @@ public class PerspectiveButton : MonoBehaviour
     {
         foreach (Transform follower in m_positionFollowers)
         {
+            /*
+            if(name.Contains("KeywordBank"))
+            {
+                Debug.Log(follower.position.x);
+            }
+            */
+
             follower.position = new Vector3(follower.position.x, m_followerLocation.position.y, follower.position.z);
         }
     }

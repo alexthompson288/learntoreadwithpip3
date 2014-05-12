@@ -81,7 +81,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 
 		if(m_wordList.Count > 0)
 		{
-        	StartCoroutine(ShowNextWord());
+        	StartCoroutine(ShowNextWord(0));
 		}
 		else
 		{
@@ -89,9 +89,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 		}
 	}
 
-    IEnumerator ShowNextWord()
+    IEnumerator ShowNextWord(float delay = 2f)
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(delay);
 
         m_hasGotWrong = false;
 
