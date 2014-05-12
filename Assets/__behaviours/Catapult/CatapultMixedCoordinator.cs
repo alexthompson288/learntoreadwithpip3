@@ -40,6 +40,10 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
+
+
+    // If the dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
+
     
     IEnumerator Start()
     {
@@ -77,7 +81,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
         {
             foreach (DataRow data in m_dataPool)
             {
-                if (m_dataType == "phonemes")
+                // If dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
+                if (m_dataType == "phonemes" || m_dataType == "words" && m_targetsShowPicture)
                 {
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
                     m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
@@ -97,7 +102,16 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             Debug.Log("m_currentData: " + m_currentData);
 
-            m_pictureDisplay.On(m_dataType, m_currentData);
+            // If dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
+            if(m_dataType == "words" && m_targetsShowPicture)
+            {
+                // Picture display should only show the first phoneme of the target word
+                m_pictureDisplay.On("phonemes", DataHelpers.GetOrderedPhonemes(m_currentData)[0]);
+            }
+            else
+            {
+                m_pictureDisplay.On(m_dataType, m_currentData);
+            }
             
             InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
