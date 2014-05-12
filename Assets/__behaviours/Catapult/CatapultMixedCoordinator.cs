@@ -158,7 +158,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
         else if (m_targetsShowPicture && m_dataType == "words")
         {
-            return DataHelpers.WordsShareOnsetPhonemes(data, m_changeCurrentData);
+            return DataHelpers.WordsShareOnsetPhonemes(data, m_currentData);
         } 
         else
         {
