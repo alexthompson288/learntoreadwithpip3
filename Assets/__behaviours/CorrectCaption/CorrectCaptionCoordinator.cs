@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Wingrove;
 
 public class CorrectCaptionCoordinator : GameCoordinator
 {
     [SerializeField]
-    private GameObject[] m_questionTweeners;
-    [SerializeField]
     private UITexture m_questionImage;
     [SerializeField]
+    private GameObject m_questionImageParent;
+    [SerializeField]
     private UILabel m_questionLabel;
+    [SerializeField]
+    private GameObject m_questionLabelParent;
     [SerializeField]
     private ClickEvent m_yesButton;
     [SerializeField]
@@ -18,15 +22,17 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private float m_probabilityYesIsCorrect = 0.5f;
     [SerializeField]
     private float m_questionTweenDuration = 0.25f;
+    [SerializeField]
+    private List<string> m_captionTextAttributes;
 
     #if UNITY_EDITOR
     [SerializeField]
     private bool m_useDebugData;
     #endif
 
-    bool m_yesIsCorrect;
+    bool m_hasAnsweredIncorrectly = false;
 
-
+    List<string> m_remainingAttributes = new List<string>();
 
     IEnumerator Start()
     {
@@ -75,39 +81,30 @@ public class CorrectCaptionCoordinator : GameCoordinator
     {
         m_currentData = GetRandomData();
 
+        m_hasAnsweredIncorrectly = false;
+
+        m_remainingAttributes.Clear();
+        m_remainingAttributes.AddRange(m_captionTextAttributes);
+        while(m_currentData[m_remainingAttributes.Last()] == null)
+        {
+            m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
+        }
+        CollectionHelpers.Shuffle(m_remainingAttributes);
+
         if (m_currentData != null)
         {
             m_dataPool.Remove(m_currentData);
 
             Texture2D tex = GetCaptionTexture(m_currentData);
 
-            if (tex != null)
+            if (m_currentData["good_sentence"] != null && tex != null)
             {
                 m_questionImage.mainTexture = tex;
                 m_questionImage.MakePixelPerfect();
 
-                m_yesIsCorrect = Random.Range(0f, 1f) > m_probabilityYesIsCorrect;
+                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
 
-                if (m_yesIsCorrect)
-                {
-                    m_questionLabel.text = m_currentData ["good_sentence"].ToString();
-                } 
-                else
-                {
-                    int badSentenceId = Random.Range(1, 5);
-                    while(m_currentData ["bad_sentence" + badSentenceId.ToString()] == null)
-                    {
-                        badSentenceId = Random.Range(1, 5);
-                        yield return null; // Defensive yield
-                    }
-
-                    m_questionLabel.text = m_currentData ["bad_sentence" + badSentenceId.ToString()].ToString();
-                }
-
-                foreach (GameObject tweener in m_questionTweeners)
-                {
-                    iTween.ScaleTo(tweener, Vector3.one, m_questionTweenDuration);
-                }
+                TweenQuestionParents(Vector3.one);
 
                 yield return new WaitForSeconds(m_questionTweenDuration);
 
@@ -141,29 +138,51 @@ public class CorrectCaptionCoordinator : GameCoordinator
     {
         EnableAnswerColliders(false);
         
-        bool answerIsYes = button.GetInt() == 1; // Separate bool for readability
-        bool isCorrect = (m_yesIsCorrect == answerIsYes);
-        
-        int scoreDelta = isCorrect ? 1 : 0;
-        
-        m_scoreKeeper.UpdateScore(scoreDelta);
-        m_score += scoreDelta;
+        bool answerIsYes = button.GetInt() == 1; 
+        bool yesIsCorrect = (m_remainingAttributes.Last() == "good_sentence");
+        bool isCorrect = (yesIsCorrect == answerIsYes);
 
-        foreach (GameObject tweener in m_questionTweeners)
+        if (isCorrect)
         {
-            iTween.ScaleTo(tweener, Vector3.zero, m_questionTweenDuration);
-        }
+            if(answerIsYes)
+            {
+                int scoreDelta = (isCorrect && !m_hasAnsweredIncorrectly) ? 1 : 0;
+                m_scoreKeeper.UpdateScore(scoreDelta);
+                m_score += scoreDelta;
 
-        yield return new WaitForSeconds(m_questionTweenDuration);
+                TweenQuestionParents(Vector3.zero);
+                
+                yield return new WaitForSeconds(m_questionTweenDuration);
+                
+                if (m_score < m_targetScore && m_dataPool.Count > 0)
+                {
+                    StartCoroutine(AskQuestion());
+                } 
+                else
+                {
+                    StartCoroutine(CompleteGame());
+                }
+            }
+            else
+            {
+                m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
 
-        if (m_score < m_targetScore && m_dataPool.Count > 0)
-        {
-            StartCoroutine(AskQuestion());
+                iTween.ScaleTo(m_questionLabelParent, Vector3.zero, m_questionTweenDuration);
+
+                yield return new WaitForSeconds(m_questionTweenDuration);
+
+                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
+
+                iTween.ScaleTo(m_questionLabelParent, Vector3.one, m_questionTweenDuration);
+            }
         } 
         else
         {
-            StartCoroutine(CompleteGame());
+            m_hasAnsweredIncorrectly = true;
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
         }
+
+        EnableAnswerColliders(true);
     }
 
     Texture2D GetCaptionTexture(DataRow data)
@@ -176,6 +195,12 @@ public class CorrectCaptionCoordinator : GameCoordinator
         }
 
         return tex;
+    }
+
+    void TweenQuestionParents(Vector3 newScale)
+    {
+        iTween.ScaleTo(m_questionImageParent, newScale, m_questionTweenDuration);
+        iTween.ScaleTo(m_questionLabelParent, newScale, m_questionTweenDuration);
     }
 
     void EnableAnswerColliders(bool enable)
