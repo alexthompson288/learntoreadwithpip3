@@ -25,6 +25,13 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private bool m_isAnswerAlwaysCorrect;
     [SerializeField]
     private PictureDisplay m_pictureDisplay;
+    [SerializeField]
+    private bool m_targetsShowPicture;
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_useDebugData;
+#endif
     
     int m_score = 0;
     
@@ -36,6 +43,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator Start()
     {
+        m_pictureDisplay.SetShowPicture(!m_targetsShowPicture);
+
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
         CatapultBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
@@ -51,9 +60,18 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
         
         m_dataPool = DataHelpers.GetData(m_dataType);
-        Debug.Log("pre removal count: " + m_dataPool.Count);
+
+#if UNITY_EDITOR
+        if(m_useDebugData)
+        {
+            if(m_dataType == "words")
+            {
+                m_dataPool = DataHelpers.GetSetData(3, "setwords", "words");
+            }
+        }
+#endif
+
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
-        Debug.Log("post removal count: " + m_dataPool.Count);
         
         if (m_dataPool.Count > 0)
         {
@@ -97,6 +115,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         foreach(Target target in targets)
         {
+            target.SetShowPicture(m_targetsShowPicture);
+
             target.OnTargetHit += OnTargetHit;
             target.OnCompleteMove += SetTargetData;
             
@@ -129,9 +149,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
         
-        if (target.data == m_currentData || target.isAlwaysCorrect || m_isAnswerAlwaysCorrect)
+        if (target.data == m_currentData || m_isAnswerAlwaysCorrect || (m_targetsShowPicture && m_dataType == "words" && DataHelpers.WordsShareOnsetPhonemes(m_currentData, target.data)))
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+
+            ball.GetComponent<CatapultAmmo>().Explode();
 
             target.OnHit();
             

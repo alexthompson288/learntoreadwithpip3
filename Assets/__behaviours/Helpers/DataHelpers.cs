@@ -321,6 +321,11 @@ public static class DataHelpers
         
         return phonemes;
     }
+
+    public static string[] GetOrderedPhonemeStrings(DataRow word)
+    {
+        return word["ordered_phonemes"] != null ? word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',') : null;
+    }
     
     static bool WordIsKeyword(DataRow wordData)
     {
@@ -694,5 +699,13 @@ public static class DataHelpers
         }
         
         return module != null ? System.Convert.ToInt32(module["id"]) : -1;
+    }
+
+    public static bool WordsShareOnsetPhonemes(DataRow dataA, DataRow dataB)
+    {
+        string[] orderedPhonemesA = GetOrderedPhonemeStrings(dataA);
+        string[] orderedPhonemesB = GetOrderedPhonemeStrings(dataB);
+
+        return orderedPhonemesA [0] == orderedPhonemesB [0];
     }
 }

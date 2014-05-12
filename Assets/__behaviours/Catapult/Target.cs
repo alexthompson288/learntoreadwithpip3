@@ -7,6 +7,8 @@ public class Target : MonoBehaviour
     [SerializeField]
     private UILabel m_label;
     [SerializeField]
+    private UITexture m_texture;
+    [SerializeField]
     protected Transform m_parent;
     [SerializeField]
     protected Transform m_startLocation;
@@ -18,6 +20,15 @@ public class Target : MonoBehaviour
     private bool m_isAlwaysCorrect;
     [SerializeField]
     private UISprite m_background;
+    [SerializeField]
+    private bool m_showPicture;
+
+    public void SetShowPicture(bool showPicture)
+    {
+        m_showPicture = showPicture;
+        m_texture.gameObject.SetActive(m_showPicture);
+        m_label.gameObject.SetActive(!m_showPicture);
+    }
 
     public bool isAlwaysCorrect
     {
@@ -61,6 +72,9 @@ public class Target : MonoBehaviour
         m_dataType = dataType;
        
         m_label.text = DataHelpers.GetLabelText(m_dataType, m_data);
+
+        m_texture.mainTexture = DataHelpers.GetPicture(dataType, newData);
+        m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
     }
     
     void OnTriggerEnter(Collider other)
