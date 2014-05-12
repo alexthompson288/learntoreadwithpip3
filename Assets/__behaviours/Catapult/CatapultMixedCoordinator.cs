@@ -10,7 +10,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private bool m_changeCurrentData;
     [SerializeField]
-    private float m_probabilityTargetIsCurrent = 0.5f;
+    private float m_probabilityTargetIsCorrect = 0.5f;
     [SerializeField]
     private int m_targetScore;
     [SerializeField]
@@ -56,7 +56,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         CatapultBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
         cannonBehaviour.MoveToMultiplayerLocation(0);
 
-        m_probabilityTargetIsCurrent = Mathf.Clamp01(m_probabilityTargetIsCurrent);
+        m_probabilityTargetIsCorrect = Mathf.Clamp01(m_probabilityTargetIsCorrect);
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -149,13 +149,29 @@ public class CatapultMixedCoordinator : MonoBehaviour
             StartCoroutine(target.On(Random.Range(1f, 4f)));
         }
     }
+
+    bool IsDataCorrect(DataRow data)
+    {
+        if (m_isAnswerAlwaysCorrect)
+        {
+            return true;
+        }
+        else if (m_targetsShowPicture && m_dataType == "words")
+        {
+            return DataHelpers.WordsShareOnsetPhonemes(data, m_changeCurrentData);
+        } 
+        else
+        {
+            return data == m_currentData;
+        }
+    }
     
     void SetTargetData(Target target)
     {
         DataRow targetData = m_currentData;
-        if (Random.Range(0f, 1f) > m_probabilityTargetIsCurrent)
+        if (Random.Range(0f, 1f) > m_probabilityTargetIsCorrect)
         {
-            while (targetData == m_currentData)
+            while (IsDataCorrect(targetData))
             {
                 targetData = m_dataPool [Random.Range(0, m_dataPool.Count)];
             }
@@ -173,20 +189,9 @@ public class CatapultMixedCoordinator : MonoBehaviour
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
         
-        if (target.data == m_currentData || m_isAnswerAlwaysCorrect || (m_targetsShowPicture && m_dataType == "words" && DataHelpers.WordsShareOnsetPhonemes(m_currentData, target.data)))
+        if (IsDataCorrect(target.data))
         {
             //WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
-
-            if(m_targetsShowPicture)
-            {
-                PlayLongAudio();
-
-                if(m_dataType == "words")
-                {
-                    Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
-                    m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
-                }
-            }
 
             ball.GetComponent<CatapultAmmo>().Explode();
 
@@ -203,7 +208,20 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
                 PlayShortAudio();
             }
-            
+
+            if(m_targetsShowPicture)
+            {
+                PlayLongAudio(target.data);
+                
+                if(m_dataType == "words")
+                {
+                    yield return null;
+                    
+                    Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
+                    m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
+                }
+            }
+
             m_score++;
             
             if(m_score >= m_targetScore)
@@ -226,21 +244,20 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         yield break;
     }
-
-    IEnumerator HideBlackboard()
-    {
-        yield return new WaitForSeconds(1.5f);
-        m_blackboard.Hide();
-    }
     
     IEnumerator OnGameComplete()
     {
         yield return null;
     }
     
-    void PlayLongAudio()
+    void PlayLongAudio(DataRow data = null)
     {
-        m_audioSource.clip = m_longAudio [m_currentData];
+        if (data == null)
+        {
+            data = m_currentData;
+        }
+
+        m_audioSource.clip = m_longAudio [data];
         if (m_audioSource.clip != null)
         {
             m_audioSource.Play();
@@ -251,9 +268,14 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
     }
     
-    void PlayShortAudio()
+    void PlayShortAudio(DataRow data = null)
     {
-        m_audioSource.clip = m_shortAudio [m_currentData];
+        if (data == null)
+        {
+            data = m_currentData;
+        }
+
+        m_audioSource.clip = m_shortAudio [data];
         if (m_audioSource.clip != null)
         {
             m_audioSource.Play();
