@@ -305,6 +305,21 @@ public static class DataHelpers
         
         return phonemes;
     }
+
+    public static DataRow GetFirstPhonemeInWord(DataRow word)
+    {
+        string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        foreach(string id in phonemeIds)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
+            if(dt.Rows.Count > 0)
+            {
+                return dt.Rows[0];
+            }
+        }
+
+        return null;
+    }
     
     public static List<DataRow> GetOrderedPhonemes(DataRow word)
     {

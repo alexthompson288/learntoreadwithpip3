@@ -9,6 +9,8 @@ public class ChooseStoryType : MonoBehaviour
     private UISprite m_sprite;
     [SerializeField]
     private UILabel m_label;
+    [SerializeField]
+    private ClickEvent m_clickEvent;
 
     void Start()
     {
@@ -27,4 +29,9 @@ public class ChooseStoryType : MonoBehaviour
 
         SessionInformation.Instance.SetStoryType(ColorInfo.GetColorString(m_storyType)); // Use strings for story type just in case we want to add non-color types (eg. Classics)
 	}
+
+    void OnClick(ClickEvent click)
+    {
+        OnClick();
+    }
 }
