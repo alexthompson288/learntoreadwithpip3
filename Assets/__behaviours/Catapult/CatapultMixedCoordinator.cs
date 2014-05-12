@@ -51,9 +51,9 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
         
         m_dataPool = DataHelpers.GetData(m_dataType);
+        Debug.Log("pre removal count: " + m_dataPool.Count);
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
-
-        m_pictureDisplay.SetDataType(m_dataType);
+        Debug.Log("post removal count: " + m_dataPool.Count);
         
         if (m_dataPool.Count > 0)
         {
@@ -72,7 +72,14 @@ public class CatapultMixedCoordinator : MonoBehaviour
             
             m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
 
-            m_pictureDisplay.On(m_currentData);
+            if(m_currentData == null)
+            {
+                m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
+            }
+
+            Debug.Log("m_currentData: " + m_currentData);
+
+            m_pictureDisplay.On(m_dataType, m_currentData);
             
             InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
@@ -125,6 +132,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
         if (target.data == m_currentData || target.isAlwaysCorrect || m_isAnswerAlwaysCorrect)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+
+            target.OnHit();
             
             GameObject targetDetachable = target.SpawnDetachable();
 

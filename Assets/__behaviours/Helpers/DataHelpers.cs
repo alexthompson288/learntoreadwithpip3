@@ -184,6 +184,13 @@ public static class DataHelpers
         return dataPool;
     }
 
+    public static List<DataRow> GetCorrectCaptions()
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
+
+        return dataPool;
+    }
+
     public static DataRow GetStory()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("stories");
@@ -529,6 +536,16 @@ public static class DataHelpers
         return picturePath;
     }
 
+    public static string GetLinkedSpriteName(string spriteName)
+    {
+        string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
+
+        string linkingName = spriteName.Substring(0, spriteName.Length - 1);
+        Debug.Log("linkingName: " + linkingName);
+
+        return linkingName + newNameEnd;
+    }
+
     public static string GetFullPicturePath(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -568,6 +585,7 @@ public static class DataHelpers
                 {
                     Debug.Log("Checking Picture for " + data["id"].ToString());
                     tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
+                    Debug.Log("Found picture: " + tex != null);
                 }
                 break;
             case "words":

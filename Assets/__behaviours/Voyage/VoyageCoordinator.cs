@@ -254,6 +254,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
         VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, m_sectionId);
 
+        Debug.Log(System.String.Format("Voyage: {0} - {1} - {2}", (int)(m_currentModuleMap.color), m_sessionId, m_sectionId));
+
         DataRow game = DataHelpers.FindGameForSection(section);
 
         if (game != null)
@@ -280,8 +282,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             
             // Set data
             GameManager.Instance.ClearAllData();
-            
-            
+
             // Phonemes
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
             if(dt.Rows.Count > 0)
@@ -303,8 +304,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }
 
+            // Quiz Questions
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE programsession_id=" + m_sessionId);
             GameManager.Instance.AddData("quizquestions", dt.Rows);
+
+            // Correct Captions
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + m_sessionId);
+            GameManager.Instance.AddData("correctcaptions", dt.Rows);
             
             GameManager.Instance.StartGames();
         }

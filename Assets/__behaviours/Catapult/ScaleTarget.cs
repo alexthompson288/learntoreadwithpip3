@@ -31,13 +31,13 @@ public class ScaleTarget : Target
 		iTween.ScaleTo(gameObject, Vector3.zero, m_tweenDuration);
 		
 		yield return new WaitForSeconds(m_tweenDuration);
+
+        ResetSpriteName();
 		
 		rigidbody.velocity = Vector3.zero;
 
-        yield return new WaitForSeconds(Time.fixedDeltaTime * 2); // Experimental bug fix: There was an error when we allegedly tried to move a kinematic rigidbody. 
-                                                                  // After setting velocity, wait for a minimum of 1 FixedUpdate to execute before setting the rigidbody kinematic
-
 		rigidbody.isKinematic = true;
+
 		transform.position = m_startLocation.position;
 		
 		InvokeOnCompleteMove();

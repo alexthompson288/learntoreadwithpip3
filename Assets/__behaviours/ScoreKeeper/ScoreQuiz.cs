@@ -57,7 +57,8 @@ public class ScoreQuiz : ScoreKeeper
     {
         if (m_markerIndex < m_targetScore)
         {
-            m_spawnedMarkers[m_markerIndex].GetComponentInChildren<UISprite>().color = delta == 0 ? m_incorrectColor : m_correctColor;
+            Color col = delta == 0 ? m_incorrectColor : m_correctColor;
+            TweenColor.Begin(m_spawnedMarkers[m_markerIndex].gameObject, 0.3f, col);
         }
 
         ++m_markerIndex;

@@ -6,6 +6,14 @@ using WingroveAudio;
 
 public class MissingPhonemeCoordinator : MonoBehaviour 
 {
+    [SerializeField]
+    private ScoreKeeper m_scoreKeeper;
+    [SerializeField]
+    private Transform[] m_locators;
+    [SerializeField]
+    private GameObject m_draggablePrefab;
+    [SerializeField]
+    private int m_targetScore;
     /*
 	[SerializeField]
 	private SimpleSpriteAnim[] m_flowers;

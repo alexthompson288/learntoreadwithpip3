@@ -39,6 +39,8 @@ public class GlideTarget : Target
     {
         yield return new WaitForSeconds(Random.Range(m_durationOff.x, m_durationOff.y));
 
+        ResetSpriteName();
+
         if (!rigidbody.isKinematic)
         {
             rigidbody.velocity = Vector3.zero;

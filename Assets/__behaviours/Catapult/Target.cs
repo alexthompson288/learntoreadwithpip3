@@ -16,6 +16,8 @@ public class Target : MonoBehaviour
     private Transform m_detachableLocation;
     [SerializeField]
     private bool m_isAlwaysCorrect;
+    [SerializeField]
+    private UISprite m_background;
 
     public bool isAlwaysCorrect
     {
@@ -70,6 +72,22 @@ public class Target : MonoBehaviour
         {
             OnTargetHit(this, other);
         } 
+    }
+
+    public void OnHit()
+    {
+        if (m_background != null)
+        {
+            m_background.spriteName = DataHelpers.GetLinkedSpriteName(m_background.spriteName);
+        }
+    }
+
+    protected void ResetSpriteName()
+    {
+        if (m_background != null && m_background.spriteName.LastIndexOf('b') == m_background.spriteName.Length - 1)
+        {
+            m_background.spriteName = DataHelpers.GetLinkedSpriteName(m_background.spriteName);
+        }
     }
     
     void OnDestroy()
