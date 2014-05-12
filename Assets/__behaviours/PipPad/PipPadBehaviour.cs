@@ -142,6 +142,8 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 	public void DisplayWord(string word, bool postEvent = false)
 	{
+        m_isSayingAll = false;
+
 		foreach (GameObject go in m_createdPhonemeButtons)
 		{
 			Destroy(go);
@@ -531,6 +533,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	{
 		if(m_isSayingAll)
 		{
+            Debug.Log("Is already saying all. Return early");
 			return;
 		}
 

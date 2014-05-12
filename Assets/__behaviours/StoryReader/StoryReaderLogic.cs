@@ -432,10 +432,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
             
             float length = 0;
             float height = 0;
-
-            int currentIndex = 0;
-            bool ignoreNext = false;
             float maxWidth = 0;
+
             foreach (string line in lines)
             {
                 string[] lineWords = line.Split(' ');

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Wingrove;
+using System;
 
 public class CorrectCaptionCoordinator : GameCoordinator
 {
@@ -10,6 +11,10 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private UITexture m_questionImage;
     [SerializeField]
     private GameObject m_questionImageParent;
+    [SerializeField]
+    private GameObject m_textPrefab;
+    [SerializeField]
+    private Transform m_textPosition;
     [SerializeField]
     private UILabel m_questionLabel;
     [SerializeField]
@@ -33,6 +38,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     bool m_hasAnsweredIncorrectly = false;
 
     List<string> m_remainingAttributes = new List<string>();
+
+    List<GameObject> m_spawnedQuestionText = new List<GameObject>();
 
     IEnumerator Start()
     {
@@ -102,7 +109,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
                 m_questionImage.mainTexture = tex;
                 m_questionImage.MakePixelPerfect();
 
-                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
+                SpawnQuestionText();
 
                 TweenQuestionParents(Vector3.one);
 
@@ -123,6 +130,50 @@ public class CorrectCaptionCoordinator : GameCoordinator
         yield break;
     }
 
+    void SpawnQuestionText()
+    {
+        for (int i = m_spawnedQuestionText.Count - 1; i > -1; --i)
+        {
+            Destroy(m_spawnedQuestionText [i]);
+        }
+
+        m_spawnedQuestionText.Clear();
+
+        string sentence = m_currentData [m_remainingAttributes.Last()].ToString();
+
+        Debug.Log("sentence: " + sentence);
+
+        string[] words = sentence.Split(new char[] {' '});
+
+        float length = 0;
+        float height = 0;
+        float maxWidth = 0;
+
+        Debug.Log("Logging words");
+
+        foreach (string word in words)
+        {
+            Debug.Log(word);
+
+            if (!string.IsNullOrEmpty(word) && word != " ")
+            {
+                GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_textPrefab, m_textPosition);
+
+                m_spawnedQuestionText.Add(newText);
+
+                newText.GetComponent<UILabel>().text = word + " ";
+                newText.transform.localPosition = new Vector3(length, height, 0);
+                Vector3 wordSize = newText.GetComponent<UILabel>().font.CalculatePrintedSize(word + " ", false, UIFont.SymbolStyle.None);
+                length += wordSize.x;
+                maxWidth = Mathf.Max(maxWidth, length);
+
+                ShowPipPadForWord showPipPadForWord = newText.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
+                
+                showPipPadForWord.SetUp(word, wordSize, true);
+            }
+        }
+    }
+    
     protected override IEnumerator CompleteGame()
     {
         Debug.Log("CompleteGame()");
@@ -168,12 +219,14 @@ public class CorrectCaptionCoordinator : GameCoordinator
                 m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
 
                 iTween.ScaleTo(m_questionLabelParent, Vector3.zero, m_questionTweenDuration);
+                WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
 
                 yield return new WaitForSeconds(m_questionTweenDuration);
 
-                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
+                SpawnQuestionText();
 
                 iTween.ScaleTo(m_questionLabelParent, Vector3.one, m_questionTweenDuration);
+                WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
             }
         } 
         else
@@ -201,6 +254,9 @@ public class CorrectCaptionCoordinator : GameCoordinator
     {
         iTween.ScaleTo(m_questionImageParent, newScale, m_questionTweenDuration);
         iTween.ScaleTo(m_questionLabelParent, newScale, m_questionTweenDuration);
+
+        string audioString = Mathf.Approximately(newScale.x, 0) ? "SOMETHING_APPEARS" : "SOMETHING_DISAPPEARS";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(audioString);
     }
 
     void EnableAnswerColliders(bool enable)
@@ -208,4 +264,52 @@ public class CorrectCaptionCoordinator : GameCoordinator
         m_yesButton.EnableCollider(enable);
         m_noButton.EnableCollider(enable);
     }
+
+    /*
+    IEnumerator AskQuestion()
+    {
+        m_currentData = GetRandomData();
+
+        m_hasAnsweredIncorrectly = false;
+
+        m_remainingAttributes.Clear();
+        m_remainingAttributes.AddRange(m_captionTextAttributes);
+        while(m_currentData[m_remainingAttributes.Last()] == null)
+        {
+            m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
+        }
+        CollectionHelpers.Shuffle(m_remainingAttributes);
+
+        if (m_currentData != null)
+        {
+            m_dataPool.Remove(m_currentData);
+
+            Texture2D tex = GetCaptionTexture(m_currentData);
+
+            if (m_currentData["good_sentence"] != null && tex != null)
+            {
+                m_questionImage.mainTexture = tex;
+                m_questionImage.MakePixelPerfect();
+
+                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
+
+                TweenQuestionParents(Vector3.one);
+
+                yield return new WaitForSeconds(m_questionTweenDuration);
+
+                EnableAnswerColliders(true);
+            }
+            else
+            {
+                StartCoroutine(AskQuestion());
+            }
+        }
+        else
+        {
+            StartCoroutine(CompleteGame());
+        }
+
+        yield break;
+    }
+    */
 }

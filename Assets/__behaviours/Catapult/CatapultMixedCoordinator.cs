@@ -27,6 +27,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private PictureDisplay m_pictureDisplay;
     [SerializeField]
     private bool m_targetsShowPicture;
+    [SerializeField]
+    private ImageBlackboard m_blackboard;
 
 #if UNITY_EDITOR
     [SerializeField]
@@ -92,7 +94,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
                     DataRow phonemeData = DataHelpers.GetFirstPhonemeInWord(data);
 
                     m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(phonemeData["grapheme"].ToString());
-                    m_longAudio [data] = LoaderHelpers.LoadMnemonic(phonemeData);
+                    m_longAudio [data] = LoaderHelpers.LoadAudioForWord(data);
+                    //m_longAudio [data] = LoaderHelpers.LoadMnemonic(phonemeData);
                 }
                 else
                 {
@@ -172,7 +175,18 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         if (target.data == m_currentData || m_isAnswerAlwaysCorrect || (m_targetsShowPicture && m_dataType == "words" && DataHelpers.WordsShareOnsetPhonemes(m_currentData, target.data)))
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+
+            if(m_targetsShowPicture)
+            {
+                PlayLongAudio();
+
+                if(m_dataType == "words")
+                {
+                    Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
+                    m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
+                }
+            }
 
             ball.GetComponent<CatapultAmmo>().Explode();
 
@@ -211,6 +225,12 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
 
         yield break;
+    }
+
+    IEnumerator HideBlackboard()
+    {
+        yield return new WaitForSeconds(1.5f);
+        m_blackboard.Hide();
     }
     
     IEnumerator OnGameComplete()

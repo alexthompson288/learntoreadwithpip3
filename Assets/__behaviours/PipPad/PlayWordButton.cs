@@ -36,6 +36,7 @@ public class PlayWordButton : MonoBehaviour {
 
     void OnClick()
     {
+        Debug.Log("PlayWordButton.OnClick()");
         PipPadBehaviour.Instance.SayAll(0.0f);
     }
 
