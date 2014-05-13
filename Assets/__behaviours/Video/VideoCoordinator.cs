@@ -15,7 +15,14 @@ public class VideoCoordinator : MonoBehaviour
     private string m_mp4Subdirectory = "mp4";
 
     bool m_videoError = false;
-    
+
+    IEnumerator Start()
+    {
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+        GameManager.Instance.CompleteGame();
+    }
+
+    /*
     // Use this for initialization
     IEnumerator Start () 
     {
@@ -97,4 +104,5 @@ public class VideoCoordinator : MonoBehaviour
             m_videoError = true;
         }
     }
+    */
 }

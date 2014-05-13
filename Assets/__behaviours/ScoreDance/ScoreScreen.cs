@@ -18,11 +18,11 @@ public class ScoreScreen : MonoBehaviour {
 
         int winningIndex = SessionInformation.Instance.GetWinningPlayerIndex();
 
-        MobileMovieTexture[] moviePlayers = GetComponents<MobileMovieTexture>();
-        moviePlayers[0]
-            .SetFilename(m_videoFilenames[SessionInformation.Instance.GetPlayerIndexForPlayer(winningIndex)]);
+        //MobileMovieTexture[] moviePlayers = GetComponents<MobileMovieTexture>();
+        //moviePlayers[0]
+            //.SetFilename(m_videoFilenames[SessionInformation.Instance.GetPlayerIndexForPlayer(winningIndex)]);
 
-        moviePlayers[0].Play();
+        //moviePlayers[0].Play();
 
         WingroveAudio.WingroveRoot.Instance.PostEvent
     ("VICTORY_DANCE_" + SessionInformation.Instance.GetPlayerIndexForPlayer(winningIndex));
