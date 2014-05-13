@@ -355,6 +355,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }
 
+            // Quiz Questions and Captions
+            dt = db.ExecuteQuery("select * from datasentences WHERE programsession_id=" + m_sessionId);
+           
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
+            /*
             // TODO: Add sentences
             dt = db.ExecuteQuery("select * from sentences WHERE programsession_id=" + m_sessionId);
 
@@ -365,6 +371,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // Correct Captions
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + m_sessionId);
             GameManager.Instance.AddData("correctcaptions", dt.Rows);
+            */
             
             GameManager.Instance.StartGames();
         }

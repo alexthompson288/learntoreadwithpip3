@@ -110,7 +110,9 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
 
 
-                // TODO: Add sentences
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+                GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
+                GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
 
                 GameManager.Instance.StartGames();
             }

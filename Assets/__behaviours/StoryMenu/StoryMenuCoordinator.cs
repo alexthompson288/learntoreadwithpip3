@@ -108,13 +108,14 @@ public class StoryMenuCoordinator : MonoBehaviour
         
         if (story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE story_id=" + story["id"]);
-            
-            if(dt.Rows.Count > 0)
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(story["id"]));
+            List<DataRow> correctCaptions = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
+
+            if(correctCaptions.Count > 0)
             {
                 m_isReadingOrPictures = false;
                 GameManager.Instance.AddGames("NewCorrectCaptions", "NewCorrectCaptions");
-                GameManager.Instance.AddData("correctcaptions", dt.Rows);
+                GameManager.Instance.AddData("correctcaptions", correctCaptions);
                 StartActivity();
             }
         }
@@ -126,13 +127,14 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         if (story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + story["id"]);
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(story["id"]));
+            List<DataRow> quizQuestions = dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t");
 
-            if(dt.Rows.Count > 0)
+            if(quizQuestions.Count > 0)
             {
                 m_isReadingOrPictures = false;
                 GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
-                GameManager.Instance.AddData("quizquestions", dt.Rows);
+                GameManager.Instance.AddData("quizquestions", quizQuestions);
                 StartActivity();
             }
         }

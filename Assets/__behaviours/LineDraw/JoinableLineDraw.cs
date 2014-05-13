@@ -15,6 +15,8 @@ public class JoinableLineDraw : LineDraw
     private UITexture m_pictureTexture;
     [SerializeField]
     private UILabel m_label;
+    [SerializeField]
+    private UISprite m_background;
 
     public bool isPicture
     {
@@ -81,6 +83,11 @@ public class JoinableLineDraw : LineDraw
 
             LineDrawManager.Instance.DestroyLine(this);
         }
+    }
+
+    public void Select(bool selected)
+    {
+        m_background.color = selected ? Color.gray : Color.white;
     }
 
     public void TransitionOff(Transform targetPosition)

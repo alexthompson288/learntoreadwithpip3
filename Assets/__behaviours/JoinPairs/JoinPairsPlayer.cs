@@ -28,7 +28,7 @@ public class JoinPairsPlayer : GamePlayer
     [SerializeField]
     private Transform[] m_locators;
 
-    ThrobGUIElement m_currentThrobBehaviour = null;
+    //ThrobGUIElement m_currentThrobBehaviour = null;
     JoinableLineDraw m_currentJoinable = null;
 
     int m_panelDepthIncrement = 1;
@@ -192,6 +192,7 @@ public class JoinPairsPlayer : GamePlayer
     {
         if (pressed)
         {
+            /*
             if(m_currentThrobBehaviour != null)
             {
                 m_currentThrobBehaviour.Off();
@@ -199,17 +200,26 @@ public class JoinPairsPlayer : GamePlayer
 
             m_currentThrobBehaviour = joinable.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
             m_currentThrobBehaviour.On();
+            */
+
+            m_currentJoinable = joinable;
+            m_currentJoinable.Select(true);
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
         } 
         else
         {
+            /*
             if(m_currentThrobBehaviour != null)
             {
                 m_currentThrobBehaviour.Off();
             }
 
             m_currentThrobBehaviour = null;
+            */
+
+            m_currentJoinable.Select(false);
+            m_currentJoinable = null;
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
         }

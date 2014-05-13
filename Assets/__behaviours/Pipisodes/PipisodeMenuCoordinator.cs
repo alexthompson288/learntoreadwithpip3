@@ -164,8 +164,10 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     List<DataRow> FindQuizQuestions(DataRow pipisode)
     {
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE pipisode_id=" + Convert.ToInt32(pipisode["id"]));
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE pipisode_id=" + Convert.ToInt32(m_currentPipisode["id"]));
+        
+        List<DataRow> quizQuestions = dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t");
 
-        return dt.Rows;
+        return quizQuestions;
     }
 }
