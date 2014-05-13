@@ -36,6 +36,8 @@ public class GameManager : Singleton<GameManager>
     // I have created this method so as a pre-emptive measure. If we need to execute something before starting any games then we can add it here without changing code in any other classes
     public void StartGames()  
     {
+        m_currentGame = "";
+
         PlayNextGame();
     }
 
@@ -43,18 +45,24 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
+        if (!System.String.IsNullOrEmpty(m_currentGame))
+        {
+            m_gameDictionary.Remove(m_currentGame);
+        }
+
+        m_currentGame = "";
+
         Debug.Log("Num Scenes: " + m_gameDictionary.Count);
 
         string nextScene = "";
 
         foreach (DictionaryEntry game in m_gameDictionary)
         {
+            m_currentGame = (string)game.Key;
             nextScene = (string)game.Value;
-            Debug.Log(System.String.Format("NextGame: {0} - {1}", (string)game.Key, nextScene));
+            Debug.Log(System.String.Format("NextGame: {0} - {1}", m_currentGame, nextScene));
             break;
         }
-
-        m_gameDictionary.Remove(nextScene);
 
         if (!System.String.IsNullOrEmpty(nextScene))
         {
@@ -81,16 +89,17 @@ public class GameManager : Singleton<GameManager>
                 onComplete();
             }
 
-            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
-
-            m_returnScene = ""; // Reset return scene so that if it is improperly set next time, we will return to the default return scene
             ClearAllData();
+            m_currentGame = "";
+
+            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
+     
+            m_returnScene = ""; // Reset return scene so that if it is improperly set next time, we will return to the default return scene
 
             TransitionScreen.Instance.ChangeLevel(returnScene, false);
         } 
         else
         {
-            m_state = State.StartGame;
             PlayNextGame();
         }
     }
@@ -110,6 +119,8 @@ public class GameManager : Singleton<GameManager>
             case State.Wait:
                 m_state = State.Sleep;
                 ClearAllData();
+                m_currentGame = "";
+                m_returnScene = "";
                 if(onCancel != null)
                 {
                     onCancel();
@@ -120,6 +131,8 @@ public class GameManager : Singleton<GameManager>
 
     //Queue<string> m_gameDictionary = new Queue<string>();
     OrderedDictionary m_gameDictionary = new OrderedDictionary();
+
+    string m_currentGame;
 
     /*
     public void AddScenes(string scene)
@@ -136,6 +149,11 @@ public class GameManager : Singleton<GameManager>
         }
     }
     */
+
+    public string GetCurrentGame()
+    {
+        return m_currentGame;
+    }
 
     public void AddGames(OrderedDictionary games)
     {

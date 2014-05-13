@@ -49,8 +49,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator Start()
     {
-        m_pictureDisplay.SetShowPicture(!m_targetsShowPicture);
-
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
         CatapultBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
@@ -59,6 +57,24 @@ public class CatapultMixedCoordinator : MonoBehaviour
         m_probabilityTargetIsCorrect = Mathf.Clamp01(m_probabilityTargetIsCorrect);
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        string gameName = GameManager.Instance.GetCurrentGame();
+
+        if (!System.String.IsNullOrEmpty(gameName))
+        {
+            if(gameName.Contains("Phoneme"))
+            {
+                m_dataType = "phonemes";
+            }
+            else if(gameName.Contains("Word"))
+            {
+                m_dataType = "words";
+            }
+
+            m_targetsShowPicture = gameName.Contains("Pictures");
+        }
+        
+        m_pictureDisplay.SetShowPicture(!m_targetsShowPicture);
 
         if (System.String.IsNullOrEmpty(m_dataType))
         {
