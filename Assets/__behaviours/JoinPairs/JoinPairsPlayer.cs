@@ -29,6 +29,7 @@ public class JoinPairsPlayer : GamePlayer
     private Transform[] m_locators;
 
     ThrobGUIElement m_currentThrobBehaviour = null;
+    JoinableLineDraw m_currentJoinable = null;
 
     int m_panelDepthIncrement = 1;
 
