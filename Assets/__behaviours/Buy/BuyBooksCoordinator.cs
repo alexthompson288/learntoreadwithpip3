@@ -85,10 +85,10 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		DataRow storyData = currentBook.storyData;
 
 #if UNITY_IPHONE
-		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
-		ep.Add("Title", bookData["title"].ToString());
-		ep.Add("isAlreadyBought", BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
-		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
+//		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
+//		ep.Add("Title", bookData["title"].ToString());
+//		ep.Add("isAlreadyBought", BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
+//		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
 #endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");

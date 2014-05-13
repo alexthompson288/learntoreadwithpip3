@@ -26,6 +26,8 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 		m_loadingIcon.SetActive(false);
 
 		string storyType = SessionInformation.Instance.GetStoryType();
+        Debug.Log("storyType: " + storyType);
+
 		if(storyType == "" || storyType == null)
 		{
             Debug.Log("Populator defaulting to Pink");
