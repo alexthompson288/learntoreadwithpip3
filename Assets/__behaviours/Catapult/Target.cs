@@ -151,6 +151,7 @@ public class Target : MonoBehaviour
     public GameObject SpawnDetachable()
     {
         GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
+        newDetachable.transform.parent = null;
         
         newDetachable.GetComponent<TargetDetachable>().SetUp(m_label.text);
 

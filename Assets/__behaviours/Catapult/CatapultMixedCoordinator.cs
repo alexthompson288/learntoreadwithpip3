@@ -215,8 +215,12 @@ public class CatapultMixedCoordinator : MonoBehaviour
             
             GameObject targetDetachable = target.SpawnDetachable();
 
+            //iTween.ScaleFrom(targetDetachable, Vector3.zero, 0.15f);
+
+            //yield return new WaitForSeconds(0.16f);
+
             StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
-            
+
             target.ApplyHitForce(ball.transform);
             
             if(m_changeCurrentData)
@@ -247,7 +251,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         } 
         else
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
             
             //target.Off();
             //StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
@@ -263,7 +267,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
-        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
         GameManager.Instance.CompleteGame();
     }
     

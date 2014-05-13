@@ -198,6 +198,8 @@ public class JoinPairsPlayer : GamePlayer
 
             m_currentThrobBehaviour = joinable.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
             m_currentThrobBehaviour.On();
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
         } 
         else
         {
@@ -207,6 +209,8 @@ public class JoinPairsPlayer : GamePlayer
             }
 
             m_currentThrobBehaviour = null;
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
         }
     }
 
