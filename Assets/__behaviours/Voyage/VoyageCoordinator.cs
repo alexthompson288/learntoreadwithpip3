@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Wingrove;
 
 public class VoyageCoordinator : Singleton<VoyageCoordinator> 
@@ -267,11 +268,15 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If the player has more than one section remaining in this session, then they will not have completed at the end of the game
             if(VoyageInfo.Instance.GetNumRemainingSections(m_sessionId) > 1)
             {
-                GameManager.Instance.SetScenes(sceneName);
+                GameManager.Instance.AddGames(dbGameName, sceneName);
             }
             else
             {
-                GameManager.Instance.SetScenes(new string[] { sceneName, "NewSessionComplete" } );
+                OrderedDictionary gameDictionary = new OrderedDictionary();
+                gameDictionary.Add(dbGameName, sceneName);
+                gameDictionary.Add("NewSessionComplete", "NewSessionComplete");
+                GameManager.Instance.AddGames(gameDictionary);
+                //GameManager.Instance.AddGames(new string[] { sceneName, "NewSessionComplete" } );
             }
             
             

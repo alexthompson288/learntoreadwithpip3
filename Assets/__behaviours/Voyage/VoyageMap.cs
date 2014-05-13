@@ -41,6 +41,7 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
+    /*
     public IEnumerator Start()
     {
         yield return new WaitForSeconds(1.5f);
@@ -62,8 +63,9 @@ public class VoyageMap : MonoBehaviour
             StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
         }
     }
+    */
 
-    /*
+
     public IEnumerator Start()
     {
         //StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -113,7 +115,7 @@ public class VoyageMap : MonoBehaviour
             StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
         }
     }
-    */
+
 
     IEnumerator PlayDelayedAnimation(SimpleSpriteAnim anim, float delay)
     {

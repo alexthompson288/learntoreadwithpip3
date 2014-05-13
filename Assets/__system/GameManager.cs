@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
@@ -42,21 +43,36 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
-        Debug.Log("Num Scenes: " + m_scenes.Count);
-        Debug.Log("Next Scene: " + m_scenes.Peek());
+        Debug.Log("Num Scenes: " + m_gameDictionary.Count);
 
-        string nextScene = m_scenes.Dequeue();
+        string nextScene = "";
 
-        TransitionScreen.Instance.ChangeLevel(nextScene, true);
+        foreach (DictionaryEntry game in m_gameDictionary)
+        {
+            nextScene = (string)game.Value;
+            Debug.Log(System.String.Format("NextGame: {0} - {1}", (string)game.Key, nextScene));
+            break;
+        }
+
+        m_gameDictionary.Remove(nextScene);
+
+        if (!System.String.IsNullOrEmpty(nextScene))
+        {
+            TransitionScreen.Instance.ChangeLevel(nextScene, true);
+        } 
+        else
+        {
+            CompleteGame();
+        }
     }
 
     public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene") // TODO: Deprecate the parameters passed to this method
     {
         Debug.Log("GameManager.CompleteGame()");
 
-        Debug.Log(System.String.Format("{0} scenes remaining", m_scenes.Count));
+        Debug.Log(System.String.Format("{0} scenes remaining", m_gameDictionary.Count));
 
-        if (m_scenes.Count == 0)
+        if (m_gameDictionary.Count == 0)
         {
             m_state = State.Sleep;
 
@@ -100,20 +116,38 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    Queue<string> m_scenes = new Queue<string>();
+    //Queue<string> m_gameDictionary = new Queue<string>();
+    OrderedDictionary m_gameDictionary = new OrderedDictionary();
 
-    public void SetScenes(string scene)
+    /*
+    public void AddScenes(string scene)
     {
-        SetScenes(new string [] { scene });
+        AddScenes(new string [] { scene });
     }
 
-    public void SetScenes(string[] scenes)
+    public void AddScenes(string[] scenes)
     {
         foreach (string scene in scenes)
         {
             Debug.Log("Adding scene: " + scene);
-            m_scenes.Enqueue(scene);
+            //m_gameDictionary.Enqueue(scene);
         }
+    }
+    */
+
+    public void AddGames(OrderedDictionary games)
+    {
+        foreach(DictionaryEntry game in games)
+        {
+            m_gameDictionary.Add(game.Key, game.Value);
+        }
+    }
+
+    public void AddGames(string dbGameName, string sceneName)
+    {
+        OrderedDictionary gameDictionary = new OrderedDictionary();
+        gameDictionary.Add(dbGameName, sceneName);
+        AddGames(gameDictionary);
     }
 
 

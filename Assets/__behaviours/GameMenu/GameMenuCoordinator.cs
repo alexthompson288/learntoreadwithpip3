@@ -97,7 +97,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
             if(!System.String.IsNullOrEmpty(sceneName))
             {
-                GameManager.Instance.SetScenes(sceneName);
+                GameManager.Instance.AddGames(game["name"].ToString(), sceneName);
 
                 GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 

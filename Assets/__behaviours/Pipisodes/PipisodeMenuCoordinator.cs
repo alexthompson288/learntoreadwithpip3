@@ -88,7 +88,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         {
             GameManager.Instance.AddData("quizquestions", quizQuestions);
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-            GameManager.Instance.SetScenes("NewQuiz");
+            GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
             GameManager.Instance.StartGames();
         }
     }

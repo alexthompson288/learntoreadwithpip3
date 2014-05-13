@@ -34,6 +34,7 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 		}
 	}
 
+    // TODO: Store an OrderedDictionary of sceneName,dbGameName and pass that to LessonInfo
 	public void OnClickSelectable(Texture2D tex, string gameSceneName)
 	{
 		Debug.Log("Clicked selectable");

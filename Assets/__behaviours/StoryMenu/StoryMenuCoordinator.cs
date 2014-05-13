@@ -95,14 +95,14 @@ public class StoryMenuCoordinator : MonoBehaviour
         m_isReadingOrPictures = true;
         StoryReaderLogic.SetShowWords(click.GetString() == "Read");
 
-        GameManager.Instance.SetScenes("NewStories");
+        GameManager.Instance.AddGames(click.GetString(), "NewStories");
         StartActivity();
     }
 
     void OnClickQuiz(ClickEvent click)
     {
         m_isReadingOrPictures = false;
-        GameManager.Instance.SetScenes("NewQuiz");
+        GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
 
         DataRow story = DataHelpers.GetStory();
 
