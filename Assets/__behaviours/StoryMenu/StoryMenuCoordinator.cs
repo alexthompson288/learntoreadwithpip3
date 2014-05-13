@@ -20,8 +20,16 @@ public class StoryMenuCoordinator : MonoBehaviour
     private UILabel m_authorLabel;
     [SerializeField]
     private UILabel m_descriptionLabel;
+    [SerializeField]
+    private GameObject m_quizParent;
 
     static bool m_isReadingOrPictures;
+
+    static DataRow m_story;
+    public static void SetStory(DataRow story)
+    {
+        m_story = story;
+    }
 
     IEnumerator Start()
     {
@@ -36,14 +44,19 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        
-        DataRow story = DataHelpers.GetStory();
+
+        //DataRow story = DataHelpers.GetStory();
+
+        if (m_story == null)
+        {
+            m_story = DataHelpers.GetStories()[0];
+        }
 
         bool hasFoundQuizQuestions = false;
 
-        if(story != null)
+        if(m_story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + story ["id"]);
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + m_story ["id"]);
             
             if (dt.Rows.Count > 0)
             {
@@ -51,8 +64,8 @@ public class StoryMenuCoordinator : MonoBehaviour
             }
 
 
-            m_authorLabel.text = ("by " + story ["author"].ToString());
-            m_titleLabel.text = story ["title"].ToString();
+            m_authorLabel.text = ("by " + m_story ["author"].ToString());
+            m_titleLabel.text = m_story ["title"].ToString();
             Debug.Log("width: " + m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x);
             
             if (m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x > 1400)
@@ -74,9 +87,9 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             Debug.Log("Title Scale: " + m_titleLabel.transform.localScale);
 
-            if(story["description"] != null)
+            if(m_story["description"] != null)
             {
-                m_descriptionLabel.text = story["description"].ToString();
+                m_descriptionLabel.text = m_story["description"].ToString();
             }
             else
             {
@@ -90,7 +103,7 @@ public class StoryMenuCoordinator : MonoBehaviour
             m_descriptionLabel.gameObject.SetActive(false);
         }
 
-        m_quizButton.gameObject.SetActive(hasFoundQuizQuestions);
+        m_quizParent.SetActive(hasFoundQuizQuestions);
     }
 
     void OnClickReadOrPictures(ClickEvent click)
@@ -149,6 +162,7 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         GameManager.Instance.OnComplete += OnGameComplete;
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+        GameManager.Instance.AddData("stories", m_story);
         GameManager.Instance.StartGames();
     }
 

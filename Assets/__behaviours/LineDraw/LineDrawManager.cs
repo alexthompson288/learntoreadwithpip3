@@ -149,6 +149,5 @@ public class LineDrawManager : Singleton<LineDrawManager>
     {
         StartCoroutine(m_lines [line].Off());
         m_lines.Remove(line);
-        Debug.Log("m_lines.Count: " + m_lines.Count);
     }
 }

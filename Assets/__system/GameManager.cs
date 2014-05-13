@@ -184,6 +184,13 @@ public class GameManager : Singleton<GameManager>
         PrivateAddData(type, newData, m_data);
     }
 
+    public void AddData(string type, DataRow newData)
+    {
+        List<DataRow> tempData = new List<DataRow>();
+        tempData.Add(newData);
+        PrivateAddData(type, tempData, m_data);
+    }
+
     public void AddTargetData(string type, List<DataRow> newTargetData)
     {
         PrivateAddData(type, newTargetData, m_targetData);

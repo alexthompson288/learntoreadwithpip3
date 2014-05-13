@@ -169,6 +169,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     {
         TweenCamera(m_worldMapLocation.position);
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
+
         yield return new WaitForSeconds(m_cameraTweenDuration + 0.1f);
 
         if (m_currentModuleMap != null) // Defensive check: Should ALWAYS execute
@@ -183,6 +185,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         if (mapPrefab != null)
         {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
+
             // If we already have a current module map, the new map must spawn either to the left or right of the current one
             if (m_currentModuleMap != null)
             {
@@ -213,6 +217,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     
     IEnumerator MoveToModuleMapCo()
     {
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
         TweenCamera(m_moduleMapLocation.position);
         
         yield return new WaitForSeconds(m_cameraTweenDuration);

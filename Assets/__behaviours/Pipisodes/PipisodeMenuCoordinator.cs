@@ -48,7 +48,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes ORDER BY order_number");
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes WHERE publishable='t' ORDER BY order_number");
         m_pipisodes = dt.Rows;
 
         UIGrid spawnGrid = m_pipisodes.Count > 5 ? m_doubleGrid : m_singleGrid;
@@ -164,7 +164,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     List<DataRow> FindQuizQuestions(DataRow pipisode)
     {
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE pipisode_id=" + Convert.ToInt32(m_currentPipisode["id"]));
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE pipisode_id=" + Convert.ToInt32(pipisode["id"]));
         
         List<DataRow> quizQuestions = dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t");
 

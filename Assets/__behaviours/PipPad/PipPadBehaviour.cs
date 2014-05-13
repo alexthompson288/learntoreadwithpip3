@@ -362,14 +362,14 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 		m_imageBlackboard.ShowImage(imageATex, null, null, null);
 		
 		Texture2D imageBTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + imageB);
-		m_additionalImageBlackboards[0].ShowImage(imageBTex, null, null, null);
-		m_additionalImageBlackboards[0].EnableClick();
+		m_additionalImageBlackboards[1].ShowImage(imageBTex, null, null, null);
+		m_additionalImageBlackboards[1].EnableClick();
 		
 		if (imageC != null)
 		{
 			Texture2D imageCTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + imageC);
-			m_additionalImageBlackboards[1].ShowImage(imageCTex, null, null, null);
-			m_additionalImageBlackboards[1].EnableClick();
+			m_additionalImageBlackboards[0].ShowImage(imageCTex, null, null, null);
+			m_additionalImageBlackboards[0].EnableClick();
 		}
 	}
 

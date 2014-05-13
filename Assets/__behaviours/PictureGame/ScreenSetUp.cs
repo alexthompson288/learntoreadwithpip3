@@ -37,6 +37,8 @@ public class ScreenSetUp : MonoBehaviour {
 		{
 			twoPlayer = false;
 		}
+
+        //Debug.Log("ScreenSetUp - twoPlayer: " + twoPlayer);
 		
         if (twoPlayer)
         {
