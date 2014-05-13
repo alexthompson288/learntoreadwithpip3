@@ -181,23 +181,20 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         }
         
         m_grid.transform.localPosition = m_gridStartPosition;
-        
 
         string query = color == "White" ? 
             "select * from phonicssets" :
                 ("select * from phonicssets WHERE programmodule_id=" + DataHelpers.GetModuleId(m_currentColor.color));
         
         DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(query);
-        
-        //Debug.Log("Found " + setsTable.Rows.Count + " sets");
-        //Debug.Log("setAttribute: " + DataHelpers.setAttribute);
-        //Debug.Log("tableName: " + DataHelpers.tableName);
+
         
         foreach(DataRow set in setsTable.Rows)
         {
             //Debug.Log("setId: " + set["id"].ToString());
             GameManager.Instance.AddData(GameManager.Instance.dataType, DataHelpers.GetSetData(set, DataHelpers.setAttribute, DataHelpers.tableName));
         }
+
         
         GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
         

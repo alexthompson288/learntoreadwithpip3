@@ -86,9 +86,15 @@ public class CatapultMixedCoordinator : MonoBehaviour
 #if UNITY_EDITOR
         if(m_useDebugData)
         {
+            int pinkModuleId = DataHelpers.GetModuleId(ColorInfo.PipColor.Pink);
+
             if(m_dataType == "words")
             {
-                m_dataPool = DataHelpers.GetSetData(3, "setwords", "words");
+                m_dataPool = DataHelpers.GetModuleWords(pinkModuleId);
+            }
+            else if(m_dataType == "phonemes")
+            {
+                m_dataPool = DataHelpers.GetModulePhonemes(pinkModuleId);
             }
         }
 #endif

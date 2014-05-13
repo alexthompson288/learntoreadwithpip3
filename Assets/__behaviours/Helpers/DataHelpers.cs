@@ -46,6 +46,47 @@ public static class DataHelpers
         return sentenceData;
     }
 
+    // TODO: Delete when not needed
+    public static List<DataRow> GetSetData(int setNum, string columnName, string tableName)
+    {
+        List<DataRow> dataList = new List<DataRow>();
+                
+        DataTable setTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
+
+        if (setTable.Rows.Count > 0)
+        {
+            if (setTable.Rows [0] [columnName] != null)
+            {
+                string[] dataIds = setTable.Rows [0] [columnName].ToString().Replace(" ", "").Replace("-", "").Replace("'", "").Replace("[", "").Replace("]", "").Split(',');
+                                    
+                foreach (string id in dataIds)
+                {
+                    try
+                    {
+                        DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
+                                                        
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            dataList.Add(dataTable.Rows [0]);
+                        }
+                    } catch
+                    {
+                        Debug.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
+                    }
+                }
+            }
+        }
+
+        if (dataList.Count > 0)
+        {           
+            return dataList;    
+        }       
+        else       
+        {         
+            return GetSetData(++setNum, columnName, tableName);       
+        }
+    }
+
 
     // TODO: Delete if not needed
     static List<DataRow> GetInclusiveSetData(int setNum, string columnName, string tableName)
@@ -112,7 +153,8 @@ public static class DataHelpers
         return data;
     }
 
-    static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
+    // TODO: Make private when no longer needed by BankIndexCoordinator
+    public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
     {
         string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
         

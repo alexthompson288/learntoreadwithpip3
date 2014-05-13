@@ -48,7 +48,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_wordsPool = m_useSillyWords ? DataHelpers.GetSillyWords() : DataHelpers.GetWords();
+        m_wordsPool = m_useSillyWords ? DataHelpers.GetSillywords() : DataHelpers.GetWords();
 
 		if(m_targetScore > m_wordsPool.Count)
 		{

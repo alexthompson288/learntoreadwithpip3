@@ -50,7 +50,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_wordsPool = m_useNonsenseWords ? DataHelpers.GetSillyWords() : DataHelpers.GetWords();
+        m_wordsPool = m_useNonsenseWords ? DataHelpers.GetSillywords() : DataHelpers.GetWords();
 
         if(m_targetScore > m_wordsPool.Count)
         {
