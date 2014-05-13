@@ -57,12 +57,11 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         {
             SelectPipisode(m_pipisodes[0]);
 
-            
             for (int i = 0; i < m_pipisodes.Count; ++i)
             {
                 GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, spawnGrid.transform);
-                
-                button.GetComponentInChildren<UILabel>().text = (i + 1).ToString();
+
+                button.GetComponentInChildren<UILabel>().text = m_pipisodes[i]["label_text"] != null ? m_pipisodes[i]["label_text"].ToString() : "";
 
                 if (BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_pipisodes[i]["id"])))
                 {
