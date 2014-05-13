@@ -377,6 +377,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + m_sessionId);
             GameManager.Instance.AddData("correctcaptions", dt.Rows);
             */
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
             
             GameManager.Instance.StartGames();
         }
