@@ -84,6 +84,7 @@ public class GameManager : Singleton<GameManager>
             string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
 
             m_returnScene = ""; // Reset return scene so that if it is improperly set next time, we will return to the default return scene
+            ClearAllData();
 
             TransitionScreen.Instance.ChangeLevel(returnScene, false);
         } 
@@ -108,6 +109,7 @@ public class GameManager : Singleton<GameManager>
                 break;
             case State.Wait:
                 m_state = State.Sleep;
+                ClearAllData();
                 if(onCancel != null)
                 {
                     onCancel();

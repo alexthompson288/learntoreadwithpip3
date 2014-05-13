@@ -99,11 +99,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IPHONE
         if(BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["pipisode_title"] != null)
         {
-            string filename = m_currentPipisode["pipisode_title"].ToString().ToLower().Replace(" ", "_");
-            Debug.Log("filename: " + filename);
-
-            Handheld.PlayFullScreenMovie(String.Format("{0}/{1}.mp4", m_relativePathMp4, filename),
-                                         Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+            PipisodeManager.Instance.PlayPipisode(m_currentPipisode);
         }
         else
         {

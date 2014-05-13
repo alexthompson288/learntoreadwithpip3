@@ -24,6 +24,8 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
     [SerializeField]
     private UIWidget[] m_widgetsToColor;
 
+    DataRow m_session = null;
+
     void Awake()
     {
         m_pipisodeButton.OnSingleClick += OnClickPipisodeButton;
@@ -33,12 +35,26 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
 
     void OnClickPipisodeButton(ClickEvent click)
     {
-
+        if (m_session ["pipisode_id"] != null)
+        {
+            int pipisodeId = Convert.ToInt32(m_session["pipisode_id"]);
+            PipisodeManager.Instance.PlayPipisode(pipisodeId);
+        }
     }
 
     void OnClickStoryButton(ClickEvent click)
     {
+        if (m_session ["story_id"] != null)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + Convert.ToInt32(m_session["story_id"]));
 
+            if(dt.Rows.Count > 0)
+            {
+                GameManager.Instance.ClearAllData();
+                GameManager.Instance.AddData("stories", dt.Rows);
+                TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
+            }
+        }
     }
 
     void OnClickBackBlocker(ClickEvent click)
@@ -48,7 +64,9 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
 
 	public void On(DataRow session)
     {
-        VoyageCoordinator.Instance.SetSessionId(Convert.ToInt32(session ["id"]));
+        m_session = session;
+
+        VoyageCoordinator.Instance.SetSessionId(Convert.ToInt32(m_session ["id"]));
 
         Color color = ColorInfo.GetColor(VoyageCoordinator.Instance.currentColor);
         foreach (UIWidget widget in m_widgetsToColor)
@@ -56,8 +74,8 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
             widget.color = color;
         }
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + Convert.ToInt32(session["id"]));
-        Debug.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, Convert.ToInt32(session["id"])));
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + Convert.ToInt32(m_session["id"]));
+        Debug.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, Convert.ToInt32(m_session["id"])));
 
         for(int i = 0; i < m_gameButtons.Length; ++i)
         {
@@ -71,10 +89,10 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
             }
         }
 
-        bool enablePipisodeButton = session["pipisode_id"] != null && Convert.ToInt32(session["pipisode_id"]) != 0;
+        bool enablePipisodeButton = m_session["pipisode_id"] != null && Convert.ToInt32(m_session["pipisode_id"]) != 0;
         m_pipisodeButton.gameObject.SetActive(enablePipisodeButton);
 
-        bool enableStoryButton = session["story_id"] != null && Convert.ToInt32(session["story_id"]) != 0;
+        bool enableStoryButton = m_session["story_id"] != null && Convert.ToInt32(m_session["story_id"]) != 0;
         m_storyButton.gameObject.SetActive(enableStoryButton);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
