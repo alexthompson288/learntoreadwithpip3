@@ -248,6 +248,24 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         return correctMap;
     }
 
+    int m_minimumDataCount = 6;
+
+    void AddExtraData(List<DataRow> dataPool, List<DataRow> extraDataPool)
+    {
+        int safetyCounter = 0;
+        while (dataPool.Count < m_minimumDataCount && safetyCounter < 100)
+        {
+            DataRow data = extraDataPool[Random.Range(0, extraDataPool.Count)];
+
+            if(!dataPool.Contains(data))
+            {
+                dataPool.Add(data);
+            }
+
+            ++safetyCounter;
+        }
+    }
+
     public void StartGame(DataRow section)
     {
         m_sectionId = System.Convert.ToInt32(section ["id"]);
@@ -286,25 +304,55 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // TODO: Set data type
             
             // Set data
-            GameManager.Instance.ClearAllData();
+            GameManager.Instance.ClearAllData(); // Defensive: GameManager already clears data when all games are complete or when they are cancelled.
+
+            
+            int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
+
+            SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
+
+            // TODO: Add sentences
 
             // Phonemes
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
+            DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
             if(dt.Rows.Count > 0)
             {
-                GameManager.Instance.AddData("phonemes", dt.Rows);
-                GameManager.Instance.AddTargetData("phonemes", dt.Rows.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
+                List<DataRow> phonemePool = dt.Rows;
+
+                if(phonemePool.Count < m_minimumDataCount)
+                {
+                    AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(previousModuleId));
+                }
+
+                GameManager.Instance.AddData("phonemes", phonemePool);
+                GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
             }
             
             // Words/Keywords
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
             if(dt.Rows.Count > 0)
             {
+                // Words
                 List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
+
+                if(words.Count < m_minimumDataCount)
+                {
+                    AddExtraData(words, DataHelpers.GetModuleWords(previousModuleId));
+
+                }
+
                 GameManager.Instance.AddData("words", words);
                 GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
-                
+
+
+                // Keywords
                 List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+
+                if(keywords.Count < m_minimumDataCount)
+                {
+                    AddExtraData(keywords, DataHelpers.GetModuleKeywords(previousModuleId));
+                }
+
                 GameManager.Instance.AddData("keywords", keywords);
                 GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }

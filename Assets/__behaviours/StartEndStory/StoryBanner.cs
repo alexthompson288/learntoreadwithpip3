@@ -14,7 +14,7 @@ public class StoryBanner : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        DataRow story = GameManager.Instance.GetSingleData("stories");
+        DataRow story = DataHelpers.GetStory();
 
         if (story != null)
         {	

@@ -87,7 +87,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 
 
 		lettersPool.AddRange(DataHelpers.GetKeywords());
-		//lettersPool = DataHelpers.GetSectionWords(1414).Rows;
 
 		
 		Debug.Log("lettersPool.Count: " + lettersPool.Count);
@@ -101,7 +100,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			m_keywordAudio[myPh] = LoaderHelpers.LoadAudioForWord(audioFilename);
         }
 
-        m_currentLetterData = GameManager.Instance.GetSingleTargetData("keywords");
+        m_currentLetterData = DataHelpers.GetSingleTargetData("keywords");
 		
 		if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme
 		{

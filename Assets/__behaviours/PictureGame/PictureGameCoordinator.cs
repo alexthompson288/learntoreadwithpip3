@@ -31,7 +31,6 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
         UnityEngine.Random.seed = DateTime.Now.Millisecond;
 
 		m_dataRows = DataHelpers.GetWords();
-		//m_dataRows = DataHelpers.GetSectionWords(1394).Rows;
 
 		Debug.Log("There are " + m_dataRows.Count + " rows");
 

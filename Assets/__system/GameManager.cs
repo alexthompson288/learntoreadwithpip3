@@ -183,22 +183,22 @@ public class GameManager : Singleton<GameManager>
 
     public void AddData(string type, List<DataRow> newData)
     {
-        AddData(type, newData, m_data);
+        PrivateAddData(type, newData, m_data);
     }
 
     public void AddTargetData(string type, List<DataRow> newTargetData)
     {
-        AddData(type, newTargetData, m_targetData);
+        PrivateAddData(type, newTargetData, m_targetData);
     }
 
     public void AddTargetData(string type, DataRow target)
     {
         List<DataRow> newTargetData = new List<DataRow>();
         newTargetData.Add(target);
-        AddData(type, newTargetData, m_targetData);
+        PrivateAddData(type, newTargetData, m_targetData);
     }
 
-    void AddData(string type, List<DataRow> newData, Dictionary<DataRow, string> data)
+    void PrivateAddData(string type, List<DataRow> newData, Dictionary<DataRow, string> data)
     {
         foreach (DataRow newDatum in newData)
         {
@@ -218,15 +218,31 @@ public class GameManager : Singleton<GameManager>
 
     public List<DataRow> GetData(string type)
     {
-        return GetData(type, m_data);
+        return PrivateGetData(type, m_data);
     }
 
     public List<DataRow> GetTargetData(string type)
     {
-        return GetData(type, m_targetData);
+        return PrivateGetData(type, m_targetData);
     }
 
-    List<DataRow> GetData(string type, Dictionary<DataRow, string> data)
+    public DataRow GetSingleTargetData(string type)
+    {
+        DataRow typeMatch = null;
+        
+        foreach (KeyValuePair<DataRow, string> kvp in m_targetData)
+        {
+            if(kvp.Value == type)
+            {
+                typeMatch = kvp.Key;
+                break;
+            }
+        }
+        
+        return typeMatch;
+    }
+
+    List<DataRow> PrivateGetData(string type, Dictionary<DataRow, string> data)
     {
         List<DataRow> typeMatches = new List<DataRow>();
 
@@ -238,47 +254,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
 
-        //Dictionary<DataRow, string> typeMatches = m_data.Where(kvp => kvp.Value == type);
-
-        //var duplicateValues = plants.GroupBy(x => x.Value).Where(x => x.Count() > 1);
-        //var typeMatches = m_data.GroupBy(x => x.Value).Where(x => x.Count() > 1);
-
-        //return typeMatches.Keys.ToList();
-
         return typeMatches;
-    }
-
-    public DataRow GetSingleData(string type)
-    {
-        return GetSingleData(type, m_data);
-    }
-
-    public DataRow GetSingleTargetData(string type, bool guaranteeData = false)
-    {
-        DataRow data = GetSingleData(type, m_targetData);
-
-        if (data == null && guaranteeData)
-        {
-            data = GetSingleData(type, m_data);
-        }
-
-        return data;
-    }
-
-    DataRow GetSingleData(string type, Dictionary<DataRow, string> data)
-    {
-        DataRow typeMatch = null;
-        
-        foreach (KeyValuePair<DataRow, string> kvp in data)
-        {
-            if(kvp.Value == type)
-            {
-                typeMatch = kvp.Key;
-                break;
-            }
-        }
-        
-        return typeMatch;
     }
 
     string m_defaultReturnScene;

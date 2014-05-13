@@ -104,17 +104,15 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 // Get and set all the data associated with the color
                 GameManager.Instance.ClearAllData();
 
-                DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + (int)m_color);
-                foreach(DataRow set in setsTable.Rows)
-                {
-                    GameManager.Instance.AddData("phonemes", DataHelpers.GetSetData(set, "setphonemes", "phonemes"));
+                int moduleId = DataHelpers.GetModuleId(m_color);
 
-                    GameManager.Instance.AddData("words", DataHelpers.GetSetData(set, "setwords", "words"));
+                GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+                GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+                GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
+                GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
 
-                    GameManager.Instance.AddData("keywords", DataHelpers.GetSetData(set, "setkeywords", "words"));
 
-                    GameManager.Instance.AddData("sillywords", DataHelpers.GetSetData(set, "setsillywords", "words"));
-                }
+                // TODO: Add sentences
 
                 GameManager.Instance.StartGames();
             }
