@@ -9,6 +9,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     [SerializeField]
     private ClickEvent m_picturesButton;
     [SerializeField]
+    private ClickEvent m_captionsButton;
+    [SerializeField]
     private ClickEvent m_quizButton;
     [SerializeField]
     private ClickEvent m_suggestionsButton;
@@ -24,6 +26,7 @@ public class StoryMenuCoordinator : MonoBehaviour
     IEnumerator Start()
     {
         m_readButton.OnSingleClick += OnClickReadOrPictures;
+        m_captionsButton.OnSingleClick += OnClickCaptions;
         m_quizButton.OnSingleClick += OnClickQuiz;
         m_picturesButton.OnSingleClick += OnClickReadOrPictures;
         m_suggestionsButton.OnSingleClick += OnClickSuggestions;
@@ -99,11 +102,26 @@ public class StoryMenuCoordinator : MonoBehaviour
         StartActivity();
     }
 
+    void OnClickCaptions(ClickEvent click)
+    {
+        DataRow story = DataHelpers.GetStory();
+        
+        if (story != null)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE story_id=" + story["id"]);
+            
+            if(dt.Rows.Count > 0)
+            {
+                m_isReadingOrPictures = false;
+                GameManager.Instance.AddGames("NewCorrectCaptions", "NewCorrectCaptions");
+                GameManager.Instance.AddData("correctcaptions", dt.Rows);
+                StartActivity();
+            }
+        }
+    }
+
     void OnClickQuiz(ClickEvent click)
     {
-        m_isReadingOrPictures = false;
-        GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
-
         DataRow story = DataHelpers.GetStory();
 
         if (story != null)
@@ -112,6 +130,8 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             if(dt.Rows.Count > 0)
             {
+                m_isReadingOrPictures = false;
+                GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
                 GameManager.Instance.AddData("quizquestions", dt.Rows);
                 StartActivity();
             }

@@ -224,6 +224,8 @@ public class JoinPairsPlayer : GamePlayer
                     b.TransitionOff(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
                     m_spawnedJoinables.Remove(a.gameObject);
                     m_spawnedJoinables.Remove(b.gameObject);
+
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
                     
                     if (m_spawnedJoinables.Count == 0)
                     {                        

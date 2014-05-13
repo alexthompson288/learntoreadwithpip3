@@ -91,6 +91,20 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+        // TODO: Don't check the gameName. Ask Alex to add attribute to game called "datatype". Find the game DataRow and read the attribute
+        string gameName = GameManager.Instance.GetCurrentGame();
+        if (!System.String.IsNullOrEmpty(gameName))
+        {
+            if(gameName.Contains("Phoneme"))
+            {
+                m_dataType = "phonemes";
+            }
+            else if(gameName.Contains("Word"))
+            {
+                m_dataType=  "words";
+            }
+        }
+
         if(System.String.IsNullOrEmpty(m_dataType))
         {
             m_dataType = GameManager.Instance.dataType;

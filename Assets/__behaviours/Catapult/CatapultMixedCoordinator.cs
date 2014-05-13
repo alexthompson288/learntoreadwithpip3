@@ -58,8 +58,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+        // TODO: Don't check the gameName. Ask Alex to add attribute to game called "datatype". Find the game DataRow and read the attribute
         string gameName = GameManager.Instance.GetCurrentGame();
-
         if (!System.String.IsNullOrEmpty(gameName))
         {
             if(gameName.Contains("Phoneme"))

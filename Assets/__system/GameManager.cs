@@ -129,6 +129,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    // TODO: This does not need to be a Dictionary. Store a queue of game names, find the scene name when you need to load it
     //Queue<string> m_gameDictionary = new Queue<string>();
     OrderedDictionary m_gameDictionary = new OrderedDictionary();
 
