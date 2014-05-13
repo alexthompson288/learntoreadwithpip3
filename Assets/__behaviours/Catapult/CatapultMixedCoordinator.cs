@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
+using System;
 
 public class CatapultMixedCoordinator : MonoBehaviour 
 {
@@ -40,8 +41,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     List<DataRow> m_dataPool = new List<DataRow>();
     DataRow m_currentData;
     
-    Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
-    Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
+    Dictionary<int, AudioClip> m_shortAudio = new Dictionary<int, AudioClip>();
+    Dictionary<int, AudioClip> m_longAudio = new Dictionary<int, AudioClip>();
 
 
     // If the dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
@@ -51,7 +52,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     {
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
-        CatapultBehaviour cannonBehaviour = Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
+        CatapultBehaviour cannonBehaviour = UnityEngine.Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
         cannonBehaviour.MoveToMultiplayerLocation(0);
 
         m_probabilityTargetIsCorrect = Mathf.Clamp01(m_probabilityTargetIsCorrect);
@@ -105,31 +106,33 @@ public class CatapultMixedCoordinator : MonoBehaviour
         {
             foreach (DataRow data in m_dataPool)
             {
+                int dataId = Convert.ToInt32(data["id"]);
+
                 if (m_dataType == "phonemes")
                 {
-                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
-                    m_longAudio [data] = LoaderHelpers.LoadMnemonic(data);
+                    m_shortAudio [dataId] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
+                    m_longAudio [dataId] = LoaderHelpers.LoadMnemonic(data);
                 }
                 // If dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
                 else if(m_dataType == "words" && m_targetsShowPicture)
                 {
                     DataRow phonemeData = DataHelpers.GetFirstPhonemeInWord(data);
 
-                    m_shortAudio [data] = AudioBankManager.Instance.GetAudioClip(phonemeData["grapheme"].ToString());
-                    m_longAudio [data] = LoaderHelpers.LoadAudioForWord(data);
+                    m_shortAudio [Convert.ToInt32(phonemeData["id"])] = AudioBankManager.Instance.GetAudioClip(phonemeData["grapheme"].ToString());
+                    m_longAudio [dataId] = LoaderHelpers.LoadAudioForWord(data);
                     //m_longAudio [data] = LoaderHelpers.LoadMnemonic(phonemeData);
                 }
                 else
                 {
-                    m_shortAudio [data] = LoaderHelpers.LoadAudioForWord(data);
+                    m_shortAudio [dataId] = LoaderHelpers.LoadAudioForWord(data);
                 }
             }
-            
+
             m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
 
             if(m_currentData == null)
             {
-                m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
+                m_currentData = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
             }
 
             Debug.Log("m_currentData: " + m_currentData);
@@ -145,7 +148,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 m_pictureDisplay.On(m_dataType, m_currentData);
             }
             
-            InitializeTargets(Object.FindObjectsOfType(typeof(Target)) as Target[]);
+            InitializeTargets(UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
             PlayShortAudio();
         } 
@@ -153,6 +156,27 @@ public class CatapultMixedCoordinator : MonoBehaviour
         {
             StartCoroutine(OnGameComplete());
         }
+    }
+
+    void LogAudio()
+    {
+#if UNITY_EDITOR
+        Debug.Log("LOGGING AUDIO");
+        Debug.Log("DATATYPE: " + m_dataType);
+        Debug.Log("TARGETPICTURES: " + m_targetsShowPicture);
+        
+        Debug.Log("LOGGING SHORT - " + m_shortAudio.Count);
+        foreach(KeyValuePair<int, AudioClip> kvp in m_shortAudio)
+        {
+            Debug.Log(kvp.Key + " - " + kvp.Value.name);
+        }
+        
+        Debug.Log("LOGGING LONG - " + m_longAudio.Count);
+        foreach(KeyValuePair<int, AudioClip> kvp in m_longAudio)
+        {
+            Debug.Log(kvp.Key + " - " + kvp.Value.name);
+        }
+#endif
     }
     
     void InitializeTargets(Target[] targets)
@@ -168,7 +192,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             
             SetTargetData(target);
             
-            StartCoroutine(target.On(Random.Range(1f, 4f)));
+            StartCoroutine(target.On(UnityEngine.Random.Range(1f, 4f)));
         }
     }
 
@@ -191,11 +215,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
     void SetTargetData(Target target)
     {
         DataRow targetData = m_currentData;
-        if (Random.Range(0f, 1f) > m_probabilityTargetIsCorrect)
+        if (UnityEngine.Random.Range(0f, 1f) > m_probabilityTargetIsCorrect)
         {
             while (IsDataCorrect(targetData))
             {
-                targetData = m_dataPool [Random.Range(0, m_dataPool.Count)];
+                targetData = m_dataPool [UnityEngine.Random.Range(0, m_dataPool.Count)];
             }
         }
         
@@ -231,7 +255,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             
             if(m_changeCurrentData)
             {
-                m_currentData = m_dataPool[Random.Range(0, m_dataPool.Count)];
+                m_currentData = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
                 PlayShortAudio();
             }
 
@@ -284,14 +308,23 @@ public class CatapultMixedCoordinator : MonoBehaviour
             data = m_currentData;
         }
 
-        m_audioSource.clip = m_longAudio [data];
-        if (m_audioSource.clip != null)
+        bool hasPlayedAudio = false;
+
+        int dataId = Convert.ToInt32(data ["id"]);
+
+        if (m_longAudio.ContainsKey(dataId))
         {
-            m_audioSource.Play();
-        } 
-        else
+            m_audioSource.clip = m_longAudio [dataId];
+            if (m_audioSource.clip != null)
+            {
+                hasPlayedAudio = true;
+                m_audioSource.Play();
+            } 
+        }
+
+        if(!hasPlayedAudio)
         {
-            PlayShortAudio();
+            PlayShortAudio(data);
         }
     }
     
@@ -302,11 +335,32 @@ public class CatapultMixedCoordinator : MonoBehaviour
             data = m_currentData;
         }
 
-        m_audioSource.clip = m_shortAudio [data];
-        if (m_audioSource.clip != null)
+        // TODO: Temporary fix. Come up with a decent solution for this
+        if (m_dataType == "words" && m_targetsShowPicture && data["word"] != null)
         {
-            m_audioSource.Play();
+            data = DataHelpers.GetFirstPhonemeInWord(data);
         }
+
+        int dataId = Convert.ToInt32(data ["id"]);
+
+        if (m_shortAudio.ContainsKey(dataId))
+        {
+            m_audioSource.clip = m_shortAudio [dataId];
+            if (m_audioSource.clip != null)
+            {
+                m_audioSource.Play();
+            }
+        } 
+#if UNITY_EDITOR
+        else
+        {
+            string attributeName = data["word"] != null ? "word" : "phoneme";
+            Debug.LogError("NO SHORT KEY: " + data[attributeName].ToString() + " - " + data["id"].ToString());
+            Debug.Log("m_shortAudio.Count: " + m_shortAudio.Count);
+
+            LogAudio();
+        }
+#endif
     }
 
     void OnGUI()

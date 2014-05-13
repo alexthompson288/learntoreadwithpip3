@@ -80,12 +80,15 @@ public class Target : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         //Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
-        CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
-
-        if (ammoBehaviour != null && !ammoBehaviour.canDrag && OnTargetHit != null)
+        if (!Mathf.Approximately(transform.localScale.y, 0))
         {
-            OnTargetHit(this, other);
-        } 
+            CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
+
+            if (ammoBehaviour != null && !ammoBehaviour.canDrag && OnTargetHit != null)
+            {
+                OnTargetHit(this, other);
+            }
+        }
     }
 
     public void OnHit()

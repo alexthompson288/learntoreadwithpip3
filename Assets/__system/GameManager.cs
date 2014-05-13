@@ -74,6 +74,18 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    void Reset()
+    {
+        m_state = State.Sleep;
+
+        m_data.Clear();
+        m_targetData.Clear();
+        m_gameDictionary.Clear();
+
+        m_currentGame = "";
+        m_returnScene = "";
+    }
+
     public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene") // TODO: Deprecate the parameters passed to this method
     {
         Debug.Log("GameManager.CompleteGame()");
@@ -82,19 +94,14 @@ public class GameManager : Singleton<GameManager>
 
         if (m_gameDictionary.Count == 0)
         {
-            m_state = State.Sleep;
+            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
+
+            Reset();
 
             if(onComplete != null)
             {
                 onComplete();
             }
-
-            ClearAllData();
-            m_currentGame = "";
-
-            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
-     
-            m_returnScene = ""; // Reset return scene so that if it is improperly set next time, we will return to the default return scene
 
             TransitionScreen.Instance.ChangeLevel(returnScene, false);
         } 
@@ -117,10 +124,7 @@ public class GameManager : Singleton<GameManager>
                 }
                 break;
             case State.Wait:
-                m_state = State.Sleep;
-                ClearAllData();
-                m_currentGame = "";
-                m_returnScene = "";
+                Reset();
                 if(onCancel != null)
                 {
                     onCancel();
@@ -174,12 +178,6 @@ public class GameManager : Singleton<GameManager>
 
     Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
     Dictionary<DataRow, string> m_targetData = new Dictionary<DataRow, string>();
-
-    public void ClearAllData()
-    {
-        m_data.Clear();
-        m_targetData.Clear();
-    }
 
     public void AddData(string type, List<DataRow> newData)
     {

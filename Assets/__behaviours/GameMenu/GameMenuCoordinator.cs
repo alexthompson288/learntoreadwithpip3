@@ -102,8 +102,6 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 
                 // Get and set all the data associated with the color
-                GameManager.Instance.ClearAllData();
-
                 int moduleId = DataHelpers.GetModuleId(m_color);
 
                 GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
@@ -156,7 +154,6 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                     GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
                     newButton.GetComponent<ClickEvent>().SetData(game);
                     newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
-                    //newButton.GetComponentInChildren<UILabel>().text = game["name"].ToString();
                     newButton.GetComponent<ChooseGameButton>().SetUp(game);
                 }
             }

@@ -50,7 +50,6 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
 
             if(dt.Rows.Count > 0)
             {
-                GameManager.Instance.ClearAllData();
                 GameManager.Instance.AddData("stories", dt.Rows);
                 TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
             }

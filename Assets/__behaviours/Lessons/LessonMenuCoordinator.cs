@@ -56,8 +56,6 @@ public class LessonMenuCoordinator : MonoBehaviour
         GameManager.Instance.AddGames(gameDictionary);
         //GameManager.Instance.AddGames(LessonInfo.Instance.GetScenes().ToArray());
 
-        GameManager.Instance.ClearAllData();
-
         GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData("phonemes"));
         GameManager.Instance.AddTargetData("phonemes", LessonInfo.Instance.GetTargetData("phonemes"));
 

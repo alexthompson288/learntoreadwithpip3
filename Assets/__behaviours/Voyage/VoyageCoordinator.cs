@@ -252,17 +252,20 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     void AddExtraData(List<DataRow> dataPool, List<DataRow> extraDataPool)
     {
-        int safetyCounter = 0;
-        while (dataPool.Count < m_minimumDataCount && safetyCounter < 100)
+        if ((int)m_currentModuleMap.color > 0)
         {
-            DataRow data = extraDataPool[Random.Range(0, extraDataPool.Count)];
-
-            if(!dataPool.Contains(data))
+            int safetyCounter = 0;
+            while (dataPool.Count < m_minimumDataCount && safetyCounter < 100)
             {
-                dataPool.Add(data);
-            }
+                DataRow data = extraDataPool [Random.Range(0, extraDataPool.Count)];
 
-            ++safetyCounter;
+                if (!dataPool.Contains(data))
+                {
+                    dataPool.Add(data);
+                }
+
+                ++safetyCounter;
+            }
         }
     }
 
@@ -304,14 +307,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // TODO: Set data type
             
             // Set data
-            GameManager.Instance.ClearAllData(); // Defensive: GameManager already clears data when all games are complete or when they are cancelled.
-
-            
             int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
 
             SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
-
-            // TODO: Add sentences
 
             // Phonemes
             DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
@@ -329,7 +327,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             }
             
             // Words/Keywords
-            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
+            dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
             if(dt.Rows.Count > 0)
             {
                 // Words
@@ -356,6 +354,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddData("keywords", keywords);
                 GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
             }
+
+            // TODO: Add sentences
+            dt = db.ExecuteQuery("select * from sentences WHERE programsession_id=" + m_sessionId);
 
             // Quiz Questions
             dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE programsession_id=" + m_sessionId);

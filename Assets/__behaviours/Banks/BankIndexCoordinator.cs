@@ -171,8 +171,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 0);
 
         yield return new WaitForSeconds(alphaTweenDuration);
-
-        GameManager.Instance.ClearAllData();
         
         int childCount = m_grid.transform.childCount;
         for(int i = childCount - 1; i > -1; --i)
