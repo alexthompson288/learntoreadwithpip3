@@ -6,11 +6,11 @@ public class WordSelectionButton : MonoBehaviour {
     [SerializeField]
     private UILabel m_label;
     [SerializeField]
-    private UITexture m_backgroundTexture;
+    private UISprite m_background;
     [SerializeField]
     private ParticleSystem m_particleSystem;
-    [SerializeField]
-    private Texture2D m_correctFrame;
+    //[SerializeField]
+    //private Texture2D m_correctFrame;
 
     private bool m_isCorrect;
     PictureGamePlayer m_player; 
@@ -34,11 +34,11 @@ public class WordSelectionButton : MonoBehaviour {
         if (!m_isCorrect)
         {
             iTween.ShakePosition(gameObject, Vector3.one * 0.01f, 0.3f);
-            TweenColor.Begin(m_backgroundTexture.gameObject, 0.5f, new Color(0.75f, 0.75f, 0.75f));
+            TweenColor.Begin(m_background.gameObject, 0.5f, new Color(0.75f, 0.75f, 0.75f));
         }
         else
         {
-            m_backgroundTexture.mainTexture = m_correctFrame;
+            //m_backgroundTexture.mainTexture = m_correctFrame;
             m_particleSystem.enableEmission = true;
         }
     }
