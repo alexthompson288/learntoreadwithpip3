@@ -73,10 +73,25 @@ public class VoyageMap : MonoBehaviour
         //StartCoroutine(GameManager.WaitForInstance());
 
         m_worldMapButton.OnSingleClick += OnClickWorldMapButton;
+
+        int buttonToDisable = 0;
+        if (m_color == ColorInfo.PipColor.Pink)
+        {
+            buttonToDisable = -1;
+        } 
+        else if (m_color == ColorInfo.PipColor.Orange)
+        {
+            buttonToDisable = 1;
+        }
         
         foreach (ClickEvent click in m_moduleMapButtons)
         {
             click.OnSingleClick += OnClickModuleMapButton;
+
+            if(click.GetInt() == buttonToDisable)
+            {
+                click.gameObject.SetActive(false);
+            }
         }
         
         Color color = ColorInfo.GetColor(m_color);
