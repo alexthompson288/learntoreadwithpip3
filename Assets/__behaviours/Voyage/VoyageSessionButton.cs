@@ -20,6 +20,7 @@ public class VoyageSessionButton : MonoBehaviour
         if (VoyageInfo.Instance.HasCompletedSession(sessionId))
         {
             m_background.spriteName = VoyageInfo.Instance.GetSessionBackground(sessionId);
+            m_background.MakePixelPerfect();
         }
 
         bool hasSetLabel = false;
