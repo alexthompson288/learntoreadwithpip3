@@ -20,7 +20,7 @@ TextureImporter:
   grayScaleToAlpha: 0
   generateCubemap: 0
   seamlessCubemap: 0
-  textureFormat: 5
+  textureFormat: -1
   maxTextureSize: 4096
   textureSettings:
     filterMode: 2
@@ -42,7 +42,7 @@ TextureImporter:
   - buildTarget: iPhone
     maxTextureSize: 2048
     textureFormat: 33
-    compressionQuality: 100
+    compressionQuality: 50
   spriteSheet:
     sprites: []
   spritePackingTag: 
