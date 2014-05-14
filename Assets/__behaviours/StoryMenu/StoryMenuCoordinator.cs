@@ -103,7 +103,7 @@ public class StoryMenuCoordinator : MonoBehaviour
             m_descriptionLabel.gameObject.SetActive(false);
         }
 
-        m_quizParent.SetActive(hasFoundQuizQuestions);
+        //m_quizParent.SetActive(hasFoundQuizQuestions);
     }
 
     void OnClickReadOrPictures(ClickEvent click)

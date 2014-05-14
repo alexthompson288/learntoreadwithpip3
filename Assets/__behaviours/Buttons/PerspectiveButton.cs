@@ -64,7 +64,12 @@ public class PerspectiveButton : MonoBehaviour
             }
             */
 
-            follower.position = new Vector3(follower.position.x, m_followerLocation.position.y, follower.position.z);
+            //follower.position = new Vector3(follower.position.x, m_followerLocation.position.y, follower.position.z);
+
+            //Vector3 followerLocal = follower.InverseTransformPoint(m_followerLocation.position);
+            //follower.localPosition = new Vector3(follower.localPosition.x, followerLocal.y, follower.localPosition.z);
+
+            follower.position = m_followerLocation.position;
         }
     }
 
