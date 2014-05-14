@@ -146,7 +146,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         {
             m_currentColor = button;
             StartCoroutine(MoveCurrentColorSprite(button));
-            StartCoroutine(ChangeColorCo(ColorInfo.GetColorString(button.color)));
+            StartCoroutine(ChangeColorCo(button.color));
         }
     }
 
@@ -164,7 +164,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         TweenScale.Begin(m_currentColorSprite.gameObject, scaleTweenDuration, Vector3.one * 1.2f);
     }
 
-    IEnumerator ChangeColorCo(string color)
+    IEnumerator ChangeColorCo(ColorInfo.PipColor color)
     {
         float alphaTweenDuration = 0.2f;
 
@@ -180,23 +180,47 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         
         m_grid.transform.localPosition = m_gridStartPosition;
 
-        string query = color == "White" ? 
+        /*
+        Debug.Log("New Color: " + color);
+
+        string query = color == ColorInfo.PipColor.White ? 
             "select * from phonicssets" :
-                ("select * from phonicssets WHERE programmodule_id=" + DataHelpers.GetModuleId(m_currentColor.color));
+                ("select * from phonicssets WHERE programmodule_id=" + DataHelpers.GetModuleId(color));
+
+        Debug.Log("query: " + query);
         
         DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(query);
 
-        
+        Debug.Log("setsTable.Count: " + setsTable.Rows.Count);
+
         foreach(DataRow set in setsTable.Rows)
         {
             //Debug.Log("setId: " + set["id"].ToString());
             GameManager.Instance.AddData(GameManager.Instance.dataType, DataHelpers.GetSetData(set, DataHelpers.setAttribute, DataHelpers.tableName));
         }
 
-        
-        GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
-        
         List<DataRow> data = GameManager.Instance.GetData(GameManager.Instance.dataType);
+        */
+
+        GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
+
+        List<DataRow> data = new List<DataRow>();
+
+        string dataType = GameManager.Instance.dataType;
+        int moduleId = DataHelpers.GetModuleId(color);
+
+        if (dataType == "phonemes")
+        {
+            data = DataHelpers.GetModulePhonemes(moduleId);
+        } 
+        else if (dataType == "words")
+        {
+            data = DataHelpers.GetModuleWords(moduleId);
+        } 
+        else if (dataType == "keywords")
+        {
+            data = DataHelpers.GetModuleKeywords(moduleId);
+        }
 
         if (data.Count == 0)
         {
