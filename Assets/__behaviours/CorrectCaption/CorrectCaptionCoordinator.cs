@@ -147,7 +147,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         float length = 0;
         float height = 0;
-        float maxWidth = 0;
+        //float maxWidth = 0;
 
         Debug.Log("Logging words");
 
@@ -165,7 +165,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
                 newText.transform.localPosition = new Vector3(length, height, 0);
                 Vector3 wordSize = newText.GetComponent<UILabel>().font.CalculatePrintedSize(word + " ", false, UIFont.SymbolStyle.None);
                 length += wordSize.x;
-                maxWidth = Mathf.Max(maxWidth, length);
+                //maxWidth = Mathf.Max(maxWidth, length);
 
                 ShowPipPadForWord showPipPadForWord = newText.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
                 

@@ -245,6 +245,12 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
 
+        if (dataPool.Count == 0)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences");
+            dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
+        }
+
         return dataPool;
     }
 
@@ -276,12 +282,28 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("quizquestions");
 
+        if (dataPool.Count == 0)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences");
+            dataPool = dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t");
+        }
+
         return dataPool;
     }
 
     public static List<DataRow> GetSentences()
     {
-        return GameManager.Instance.GetData("sentences");
+        List<DataRow> dataPool = GameManager.Instance.GetData("sentences");
+
+        if (dataPool.Count == 0)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE is_target_sentence='t'");
+            dataPool = dt.Rows;
+            //dataPool = dt.Rows.FindAll(x => x["is_target_sentence"] != null && x["is_target_sentence"].ToString() == "t");
+            //dataPool.AddRange(dt.Rows.FindAll(x => (x["quiz"] == null || x["quiz"].ToString() == "f") && (x["correctsentence"] == null || x["correctsentence"].ToString() == "f")));
+        }
+
+        return dataPool;
     }
     
     public static List<DataRow> GetPhonemes()
@@ -758,9 +780,21 @@ public static class DataHelpers
         int previousColorIndex = ((int)pipColor) - 1;
         previousColorIndex = Mathf.Clamp(previousColorIndex, 0, previousColorIndex);
 
-        Debug.Log("Previous Color: " + ColorInfo.GetColorString((ColorInfo.PipColor)previousColorIndex));
-
         return GetModuleId((ColorInfo.PipColor)previousColorIndex);
+    }
+
+    public static string[] GetSentenceWords(DataRow sentenceData)
+    {
+        if (sentenceData != null && sentenceData ["text"] != null)
+        {
+            string sentence = sentenceData ["text"].ToString();
+            string[] words = sentence.Split(new char[] { ' ' });
+            return words;
+        } 
+        else
+        {
+            return new string[] {};
+        }
     }
 
     public static bool WordsShareOnsetPhonemes(DataRow dataA, DataRow dataB)

@@ -45,6 +45,14 @@ public class GameWidget : MonoBehaviour
         }
     }
 
+    public float backgroundWidth
+    {
+        get
+        {
+            return m_background.width;
+        }
+    }
+
     Vector3 m_dragOffset;
 
     Vector3 m_startPosition;
@@ -81,26 +89,17 @@ public class GameWidget : MonoBehaviour
 
     public void SetUp(string dataType, DataRow newData, bool changeBackgroundWidth)
     {
-        if (m_label != null)
-        {
-            m_label.text = DataHelpers.GetLabelText(dataType, newData);
-        }
-
+        Debug.Log("GameWidget.SetUp()");
         m_data = newData;
 
-        if(changeBackgroundWidth && m_label != null)
+        if (m_label != null)
         {
-            int newWidth = (int)(m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x*1.3f);
-            
-            if(m_background != null && newWidth > m_background.width)
-            {
-                m_background.width = newWidth;
-            }
+            m_label.text = DataHelpers.GetLabelText(dataType, m_data);
         }
-        
-        if(m_collider != null && m_background != null)
+
+        if (changeBackgroundWidth)
         {
-            m_collider.size = m_background.localSize;
+            ChangeBackgroundWidth();
         }
 
         transform.localScale = Vector3.one;
@@ -132,15 +131,37 @@ public class GameWidget : MonoBehaviour
     {
         m_label.text = labelText;
 
-        if(changeBackgroundWidth && m_label != null)
+        if (changeBackgroundWidth)
         {
-            int newWidth = (int)(m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x*1.3f);
+            ChangeBackgroundWidth();
+        }
+    }
+
+    void ChangeBackgroundWidth()
+    {
+        Debug.LogWarning("GameWidget.ChangeBackgroundWidth()");
+        if(m_label != null)
+        {
+            int newWidth = (int)((m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x + 60) * m_label.transform.localScale.x);
+
+            if(newWidth < 150)
+            {
+                newWidth = 150;
+            }
+
+            Debug.Log(m_label.text + " - " + newWidth);
             
-            if(m_background != null && newWidth > m_background.width)
+            if(m_background != null)
             {
                 m_background.width = newWidth;
             }
         }
+        
+        if (m_collider != null && m_background != null)
+        {
+            //Debug.Log("m_background.localSize: " + m_background.localSize);
+            m_collider.size = m_background.localSize;
+        } 
     }
 
     void OnPress(bool pressed)
