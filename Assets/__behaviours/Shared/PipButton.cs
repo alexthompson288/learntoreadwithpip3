@@ -38,30 +38,33 @@ public class PipButton : MonoBehaviour
 
 	void Awake () 
 	{
-		if(m_changeColor)
-		{
-			m_unpressedColor = m_sprite.color;
+        if (m_sprite != null)
+        {
+            if (m_changeColor)
+            {
+                m_unpressedColor = m_sprite.color;
 
-			if(Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
-			{
-				m_pressedColor = m_unpressedColor;
+                if (Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
+                {
+                    m_pressedColor = m_unpressedColor;
 
-				for(int i = 0; i < 3; ++i) // Only change 0(r), 1(g), 2(b). 3 is alpha.
-				{
-					m_pressedColor[i] = Mathf.Clamp01(m_pressedColor[i] - 0.2f);
-				}
-			}
-		}
+                    for (int i = 0; i < 3; ++i) // Only change 0(r), 1(g), 2(b). 3 is alpha.
+                    {
+                        m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
+                    }
+                }
+            }
 
-		if(m_changeSprite)
-		{
-			m_unpressedSpriteName = m_sprite.spriteName;
+            if (m_changeSprite)
+            {
+                m_unpressedSpriteName = m_sprite.spriteName;
 
-			if(String.IsNullOrEmpty(m_pressedSpriteName))
-			{
-				m_pressedSpriteName = m_unpressedSpriteName.Substring(0, m_unpressedSpriteName.Length - 1) + "b";
-			}
-		}
+                if (String.IsNullOrEmpty(m_pressedSpriteName))
+                {
+                    m_pressedSpriteName = m_unpressedSpriteName.Substring(0, m_unpressedSpriteName.Length - 1) + "b";
+                }
+            }
+        }
 	}
 
 	void OnPress(bool pressed)

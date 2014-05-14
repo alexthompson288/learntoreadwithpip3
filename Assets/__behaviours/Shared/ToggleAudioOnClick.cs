@@ -18,7 +18,7 @@ public class ToggleAudioOnClick : MonoBehaviour
 		{
 			m_audioSource.Stop();
 
-			if(m_offSpriteName != null)
+            if(m_backgroundSprite != null && m_offSpriteName != null)
 			{
 				m_backgroundSprite.spriteName = m_offSpriteName;
 			}
@@ -27,7 +27,7 @@ public class ToggleAudioOnClick : MonoBehaviour
 		{
 			m_audioSource.Play();
 
-			if(m_onSpriteName != null)
+            if(m_backgroundSprite != null && m_onSpriteName != null)
 			{
 				m_backgroundSprite.spriteName = m_onSpriteName;
 			}
