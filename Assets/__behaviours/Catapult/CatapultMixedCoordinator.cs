@@ -30,11 +30,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private bool m_targetsShowPicture;
     [SerializeField]
     private ImageBlackboard m_blackboard;
-
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool m_useDebugData;
-#endif
+   
     
     int m_score = 0;
     
@@ -85,7 +81,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         m_dataPool = DataHelpers.GetData(m_dataType);
 
 #if UNITY_EDITOR
-        if(m_useDebugData)
+        if(m_dataPool.Count == 0)
         {
             int pinkModuleId = DataHelpers.GetModuleId(ColorInfo.PipColor.Pink);
 
@@ -252,17 +248,26 @@ public class CatapultMixedCoordinator : MonoBehaviour
             StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
 
             target.ApplyHitForce(ball.transform);
-            
+
+            /*
             if(m_changeCurrentData)
             {
                 m_currentData = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
                 PlayShortAudio();
             }
+            */
+
+            if(!m_targetsShowPicture && m_dataType == "phonemes")
+            {
+                PlayShortAudio(target.data);
+            }
+            else
+            {
+                PlayLongAudio(target.data);
+            }
 
             if(m_targetsShowPicture)
             {
-                PlayLongAudio(target.data);
-                
                 if(m_dataType == "words")
                 {
                     yield return null;
