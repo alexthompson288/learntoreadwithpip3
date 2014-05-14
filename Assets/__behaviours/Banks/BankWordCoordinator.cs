@@ -70,11 +70,11 @@ public class BankWordCoordinator : MonoBehaviour
             
             Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
             float tweenDuration = 0.3f;
-            if (tex != null)
+            if (tex != null && m_showPictureButton.transform.localScale.x < 1)
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.one);
             } 
-            else
+            else if(m_showPictureButton.transform.localScale.x > 0)
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.zero);
             }
