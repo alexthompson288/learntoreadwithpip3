@@ -234,6 +234,11 @@ public class JoinPairsPlayer : GamePlayer
                 if (a.data == b.data)
                 {
                     //StartCoroutine(SpeakWellDone(a.word));
+                    if(SessionInformation.Instance.GetNumPlayers() == 1)
+                    {
+                        DataRow audioData = a.isPicture ? b.data : a.data;
+                        JoinPairsCoordinator.Instance.PlayShortAudio(audioData);
+                    }
                     
                     a.TransitionOff(a.transform.position.x < b.transform.position.x ? m_leftOff : m_rightOff);
                     b.TransitionOff(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
@@ -247,11 +252,11 @@ public class JoinPairsPlayer : GamePlayer
                         StartCoroutine(AddPoint());
                     }
                 }
-                else
+                else if(SessionInformation.Instance.GetNumPlayers() == 1 && JoinPairsCoordinator.Instance.dataType == "words")
                 {
-                    //WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
-                    //PipPadBehaviour.Instance.Show(a.isPicture ? b.word : a.word);
-                    //PipPadBehaviour.Instance.SayAll(1.5f);
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
+                    PipPadBehaviour.Instance.Show(a.isPicture ? b.data["word"].ToString() : a.data["word"].ToString());
+                    PipPadBehaviour.Instance.SayAll(1.5f);
                 }
             }
         }

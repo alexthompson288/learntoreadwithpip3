@@ -240,6 +240,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     public void PlayShortAudio(DataRow data)
     {
+        Debug.Log("PLAY SHORT");
         PlayAudio(data, m_shortAudio);
     }
 
@@ -252,12 +253,19 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     {
         if (audioDictionary.ContainsKey(data))
         {
-            AudioClip clip = audioDictionary[data];
-            if(clip != null)
+            AudioClip clip = audioDictionary [data];
+            Debug.Log("clip: " + clip);
+            if (clip != null)
             {
                 m_audioSource.clip = clip;
                 m_audioSource.Play();
             }
+        } 
+        else
+        {
+            string attributeName = dataType == "words" ? "word" : "phoneme";
+            Debug.LogError("NO KEY for " + data[attributeName].ToString());
+            Debug.Log("audioDictionary.Count: " + audioDictionary.Count);
         }
     }
 

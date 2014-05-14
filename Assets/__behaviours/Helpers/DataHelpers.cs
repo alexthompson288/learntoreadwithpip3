@@ -671,7 +671,7 @@ public static class DataHelpers
             case "keywords":
                 if(data["word"] != null)
                 {
-                    LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
                 }
                 break;
         }
@@ -697,7 +697,7 @@ public static class DataHelpers
             case "keywords":
                 if(data["word"] != null)
                 {
-                    LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
                 }
                 break;
         }

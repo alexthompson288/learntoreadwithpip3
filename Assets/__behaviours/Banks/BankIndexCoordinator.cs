@@ -242,7 +242,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
         }
         
-        Debug.Log("data.Count: " + data.Count);
+        //Debug.Log("data.Count: " + data.Count);
         
         yield return new WaitForSeconds(0.1f);
         
