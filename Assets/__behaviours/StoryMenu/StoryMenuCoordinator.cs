@@ -21,14 +21,24 @@ public class StoryMenuCoordinator : MonoBehaviour
     [SerializeField]
     private UILabel m_descriptionLabel;
     [SerializeField]
-    private GameObject m_quizParent;
+    private Transform[] m_buttonParents;
+    [SerializeField]
+    private float m_buttonDistance = 240;
 
     static bool m_isReadingOrPictures;
 
     static DataRow m_story;
-    public static void SetStory(DataRow story)
+    public static DataRow story
     {
-        m_story = story;
+        get
+        {
+            return m_story;
+        }
+    }
+
+    public static void SetStory(DataRow newStory)
+    {
+        m_story = newStory;
     }
 
     IEnumerator Start()
@@ -41,26 +51,46 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.OnCancel += OnGameCancel;
 
-
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-
-        //DataRow story = DataHelpers.GetStory();
 
         if (m_story == null)
         {
             m_story = DataHelpers.GetStories()[0];
         }
-
-        bool hasFoundQuizQuestions = false;
-
+   
         if(m_story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + m_story ["id"]);
+            Debug.Log("Title: " + m_story["title"].ToString());
+
+            int numButtons = 4;
+
+            System.Array.Sort(m_buttonParents, CollectionHelpers.ComparePosX);
+
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + m_story ["id"]);
             
-            if (dt.Rows.Count > 0)
+            if (DataHelpers.OnlyQuizQuestions(dt.Rows).Count == 0)
             {
-                hasFoundQuizQuestions = true;
+                m_quizButton.transform.parent.gameObject.SetActive(false);
+                --numButtons;
+            }
+
+            if (DataHelpers.OnlyCorrectCaptions(dt.Rows).Count == 0)
+            {
+                m_captionsButton.transform.parent.gameObject.SetActive(false);
+                --numButtons;
+            }
+
+            // Position the buttons
+            float posX = numButtons % 2 == 0 ? ((numButtons - 2) / 2 * m_buttonDistance) + m_buttonDistance / 2 : (numButtons - 1) / 2 * m_buttonDistance;
+            posX *= -1;
+
+            foreach(Transform buttonParent in m_buttonParents)
+            {
+                if(buttonParent.gameObject.activeInHierarchy)
+                {
+                    buttonParent.transform.localPosition = new Vector3(posX, buttonParent.transform.localPosition.y, buttonParent.transform.localPosition.z);
+                    posX += m_buttonDistance;                                                       
+                }
             }
 
 
@@ -102,32 +132,31 @@ public class StoryMenuCoordinator : MonoBehaviour
             m_authorLabel.gameObject.SetActive(false);
             m_descriptionLabel.gameObject.SetActive(false);
         }
-
-        //m_quizParent.SetActive(hasFoundQuizQuestions);
     }
 
     void OnClickReadOrPictures(ClickEvent click)
     {
-        m_isReadingOrPictures = true;
-        StoryReaderLogic.SetShowWords(click.GetString() == "Read");
+        if (m_story != null)
+        {
+            m_isReadingOrPictures = true;
+            StoryReaderLogic.SetShowWords(click.GetString() == "Read");
 
-        GameManager.Instance.AddGames(click.GetString(), "NewStories");
-        StartActivity();
+            GameManager.Instance.AddGames(click.GetString(), "NewStories");
+            StartActivity();
+        }
     }
 
     void OnClickCaptions(ClickEvent click)
     {
-        DataRow story = DataHelpers.GetStory();
-        
-        if (story != null)
+        if (m_story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(story["id"]));
-            List<DataRow> correctCaptions = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_story["id"]));
+            List<DataRow> correctCaptions = DataHelpers.OnlyCorrectCaptions(dt.Rows);
 
             if(correctCaptions.Count > 0)
             {
                 m_isReadingOrPictures = false;
-                GameManager.Instance.AddGames("NewCorrectCaptions", "NewCorrectCaptions");
+                GameManager.Instance.AddGames("NewCorrectCaption", "NewCorrectCaption");
                 GameManager.Instance.AddData("correctcaptions", correctCaptions);
                 StartActivity();
             }
@@ -136,12 +165,10 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnClickQuiz(ClickEvent click)
     {
-        DataRow story = DataHelpers.GetStory();
-
-        if (story != null)
+        if (m_story != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(story["id"]));
-            List<DataRow> quizQuestions = dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t");
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_story["id"]));
+            List<DataRow> quizQuestions = DataHelpers.OnlyQuizQuestions(dt.Rows);
 
             if(quizQuestions.Count > 0)
             {
@@ -162,7 +189,16 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         GameManager.Instance.OnComplete += OnGameComplete;
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+
         GameManager.Instance.AddData("stories", m_story);
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_story["id"]));
+        GameManager.Instance.AddData("correctcaptions", DataHelpers.OnlyCorrectCaptions(dt.Rows));
+        GameManager.Instance.AddData("quizquestions", DataHelpers.OnlyQuizQuestions(dt.Rows));
+
+        Debug.Log("correctcaptions: " + DataHelpers.GetCorrectCaptions().Count);
+        Debug.Log("quizquestions: " + DataHelpers.GetQuizQuestions().Count);
+
         GameManager.Instance.StartGames();
     }
 

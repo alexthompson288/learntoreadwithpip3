@@ -30,16 +30,13 @@ public class CorrectCaptionCoordinator : GameCoordinator
     [SerializeField]
     private List<string> m_captionTextAttributes;
 
-    #if UNITY_EDITOR
-    [SerializeField]
-    private bool m_useDebugData;
-    #endif
-
     bool m_hasAnsweredIncorrectly = false;
 
     List<string> m_remainingAttributes = new List<string>();
 
     List<GameObject> m_spawnedQuestionText = new List<GameObject>();
+
+    int m_numAnswered = 0;
 
     IEnumerator Start()
     {
@@ -53,7 +50,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
         m_dataPool = DataHelpers.GetCorrectCaptions();
 
 #if UNITY_EDITOR
-        if(m_useDebugData)
+        if(m_dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + 304);
             m_dataPool = dt.Rows;
@@ -104,7 +101,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
             Texture2D tex = GetCaptionTexture(m_currentData);
 
-            if (m_currentData["good_sentence"] != null && tex != null)
+            if (m_currentData["good_sentence"] != null && tex != null) // if "good_sentence" is null then the player is unable to answer correctly, if tex is null the question is unfair
             {
                 m_questionImage.mainTexture = tex;
                 m_questionImage.MakePixelPerfect();
@@ -141,18 +138,12 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         string sentence = m_currentData [m_remainingAttributes.Last()].ToString();
 
-        Debug.Log("sentence: " + sentence);
-
         string[] words = sentence.Split(new char[] {' '});
 
         float length = 0;
 
-        Debug.Log("Logging words");
-
         foreach (string word in words)
         {
-            Debug.Log(word);
-
             if (!string.IsNullOrEmpty(word) && word != " ")
             {
                 GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_textPrefab, m_textPosition);
@@ -173,8 +164,10 @@ public class CorrectCaptionCoordinator : GameCoordinator
     
     protected override IEnumerator CompleteGame()
     {
-        Debug.Log("CompleteGame()");
-        yield break;
+        Debug.Log("GameCoordinator.CompleteGame()");
+        yield return null;
+
+        GameManager.Instance.CompleteGame();
     }
 
     void OnAnswer(ClickEvent button)
@@ -187,13 +180,15 @@ public class CorrectCaptionCoordinator : GameCoordinator
         EnableAnswerColliders(false);
         
         bool answerIsYes = button.GetInt() == 1; 
-        bool yesIsCorrect = (m_remainingAttributes.Last() == "good_sentence");
+        bool yesIsCorrect = (m_remainingAttributes.Last() == "good_sentence"); // The current attribute is the last one in m_remainingAttributes
         bool isCorrect = (yesIsCorrect == answerIsYes);
 
         if (isCorrect)
         {
             if(answerIsYes)
             {
+                ++m_numAnswered;
+
                 int scoreDelta = (isCorrect && !m_hasAnsweredIncorrectly) ? 1 : 0;
                 m_scoreKeeper.UpdateScore(scoreDelta);
                 m_score += scoreDelta;
@@ -202,7 +197,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
                 
                 yield return new WaitForSeconds(m_questionTweenDuration);
                 
-                if (m_score < m_targetScore && m_dataPool.Count > 0)
+                if (m_numAnswered < m_targetScore && m_dataPool.Count > 0)
                 {
                     StartCoroutine(AskQuestion());
                 } 
@@ -237,11 +232,11 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
     Texture2D GetCaptionTexture(DataRow data)
     {
-        Texture2D tex = Resources.Load<Texture2D>(data ["image"].ToString());
+        Texture2D tex = Resources.Load<Texture2D>(data ["correct_image_name"].ToString());
 
         if (tex == null)
         {
-            tex = Resources.Load<Texture2D>("Images/storypages/" + data ["image"].ToString());
+            tex = Resources.Load<Texture2D>("Images/storypages/" + data ["correct_image_name"].ToString());
         }
 
         return tex;
@@ -261,52 +256,4 @@ public class CorrectCaptionCoordinator : GameCoordinator
         m_yesButton.EnableCollider(enable);
         m_noButton.EnableCollider(enable);
     }
-
-    /*
-    IEnumerator AskQuestion()
-    {
-        m_currentData = GetRandomData();
-
-        m_hasAnsweredIncorrectly = false;
-
-        m_remainingAttributes.Clear();
-        m_remainingAttributes.AddRange(m_captionTextAttributes);
-        while(m_currentData[m_remainingAttributes.Last()] == null)
-        {
-            m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
-        }
-        CollectionHelpers.Shuffle(m_remainingAttributes);
-
-        if (m_currentData != null)
-        {
-            m_dataPool.Remove(m_currentData);
-
-            Texture2D tex = GetCaptionTexture(m_currentData);
-
-            if (m_currentData["good_sentence"] != null && tex != null)
-            {
-                m_questionImage.mainTexture = tex;
-                m_questionImage.MakePixelPerfect();
-
-                m_questionLabel.text = m_currentData[m_remainingAttributes.Last()].ToString();
-
-                TweenQuestionParents(Vector3.one);
-
-                yield return new WaitForSeconds(m_questionTweenDuration);
-
-                EnableAnswerColliders(true);
-            }
-            else
-            {
-                StartCoroutine(AskQuestion());
-            }
-        }
-        else
-        {
-            StartCoroutine(CompleteGame());
-        }
-
-        yield break;
-    }
-    */
 }

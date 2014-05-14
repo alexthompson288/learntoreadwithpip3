@@ -11,7 +11,7 @@ public class StoryMenuBackground : MonoBehaviour
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        DataRow story = DataHelpers.GetStory();
+        DataRow story = StoryMenuCoordinator.story;
 
         if(story != null)
         {

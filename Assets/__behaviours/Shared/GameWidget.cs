@@ -168,8 +168,6 @@ public class GameWidget : MonoBehaviour
             {
                 newWidth = 150;
             }
-
-            Debug.Log(m_label.text + " - " + newWidth);
             
             if(m_background != null)
             {
@@ -179,7 +177,6 @@ public class GameWidget : MonoBehaviour
         
         if (m_collider != null && m_background != null)
         {
-            //Debug.Log("m_background.localSize: " + m_background.localSize);
             m_collider.size = m_background.localSize;
         } 
     }

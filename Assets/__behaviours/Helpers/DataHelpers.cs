@@ -673,10 +673,15 @@ public static class DataHelpers
                     tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
                 }
                 break;
-            case "sentences":
-                if(data["correct_sentence_image"] != null)
+            case "quizquestions":
+            case "correctcaptions":
+                if(data["correct_image_name"] != null)
                 {
-                    tex = Resources.Load<Texture2D>(data["correct_sentence_image"].ToString());
+                    tex = Resources.Load<Texture2D>(data["correct_image_name"].ToString());
+                    if(tex == null)
+                    {
+                        tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
+                    }
                 }
                 break;
             default:
@@ -744,6 +749,16 @@ public static class DataHelpers
         }
 
         return hasPictureDataPool;
+    }
+
+    public static List<DataRow> OnlyQuizQuestions(List<DataRow> dataPool)
+    {
+        return dataPool.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t");
+    }
+
+    public static List<DataRow> OnlyCorrectCaptions(List<DataRow> dataPool)
+    {
+        return dataPool.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t");
     }
 
     public static DataRow GetModule(ColorInfo.PipColor pipColor)

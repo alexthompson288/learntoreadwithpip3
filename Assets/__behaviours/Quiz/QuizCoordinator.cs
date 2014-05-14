@@ -26,10 +26,6 @@ public class QuizCoordinator : MonoBehaviour
 
     DataRow m_currentQuestion = null;
 
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool m_useDebugData;
-#endif
 
     IEnumerator Start()
     {
@@ -38,10 +34,13 @@ public class QuizCoordinator : MonoBehaviour
         m_dataPool = DataHelpers.GetQuizQuestions();
 
 #if UNITY_EDITOR
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + 48);
-        if(dt.Rows.Count > 0)
+        if(m_dataPool.Count == 0)
         {
-            m_dataPool = dt.Rows;
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE story_id=" + 48);
+            if(dt.Rows.Count > 0)
+            {
+                m_dataPool = dt.Rows;
+            }
         }
 #endif
 
@@ -73,13 +72,10 @@ public class QuizCoordinator : MonoBehaviour
             m_questionLabel.text = m_currentQuestion["question"].ToString();
         }
 
-        if (m_currentQuestion ["image"] != null)
-        {
-            Texture2D tex = Resources.Load<Texture2D>(m_currentQuestion["image"].ToString());
-            m_questionTexture.mainTexture = tex;
-            m_questionTexture.MakePixelPerfect();
-            m_questionTexture.gameObject.SetActive(tex != null);
-        }
+        Texture2D tex = DataHelpers.GetPicture("quizquestions", m_currentQuestion);
+        m_questionTexture.mainTexture = tex;
+        m_questionTexture.MakePixelPerfect();
+        m_questionTexture.gameObject.SetActive(tex != null);
 
         List<string> answerStrings = new List<string>();
 
