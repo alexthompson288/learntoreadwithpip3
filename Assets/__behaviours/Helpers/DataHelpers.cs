@@ -673,32 +673,17 @@ public static class DataHelpers
                     tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
                 }
                 break;
+            case "sentences":
+                if(data["correct_sentence_image"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(data["correct_sentence_image"].ToString());
+                }
+                break;
+            default:
+                break;
         }
 
         return tex;
-    }
-
-    public static AudioClip GetLongAudio(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-
-        AudioClip clip = null;
-
-        switch (dataType)
-        {
-            case "phonemes":
-                clip = LoaderHelpers.LoadMnemonic(data);
-                break;
-            case "words":
-            case "keywords":
-                if(data["word"] != null)
-                {
-                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
-                }
-                break;
-        }
-
-        return clip;
     }
 
     public static AudioClip GetShortAudio(string dataType, DataRow data)
@@ -722,9 +707,28 @@ public static class DataHelpers
                     clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
                 }
                 break;
+            case "sentences":
+                break;
+            default:
+                break;
         }
         
         return clip;
+    }
+
+    public static AudioClip GetLongAudio(string dataType, DataRow data)
+    {
+        dataType = dataType.ToLower();
+        
+        switch (dataType)
+        {
+            case "phonemes":
+                return LoaderHelpers.LoadMnemonic(data);
+                break;
+            default:
+                return GetShortAudio(dataType, data);
+                break;
+        }
     }
 
     public static List<DataRow> OnlyPictureData(string dataType, List<DataRow> dataPool)

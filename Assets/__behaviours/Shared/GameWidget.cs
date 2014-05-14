@@ -26,6 +26,8 @@ public class GameWidget : MonoBehaviour
     [SerializeField]
     private float m_scaleTweenDuration;
     [SerializeField]
+    private float m_positionTweenDuration = 0.5f;
+    [SerializeField]
     private bool m_canDrag = true;
 
     DataRow m_data;
@@ -53,6 +55,22 @@ public class GameWidget : MonoBehaviour
         }
     }
 
+    public float scaleTweenDuration
+    {
+        get
+        {
+            return m_scaleTweenDuration;
+        }
+    }
+
+    public float positionTweenDuration
+    {
+        get
+        {
+            return m_positionTweenDuration;
+        }
+    }
+
     Vector3 m_dragOffset;
 
     Vector3 m_startPosition;
@@ -61,6 +79,10 @@ public class GameWidget : MonoBehaviour
 
     int m_backgroundIndex;
 
+    void Start()
+    {
+        iTween.ScaleFrom(gameObject, Vector3.zero, m_scaleTweenDuration);
+    }
 
     public void SetUp(string dataType, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
     {
@@ -89,7 +111,6 @@ public class GameWidget : MonoBehaviour
 
     public void SetUp(string dataType, DataRow newData, bool changeBackgroundWidth)
     {
-        Debug.Log("GameWidget.SetUp()");
         m_data = newData;
 
         if (m_label != null)
@@ -139,7 +160,6 @@ public class GameWidget : MonoBehaviour
 
     void ChangeBackgroundWidth()
     {
-        Debug.LogWarning("GameWidget.ChangeBackgroundWidth()");
         if(m_label != null)
         {
             int newWidth = (int)((m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x + 60) * m_label.transform.localScale.x);
@@ -213,12 +233,12 @@ public class GameWidget : MonoBehaviour
 
     public void TweenToStartPos()
     {
-        iTween.MoveTo(gameObject, m_startPosition, 0.5f);
+        iTween.MoveTo(gameObject, m_startPosition, m_positionTweenDuration);
     }
 
     public void TweenToPos(Vector3 pos)
     {
-        iTween.MoveTo(gameObject, pos, 0.5f);
+        iTween.MoveTo(gameObject, pos, m_positionTweenDuration);
     }
 
     public void Off()
