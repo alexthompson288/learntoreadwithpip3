@@ -18,6 +18,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     [SerializeField]
     private UILabel m_questionLabel;
     [SerializeField]
+    private UISprite m_questionBackground;
+    [SerializeField]
     private GameObject m_questionLabelParent;
     [SerializeField]
     private ClickEvent m_yesButton;
@@ -150,16 +152,26 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
                 m_spawnedQuestionText.Add(newText);
 
-                newText.GetComponent<UILabel>().text = word + " ";
+
+                UILabel label = newText.GetComponent<UILabel>() as UILabel;
+
+                label.text = word + " ";
+
+                Vector3 wordSize = label.font.CalculatePrintedSize(word + " ", false, UIFont.SymbolStyle.None);
+
                 newText.transform.localPosition = new Vector3(length, 0, 0);
-                Vector3 wordSize = newText.GetComponent<UILabel>().font.CalculatePrintedSize(word + " ", false, UIFont.SymbolStyle.None);
+
                 length += wordSize.x;
+
 
                 ShowPipPadForWord showPipPadForWord = newText.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
                 
                 showPipPadForWord.SetUp(word, wordSize, true);
             }
         }
+
+        m_textPosition.localPosition = new Vector3(-length / 2, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
+        m_questionBackground.width = (int)length + 50;
     }
     
     protected override IEnumerator CompleteGame()

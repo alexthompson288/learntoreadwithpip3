@@ -107,11 +107,10 @@ public class JumbleSentenceCoordinator : GameCoordinator
         }
 
         m_textPosition.localPosition = new Vector3(-length / 2, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
-
+        m_sentenceBackground.width = (int)(length + 50);
 
         float tweenDuration = m_spawnedWords[0].scaleTweenDuration;
 
-        m_sentenceBackground.width = (int)(length + 50);
         iTween.ScaleTo(m_sentenceParent, Vector3.one, tweenDuration);
 
         bool hasSetPicture = false;
