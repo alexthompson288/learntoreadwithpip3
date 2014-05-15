@@ -22,6 +22,8 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 	private UILabel m_pageCount;
 	[SerializeField]
 	private float m_pageTurnDuration = 0.8f;
+    [SerializeField]
+    private UITexture m_storyPicture;
 
     static bool m_showWords = true;
     public static void SetShowWords(bool showWords)
@@ -355,6 +357,11 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			//Debug.Log("imageName: " + imageName);
 			//Debug.Log("bgImage: " + bgImage);
             m_currentDisplayer.Show(image, bgImage);
+
+            if(m_storyPicture != null)
+            {
+                m_storyPicture.mainTexture = bgImage != null ? bgImage : image;
+            }
 
 
 			string storyType = SessionInformation.Instance.GetStoryType();

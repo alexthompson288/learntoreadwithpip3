@@ -597,57 +597,16 @@ public static class DataHelpers
         return containerName;
     }
 
-    public static string GetPicturePath(string dataType)
-    {
-        dataType = dataType.ToLower();
-
-        string picturePath = "Images/mnemonics_images_png_250/";
-
-        switch (dataType)
-        {
-            case "words":
-            case "keywords":
-                picturePath = "Images/word_images_png_350/_";
-                break;
-        }
-
-        return picturePath;
-    }
-
     public static string GetLinkedSpriteName(string spriteName)
     {
         string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
 
-        string linkingName = spriteName.Substring(0, spriteName.Length - 1);
-        Debug.Log("linkingName: " + linkingName);
+        return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
 
-        return linkingName + newNameEnd;
-    }
+        //string linkingName = spriteName.Substring(0, spriteName.Length - 1);
+        //Debug.Log("linkingName: " + linkingName);
 
-    public static string GetFullPicturePath(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-
-        string fullPicturePath = "";
-
-        switch (dataType)
-        {
-            case "phonemes":
-                if(data["phoneme"] != null && data["mneumonic"] != null)
-                {
-                    fullPicturePath = String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]);
-                }
-                break;
-            case "words":
-            case "keywords":
-                if(data["word"] != null)
-                {
-                    fullPicturePath = String.Format("Images/word_images_png_350/_{0}", data["word"]);
-                }
-                break;
-        }
-
-        return fullPicturePath;
+        //return linkingName + newNameEnd;
     }
 
     public static Texture2D GetPicture(string dataType, DataRow data)
