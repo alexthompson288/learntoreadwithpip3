@@ -5,15 +5,15 @@ using System.Collections.Generic;
 public class StoryMenuCoordinator : MonoBehaviour 
 {
     [SerializeField]
-    private ClickEvent m_readButton;
+    private PipButton m_readButton;
     [SerializeField]
-    private ClickEvent m_picturesButton;
+    private PipButton m_picturesButton;
     [SerializeField]
-    private ClickEvent m_captionsButton;
+    private PipButton m_captionsButton;
     [SerializeField]
-    private ClickEvent m_quizButton;
+    private PipButton m_quizButton;
     [SerializeField]
-    private ClickEvent m_suggestionsButton;
+    private PipButton m_suggestionsButton;
     [SerializeField]
     private UILabel m_titleLabel;
     [SerializeField]
@@ -43,11 +43,11 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     IEnumerator Start()
     {
-        m_readButton.OnSingleClick += OnClickReadOrPictures;
-        m_captionsButton.OnSingleClick += OnClickCaptions;
-        m_quizButton.OnSingleClick += OnClickQuiz;
-        m_picturesButton.OnSingleClick += OnClickReadOrPictures;
-        m_suggestionsButton.OnSingleClick += OnClickSuggestions;
+        m_readButton.Unpressed += OnClickReadOrPictures;
+        m_picturesButton.Unpressed += OnClickReadOrPictures;
+        m_captionsButton.Unpressed += OnClickCaptions;
+        m_quizButton.Unpressed += OnClickQuiz;
+        m_suggestionsButton.Unpressed += OnClickSuggestions;
 
         GameManager.Instance.OnCancel += OnGameCancel;
 
@@ -134,19 +134,21 @@ public class StoryMenuCoordinator : MonoBehaviour
         }
     }
 
-    void OnClickReadOrPictures(ClickEvent click)
+    void OnClickReadOrPictures(PipButton button)
     {
         if (m_story != null)
         {
             m_isReadingOrPictures = true;
-            StoryReaderLogic.SetShowWords(click.GetString() == "Read");
 
-            GameManager.Instance.AddGames(click.GetString(), "NewStories");
+            string gameName = button == m_readButton ? "Read" : "Pictures";
+
+            GameManager.Instance.AddGames(gameName, "NewStories");
+
             StartActivity();
         }
     }
 
-    void OnClickCaptions(ClickEvent click)
+    void OnClickCaptions(PipButton click)
     {
         if (m_story != null)
         {
@@ -163,7 +165,7 @@ public class StoryMenuCoordinator : MonoBehaviour
         }
     }
 
-    void OnClickQuiz(ClickEvent click)
+    void OnClickQuiz(PipButton click)
     {
         if (m_story != null)
         {
@@ -180,7 +182,7 @@ public class StoryMenuCoordinator : MonoBehaviour
         }
     }
 
-    void OnClickSuggestions(ClickEvent click)
+    void OnClickSuggestions(PipButton click)
     {
 
     }

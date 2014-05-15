@@ -715,9 +715,19 @@ public static class DataHelpers
         return dataPool.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t");
     }
 
+    public static bool IsQuizQuestion(DataRow data) // This should be more efficient than using OnlyQuizQuestions
+    {
+        return data ["quiz"] != null && data ["quiz"].ToString() == "t";
+    }
+
     public static List<DataRow> OnlyCorrectCaptions(List<DataRow> dataPool)
     {
         return dataPool.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t");
+    }
+
+    public static bool IsCorrectCaption(DataRow data) // This should be more efficient than using OnlyCorrectCaptions
+    {
+        return data ["correctsentence"] != null && data ["correctsentence"].ToString() == "t";
     }
 
     public static DataRow GetModule(ColorInfo.PipColor pipColor)

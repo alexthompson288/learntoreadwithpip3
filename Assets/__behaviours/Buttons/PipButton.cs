@@ -9,7 +9,9 @@ public class PipButton : MonoBehaviour
     public event PressEventHandler Unpressed;
     
     
-    // Shared
+    // Shared Variables
+    [SerializeField]
+    private string m_string;
     [SerializeField]
     private UISprite m_pressableButton;
     [SerializeField]
@@ -38,7 +40,7 @@ public class PipButton : MonoBehaviour
     }
     
     
-    // PositionChange
+    // PositionChange Variables and Method
     [SerializeField]
     private bool m_changePosition;
     [SerializeField]
@@ -54,9 +56,16 @@ public class PipButton : MonoBehaviour
     
     Transform m_unpressedLocation;
     Hashtable m_positionTweenArgs = new Hashtable();
+
+    IEnumerator UpdateFollowerPosition()
+    {
+        m_positionFollower.position = m_followerLocation.position;
+        yield return null;
+        StartCoroutine("UpdateFollowerPosition");
+    }
     
     
-    // SpriteChange
+    // SpriteChange Variables and Method
     [SerializeField]
     private bool m_changeSprite;
     [SerializeField]
@@ -65,9 +74,14 @@ public class PipButton : MonoBehaviour
     private string m_pressedSpriteName;
     
     string m_unpressedSpriteName;
+
+    public void SetResetSprite(bool resetSprite)
+    {
+        m_resetSprite = resetSprite;
+    }
     
     
-    // ColorChange
+    // ColorChange Variables
     [SerializeField]
     private bool m_changeColor;
     [SerializeField]
@@ -75,7 +89,24 @@ public class PipButton : MonoBehaviour
     
     Color m_unpressedColor;
     
-    
+
+    // Shared Methods
+
+    public string GetString()
+    {
+        return m_string;
+    }
+
+    public void SetString(string newString)
+    {
+        m_string = newString;
+    }
+
+    public void SetPipColor(ColorInfo.PipColor newPipColor)
+    {
+        m_pipColor = newPipColor;
+    }
+
     void Awake()
     {
         if (m_pressableButton != null)
@@ -147,13 +178,6 @@ public class PipButton : MonoBehaviour
     {
         yield return new WaitForSeconds(Random.Range(3f, 9f));
         m_sheenAnimation.PlayAnimation("ON");
-    }
-    
-    IEnumerator UpdateFollowerPosition()
-    {
-        m_positionFollower.position = m_followerLocation.position;
-        yield return null;
-        StartCoroutine("UpdateFollowerPosition");
     }
     
     void OnPress(bool pressed)
