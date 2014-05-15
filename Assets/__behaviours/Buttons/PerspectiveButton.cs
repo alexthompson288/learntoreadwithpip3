@@ -25,7 +25,7 @@ public class PerspectiveButton : MonoBehaviour
     [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
-    private string m_unpressedAudio = "BUTTON_UNPRESS";
+    private string[] m_unpressedAudio = new string[] { "BUTTON_UNPRESS" };
     [SerializeField]
     private float m_resetDelay = -1;
 
@@ -133,7 +133,10 @@ public class PerspectiveButton : MonoBehaviour
             spriteAnim.PlayAnimation("ON");
         }
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent(m_unpressedAudio);
+        foreach (string audioEvent in m_unpressedAudio)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+        }
         
         yield return new WaitForSeconds(m_tweenDuration);
 

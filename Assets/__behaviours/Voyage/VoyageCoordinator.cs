@@ -141,6 +141,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
             VoyageInfo.Instance.DestroyBookmark();
         }
+
+        yield return new WaitForSeconds(0.5f);
+
+        Debug.Log("Posting audio");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_WELCOME_TIMBLE_TOMBLE");
     }
 
     void TweenCamera(Vector3 newPosition)

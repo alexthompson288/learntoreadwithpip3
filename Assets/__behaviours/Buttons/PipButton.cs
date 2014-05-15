@@ -19,7 +19,7 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
-    private string m_unpressedAudio = "BUTTON_UNPRESS";
+    private string[] m_unpressedAudio = new string[] { "BUTTON_UNPRESS" };
     [SerializeField]
     private ColorInfo.PipColor m_pipColor = ColorInfo.PipColor.White;
     [SerializeField]
@@ -255,8 +255,11 @@ public class PipButton : MonoBehaviour
         
         m_isTransitioning = true;
         collider.enabled = false;
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent(m_unpressedAudio);
+
+        foreach(string audioEvent in m_unpressedAudio)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+        }
         
         if (m_changePosition)
         {

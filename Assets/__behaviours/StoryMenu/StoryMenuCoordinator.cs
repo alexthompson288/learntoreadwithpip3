@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Wingrove;
 
 public class StoryMenuCoordinator : MonoBehaviour 
 {
@@ -144,6 +145,8 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             GameManager.Instance.AddGames(gameName, "NewStories");
 
+            WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_STORY_TIME");
+
             StartActivity();
         }
     }
@@ -160,6 +163,9 @@ public class StoryMenuCoordinator : MonoBehaviour
                 m_isReadingOrPictures = false;
                 GameManager.Instance.AddGames("NewCorrectCaption", "NewCorrectCaption");
                 GameManager.Instance.AddData("correctcaptions", correctCaptions);
+
+                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
+
                 StartActivity();
             }
         }
@@ -177,6 +183,9 @@ public class StoryMenuCoordinator : MonoBehaviour
                 m_isReadingOrPictures = false;
                 GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
                 GameManager.Instance.AddData("quizquestions", quizQuestions);
+
+                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
+
                 StartActivity();
             }
         }
@@ -187,7 +196,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     }
 
-    void StartActivity()
+    void StartActivity(string audioEvent = "")
     {
         GameManager.Instance.OnComplete += OnGameComplete;
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
