@@ -69,8 +69,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		//NavMenu.Instance.MoveCallButtonToRight();
-
         DataRow story = DataHelpers.GetStory();
         if (story != null)
         {
@@ -80,7 +78,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		UserStats.Activity.SetStoryId (m_storyId);
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
-		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "'");
+
 		m_numPages = dt.Rows.Count;
 		Debug.Log("There are " + m_numPages + " pages");
 
@@ -193,39 +191,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		m_canTurn = true;
 	}
 
-	/*
-    public IEnumerator PrevPage()
-    {
-		Debug.Log("PrevPage()");
-
-        ClearOld();
-
-        m_hideWhenTurning.SetActive(false);
-        m_canTurn = false;
-        m_currentPage--;
-        SwapActivePage();
-
-        DataTable dt = UpdateCurrentDisplayer();
-
-        m_currentDisplayer.TurnBack((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform);
-
-        yield return new WaitForSeconds(1.0f);
-
-        if (dt.Rows.Count > 0)
-        {
-            DataRow row = dt.Rows[0];
-            SetText(row);
-        }
-
-        yield return new WaitForSeconds(2.6f);
-		//yield return new WaitForSeconds(3.5f);
-
-        m_hideWhenTurning.SetActive(true);
-        m_canTurn = true;
-
-    }
-    */
-
 	IEnumerator TurnNextPage()
 	{
 		yield return StartCoroutine(m_currentDisplayer.TurnPage((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform));
@@ -236,7 +201,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 	
 	public IEnumerator NextPage(bool isFirstPage)
 	{
-		
 		m_canTurn = false;
 		m_hideWhenTurning.SetActive(false);
 		if (!isFirstPage)
@@ -271,42 +235,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			m_hideWhenTurning.SetActive(true);
 		}
 	}
-	/*
-    public IEnumerator NextPage(bool isFirstPage)
-    {
-
-        m_canTurn = false;
-        m_hideWhenTurning.SetActive(false);
-        if (!isFirstPage)
-        {
-            m_currentPage++;
-            m_currentDisplayer.Turn((m_currentDisplayer == m_page0) ? m_page1.transform : m_page0.transform);
-            SwapActivePage();
-        }
-
-        ClearOld();
-        DataTable dt = UpdateCurrentDisplayer();
-		if (dt.Rows.Count == 0)
-		{
-			TransitionScreen.Instance.ChangeLevel("NewEndStory", false);
-		}
-
-        if (!isFirstPage)
-        {
-            yield return new WaitForSeconds(0.3f);
-        }
-
-        if (dt.Rows.Count > 0)
-        {
-            DataRow row = dt.Rows[0];
-            SetText(row);
-        }
-
-        yield return new WaitForSeconds(1f);
-        m_canTurn = true;
-        m_hideWhenTurning.SetActive(true);
-    }
-    */
 
     void SwapActivePage()
     {
@@ -341,7 +269,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 			m_pageCount.text = currentPageOneBased.ToString() + " \\ " + m_numPages.ToString();
 		}
 
-		//DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + SessionInformation.Instance.GetBookId() + "' and pageorder='" + currentPageOneBased + "'");
+		
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + currentPageOneBased + "'");
 
         if (dt.Rows.Count > 0)
@@ -353,9 +281,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
             Texture2D image = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
             Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
-			//Debug.Log("image: " + image);
-			//Debug.Log("imageName: " + imageName);
-			//Debug.Log("bgImage: " + bgImage);
+
             m_currentDisplayer.Show(image, bgImage);
 
             if(m_storyPicture != null)
@@ -365,7 +291,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 
 			string storyType = SessionInformation.Instance.GetStoryType();
-			//Debug.Log("storyType: " + storyType);
 
 			if(storyType == "" || storyType == null)
 			{
@@ -472,17 +397,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
                         showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
 
-                        /*
-    					if(storyType == "Reception" || storyType == "Year 1")
-    					{
-    						showPipPadForWord.SetUp(newWord, wordSize, (!isOnDecodeList && m_currentLanguage == "text"));
-    					}
-    					else if(storyType == "Classic")
-    					{
-    						showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
-    					}
-                        */               
-
                         // Highlight if word is on the decode list
                         if (isOnDecodeList)
                         {
@@ -498,12 +412,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
             }
 
             UpdateAudio(row);
-            //string audioSetting = row["audio"] == null ? null : row["audio"].ToString();
-            //if (!string.IsNullOrEmpty(audioSetting))
-            //{
-            //m_audioPlayButton.SetActive(true);
-            //m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + row["audio"].ToString());
-            //}
 
             if (maxWidth > 850)
             {
