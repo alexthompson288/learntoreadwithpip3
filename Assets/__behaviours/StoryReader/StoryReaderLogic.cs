@@ -69,7 +69,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
         m_canTurn = false;
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-		NavMenu.Instance.MoveCallButtonToRight();
+		//NavMenu.Instance.MoveCallButtonToRight();
 
         DataRow story = DataHelpers.GetStory();
         if (story != null)
