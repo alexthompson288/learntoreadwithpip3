@@ -12,7 +12,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	[SerializeField]
 	private GameObject m_numPlayerMenu;
     [SerializeField]
-    private ClickEvent[] m_numPlayerButtons;
+    private PipButton[] m_numPlayerButtons;
 	[SerializeField]
 	private GameObject m_colorMenu;
     [SerializeField]
@@ -41,10 +41,11 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             click.OnSingleClick += OnClickBack;
         }
 
+        System.Array.Sort(m_numPlayerButtons, CollectionHelpers.ComparePosX);
+
         for (int i = 0; i < m_numPlayerButtons.Length; ++i)
         {
-            m_numPlayerButtons[i].SetInt(i + 1);
-            m_numPlayerButtons[i].OnSingleClick += OnChooseNumPlayers;
+            m_numPlayerButtons[i].Unpressed += OnChooseNumPlayers;
         }
 
         foreach (ClickEvent click in m_colorButtons)
@@ -53,6 +54,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         }
     }
 
+    /*
     void OnChooseNumPlayers(ClickEvent click)
     {
         m_isTwoPlayer = click.GetInt() == 2;
@@ -64,6 +66,17 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
         StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu, buttonTweenDuration + 0.4f));
         StartCoroutine(ResetChooseNumPlayersButton(button, buttonTweenDuration + 0.4f + m_cameraTweenDuration));
+    }
+    */
+
+    void OnChooseNumPlayers(PipButton button)
+    {
+        int numPlayers = System.Array.IndexOf(m_numPlayerButtons, button) + 1;
+        SessionInformation.Instance.SetNumPlayers(numPlayers);
+
+        m_isTwoPlayer = numPlayers == 2;
+
+        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu));
     }
 
     IEnumerator ResetChooseNumPlayersButton(PerspectiveButton button, float delay)

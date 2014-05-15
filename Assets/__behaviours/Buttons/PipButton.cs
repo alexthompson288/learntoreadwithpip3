@@ -259,7 +259,6 @@ public class PipButton : MonoBehaviour
 
         if (m_changePosition && m_positionFollower != null)
         {
-            Debug.Log("Stopping Coroutine");
             StopCoroutine("UpdateFollowerPosition");
         }
         
