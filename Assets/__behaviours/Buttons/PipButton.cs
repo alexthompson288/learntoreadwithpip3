@@ -11,15 +11,15 @@ public class PipButton : MonoBehaviour
     
     // Shared
     [SerializeField]
-    private UISprite m_button;
+    private UISprite m_pressableButton;
     [SerializeField]
-    private float m_pressDuration;
+    private float m_pressDuration = 0.3f;
     [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
     private string m_unpressedAudio = "BUTTON_UNPRESS";
     [SerializeField]
-    private ColorInfo.PipColor m_pipColor;
+    private ColorInfo.PipColor m_pipColor = ColorInfo.PipColor.White;
     [SerializeField]
     private UIWidget[] m_additionalColoredWidgets;
     [SerializeField]
@@ -78,62 +78,63 @@ public class PipButton : MonoBehaviour
     
     void Awake()
     {
-        Color col = ColorInfo.GetColor(m_pipColor);
-        m_button.color = col;
-        
-        foreach (UIWidget widget in m_additionalColoredWidgets)
+        if (m_pressableButton != null)
         {
-            widget.color = col;
-        }
-        
-        if (m_changePosition)
-        {
-            GameObject unpressedLocationGo = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_emptyPrefab, transform);
-            m_unpressedLocation = unpressedLocationGo.transform;
-            m_unpressedLocation.position = m_button.transform.position;
+            Color col = ColorInfo.GetColor(m_pipColor);
+            m_pressableButton.color = col;
             
-            m_positionTweenArgs.Add("time", m_pressDuration);
-            m_positionTweenArgs.Add("easetype", m_positionEaseType);
-            
-            StartCoroutine(UpdateFollowerPosition());
-        }
-        
-        if (m_changeSprite)
-        {
-            m_unpressedSpriteName = m_button.spriteName;
-            
-            if(System.String.IsNullOrEmpty(m_pressedSpriteName))
+            foreach (UIWidget widget in m_additionalColoredWidgets)
             {
-                m_pressedSpriteName = DataHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
-            }
-        }
-        
-        if (m_changeColor)
-        {
-            m_unpressedColor = m_button.color;
-            
-            // If unpressedColor hasn't been set then we want to set it to be a bit darker than the pressed color
-            if(m_pressedColor == Color.white)
-            {
-                m_unpressedColor = m_pressedColor;
+                widget.color = col;
             }
             
-            if (Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
+            if (m_changePosition)
             {
-                m_pressedColor = m_unpressedColor;
+                GameObject unpressedLocationGo = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_emptyPrefab, transform);
+                m_unpressedLocation = unpressedLocationGo.transform;
+                m_unpressedLocation.position = m_pressableButton.transform.position;
                 
-                for (int i = 0; i < 3; ++i) // Only change 0(r), 1(g), 2(b). 3 is alpha.
+                m_positionTweenArgs.Add("time", m_pressDuration);
+                m_positionTweenArgs.Add("easetype", m_positionEaseType);
+            }
+            
+            if (m_changeSprite)
+            {
+                m_unpressedSpriteName = m_pressableButton.spriteName;
+                
+                if (System.String.IsNullOrEmpty(m_pressedSpriteName))
                 {
-                    m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
+                    m_pressedSpriteName = DataHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
                 }
             }
-        }
-        
-        if (m_sheenAnimation != null)
-        {
-            m_sheenAnimation.OnAnimFinish += OnSheenFinish;
-            m_sheenAnimation.PlayAnimation("ON");
-            StartCoroutine(PlaySheen());
+            
+            if (m_changeColor)
+            {
+                m_unpressedColor = m_pressableButton.color;
+                
+                // If unpressedColor hasn't been set then we want to set it to be a bit darker than the pressed color
+                if (m_pressedColor == Color.white)
+                {
+                    m_unpressedColor = m_pressedColor;
+                }
+                
+                if (Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
+                {
+                    m_pressedColor = m_unpressedColor;
+                    
+                    for (int i = 0; i < 3; ++i) // Only change 0(r), 1(g), 2(b). 3 is alpha.
+                    {
+                        m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
+                    }
+                }
+            }
+            
+            if (m_sheenAnimation != null)
+            {
+                m_sheenAnimation.OnAnimFinish += OnSheenFinish;
+                m_sheenAnimation.PlayAnimation("ON");
+                StartCoroutine(PlaySheen());
+            }
         }
     }
     
@@ -152,6 +153,7 @@ public class PipButton : MonoBehaviour
     {
         m_positionFollower.position = m_followerLocation.position;
         yield return null;
+        StartCoroutine("UpdateFollowerPosition");
     }
     
     void OnPress(bool pressed)
@@ -185,18 +187,23 @@ public class PipButton : MonoBehaviour
         
         if (m_changePosition)
         {
+            if (m_positionFollower != null)
+            {
+                StartCoroutine("UpdateFollowerPosition");
+            }
+
             m_positionTweenArgs ["position"] = m_pressedLocation;
-            iTween.MoveTo(m_button.gameObject, m_positionTweenArgs);
+            iTween.MoveTo(m_pressableButton.gameObject, m_positionTweenArgs);
         }
         
         if (m_changeSprite)
         {
-            m_button.spriteName = m_pressedSpriteName;
+            m_pressableButton.spriteName = m_pressedSpriteName;
         }
         
         if (m_changeColor)
         {
-            m_button.color = m_pressedColor;
+            m_pressableButton.color = m_pressedColor;
         }
         
         if (m_pressAnimation != null)
@@ -230,17 +237,17 @@ public class PipButton : MonoBehaviour
         if (m_changePosition)
         {
             m_positionTweenArgs ["position"] = m_unpressedLocation;
-            iTween.MoveTo(m_button.gameObject, m_positionTweenArgs);
+            iTween.MoveTo(m_pressableButton.gameObject, m_positionTweenArgs);
         }
         
         if (m_changeSprite && m_resetSprite)
         {
-            m_button.spriteName = m_unpressedSpriteName;
+            m_pressableButton.spriteName = m_unpressedSpriteName;
         }
         
         if (m_changeColor)
         {
-            m_button.color = m_unpressedColor;
+            m_pressableButton.color = m_unpressedColor;
         }
         
         yield return new WaitForSeconds(m_pressDuration);
@@ -248,6 +255,12 @@ public class PipButton : MonoBehaviour
         if (Unpressed != null)
         {
             Unpressed(this);
+        }
+
+        if (m_changePosition && m_positionFollower != null)
+        {
+            Debug.Log("Stopping Coroutine");
+            StopCoroutine("UpdateFollowerPosition");
         }
         
         collider.enabled = true;
