@@ -85,9 +85,9 @@ public class JoinableLineDraw : LineDraw
         }
     }
 
-    public void Select(bool selected)
+    public void Tint(Color newCol)
     {
-        m_background.color = selected ? Color.gray : Color.white;
+        m_background.color = newCol;
     }
 
     public void TransitionOff(Transform targetPosition)

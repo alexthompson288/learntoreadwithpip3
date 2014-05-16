@@ -207,8 +207,6 @@ public static class DataHelpers
         return GetModuleData(moduleId, "setsillywords", "words");
     }
 
-
-
     public static List<DataRow> GetData(string dataType)
     {
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
@@ -299,8 +297,6 @@ public static class DataHelpers
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE is_target_sentence='t'");
             dataPool = dt.Rows;
-            //dataPool = dt.Rows.FindAll(x => x["is_target_sentence"] != null && x["is_target_sentence"].ToString() == "t");
-            //dataPool.AddRange(dt.Rows.FindAll(x => (x["quiz"] == null || x["quiz"].ToString() == "f") && (x["correctsentence"] == null || x["correctsentence"].ToString() == "f")));
         }
 
         return dataPool;
@@ -602,11 +598,6 @@ public static class DataHelpers
         string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
 
         return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
-
-        //string linkingName = spriteName.Substring(0, spriteName.Length - 1);
-        //Debug.Log("linkingName: " + linkingName);
-
-        //return linkingName + newNameEnd;
     }
 
     public static Texture2D GetPicture(string dataType, DataRow data)
@@ -764,7 +755,6 @@ public static class DataHelpers
 
     public static int GetPreviousModuleId(ColorInfo.PipColor pipColor)
     {
-        //return GetPreviousModuleId(GetModule(pipColor));
         int previousColorIndex = ((int)pipColor) - 1;
         previousColorIndex = Mathf.Clamp(previousColorIndex, 0, previousColorIndex);
 

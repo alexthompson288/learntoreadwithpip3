@@ -97,7 +97,8 @@ public class JumbleSentenceCoordinator : GameCoordinator
             m_spawnedWordLocations.Add(newWordLocation.transform);
             newWordLocation.name = "wordLocation_" + i.ToString();
 
-            float halfLocationWidth = (wordBehaviour.backgroundWidth / 2) + 10;
+            //float halfLocationWidth = (wordBehaviour.backgroundWidth / 2) + 10;
+            float halfLocationWidth = (wordBehaviour.labelWidth / 2) + 30;
 
             length += halfLocationWidth;
 
@@ -139,14 +140,15 @@ public class JumbleSentenceCoordinator : GameCoordinator
             widget.EnableCollider(false);
             widget.transform.parent = m_textPosition;
             widget.TweenToPos(m_spawnedWordLocations[0].position);
+            widget.FadeBackground(true);
 
             m_remainingWords.RemoveAt(0);
             m_spawnedWordLocations.RemoveAt(0);
 
-            yield return new WaitForSeconds(widget.positionTweenDuration);
-
             if(m_remainingWords.Count == 0)
             {
+                yield return new WaitForSeconds(widget.positionTweenDuration + 1);
+
                 float tweenDuration = m_spawnedWords[0].scaleTweenDuration;
 
                 iTween.ScaleTo(m_pictureParent, Vector3.zero, tweenDuration);

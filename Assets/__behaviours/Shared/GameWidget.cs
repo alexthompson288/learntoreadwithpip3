@@ -29,6 +29,8 @@ public class GameWidget : MonoBehaviour
     private float m_positionTweenDuration = 0.5f;
     [SerializeField]
     private bool m_canDrag = true;
+    [SerializeField]
+    private bool m_offsetOnClick;
 
     DataRow m_data;
     public DataRow data
@@ -52,6 +54,14 @@ public class GameWidget : MonoBehaviour
         get
         {
             return m_background.width;
+        }
+    }
+
+    public float labelWidth
+    {
+        get
+        {
+            return m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x * m_label.transform.localScale.x;
         }
     }
 
@@ -206,11 +216,40 @@ public class GameWidget : MonoBehaviour
             }
             else
             {
-                if(OnWidgetClick != null)
+                if(m_offsetOnClick)
+                {
+                    StartCoroutine(OnClickCo());
+                }
+                else if(OnWidgetClick != null)
                 {
                     OnWidgetClick(this);
                 }
             }
+        }
+    }
+
+    IEnumerator OnClickCo()
+    {
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("islocal", true);
+
+        tweenArgs.Add("position", new Vector3(transform.localPosition.x, transform.localPosition.y - 15));
+        
+        float tweenDuration = 0.3f;
+        tweenArgs.Add("time", tweenDuration);
+
+        iTween.MoveTo(gameObject, tweenArgs);
+        yield return new WaitForSeconds(tweenDuration);
+
+        tweenArgs ["position"] = m_startPosition;
+        tweenArgs ["islocal"] = false;
+
+        iTween.MoveTo(gameObject, tweenArgs);
+        yield return new WaitForSeconds(tweenDuration);
+        
+        if(OnWidgetClick != null)
+        {
+            OnWidgetClick(this);
         }
     }
 
@@ -236,6 +275,12 @@ public class GameWidget : MonoBehaviour
     public void TweenToPos(Vector3 pos)
     {
         iTween.MoveTo(gameObject, pos, m_positionTweenDuration);
+    }
+
+    public void FadeBackground(bool fadeOut)
+    {
+        float alpha = fadeOut ? 0 : 1;
+        TweenAlpha.Begin(m_background.gameObject, 0.5f, alpha);
     }
 
     public void Off()
@@ -278,6 +323,15 @@ public class GameWidget : MonoBehaviour
         m_collider.enabled = enable;
     }
 
+    public void Tint(Color newCol)
+    {
+        m_background.color = newCol;
+    }
+
+    public void Shake()
+    {
+        iTween.ShakePosition(gameObject, Vector3.one * 0.01f, 0.5f);
+    }
 
     public delegate void GameWidgetEvent(GameWidget widget);
 

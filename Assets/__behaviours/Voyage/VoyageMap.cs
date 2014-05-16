@@ -41,36 +41,9 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
-    /*
     public IEnumerator Start()
     {
-        yield return new WaitForSeconds(1.5f);
-        
-        // TODO: Randomize these values. The delay is hard-coded so that it looks good for a meeting tomorrow
-        for (int i = 0; i < m_delayedSpriteAnims.Length; ++i)
-        {
-            float delay = 0;
-            
-            if(i == 1)
-            {
-                delay = 3f;
-            }
-            else if(i ==2)
-            {
-                delay = 5f;
-            }
-            
-            StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
-        }
-    }
-    */
-
-
-    public IEnumerator Start()
-    {
-        //StartCoroutine(GameDataBridge.WaitForDatabase());
-        //StartCoroutine(ColorInfo.WaitForInstance());
-        //StartCoroutine(GameManager.WaitForInstance());
+        StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_worldMapButton.OnSingleClick += OnClickWorldMapButton;
 

@@ -16,7 +16,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	[SerializeField]
 	private GameObject m_colorMenu;
     [SerializeField]
-    private ClickEvent[] m_colorButtons;
+    private PipButton[] m_colorButtons;
     [SerializeField]
     private GameObject m_gameMenu;
 	[SerializeField]
@@ -51,9 +51,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
         }
 
-        foreach (ClickEvent click in m_colorButtons)
+        foreach (PipButton button in m_colorButtons)
         {
-            click.OnSingleClick += OnChooseColor;
+            string colorName = button.transform.parent.name;
+            button.SetPipColor(ColorInfo.GetPipColor(colorName), true);
+            button.AddPressedAudio("COLOR_" + colorName.ToUpper());
+            button.Unpressing += OnChooseColor;
         }
     }
 
@@ -73,16 +76,13 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         button.Reset();
     }
 
-    void OnChooseColor(ClickEvent click)
+    void OnChooseColor(PipButton button)
     {
-        m_color = click.GetComponent<PipColorWidgets>().color;
+        m_color = button.pipColor;
 
         DestroyGameButtons();
-
-        PerspectiveButton button = click.GetComponent<PerspectiveButton>() as PerspectiveButton;
-        float buttonTweenDuration = button != null ? button.tweenDuration : 0.5f;
         
-        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu, buttonTweenDuration + 0.4f));
+        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
 
         SpawnGameButtons();
     }

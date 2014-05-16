@@ -16,7 +16,7 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_orange;
     [SerializeField]
-    private Color m_alternateBlue;
+    private Color m_lightBlue;
 
     public enum PipColor
     {
@@ -26,7 +26,8 @@ public class ColorInfo : Singleton<ColorInfo>
         Blue,
         Green,
         Orange,
-        White
+        White,
+        LightBlue
     }
 
     public class NoColor : System.Exception {}
@@ -40,37 +41,6 @@ public class ColorInfo : Singleton<ColorInfo>
     }
 
     // Methods are static to reduce typing required in other classes
-    public static Color GetColor(string color)
-    {
-        switch (color)
-        {
-            case "Pink":
-                return Instance.m_pink;
-                break;
-            case "Red":
-                return Instance.m_red;
-                break;
-            case "Yellow":
-                return Instance.m_yellow;
-                break;
-            case "Blue":
-                return Instance.m_blue;
-                break;
-            case "Green":
-                return Instance.m_green;
-                break;
-            case "Orange":
-                return Instance.m_orange;
-                break;
-            case "White":
-                return Color.white;
-                break;
-            default:
-                return Color.white;
-                break;
-        }
-    }
-
     public static Color GetColor(PipColor pipColor)
     {
         switch(pipColor)
@@ -96,10 +66,18 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.White:
                 return Color.white;
                 break;
+            case PipColor.LightBlue:
+                return Instance.m_lightBlue;
+                break;
             default:
                 return Color.white;
                 break;
         }
+    }
+
+    public static Color GetColor(string color)
+    {
+        return GetColor(GetPipColor(color));
     }
 
     public static PipColor GetPipColor(string color)
@@ -127,29 +105,15 @@ public class ColorInfo : Singleton<ColorInfo>
             case "White":
                 return PipColor.White;
                 break;
+            case "LightBlue":
+                return PipColor.LightBlue;
+                break;
             default:
                 throw new NoColor();
                 break;
         }
     }
 
-    public static int GetColorIndex(string color)
-    {
-        int index = -1;
-
-        try
-        {
-            index = (int)(GetPipColor(color));
-        }
-        catch
-        {
-            index = -1;
-        }
-
-        return index;
-    }
-
-    // Used for stories where strings are used because we may have other options (eg. Classics)
     public static string GetColorString(PipColor pipColor)
     {
         switch(pipColor)
@@ -175,9 +139,28 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.White:
                 return "White";
                 break;
+            case PipColor.LightBlue:
+                return "LightBlue";
+                break;
             default:
                 return "White";
                 break;
         }
+    }
+
+    public static int GetColorIndex(string color)
+    {
+        int index = -1;
+
+        try
+        {
+            index = (int)(GetPipColor(color));
+        }
+        catch
+        {
+            index = -1;
+        }
+
+        return index;
     }
 }

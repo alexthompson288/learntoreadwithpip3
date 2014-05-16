@@ -20,7 +20,7 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private float m_pressDuration = 0.3f;
     [SerializeField]
-    private string m_pressedAudio = "BUTTON_PRESS";
+    private List<string> m_pressedAudio = new List<string>();
     [SerializeField]
     private List<string> m_unpressedAudio = new List<string>();
     [SerializeField]
@@ -66,16 +66,10 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private bool m_changeSprite;
     [SerializeField]
-    private bool m_resetSprite;
-    [SerializeField]
     private string m_pressedSpriteName;
     
     string m_unpressedSpriteName;
 
-    public void SetResetSprite(bool resetSprite)
-    {
-        m_resetSprite = resetSprite;
-    }
     
     
     // ColorChange Variables
@@ -88,10 +82,31 @@ public class PipButton : MonoBehaviour
     
 
     // Shared Methods
+    public void AddPressedAudio(string audioEvent)
+    {
+        m_pressedAudio.Add(audioEvent);
+    }
 
     public void AddUnpressedAudio(string audioEvent)
     {
         m_unpressedAudio.Add(audioEvent);
+    }
+
+    public void SetPipColor(ColorInfo.PipColor newPipColor, bool changeSpriteColor)
+    {
+        m_pipColor = newPipColor;
+
+        if (changeSpriteColor)
+        {
+            Color col = ColorInfo.GetColor(m_pipColor);
+
+            m_pressableButton.color = col;
+
+            foreach(UIWidget widget in m_additionalColoredWidgets)
+            {
+                widget.color = col;
+            }
+        }
     }
 
     public void SetData(DataRow newData)
@@ -240,8 +255,11 @@ public class PipButton : MonoBehaviour
         
         m_isTransitioning = true;
         collider.enabled = false;
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent(m_pressedAudio);
+
+        foreach (string audioEvent in m_pressedAudio)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+        }
         
         if (m_changePosition)
         {
@@ -300,12 +318,7 @@ public class PipButton : MonoBehaviour
             m_positionTweenArgs ["position"] = m_unpressedLocation;
             iTween.MoveTo(m_pressableButton.gameObject, m_positionTweenArgs);
         }
-        
-        if (m_changeSprite && m_resetSprite)
-        {
-            m_pressableButton.spriteName = m_unpressedSpriteName;
-        }
-        
+
         if (m_changeColor)
         {
             m_pressableButton.color = m_unpressedColor;
@@ -316,6 +329,11 @@ public class PipButton : MonoBehaviour
         if (Unpressed != null)
         {
             Unpressed(this);
+        }
+
+        if (m_changeSprite)
+        {
+            m_pressableButton.spriteName = m_unpressedSpriteName;
         }
 
         if (m_changePosition && m_positionFollower != null)

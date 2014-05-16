@@ -117,25 +117,6 @@ public class JoinPairsPlayer : GamePlayer
             yield return null;
         }
 
-        /*
-        List<Vector3> positions = new List<Vector3>();
-        Vector3 delta = m_highCorner.transform.localPosition - m_lowCorner.transform.localPosition;
-        
-        for (int index = 0; index < pairsToShowAtOnce * 2; ++index)
-        {
-            int x = index % pairsToShowAtOnce;
-            int y = index / pairsToShowAtOnce;
-            positions.Add(
-                m_lowCorner.transform.localPosition +
-                new Vector3((delta.x / pairsToShowAtOnce) * (x + 0.5f),
-                        (delta.y / 2) * (y + 0.5f), 0)
-                + new Vector3(Random.Range(-delta.x / (pairsToShowAtOnce*20.0f), delta.x / (pairsToShowAtOnce*20.0f)),
-                          Random.Range(-delta.y / 5, delta.y / 5),
-                          0)
-                );
-        }
-        */
-
         CollectionHelpers.Shuffle(m_locators);
 
         int locatorIndex = 0;
@@ -146,21 +127,6 @@ public class JoinPairsPlayer : GamePlayer
 
             GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_locators[locatorIndex]);
             ++locatorIndex;
-
-            //GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_spawnTransform);
-            //GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_spawnTransform);
-            
-            //int posIndex = Random.Range(0, positions.Count);
-            //Vector3 posA = positions[posIndex];
-            //positions.RemoveAt(posIndex);
-            
-            //newText.transform.localPosition = posA;
-            
-            //posIndex = Random.Range(0, positions.Count);
-            //Vector3 posB = positions[posIndex];
-            //positions.RemoveAt(posIndex);
-            
-            //newImage.transform.localPosition = posB;
             
             Texture2D texture = JoinPairsCoordinator.Instance.GetPicture(data);
 
@@ -192,18 +158,9 @@ public class JoinPairsPlayer : GamePlayer
     {
         if (pressed)
         {
-            /*
-            if(m_currentThrobBehaviour != null)
-            {
-                m_currentThrobBehaviour.Off();
-            }
-
-            m_currentThrobBehaviour = joinable.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
-            m_currentThrobBehaviour.On();
-            */
-
             m_currentJoinable = joinable;
-            m_currentJoinable.Select(true);
+
+            m_currentJoinable.Tint(Color.gray);
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
         } 
@@ -218,7 +175,8 @@ public class JoinPairsPlayer : GamePlayer
             m_currentThrobBehaviour = null;
             */
 
-            m_currentJoinable.Select(false);
+            m_currentJoinable.Tint(Color.white);
+
             m_currentJoinable = null;
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
