@@ -31,8 +31,10 @@ public class dbAccess : MonoBehaviour {
 			// open StreamingAssets directory and load the db -> 
 			WWW loadDB = new WWW("jar:file://" + Application.dataPath + "!/assets/" + p);
 			while(!loadDB.isDone) {}
+#if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE
 			// then save to Application.persistentDataPath
 			File.WriteAllBytes(filepath, loadDB.bytes);
+#endif
 		}
 		
 		//open db connection
