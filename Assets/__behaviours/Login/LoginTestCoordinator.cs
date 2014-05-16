@@ -4,8 +4,7 @@ using System;
 
 public class LoginTestCoordinator : MonoBehaviour 
 {
-	[SerializeField]
-	private string m_loginUrl = "learntoreadwithpip.com/admins/sign_in";
+	string m_loginUrl = "learntoreadwithpip.com/admins/sign_in";
 
 	// Use this for initialization
 	IEnumerator Start () 
