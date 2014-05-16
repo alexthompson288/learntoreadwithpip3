@@ -12,6 +12,8 @@ public class PipButton : MonoBehaviour
     
     // Shared Variables
     [SerializeField]
+    private int m_int;
+    [SerializeField]
     private string m_string;
     [SerializeField]
     private UISprite m_pressableButton;
@@ -112,6 +114,16 @@ public class PipButton : MonoBehaviour
         {
             return m_pipColor;
         }
+    }
+
+    public int GetInt()
+    {
+        return m_int;
+    }
+
+    public void SetInt(int newInt)
+    {
+        m_int = newInt;
     }
 
     public string GetString()
@@ -313,5 +325,10 @@ public class PipButton : MonoBehaviour
         
         collider.enabled = true;
         m_isTransitioning = false;
+    }
+
+    public void EnableCollider(bool enable)
+    {
+        collider.enabled = enable;
     }
 }
