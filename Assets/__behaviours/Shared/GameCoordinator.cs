@@ -9,7 +9,7 @@ public class GameCoordinator : Singleton<GameCoordinator>
     [SerializeField]
     protected int m_targetScore;
     [SerializeField]
-    private AudioSource m_audioSource;
+    protected AudioSource m_audioSource;
     
     protected int m_score = 0;
     

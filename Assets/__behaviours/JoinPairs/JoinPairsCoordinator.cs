@@ -91,24 +91,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        DataRow game = GameManager.Instance.currentGame;
-        if (game != null)
-        {
-            string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";
-            if(gameType.Contains("Phoneme"))
-            {
-                m_dataType = "phonemes";
-            }
-            else if(gameType.Contains("Word"))
-            {
-                m_dataType = "words";
-            }
-        }
-
-        if(System.String.IsNullOrEmpty(m_dataType))
-        {
-            m_dataType = GameManager.Instance.dataType;
-        }
+        m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
         m_dataPool = DataHelpers.GetData(m_dataType);
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);

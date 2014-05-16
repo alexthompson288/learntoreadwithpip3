@@ -8,6 +8,8 @@ using System;
 public class CorrectCaptionCoordinator : GameCoordinator
 {
     [SerializeField]
+    private string m_dataType;
+    [SerializeField]
     private UITexture m_questionImage;
     [SerializeField]
     private GameObject m_questionImageParent;
@@ -29,16 +31,17 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private float m_probabilityYesIsCorrect = 0.5f;
     [SerializeField]
     private float m_questionTweenDuration = 0.25f;
-    [SerializeField]
-    private List<string> m_captionTextAttributes;
 
     bool m_hasAnsweredIncorrectly = false;
 
+    List<string> m_captionTextAttributes = new List<string>();
     List<string> m_remainingAttributes = new List<string>();
 
     List<GameObject> m_spawnedQuestionText = new List<GameObject>();
 
     int m_numAnswered = 0;
+
+    string m_goodAttribute;
 
     IEnumerator Start()
     {
@@ -49,23 +52,41 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_dataPool = DataHelpers.GetCorrectCaptions();
+        m_dataType = DataHelpers.GameOrDefault(m_dataType);
+
+        Debug.Log("DataType: " + m_dataType);
+
+        if (m_dataType == "words")
+        {
+            m_dataPool = DataHelpers.GetWords();
+
+            m_goodAttribute = "word";
+
+            m_captionTextAttributes.Add("dummyword1");
+            m_captionTextAttributes.Add("dummyword2");
+        } 
+        else
+        {
+            m_dataPool = DataHelpers.GetCorrectCaptions();
+            
+            m_goodAttribute = "good_sentence";
+            
+            m_captionTextAttributes.Add("bad_sentence1");
+            m_captionTextAttributes.Add("bad_sentence2");
+            m_captionTextAttributes.Add("bad_sentence4");
+        }
+
+        m_captionTextAttributes.Add(m_goodAttribute);
 
 #if UNITY_EDITOR
-        if(m_dataPool.Count == 0)
+        if(m_dataPool.Count == 0 && m_dataType == "correctcaptions")
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + 304);
             m_dataPool = dt.Rows;
         }
 #endif
 
-        for (int i = m_dataPool.Count - 1; i > -1; --i)
-        {
-            if(GetCaptionTexture(m_dataPool[i]) == null)
-            {
-                m_dataPool.RemoveAt(i);
-            }
-        }
+        DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
 
         Debug.Log("m_dataPool.Count: " + m_dataPool.Count);
 
@@ -87,23 +108,33 @@ public class CorrectCaptionCoordinator : GameCoordinator
     {
         m_currentData = GetRandomData();
 
-        m_hasAnsweredIncorrectly = false;
-
-        m_remainingAttributes.Clear();
-        m_remainingAttributes.AddRange(m_captionTextAttributes);
-        while(m_currentData[m_remainingAttributes.Last()] == null)
-        {
-            m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
-        }
-        CollectionHelpers.Shuffle(m_remainingAttributes);
-
         if (m_currentData != null)
         {
             m_dataPool.Remove(m_currentData);
 
-            Texture2D tex = GetCaptionTexture(m_currentData);
+            Debug.Log("m_currentData: " + m_currentData);
 
-            if (m_currentData["good_sentence"] != null && tex != null) // if "good_sentence" is null then the player is unable to answer correctly, if tex is null the question is unfair
+            m_hasAnsweredIncorrectly = false;
+
+            m_remainingAttributes.Clear();
+            m_remainingAttributes.AddRange(m_captionTextAttributes);
+
+            // Remove any attributes which current data is missing
+            for (int i = m_remainingAttributes.Count - 1; i > -1; --i)
+            {
+                Debug.Log(System.String.Format("{0} - {1}", m_currentData[m_goodAttribute], m_remainingAttributes[i]));
+
+                if(m_currentData[m_remainingAttributes[i]] == null)
+                {
+                    m_remainingAttributes.RemoveAt(i);
+                }
+            }
+
+            CollectionHelpers.Shuffle(m_remainingAttributes);
+
+            Texture2D tex = DataHelpers.GetPicture(m_dataType, m_currentData);
+
+            if (m_currentData[m_goodAttribute] != null && tex != null) // if "good_sentence" is null then the player is unable to answer correctly, if tex is null the question is unfair
             {
                 m_questionImage.mainTexture = tex;
                 m_questionImage.MakePixelPerfect();
@@ -192,13 +223,21 @@ public class CorrectCaptionCoordinator : GameCoordinator
         EnableAnswerColliders(false);
         
         bool answerIsYes = button.GetInt() == 1; 
-        bool yesIsCorrect = (m_remainingAttributes.Last() == "good_sentence"); // The current attribute is the last one in m_remainingAttributes
+        bool yesIsCorrect = (m_remainingAttributes.Last() == m_goodAttribute); // The current attribute is the last one in m_remainingAttributes
         bool isCorrect = (yesIsCorrect == answerIsYes);
 
         if (isCorrect)
         {
             if(answerIsYes)
             {
+                AudioClip clip = DataHelpers.GetShortAudio(m_dataType, m_currentData);
+
+                if(clip != null)
+                {
+                    m_audioSource.clip = clip;
+                    m_audioSource.Play();
+                }
+
                 ++m_numAnswered;
 
                 int scoreDelta = (isCorrect && !m_hasAnsweredIncorrectly) ? 1 : 0;
@@ -220,6 +259,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
             }
             else
             {
+                WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+
                 m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
 
                 iTween.ScaleTo(m_questionLabelParent, Vector3.zero, m_questionTweenDuration);
@@ -240,18 +281,6 @@ public class CorrectCaptionCoordinator : GameCoordinator
         }
 
         EnableAnswerColliders(true);
-    }
-
-    Texture2D GetCaptionTexture(DataRow data)
-    {
-        Texture2D tex = Resources.Load<Texture2D>(data ["correct_image_name"].ToString());
-
-        if (tex == null)
-        {
-            tex = Resources.Load<Texture2D>("Images/storypages/" + data ["correct_image_name"].ToString());
-        }
-
-        return tex;
     }
 
     void TweenQuestionParents(Vector3 newScale)

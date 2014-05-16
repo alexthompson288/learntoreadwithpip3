@@ -775,6 +775,26 @@ public static class DataHelpers
         }
     }
 
+    public static string GameOrDefault(string defaultDataType)
+    {
+        string gameDataType = GetDataType(GameManager.Instance.currentGame);
+
+        return !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
+    }
+
+    public static string GetDataType(DataRow game)
+    {
+        string dataType = "";
+        if (game != null)
+        {
+            string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";
+
+            dataType = gameType.ToLower();
+        }
+
+        return dataType;
+    }
+
     public static bool WordsShareOnsetPhonemes(DataRow dataA, DataRow dataB)
     {
         string[] orderedPhonemesA = GetOrderedPhonemeStrings(dataA);

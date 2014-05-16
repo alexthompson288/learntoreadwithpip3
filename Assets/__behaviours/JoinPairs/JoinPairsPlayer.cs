@@ -143,7 +143,12 @@ public class JoinPairsPlayer : GamePlayer
             imageLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
             imageLineDraw.JoinableJoinEventHandler += OnJoin;
             imageLineDraw.JoinablePressEventHandler += OnJoinablePressed;
-            
+
+            if(JoinPairsCoordinator.Instance.dataType == "words" && SessionInformation.Instance.GetNumPlayers() == 1)
+            {
+                imageLineDraw.JoinableClickEventHandler += OnJoinableClicked;
+            }
+
             m_spawnedJoinables.Add(newText);
             m_spawnedJoinables.Add(newImage);
         }
@@ -154,32 +159,22 @@ public class JoinPairsPlayer : GamePlayer
         yield break;
     }
 
+    void OnJoinableClicked(JoinableLineDraw joinable)
+    {
+        JoinPairsCoordinator.Instance.PlayShortAudio(joinable.data);
+    }
+
     void OnJoinablePressed(JoinableLineDraw joinable, bool pressed)
     {
         if (pressed)
         {
             m_currentJoinable = joinable;
-
             m_currentJoinable.Tint(Color.gray);
-
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
         } 
         else
         {
-            /*
-            if(m_currentThrobBehaviour != null)
-            {
-                m_currentThrobBehaviour.Off();
-            }
-
-            m_currentThrobBehaviour = null;
-            */
-
             m_currentJoinable.Tint(Color.white);
-
             m_currentJoinable = null;
-
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
         }
     }
 
