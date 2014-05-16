@@ -149,7 +149,6 @@ public class AssetBundleLoader : Singleton<AssetBundleLoader> {
 		Debug.Log ("Downloading AssetBundle from " + urlFixed);
         using (WWW compressedLoader = new WWW(urlFixed))
         {
-
             while (!compressedLoader.isDone)
             {
                 DownloadProgressInformation.Instance.SetDownloading("storydata", compressedLoader.progress);
@@ -165,9 +164,12 @@ public class AssetBundleLoader : Singleton<AssetBundleLoader> {
                 // cache for next time
                 string outputPath = Path.Combine(UnityEngine.Application.persistentDataPath,
                                                     saveAsFileName);
+
+#if UNITY_IPHONE || UNITY_ANDROID || UNITY_STANDALONE
                 File.WriteAllBytes(outputPath, compressedLoader.bytes);
                 Debug.Log("Saving to " + outputPath + " and logging as version " + saveAsVersion);
                 SavedAssetBundles.Instance.AddAssetVersion(saveAsRefName, saveAsVersion);
+#endif
             }
             else
             {
