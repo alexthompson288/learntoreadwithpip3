@@ -197,8 +197,10 @@ public class GameDataBridge : Singleton<GameDataBridge>
                         System.IO.File.WriteAllBytes(cmsDbPath, m_localDatabase.bytes);
                     }
                 }
-#endif
+
                 www.Dispose();
+#endif
+
             }
             else
             {
