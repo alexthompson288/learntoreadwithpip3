@@ -12,6 +12,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     [SerializeField]
     private UITexture m_questionImage;
     [SerializeField]
+    private Transform m_questionImageScale;
+    [SerializeField]
     private GameObject m_questionImageParent;
     [SerializeField]
     private GameObject m_textPrefab;
@@ -64,6 +66,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
             m_captionTextAttributes.Add("dummyword1");
             m_captionTextAttributes.Add("dummyword2");
+
+            m_questionImageScale.transform.localScale = Vector3.one * 2f;
         } 
         else
         {
@@ -74,6 +78,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
             m_captionTextAttributes.Add("bad_sentence1");
             m_captionTextAttributes.Add("bad_sentence2");
             m_captionTextAttributes.Add("bad_sentence4");
+
+            m_questionImageScale.transform.localScale = Vector3.one * 0.5f;
         }
 
         m_captionTextAttributes.Add(m_goodAttribute);
