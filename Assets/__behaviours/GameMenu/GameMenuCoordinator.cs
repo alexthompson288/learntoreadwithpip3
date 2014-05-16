@@ -46,6 +46,9 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         for (int i = 0; i < m_numPlayerButtons.Length; ++i)
         {
             m_numPlayerButtons[i].Unpressed += OnChooseNumPlayers;
+
+            string buttonAudioEvent = i == 0 ? "NAV_ONE_PLAYER" : "NAV_TWO_PLAYER";
+            m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
         }
 
         foreach (ClickEvent click in m_colorButtons)
@@ -53,21 +56,6 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             click.OnSingleClick += OnChooseColor;
         }
     }
-
-    /*
-    void OnChooseNumPlayers(ClickEvent click)
-    {
-        m_isTwoPlayer = click.GetInt() == 2;
-
-        SessionInformation.Instance.SetNumPlayers(click.GetInt());
-
-        PerspectiveButton button = click.GetComponent<PerspectiveButton>() as PerspectiveButton;
-        float buttonTweenDuration = button != null ? button.tweenDuration : 0.5f;
-
-        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu, buttonTweenDuration + 0.4f));
-        StartCoroutine(ResetChooseNumPlayersButton(button, buttonTweenDuration + 0.4f + m_cameraTweenDuration));
-    }
-    */
 
     void OnChooseNumPlayers(PipButton button)
     {
@@ -99,13 +87,15 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         SpawnGameButtons();
     }
 
-    void OnChooseGame(ClickEvent click)
+    void OnChooseGame(PipButton button)
     {
-        DataRow game = click.GetData();
+        Debug.Log("OnChooseGame");
+        DataRow game = button.data;
         
         // Set the game scene
         if (game != null)
         {
+            Debug.Log("Found game");
             GameManager.Instance.AddGames(game);
 
             GameManager.Instance.SetReturnScene("NewScoreDanceScene");
@@ -120,10 +110,14 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
 
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
-            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
-            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
 
             GameManager.Instance.StartGames();
+        } 
+        else
+        {
+            Debug.LogError("Game button has no data!");
         }
     }
 
@@ -156,14 +150,17 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             if(gameTable.Rows.Count > 0)
             {
                 DataRow game = gameTable.Rows[0];
+                Debug.Log("game: " + game);
 
                 bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
 
                 if(!m_isTwoPlayer || m_isTwoPlayer && gameIsMultiplayer)
                 {
                     GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
-                    newButton.GetComponent<ClickEvent>().SetData(game);
-                    newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
+                    newButton.GetComponent<PipButton>().SetData(game);
+                    newButton.GetComponent<PipButton>().Unpressed += OnChooseGame;
+                    //newButton.GetComponent<ClickEvent>().SetData(game);
+                    //newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
                     newButton.GetComponent<ChooseGameButton>().SetUp(game);
                 }
             }

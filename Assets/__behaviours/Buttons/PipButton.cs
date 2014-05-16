@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PipButton : MonoBehaviour 
 {
@@ -19,7 +20,7 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private string m_pressedAudio = "BUTTON_PRESS";
     [SerializeField]
-    private string[] m_unpressedAudio = new string[] { "BUTTON_UNPRESS" };
+    private List<string> m_unpressedAudio = new List<string>();
     [SerializeField]
     private ColorInfo.PipColor m_pipColor = ColorInfo.PipColor.White;
     [SerializeField]
@@ -28,17 +29,11 @@ public class PipButton : MonoBehaviour
     private SimpleSpriteAnim m_sheenAnimation;
     [SerializeField]
     private SimpleSpriteAnim m_pressAnimation;
-    
+
     bool m_isTransitioning;
-    
-    public ColorInfo.PipColor pipColor
-    {
-        get
-        {
-            return m_pipColor;
-        }
-    }
-    
+
+    DataRow m_data;
+
     
     // PositionChange Variables and Method
     [SerializeField]
@@ -91,6 +86,33 @@ public class PipButton : MonoBehaviour
     
 
     // Shared Methods
+
+    public void AddUnpressedAudio(string audioEvent)
+    {
+        m_unpressedAudio.Add(audioEvent);
+    }
+
+    public void SetData(DataRow newData)
+    {
+        m_data = newData;
+        Debug.Log("Button.SetData: " + m_data);
+    }
+
+    public DataRow data
+    {
+        get
+        {
+            return m_data;
+        }
+    }
+    
+    public ColorInfo.PipColor pipColor
+    {
+        get
+        {
+            return m_pipColor;
+        }
+    }
 
     public string GetString()
     {
