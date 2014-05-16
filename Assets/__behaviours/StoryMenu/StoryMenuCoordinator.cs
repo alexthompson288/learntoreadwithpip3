@@ -137,13 +137,13 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnClickReadOrPictures(PipButton button)
     {
-        if (m_story != null)
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewStories'");
+        
+        if(dt.Rows.Count > 0 && m_story != null)
         {
+            GameManager.Instance.AddGames(dt.Rows[0]);
+
             m_isReadingOrPictures = true;
-
-            string gameName = button == m_readButton ? "Read" : "Pictures";
-
-            GameManager.Instance.AddGames(gameName, "NewStories");
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_STORY_TIME");
 
@@ -160,13 +160,18 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             if(correctCaptions.Count > 0)
             {
-                m_isReadingOrPictures = false;
-                GameManager.Instance.AddGames("NewCorrectCaption", "NewCorrectCaption");
-                GameManager.Instance.AddData("correctcaptions", correctCaptions);
+                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewCorrectCaption'");
 
-                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
+                if(dt.Rows.Count > 0)
+                {
+                    m_isReadingOrPictures = false;
+                    GameManager.Instance.AddGames(dt.Rows[0]);
+                    GameManager.Instance.AddData("correctcaptions", correctCaptions);
 
-                StartActivity();
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
+
+                    StartActivity();
+                }
             }
         }
     }
@@ -180,13 +185,18 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             if(quizQuestions.Count > 0)
             {
-                m_isReadingOrPictures = false;
-                GameManager.Instance.AddGames("NewQuiz", "NewQuiz");
-                GameManager.Instance.AddData("quizquestions", quizQuestions);
+                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewQuizGame'");
 
-                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
+                if(dt.Rows.Count > 0)
+                {
+                    m_isReadingOrPictures = false;
+                    GameManager.Instance.AddGames(dt.Rows[0]);
+                    GameManager.Instance.AddData("quizquestions", quizQuestions);
 
-                StartActivity();
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
+
+                    StartActivity();
+                }
             }
         }
     }

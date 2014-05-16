@@ -1,15 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Specialized;
 
 public class StartGamesNoData : MonoBehaviour 
 {
     [SerializeField]
     private string m_returnScene = "";
     [SerializeField]
-    private string[] m_sceneNames;
-    [SerializeField]
-    private string[] m_dbGameNames;
+    private string[] m_gameNames;
 
 	void OnClick()
     {
@@ -20,25 +17,16 @@ public class StartGamesNoData : MonoBehaviour
 
         GameManager.Instance.SetReturnScene(m_returnScene);
 
-        OrderedDictionary gameDictionary = new OrderedDictionary();
 
-        foreach (string scene in m_sceneNames)
+        foreach (string game in m_gameNames)
         {
-            gameDictionary.Add(scene, scene);
-        }
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='" + game + "'");
 
-        foreach (string dbGame in m_dbGameNames)
-        {
-            string sceneName = GameLinker.Instance.GetSceneName(dbGame);
-
-            if(!System.String.IsNullOrEmpty(sceneName))
+            if(dt.Rows.Count > 0)
             {
-                gameDictionary.Add(dbGame, sceneName);
+                GameManager.Instance.AddGames(dt.Rows[0]);
             }
         }
-
-        GameManager.Instance.AddGames(gameDictionary);
-        //GameManager.Instance.AddGames(m_scenes);
 
         GameManager.Instance.StartGames();
     }

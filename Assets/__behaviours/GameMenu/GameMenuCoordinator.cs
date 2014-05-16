@@ -104,31 +104,26 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         DataRow game = click.GetData();
         
         // Set the game scene
-        if (game ["name"] != null)
+        if (game != null)
         {
-            string sceneName = GameLinker.Instance.GetSceneName(game["name"].ToString());
+            GameManager.Instance.AddGames(game);
 
-            if(!System.String.IsNullOrEmpty(sceneName))
-            {
-                GameManager.Instance.AddGames(game["name"].ToString(), sceneName);
+            GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 
-                GameManager.Instance.SetReturnScene("NewScoreDanceScene");
+            // Get and set all the data associated with the color
+            int moduleId = DataHelpers.GetModuleId(m_color);
 
-                // Get and set all the data associated with the color
-                int moduleId = DataHelpers.GetModuleId(m_color);
-
-                GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
-                GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
-                GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
-                GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
+            GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+            GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+            GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
+            GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
 
 
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
-                GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
-                GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
 
-                GameManager.Instance.StartGames();
-            }
+            GameManager.Instance.StartGames();
         }
     }
 

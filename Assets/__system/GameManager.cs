@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
@@ -33,11 +32,10 @@ public class GameManager : Singleton<GameManager>
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
     }
 
-    // I have created this method so as a pre-emptive measure. If we need to execute something before starting any games then we can add it here without changing code in any other classes
+    // I have created this method so as a pre-emptive measure. 
+    // If we need to execute something before starting any games then we can add it here without changing code in any other classes
     public void StartGames()  
     {
-        m_currentGame = "";
-
         PlayNextGame();
     }
 
@@ -45,32 +43,29 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
-        if (!System.String.IsNullOrEmpty(m_currentGame))
+        Debug.Log("Num Scenes: " + m_games.Count);
+
+        m_currentGame = m_games.Dequeue();
+
+        string audioEvent = "NAV_" + m_currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
+        //Debug.Log("audioEvent: " + audioEvent);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+
+        try
         {
-            m_gameDictionary.Remove(m_currentGame);
+            TransitionScreen.Instance.ChangeLevel(m_currentGame["name"].ToString(), true);
         }
-
-        m_currentGame = "";
-
-        Debug.Log("Num Scenes: " + m_gameDictionary.Count);
-
-        string nextScene = "";
-
-        foreach (DictionaryEntry game in m_gameDictionary)
+        catch
         {
-            m_currentGame = (string)game.Key;
-            nextScene = (string)game.Value;
-            Debug.Log(System.String.Format("NextGame: {0} - {1}", m_currentGame, nextScene));
-            break;
-        }
-
-        if (!System.String.IsNullOrEmpty(nextScene))
-        {
-            TransitionScreen.Instance.ChangeLevel(nextScene, true);
-        } 
-        else
-        {
-            CompleteGame();
+            try
+            {
+                TransitionScreen.Instance.ChangeLevel(GameLinker.Instance.GetSceneName(m_currentGame["name"].ToString()), true);
+            }
+            catch
+            {
+                CompleteGame();
+            }
         }
     }
 
@@ -80,9 +75,9 @@ public class GameManager : Singleton<GameManager>
 
         m_data.Clear();
         m_targetData.Clear();
-        m_gameDictionary.Clear();
+        m_games.Clear();
 
-        m_currentGame = "";
+        m_currentGame = null;
         m_returnScene = "";
     }
 
@@ -90,9 +85,9 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager.CompleteGame()");
 
-        Debug.Log(System.String.Format("{0} scenes remaining", m_gameDictionary.Count));
+        Debug.Log(System.String.Format("{0} scenes remaining", m_games.Count));
 
-        if (m_gameDictionary.Count == 0)
+        if (m_games.Count == 0)
         {
             string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
 
@@ -133,46 +128,28 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    // TODO: This does not need to be a Dictionary. Store a queue of game names, find the scene name when you need to load it
-    //Queue<string> m_gameDictionary = new Queue<string>();
-    OrderedDictionary m_gameDictionary = new OrderedDictionary();
+    Queue<DataRow> m_games = new Queue<DataRow>();
+    DataRow m_currentGame;
 
-    string m_currentGame;
-
-    /*
-    public void AddScenes(string scene)
+    public DataRow currentGame
     {
-        AddScenes(new string [] { scene });
-    }
-
-    public void AddScenes(string[] scenes)
-    {
-        foreach (string scene in scenes)
+        get
         {
-            Debug.Log("Adding scene: " + scene);
-            //m_gameDictionary.Enqueue(scene);
-        }
-    }
-    */
-
-    public string GetCurrentGame()
-    {
-        return m_currentGame;
-    }
-
-    public void AddGames(OrderedDictionary games)
-    {
-        foreach(DictionaryEntry game in games)
-        {
-            m_gameDictionary.Add(game.Key, game.Value);
+            return m_currentGame;
         }
     }
 
-    public void AddGames(string dbGameName, string sceneName)
+    public void AddGames(DataRow[] games)
     {
-        OrderedDictionary gameDictionary = new OrderedDictionary();
-        gameDictionary.Add(dbGameName, sceneName);
-        AddGames(gameDictionary);
+        foreach(DataRow game in games)
+        {
+            m_games.Enqueue(game);
+        }
+    }
+
+    public void AddGames(DataRow game)
+    {
+        m_games.Enqueue(game);
     }
 
 

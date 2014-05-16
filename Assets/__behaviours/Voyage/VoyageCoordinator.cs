@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Wingrove;
 
 public class VoyageCoordinator : Singleton<VoyageCoordinator> 
@@ -299,17 +298,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If the player has more than one section remaining in this session, then they will not have completed at the end of the game
             if(VoyageInfo.Instance.GetNumRemainingSections(m_sessionId) > 1)
             {
-                GameManager.Instance.AddGames(dbGameName, sceneName);
+                GameManager.Instance.AddGames(game);
             }
             else
             {
-                OrderedDictionary gameDictionary = new OrderedDictionary();
-                gameDictionary.Add(dbGameName, sceneName);
-                gameDictionary.Add("NewSessionComplete", "NewSessionComplete");
-                GameManager.Instance.AddGames(gameDictionary);
-                //GameManager.Instance.AddGames(new string[] { sceneName, "NewSessionComplete" } );
+                GameManager.Instance.AddGames(game);
             }
-            
             
             // Set return scene
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
@@ -370,18 +364,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
            
             GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
-            /*
-            // TODO: Add sentences
-            dt = db.ExecuteQuery("select * from sentences WHERE programsession_id=" + m_sessionId);
-
-            // Quiz Questions
-            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from quizquestions WHERE programsession_id=" + m_sessionId);
-            GameManager.Instance.AddData("quizquestions", dt.Rows);
-
-            // Correct Captions
-            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from correctcaptions WHERE programsession_id=" + m_sessionId);
-            GameManager.Instance.AddData("correctcaptions", dt.Rows);
-            */
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
             

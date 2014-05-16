@@ -100,7 +100,7 @@ public class LessonInfo : Singleton<LessonInfo>
 	{
 		string m_name;
 		
-        // TODO: Store an OrderedDictionary of sceneName,dbGameName
+        // TODO: Store List<int> of gameIds
 		List<string> m_games = new List<string>();
 		
 		HashSet<int> m_letters = new HashSet<int>();

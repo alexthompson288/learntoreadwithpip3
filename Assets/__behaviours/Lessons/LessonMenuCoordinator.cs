@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Wingrove;
 
 public class LessonMenuCoordinator : MonoBehaviour 
@@ -46,14 +45,14 @@ public class LessonMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
-        // TODO: You need store the dbGameNames in LessonInfo
-        OrderedDictionary gameDictionary = new OrderedDictionary();
-        List<string> sceneList = LessonInfo.Instance.GetScenes();
-        foreach (string scene in sceneList)
-        {
-            gameDictionary.Add(scene, scene);
-        }
-        GameManager.Instance.AddGames(gameDictionary);
+        // TODO: You need store gameIds LessonInfo
+        //OrderedDictionary gameDictionary = new OrderedDictionary();
+        //List<string> sceneList = LessonInfo.Instance.GetScenes();
+        //foreach (string scene in sceneList)
+        //{
+           // gameDictionary.Add(scene, scene);
+        //}
+        //GameManager.Instance.AddGames(gameDictionary);
         //GameManager.Instance.AddGames(LessonInfo.Instance.GetScenes().ToArray());
 
         GameManager.Instance.AddData("phonemes", LessonInfo.Instance.GetData("phonemes"));
