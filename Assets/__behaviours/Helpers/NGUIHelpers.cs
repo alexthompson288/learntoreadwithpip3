@@ -16,4 +16,9 @@ public static class NGUIHelpers
             }
         }
     }
+
+    public static float GetLabelWidth(UILabel label)
+    {
+        return label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None).x * label.transform.localScale.x;
+    }
 }
