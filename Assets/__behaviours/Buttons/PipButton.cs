@@ -161,6 +161,11 @@ public class PipButton : MonoBehaviour
         m_pipColor = newPipColor;
     }
 
+    public void SetAutoReset(bool newAutoReset)
+    {
+        m_autoReset = newAutoReset;
+    }
+
     void Start()
     {
         if (m_pressableButton != null)

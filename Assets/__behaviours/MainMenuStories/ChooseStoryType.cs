@@ -18,7 +18,7 @@ public class ChooseStoryType : MonoBehaviour
         //m_sprite.color = ColorInfo.GetColor(m_storyType);
         m_label.text = ColorInfo.GetColorString(m_storyType);
 
-        m_button.Unpressing += OnButtonClick;
+        m_button.Pressing += OnButtonClick;
     }
 
     void OnButtonClick(PipButton button)
