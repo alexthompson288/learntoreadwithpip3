@@ -52,21 +52,28 @@ public class GameManager : Singleton<GameManager>
 
         WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
 
+        TransitionScreen.Instance.ChangeLevel(GameLinker.Instance.GetSceneName(m_currentGame["name"].ToString()), true);
+        /*
         try
         {
+            Debug.Log("TRYING");
             TransitionScreen.Instance.ChangeLevel(m_currentGame["name"].ToString(), true);
         }
         catch
         {
+            Debug.Log("CATCH");
             try
             {
+                Debug.Log("TRYING - 2");
                 TransitionScreen.Instance.ChangeLevel(GameLinker.Instance.GetSceneName(m_currentGame["name"].ToString()), true);
             }
             catch
             {
+                Debug.Log("CATCH - 2");
                 CompleteGame();
             }
         }
+        */
     }
 
     void Reset()

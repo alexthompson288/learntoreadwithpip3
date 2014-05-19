@@ -157,7 +157,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 DataRow game = gameTable.Rows[0];
                 Debug.Log("game: " + game);
 
-                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
+                // TODO: Temporary fix, remove when database is correct - game["name"].ToString() != "NewSplatGame" 
+                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t" && game["name"].ToString() != "NewSplatGame";
 
                 if(!m_isTwoPlayer || m_isTwoPlayer && gameIsMultiplayer)
                 {
