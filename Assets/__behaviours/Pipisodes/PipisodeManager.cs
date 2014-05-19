@@ -20,8 +20,10 @@ public class PipisodeManager : Singleton<PipisodeManager>
     {
         string filename = pipisode["pipisode_title"].ToString().ToLower().Replace(" ", "_");
         Debug.Log("filename: " + filename);
-        
+
+#if UNITY_ANDROID || UNITY_IPHONE
         Handheld.PlayFullScreenMovie(System.String.Format("{0}/{1}.mp4", m_relativePathMp4, filename),
                                      Color.black, FullScreenMovieControlMode.Full, FullScreenMovieScalingMode.AspectFit);
+#endif
     }
 }
