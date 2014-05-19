@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System.IO;
 
 
 public class VideoAssetBundleBuilder : EditorWindow
@@ -16,6 +17,15 @@ public class VideoAssetBundleBuilder : EditorWindow
 
     void OnGUI()
     {
-        GUILayout.Label("Test Success");
+        GUILayout.Label("File Path");
+        GUILayout.TextField("__BundleSource/videos/");
+
+        GUILayout.Label("File Name");
+        GUILayout.TextField("");
+
+        if (GUILayout.Button("Build Bundle"))
+        {
+
+        }
     }
 }
