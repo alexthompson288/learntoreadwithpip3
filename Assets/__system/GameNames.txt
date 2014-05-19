@@ -79,4 +79,6 @@ NewJoinPairs,
 NewQuizGame,
 NewQuiz,
 NewSessionComplete,
-NewSessionComplete
+NewSessionComplete,
+NewCorrectCaption,
+NewCorrectCaption

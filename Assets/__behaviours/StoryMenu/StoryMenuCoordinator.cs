@@ -42,6 +42,8 @@ public class StoryMenuCoordinator : MonoBehaviour
         m_story = newStory;
     }
 
+    string m_readButtonString = "Read";
+
     IEnumerator Start()
     {
         m_readButton.Unpressed += OnClickReadOrPictures;
@@ -49,6 +51,8 @@ public class StoryMenuCoordinator : MonoBehaviour
         m_captionsButton.Unpressed += OnClickCaptions;
         m_quizButton.Unpressed += OnClickQuiz;
         m_suggestionsButton.Unpressed += OnClickSuggestions;
+
+        m_readButton.SetString(m_readButtonString);
 
         GameManager.Instance.OnCancel += OnGameCancel;
 
@@ -141,6 +145,8 @@ public class StoryMenuCoordinator : MonoBehaviour
         
         if(dt.Rows.Count > 0 && m_story != null)
         {
+            StoryCoordinator.SetShowWords(button.GetString() == m_readButtonString);
+
             GameManager.Instance.AddGames(dt.Rows[0]);
 
             m_isReadingOrPictures = true;

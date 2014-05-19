@@ -45,7 +45,11 @@ public class GameManager : Singleton<GameManager>
 
         Debug.Log("Num Scenes: " + m_games.Count);
 
+        Debug.Log("m_games.Count: " + m_games.Count);
+
         m_currentGame = m_games.Dequeue();
+
+        Debug.Log("currentGame: " + m_currentGame ["name"].ToString());
 
         string audioEvent = "NAV_" + m_currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
         //Debug.Log("audioEvent: " + audioEvent);
@@ -75,10 +79,6 @@ public class GameManager : Singleton<GameManager>
         }
         */
     }
-
-    //Temporary Fix: NewSessionComplete needs to be in db
-    bool m_goToSessionComplete = false;
-
 
     void Reset()
     {
