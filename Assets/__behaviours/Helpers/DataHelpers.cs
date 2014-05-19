@@ -258,6 +258,12 @@ public static class DataHelpers
                 case "stories":
                     dataPool = GetStories();
                     break;
+                case "correctcaptions":
+                    dataPool = GetCorrectCaptions();
+                    break;
+                case "quizquestions":
+                    dataPool = GetQuizQuestions();
+                    break;
             }
         }
 
@@ -634,6 +640,8 @@ public static class DataHelpers
 
         Texture2D tex = null;
 
+        Debug.Log("GetPicture dataType: " + dataType);
+
         switch (dataType)
         {
             case "phonemes":
@@ -655,6 +663,7 @@ public static class DataHelpers
                 break;
             case "quizquestions":
             case "correctcaptions":
+            case "sentences":
                 if(data["correct_image_name"] != null)
                 {
                     tex = Resources.Load<Texture2D>(data["correct_image_name"].ToString());
@@ -662,6 +671,8 @@ public static class DataHelpers
                     {
                         tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
                     }
+
+                    Debug.Log("TEX - " + data["correct_image_name"].ToString() + ": " + tex);
                 }
                 break;
             default:
