@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEditor;
-using System.IO;
 
 
 public class VideoAssetBundleBuilder : EditorWindow
@@ -25,7 +23,23 @@ public class VideoAssetBundleBuilder : EditorWindow
 
         if (GUILayout.Button("Build Bundle"))
         {
+            //string path = EditorUtility.SaveFilePanel("Save Videos", "", "default_pipisode", "asset");
+            string path = EditorUtility.SaveFilePanel("Save Videos", "", "default_pipisode", "mp4");
 
+            Object[] selection = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
+
+            foreach (object asset in selection) 
+            {
+                string assetPath = AssetDatabase.GetAssetPath((UnityEngine.Object) asset);
+                if (asset is Texture2D) 
+                {
+                    // Force reimport thru TextureProcessor.
+                    //AssetDatabase.ImportAsset(assetPath);
+                }
+            }
+
+            BuildPipeline.BuildAssetBundle(Selection.activeObject, selection, path, BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets);
+            Selection.objects = selection;
         }
     }
 }
