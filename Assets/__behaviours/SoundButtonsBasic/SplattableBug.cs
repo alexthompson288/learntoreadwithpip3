@@ -17,7 +17,7 @@ public class SplattableBug : MonoBehaviour
 	{
 		Debug.Log("Unsplat");
 		m_sprite.spriteName = m_splatSpriteName;
-		WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_HAPPY");
 
 		if(m_throbBehaviour != null)
 		{

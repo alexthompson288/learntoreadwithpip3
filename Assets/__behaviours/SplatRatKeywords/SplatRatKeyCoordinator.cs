@@ -173,9 +173,9 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_currentLetter));
 		}
 		
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_RAT_KEYWORDS_INSTRUCTION");
+		//WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_RAT_KEYWORDS_INSTRUCTION");
 		
-		yield return new WaitForSeconds(2.6f);
+		//yield return new WaitForSeconds(2.6f);
 		
 		StartCoroutine(PlayLetterSound());
 		

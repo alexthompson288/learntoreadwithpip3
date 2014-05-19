@@ -188,9 +188,9 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_phonemeImages[m_currentLetterData], m_currentLetter, m_currentLetter));
 		}
 		
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_THE_RAT_INSTRUCTION");
+		//WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_THE_RAT_INSTRUCTION");
 		
-		yield return new WaitForSeconds(4.8f);
+		//yield return new WaitForSeconds(4.8f);
 		
 		StartCoroutine(PlayLetterSound());
 		

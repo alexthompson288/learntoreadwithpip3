@@ -236,7 +236,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         if (IsDataCorrect(target.data))
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_SQUEAL");
 
             ball.GetComponent<CatapultAmmo>().Explode();
 

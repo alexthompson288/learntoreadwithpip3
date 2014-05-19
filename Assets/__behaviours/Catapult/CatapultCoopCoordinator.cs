@@ -129,7 +129,7 @@ public class CatapultCoopCoordinator : MonoBehaviour
     {
         if (target.data == m_currentData)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SQUEAL_GAWP");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_SQUEAL");
 
             target.ApplyHitForce(ball.transform);
 
@@ -148,7 +148,7 @@ public class CatapultCoopCoordinator : MonoBehaviour
         } 
         else
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("HAPPY_GAWP");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_HAPPY");
 
             target.Off();
             StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
