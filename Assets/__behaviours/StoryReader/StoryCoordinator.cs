@@ -181,7 +181,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             
             float length = 0;
             float height = 0;
-            float maxWidth = 0;
+            float widestLineWidth = 0;
             
             foreach (string line in lines)
             {
@@ -201,7 +201,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                         newWordInstance.transform.localPosition = new Vector3(length, height, 0);
                         Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
                         length += wordSize.x;
-                        maxWidth = Mathf.Max(maxWidth, length);
+                        widestLineWidth = Mathf.Max(widestLineWidth, length);
                         
                         string storyType = SessionInformation.Instance.GetStoryType();
                         if (storyType == "" || storyType == null)
@@ -227,10 +227,11 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                     height -= 96;
                 }
             }
-            
-            if (maxWidth > 850)
+
+            float maxWidth = 850;
+            if (widestLineWidth > maxWidth)
             {
-                float scale = 850 / maxWidth;
+                float scale = maxWidth / widestLineWidth;
                 m_textAnchors [0].transform.localScale = scale * Vector3.one;
             } else
             {

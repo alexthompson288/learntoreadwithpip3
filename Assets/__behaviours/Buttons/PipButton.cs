@@ -82,7 +82,7 @@ public class PipButton : MonoBehaviour
     private bool m_changeColor;
     [SerializeField]
     private Color m_pressedColor = Color.white;
-    
+
     Color m_unpressedColor;
     
 
@@ -196,21 +196,24 @@ public class PipButton : MonoBehaviour
             if (m_changeColor)
             {
                 m_unpressedColor = m_pressableButton.color;
-                
-                // If unpressedColor hasn't been set then we want to set it to be a bit darker than the pressed color
-                if (m_pressedColor == Color.white)
-                {
-                    m_unpressedColor = m_pressedColor;
-                }
-                
-                if (Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
-                {
+
+
+                //if (Mathf.Approximately(m_pressedColor.r, m_unpressedColor.r) && Mathf.Approximately(m_pressedColor.g, m_unpressedColor.g) && Mathf.Approximately(m_pressedColor.b, m_unpressedColor.b))
+                //{
                     m_pressedColor = m_unpressedColor;
                     
                     for (int i = 0; i < 3; ++i) // Only change 0(r), 1(g), 2(b). 3 is alpha.
                     {
                         m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
                     }
+                //}
+
+                if(gameObject.name == "TurnLeftButton")
+                {
+                    Debug.Log("BUTTON COLOR");
+                    Debug.Log("button: " + m_pressableButton.color);
+                    Debug.Log("unpressed: " + m_unpressedColor);
+                    Debug.Log("pressed: " + m_pressedColor);
                 }
             }
             

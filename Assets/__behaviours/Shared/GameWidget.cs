@@ -235,7 +235,7 @@ public class GameWidget : MonoBehaviour
 
         tweenArgs.Add("position", new Vector3(transform.localPosition.x, transform.localPosition.y - 15));
         
-        float tweenDuration = 0.3f;
+        float tweenDuration = 0.2f;
         tweenArgs.Add("time", tweenDuration);
 
         iTween.MoveTo(gameObject, tweenArgs);

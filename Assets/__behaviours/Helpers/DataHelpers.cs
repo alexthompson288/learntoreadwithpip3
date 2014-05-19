@@ -270,10 +270,13 @@ public static class DataHelpers
 
         if (dataPool.Count == 0)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences");
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
+            Debug.Log("GETCORRECT: " + dt.Rows.Count);
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
+            Debug.Log("POSTCHECK: " + dt.Rows.Count);
         }
 
+        Debug.Log("RETURNING: " + dataPool.Count);
         return dataPool;
     }
 
@@ -790,6 +793,20 @@ public static class DataHelpers
         previousColorIndex = Mathf.Clamp(previousColorIndex, 0, previousColorIndex);
 
         return GetModuleId((ColorInfo.PipColor)previousColorIndex);
+    }
+
+    public static string[] GetCorrectCaptionWords(DataRow data)
+    {
+        if (data != null && data ["good_sentence"] != null)
+        {
+            string sentence = data ["good_sentence"].ToString();
+            string[] words = sentence.Split(new char[] { ' ' });
+            return words;
+        } 
+        else
+        {
+            return new string[] {};
+        }
     }
 
     public static string[] GetSentenceWords(DataRow sentenceData)

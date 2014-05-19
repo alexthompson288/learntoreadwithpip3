@@ -37,14 +37,21 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_dataPool = DataHelpers.GetSentences();
+        m_dataPool = DataHelpers.GetCorrectCaptions();
 
-        m_dataPool.RemoveAll(x => DataHelpers.GetSentenceWords(x).Length > 5);
-        m_dataPool.RemoveAll(x => x["text"] == null || !x["text"].ToString().Contains(" "));
+        Debug.Log("PRE-REMOVE: " + m_dataPool.Count);
+
+        m_dataPool.RemoveAll(x => DataHelpers.GetCorrectCaptionWords(x).Length > 5);
+
+        Debug.Log("POST-LENGTH-CHECK: " + m_dataPool.Count);
+
+        m_dataPool.RemoveAll(x => x["good_sentence"] == null || !x["good_sentence"].ToString().Contains(" "));
+
+        Debug.Log("POST-NULL-CHECK: " + m_dataPool.Count);
 
         foreach (DataRow data in m_dataPool)
         {
-            AudioClip clip = DataHelpers.GetLongAudio("sentences", data);
+            AudioClip clip = DataHelpers.GetLongAudio("correctcaptions", data);
 
             if(clip != null)
             {
@@ -56,7 +63,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
-        Debug.Log("dataPool.Count: " + m_dataPool.Count);
+
 
         if (m_dataPool.Count > 0)
         {
@@ -73,7 +80,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         m_currentData = GetRandomData();
         m_dataPool.Remove(m_currentData);
 
-        m_remainingWords = DataHelpers.GetSentenceWords(m_currentData).ToList();
+        m_remainingWords = DataHelpers.GetCorrectCaptionWords(m_currentData).ToList();
         m_remainingWords.RemoveAll(x => x == " ");
 
         List<Transform> locators = new List<Transform>();
@@ -117,7 +124,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         bool hasSetPicture = false;
         if (m_currentData ["correct_image_name"] != null)
         {
-            m_picture.mainTexture = DataHelpers.GetPicture("sentences", m_currentData);
+            m_picture.mainTexture = DataHelpers.GetPicture("correctcaptions", m_currentData);
 
             if(m_picture.mainTexture != null)
             {
@@ -195,6 +202,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
     protected override IEnumerator CompleteGame()
     {
         yield return new WaitForSeconds(1f);
-        //GameManager.Instance.CompleteGame();
+        GameManager.Instance.CompleteGame();
     }
 }
