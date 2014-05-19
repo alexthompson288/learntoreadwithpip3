@@ -10,45 +10,50 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     public event MoveToShow OnMoveToShow;
 
     [SerializeField]
-    private UIPanel m_gridPanel;
+    private UIPanel m_defaultGridPanel;
     [SerializeField]
-    private UIDraggablePanel m_draggablePanel;
+    private UIDraggablePanel m_defaultDraggablePanel;
     [SerializeField]
-    private UIGrid m_grid;
+    private UIGrid m_defaultGrid;
     [SerializeField]
-    private PipColorWidgets[] m_colorButtons;
+    private UIGrid m_alphabetGrid;
+    [SerializeField]
+    private PipButton[] m_colorButtons;
     [SerializeField]
     private GameObject m_phonemePrefab;
     [SerializeField]
     private GameObject m_wordPrefab;
     [SerializeField]
-    private PipColorWidgets m_testButton;
+    private GameObject m_alphabetLetterPrefab;
     [SerializeField]
-    private PipColorWidgets m_clearButton;
+    private PipButton m_testButton;
     [SerializeField]
-    private GameObject m_songButton;
+    private PipButton m_clearButton;
+    [SerializeField]
+    private GameObject[] m_alphabetButtons;
     [SerializeField]
     private TweenOnOffBehaviour m_noDataSign;
     [SerializeField]
-    private UISprite m_currentColorSprite;
+    private Transform m_colorGrid;
+    [SerializeField]
+    private Transform m_alternateColorGridLocation;
 
     List<DataRow> m_data = new List<DataRow>();
 
-    PipColorWidgets m_currentColor = null;
-    ThrobGUIElement m_currentColorThrob;
+    PipButton m_currentButton = null;
 
     Vector3 m_gridStartPosition;
 
     IEnumerator Start()
     {
-        m_gridPanel.alpha = 0;
+        m_defaultGridPanel.alpha = 0;
 
-        m_gridStartPosition = m_grid.transform.localPosition;
+        m_gridStartPosition = m_defaultGrid.transform.localPosition;
 
         Debug.Log("gridStartPos: " + m_gridStartPosition);
 
-        m_clearButton.Clicked += ClearAnswers;
-        m_testButton.Clicked += OnClickTestButton;
+        m_clearButton.Unpressing += ClearAnswers;
+        m_testButton.Unpressing += OnClickTestButton;
 
         NavMenu.Instance.HideCallButton();
 
@@ -56,11 +61,10 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 #if UNITY_EDITOR
         if (String.IsNullOrEmpty(GameManager.Instance.dataType))
         {
-            GameManager.Instance.SetDataType("keywords");
+            string dataType = Application.loadedLevelName == "NewBankLetters" ? "alphabet" : "words";
+            GameManager.Instance.SetDataType(dataType);
         }
 #endif
-
-        m_songButton.SetActive(GameManager.Instance.dataType == "alphabet");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -68,46 +72,54 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         if (GameManager.Instance.dataType != "alphabet")
         {
+            foreach(GameObject button in m_alphabetButtons)
+            {
+                button.SetActive(false);
+            }
+
             Array.Sort(m_colorButtons, SortByColor);
 
-            foreach (PipColorWidgets button in m_colorButtons)
+            if(GameManager.Instance.dataType != "phonemes")
             {
-                button.Clicked += ChangeColor;
+                m_colorButtons[m_colorButtons.Length - 1].gameObject.SetActive(false);
+            }
+
+            m_colorGrid.position = m_alternateColorGridLocation.position;
+
+            foreach (PipButton button in m_colorButtons)
+            {
+                button.Pressing += ChangeColor;
             }
 
             // Start on the first color
             ChangeColor(m_colorButtons [0]);
+            m_colorButtons[0].ChangeSprite(true);
         } 
         else
         {
-            m_currentColorSprite.gameObject.SetActive(false);
-
-            foreach(PipColorWidgets button in m_colorButtons)
-            {
-                button.gameObject.SetActive(false);
-            }
+            m_colorGrid.gameObject.SetActive(false);
 
             for (char i = 'a'; i <= 'z'; ++i)
             {
-                GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemePrefab, m_grid.transform);
+                GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_alphabetLetterPrefab, m_alphabetGrid.transform);
                 newButton.GetComponent<BankButton>().SetUp(i.ToString());
                 newButton.GetComponent<ClickEvent>().SetString(i.ToString());
                 newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
-                newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
+                newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
             }
             
-            m_grid.Reposition();
+            m_alphabetGrid.Reposition();
 
             float alphaTweenDuration = 0.2f;
             
-            TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 1);
+            TweenAlpha.Begin(m_defaultGridPanel.gameObject, alphaTweenDuration, 1);
         }
     }
 
-    int SortByColor(PipColorWidgets x, PipColorWidgets y)
+    int SortByColor(PipButton x, PipButton y)
     {
-        int xIndex = (int)x.color;
-        int yIndex = (int)y.color;
+        int xIndex = (int)x.pipColor;
+        int yIndex = (int)y.pipColor;
 
         if (xIndex < 0)
         {
@@ -140,73 +152,43 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         }
     }
 
-    void ChangeColor(PipColorWidgets button)
+    void ChangeColor(PipButton button)
     {
-        if (button != m_currentColor)
+        if (button != m_currentButton)
         {
-            m_currentColor = button;
-            StartCoroutine(MoveCurrentColorSprite(button));
-            StartCoroutine(ChangeColorCo(button.color));
+            if(m_currentButton != null)
+            {
+                m_currentButton.ChangeSprite(false);
+            }
+
+            m_currentButton = button;
+            //StartCoroutine(MoveCurrentColorSprite(button));
+            StartCoroutine(ChangeColorCo(button.pipColor));
         }
-    }
-
-    IEnumerator MoveCurrentColorSprite(PipColorWidgets button)
-    {
-        float scaleTweenDuration = 0.3f;
-        
-        TweenScale.Begin(m_currentColorSprite.gameObject, scaleTweenDuration, Vector3.one * 0.8f);
-        
-        yield return new WaitForSeconds(scaleTweenDuration);
-
-        m_currentColorSprite.transform.position = button.transform.position;
-        m_currentColorSprite.color = ColorInfo.GetColor(button.color);
-        
-        TweenScale.Begin(m_currentColorSprite.gameObject, scaleTweenDuration, Vector3.one * 1.2f);
     }
 
     IEnumerator ChangeColorCo(ColorInfo.PipColor color)
     {
         float alphaTweenDuration = 0.2f;
 
-        TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 0);
+        TweenAlpha.Begin(m_defaultGridPanel.gameObject, alphaTweenDuration, 0);
 
         yield return new WaitForSeconds(alphaTweenDuration);
         
-        int childCount = m_grid.transform.childCount;
+        int childCount = m_defaultGrid.transform.childCount;
         for(int i = childCount - 1; i > -1; --i)
         {
-            Destroy(m_grid.transform.GetChild(i).gameObject);
+            Destroy(m_defaultGrid.transform.GetChild(i).gameObject);
         }
         
-        m_grid.transform.localPosition = m_gridStartPosition;
-
-        /*
-        Debug.Log("New Color: " + color);
-
-        string query = color == ColorInfo.PipColor.White ? 
-            "select * from phonicssets" :
-                ("select * from phonicssets WHERE programmodule_id=" + DataHelpers.GetModuleId(color));
-
-        Debug.Log("query: " + query);
-        
-        DataTable setsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(query);
-
-        Debug.Log("setsTable.Count: " + setsTable.Rows.Count);
-
-        foreach(DataRow set in setsTable.Rows)
-        {
-            //Debug.Log("setId: " + set["id"].ToString());
-            GameManager.Instance.AddData(GameManager.Instance.dataType, DataHelpers.GetSetData(set, DataHelpers.setAttribute, DataHelpers.tableName));
-        }
-
-        List<DataRow> data = GameManager.Instance.GetData(GameManager.Instance.dataType);
-        */
+        m_defaultGrid.transform.localPosition = m_gridStartPosition;
 
         GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
 
         List<DataRow> data = new List<DataRow>();
 
         string dataType = GameManager.Instance.dataType;
+
         int moduleId = DataHelpers.GetModuleId(color);
 
         if (dataType == "phonemes")
@@ -222,6 +204,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             data = DataHelpers.GetModuleKeywords(moduleId);
         }
 
+        GameManager.Instance.SetData(GameManager.Instance.dataType, data);
+ 
         if (data.Count == 0)
         {
             Debug.Log("No Data!");
@@ -235,25 +219,25 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         foreach (DataRow row in data)
         {
-            GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_grid.transform);
+            GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_defaultGrid.transform);
             newButton.GetComponent<BankButton>().SetUp(row);
             newButton.GetComponent<ClickEvent>().SetData(row);
             newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
-            newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
+            newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
         }
         
         //Debug.Log("data.Count: " + data.Count);
         
         yield return new WaitForSeconds(0.1f);
         
-        m_grid.Reposition();
+        m_defaultGrid.Reposition();
 
         yield return new WaitForSeconds(0.1f);
 
-        TweenAlpha.Begin(m_gridPanel.gameObject, alphaTweenDuration, 1); 
+        TweenAlpha.Begin(m_defaultGridPanel.gameObject, alphaTweenDuration, 1); 
     }
 
-    void OnClickTestButton(PipColorWidgets button)
+    void OnClickTestButton(PipButton button)
     {
         if (OnMoveToShow != null)
         {
@@ -273,7 +257,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         BankCamera.Instance.MoveToShow();
     }
 
-    void ClearAnswers(PipColorWidgets click)
+    void ClearAnswers(PipButton click)
     {
         BankInfo.Instance.ClearAnswers();
         RefreshButtons();

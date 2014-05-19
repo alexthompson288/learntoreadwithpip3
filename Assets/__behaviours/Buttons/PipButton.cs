@@ -12,6 +12,8 @@ public class PipButton : MonoBehaviour
     
     // Shared Variables
     [SerializeField]
+    private bool m_autoReset = true;
+    [SerializeField]
     private int m_int;
     [SerializeField]
     private string m_string;
@@ -70,7 +72,10 @@ public class PipButton : MonoBehaviour
     
     string m_unpressedSpriteName;
 
-    
+    public void ChangeSprite(bool toStateB)
+    {
+        m_pressableButton.spriteName = toStateB ? m_pressedSpriteName : m_unpressedSpriteName;
+    }
     
     // ColorChange Variables
     [SerializeField]
@@ -156,7 +161,7 @@ public class PipButton : MonoBehaviour
         m_pipColor = newPipColor;
     }
 
-    void Awake()
+    void Start()
     {
         if (m_pressableButton != null)
         {
@@ -235,7 +240,7 @@ public class PipButton : MonoBehaviour
         {
             StartCoroutine(Press());
         } 
-        else
+        else if(m_autoReset)
         {
             StartCoroutine(Unpress());
         }
@@ -293,7 +298,7 @@ public class PipButton : MonoBehaviour
         m_isTransitioning = false;
     }
     
-    IEnumerator Unpress()
+    public IEnumerator Unpress()
     {
         while (m_isTransitioning)
         {

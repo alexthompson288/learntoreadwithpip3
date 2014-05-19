@@ -62,27 +62,31 @@ public class BankWordCoordinator : MonoBehaviour
 
     IEnumerator RefreshPipPad()
     {
-        Debug.Log("currentIndex: " + m_currentIndex);
-        Debug.Log("wordPool.Count: " + m_wordPool.Count);
+        Debug.Log("RefreshPipPad()");
+
+        //Debug.Log("currentIndex: " + m_currentIndex);
+        //Debug.Log("wordPool.Count: " + m_wordPool.Count);
         if (m_wordPool.Count > 0)
         {
             string word = m_wordPool [m_currentIndex] ["word"].ToString();
+
+            Debug.Log("word: " + word);
             
-            Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
+            //Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
+            Texture2D tex = DataHelpers.GetPicture("words", m_wordPool[m_currentIndex]);
+            Debug.Log("tex: " + tex);
             float tweenDuration = 0.3f;
-            if (tex != null && m_showPictureButton.transform.localScale.x < 1)
+            if (tex != null)
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.one);
             } 
-            else if(m_showPictureButton.transform.localScale.x > 0)
+            else
             {
                 TweenScale.Begin(m_showPictureButton.gameObject, tweenDuration, Vector3.zero);
             }
             
             yield return new WaitForSeconds(0.5f);
-            
-            Debug.Log("RefreshPipPad()");
-            
+
             PipPadBehaviour.Instance.Show(word);
             
             PipPadBehaviour.Instance.EnableButtons(false);

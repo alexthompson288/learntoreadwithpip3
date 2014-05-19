@@ -18,10 +18,16 @@ public class NavMenu : Singleton<NavMenu>
 	private GameObject m_navMenuGoParent;
 	[SerializeField]
 	private UILabel m_buyAllBooksLabel;
+    [SerializeField]
+    private GameObject m_parentGate;
 
 	void Awake()
 	{
 		m_navMenuGoParent.SetActive(true);
+        m_mainMoveable.gameObject.SetActive(true);
+        m_buyMoveable.gameObject.SetActive(true);
+        m_roomMoveable.gameObject.SetActive(true);
+        m_parentGate.SetActive(true);
 	}
 
 	void Start()

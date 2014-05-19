@@ -53,7 +53,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
         foreach (PipButton button in m_colorButtons)
         {
-            string colorName = button.transform.parent.name;
+            Transform buttonParent = button.transform.parent;
+
+            string colorName = buttonParent.name;
+
+            buttonParent.GetComponentInChildren<UILabel>().text = colorName;
+
             button.SetPipColor(ColorInfo.GetPipColor(colorName), true);
             button.AddPressedAudio("COLOR_" + colorName.ToUpper());
             button.Unpressing += OnChooseColor;

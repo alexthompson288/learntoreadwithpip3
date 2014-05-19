@@ -8,7 +8,7 @@ public class BankCamera : Singleton<BankCamera>
     [SerializeField]
     private Transform m_index;
     [SerializeField]
-    private ClickEvent m_toShowButton;
+    private PipButton m_toShowButton;
     [SerializeField]
     private Transform m_show;
     [SerializeField]
@@ -23,7 +23,7 @@ public class BankCamera : Singleton<BankCamera>
 
         if (m_toShowButton != null)
         {
-            m_toShowButton.OnSingleClick += OnClickMoveToShow;
+            m_toShowButton.Unpressing += OnClickMoveToShow;
         }
     }
 
@@ -32,7 +32,7 @@ public class BankCamera : Singleton<BankCamera>
         TweenToPos(m_index);
     }
 
-    void OnClickMoveToShow(ClickEvent click)
+    void OnClickMoveToShow(PipButton button)
     {
         TweenToPos(m_show);
     }

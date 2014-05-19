@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class DataHelpers 
 {
@@ -189,17 +190,41 @@ public static class DataHelpers
     
     public static List<DataRow> GetModulePhonemes(int moduleId)
     {
-        return GetModuleData(moduleId, "setphonemes", "phonemes");
+        if (moduleId != -1)
+        {
+            return GetModuleData(moduleId, "setphonemes", "phonemes");
+        } 
+        else
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE completed='t'");
+            return dt.Rows;
+        }
     }
     
     public static List<DataRow> GetModuleWords(int moduleId)
     {
-        return GetModuleData(moduleId, "setwords", "words");
+        if (moduleId != -1)
+        {
+            return GetModuleData(moduleId, "setwords", "words");
+        }
+        else
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id");
+            return dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+        }
     }
     
     public static List<DataRow> GetModuleKeywords(int moduleId)
     {
-        return GetModuleData(moduleId, "setkeywords", "words");
+        if (moduleId != -1)
+        {
+            return GetModuleData(moduleId, "setkeywords", "words");
+        }
+        else
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id");
+            return dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "t"));
+        }
     }
     
     public static List<DataRow> GetModuleSillywords(int moduleId)
@@ -618,8 +643,10 @@ public static class DataHelpers
                 break;
             case "words":
             case "keywords":
+                Debug.Log("Searching words");
                 if(data["word"] != null)
                 {
+                    Debug.Log("Finding picture for: " + data["word"].ToString());
                     tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
                 }
                 break;
@@ -733,10 +760,12 @@ public static class DataHelpers
             module = dt.Rows[0];
         }
 
+        /*
         if (module == null)
         {
             Debug.LogError(String.Format("Could not find module for programmename {0} - colour {1}", GameManager.currentProgramme, pipColor));
         }
+        */
         
         return module;
     }
@@ -745,10 +774,12 @@ public static class DataHelpers
     {
         DataRow module = GetModule(pipColor);
 
+        /*
         if (module == null)
         {
             Debug.LogError(String.Format("Could not find module for programmename {0} - colour {1}", GameManager.currentProgramme, pipColor));
         }
+        */
         
         return module != null ? System.Convert.ToInt32(module["id"]) : -1;
     }
@@ -801,5 +832,24 @@ public static class DataHelpers
         string[] orderedPhonemesB = GetOrderedPhonemeStrings(dataB);
 
         return orderedPhonemesA [0] == orderedPhonemesB [0];
+    }
+
+    public static List<DataRow> FindSharedOnsetWords(DataRow data, int numToFind)
+    {
+        HashSet<DataRow> sharedOnsetWords = new HashSet<DataRow>();
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words");
+
+        if (dt.Rows.Count > 0)
+        {
+            numToFind = Mathf.Min(numToFind, dt.Rows.Count);
+
+            for(int i = 0; i < numToFind; ++i)
+            {
+                sharedOnsetWords.Add(dt.Rows[UnityEngine.Random.Range(0, dt.Rows.Count)]);
+            }
+        }
+
+        return sharedOnsetWords.ToList();
     }
 }

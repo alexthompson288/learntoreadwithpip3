@@ -193,6 +193,16 @@ public class GameManager : Singleton<GameManager>
         m_data = newData;
     }
 
+    public void SetData(string dataType, List<DataRow> newDataPool)
+    {
+        m_data.Clear();
+
+        foreach (DataRow row in newDataPool)
+        {
+            m_data[row] = dataType;
+        }
+    }
+
     public void SetTargetData(Dictionary<DataRow, string> newTargetData)
     {
         m_targetData = newTargetData;

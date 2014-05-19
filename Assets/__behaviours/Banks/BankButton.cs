@@ -59,7 +59,10 @@ public class BankButton : MonoBehaviour
 
     public void SetUp(string labelText)
     {
-        m_texture.gameObject.SetActive(false);
+        if (m_texture != null)
+        {
+            m_texture.gameObject.SetActive(false);
+        }
 
         m_labelText = labelText;
         m_label.text = m_labelText.ToUpper();
@@ -68,9 +71,9 @@ public class BankButton : MonoBehaviour
 
         if (GameManager.Instance.dataType == "alphabet")
         {
-            Vector3 labelPos = m_label.transform.localPosition;
-            labelPos.x = 20;
-            m_label.transform.localPosition = labelPos;
+            //Vector3 labelPos = m_label.transform.localPosition;
+            //labelPos.x = 20;
+            //m_label.transform.localPosition = labelPos;
         }
 
         Refresh();
