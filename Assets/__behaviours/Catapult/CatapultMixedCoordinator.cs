@@ -370,9 +370,4 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
 #endif
     }
-
-    void OnGUI()
-    {
-        GUILayout.Label("Score: " + m_score);
-    }
 }

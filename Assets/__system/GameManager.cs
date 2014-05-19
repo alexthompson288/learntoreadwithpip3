@@ -76,6 +76,10 @@ public class GameManager : Singleton<GameManager>
         */
     }
 
+    //Temporary Fix: NewSessionComplete needs to be in db
+    bool m_goToSessionComplete = false;
+
+
     void Reset()
     {
         m_state = State.Sleep;

@@ -77,4 +77,6 @@ NewJoinPairs,
 NewJoinWordPictures,
 NewJoinPairs,
 NewQuizGame,
-NewQuiz
+NewQuiz,
+NewSessionComplete,
+NewSessionComplete
