@@ -43,41 +43,32 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
-        Debug.Log("Num Scenes: " + m_games.Count);
+        Debug.Log("Num Scenes: " + m_gameNames.Count);
 
-        Debug.Log("m_games.Count: " + m_games.Count);
+        Debug.Log("m_gameNames.Count: " + m_gameNames.Count);
 
-        m_currentGame = m_games.Dequeue();
+        m_currentGameName = m_gameNames.Dequeue();
 
-        Debug.Log("currentGame: " + m_currentGame ["name"].ToString());
+        Debug.Log("m_currentGameName: " + m_currentGameName);
 
-        string audioEvent = "NAV_" + m_currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
-        //Debug.Log("audioEvent: " + audioEvent);
+        DataRow currentGame = DataHelpers.FindGame(m_currentGameName);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
-
-        TransitionScreen.Instance.ChangeLevel(GameLinker.Instance.GetSceneName(m_currentGame["name"].ToString()), true);
-        /*
-        try
+        if (currentGame != null)
         {
-            Debug.Log("TRYING");
-            TransitionScreen.Instance.ChangeLevel(m_currentGame["name"].ToString(), true);
+            string audioEvent = "NAV_" + currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
         }
-        catch
+
+        string sceneName = GameLinker.Instance.GetSceneName(m_currentGameName);
+
+        if (!System.String.IsNullOrEmpty(sceneName))
         {
-            Debug.Log("CATCH");
-            try
-            {
-                Debug.Log("TRYING - 2");
-                TransitionScreen.Instance.ChangeLevel(GameLinker.Instance.GetSceneName(m_currentGame["name"].ToString()), true);
-            }
-            catch
-            {
-                Debug.Log("CATCH - 2");
-                CompleteGame();
-            }
+            TransitionScreen.Instance.ChangeLevel(sceneName, true);
+        } 
+        else
+        {
+            CompleteGame();
         }
-        */
     }
 
     void Reset()
@@ -86,9 +77,9 @@ public class GameManager : Singleton<GameManager>
 
         m_data.Clear();
         m_targetData.Clear();
-        m_games.Clear();
+        m_gameNames.Clear();
 
-        m_currentGame = null;
+        m_currentGameName = "";
         m_returnScene = "";
     }
 
@@ -96,9 +87,9 @@ public class GameManager : Singleton<GameManager>
     {
         Debug.Log("GameManager.CompleteGame()");
 
-        Debug.Log(System.String.Format("{0} scenes remaining", m_games.Count));
+        Debug.Log(System.String.Format("{0} scenes remaining", m_gameNames.Count));
 
-        if (m_games.Count == 0)
+        if (m_gameNames.Count == 0)
         {
             string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
 
@@ -139,14 +130,16 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    Queue<DataRow> m_games = new Queue<DataRow>();
-    DataRow m_currentGame;
+    //Queue<DataRow> m_gameNames = new Queue<DataRow>();
+    //DataRow m_currentGame;
+    Queue<string> m_gameNames = new Queue<string>();
+    string m_currentGameName;
 
-    public DataRow currentGame
+    public string currentGameName
     {
         get
         {
-            return m_currentGame;
+            return m_currentGameName;
         }
     }
 
@@ -154,13 +147,26 @@ public class GameManager : Singleton<GameManager>
     {
         foreach(DataRow game in games)
         {
-            m_games.Enqueue(game);
+            m_gameNames.Enqueue(game["name"].ToString());
         }
     }
 
-    public void AddGames(DataRow game)
+    public void AddGame(DataRow game)
     {
-        m_games.Enqueue(game);
+        m_gameNames.Enqueue(game["name"].ToString());
+    }
+
+    public void AddGames(string[] gameNames)
+    {
+        foreach(string gameName in gameNames)
+        {
+            m_gameNames.Enqueue(gameName);
+        }
+    }
+
+    public void AddGame(string gameName)
+    {
+        m_gameNames.Enqueue(gameName);
     }
 
 

@@ -98,7 +98,6 @@ public class StoryMenuCoordinator : MonoBehaviour
                 }
             }
 
-
             m_authorLabel.text = ("by " + m_story ["author"].ToString());
             m_titleLabel.text = m_story ["title"].ToString();
             Debug.Log("width: " + m_titleLabel.font.CalculatePrintedSize(m_titleLabel.text, false, UIFont.SymbolStyle.None).x);
@@ -141,13 +140,11 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnClickReadOrPictures(PipButton button)
     {
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewStories'");
-        
-        if(dt.Rows.Count > 0 && m_story != null)
+        if(m_story != null)
         {
             StoryCoordinator.SetShowWords(button.GetString() == m_readButtonString);
 
-            GameManager.Instance.AddGames(dt.Rows[0]);
+            GameManager.Instance.AddGame("NewStories");
 
             m_isReadingOrPictures = true;
 
@@ -166,18 +163,13 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             if(correctCaptions.Count > 0)
             {
-                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewCorrectCaption'");
+                m_isReadingOrPictures = false;
+                GameManager.Instance.AddGame("NewCorrectCaption");
+                GameManager.Instance.AddData("correctcaptions", correctCaptions);
 
-                if(dt.Rows.Count > 0)
-                {
-                    m_isReadingOrPictures = false;
-                    GameManager.Instance.AddGames(dt.Rows[0]);
-                    GameManager.Instance.AddData("correctcaptions", correctCaptions);
+                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
 
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
-
-                    StartActivity();
-                }
+                StartActivity();
             }
         }
     }
@@ -191,18 +183,13 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             if(quizQuestions.Count > 0)
             {
-                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewQuizGame'");
+                m_isReadingOrPictures = false;
+                GameManager.Instance.AddGame("NewQuizGame");
+                GameManager.Instance.AddData("quizquestions", quizQuestions);
 
-                if(dt.Rows.Count > 0)
-                {
-                    m_isReadingOrPictures = false;
-                    GameManager.Instance.AddGames(dt.Rows[0]);
-                    GameManager.Instance.AddData("quizquestions", quizQuestions);
+                WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
 
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
-
-                    StartActivity();
-                }
+                StartActivity();
             }
         }
     }
@@ -218,13 +205,6 @@ public class StoryMenuCoordinator : MonoBehaviour
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
         GameManager.Instance.AddData("stories", m_story);
-
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_story["id"]));
-        GameManager.Instance.AddData("correctcaptions", DataHelpers.OnlyCorrectCaptions(dt.Rows));
-        GameManager.Instance.AddData("quizquestions", DataHelpers.OnlyQuizQuestions(dt.Rows));
-
-        Debug.Log("correctcaptions: " + DataHelpers.GetCorrectCaptions().Count);
-        Debug.Log("quizquestions: " + DataHelpers.GetQuizQuestions().Count);
 
         GameManager.Instance.StartGames();
     }

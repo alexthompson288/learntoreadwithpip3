@@ -101,7 +101,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         if (game != null)
         {
             Debug.Log("Found game");
-            GameManager.Instance.AddGames(game);
+            GameManager.Instance.AddGame(game);
 
             GameManager.Instance.SetReturnScene("NewScoreDanceScene");
 

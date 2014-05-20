@@ -55,7 +55,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        DataRow game = GameManager.Instance.currentGame;
+        DataRow game = DataHelpers.GetCurrentGame();
         if (game != null)
         {
             string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";

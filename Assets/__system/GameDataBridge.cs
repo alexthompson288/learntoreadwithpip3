@@ -41,7 +41,6 @@ public class GameDataBridge : Singleton<GameDataBridge>
         #if UNITY_IPHONE
         
         Debug.Log("DEVELOPMENT BUILD: " + Debug.isDebugBuild);
-        Debug.Log("UP_TO_DATE_TEST_4");
         
         string apiKey = Debug.isDebugBuild ?  "FV6X7ZZW2B2YVY6BY9RR" : "6Z5K6YT4JSC6KYMD77XQ";
         FlurryBinding.startSession(apiKey);

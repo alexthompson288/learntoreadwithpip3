@@ -24,7 +24,7 @@ public class StartGamesNoData : MonoBehaviour
 
             if(dt.Rows.Count > 0)
             {
-                GameManager.Instance.AddGames(dt.Rows[0]);
+                GameManager.Instance.AddGame(dt.Rows[0]);
             }
         }
 

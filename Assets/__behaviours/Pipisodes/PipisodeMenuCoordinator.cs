@@ -85,15 +85,10 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
         if (quizQuestions.Count > 0)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='NewQuizGame'");
-            
-            if(dt.Rows.Count > 0)
-            {
-                GameManager.Instance.AddData("quizquestions", quizQuestions);
-                GameManager.Instance.AddGames(dt.Rows[0]);
-                GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-                GameManager.Instance.StartGames();
-            }
+            GameManager.Instance.AddGame("NewQuizGame");
+            GameManager.Instance.AddData("quizquestions", quizQuestions);
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+            GameManager.Instance.StartGames();
         }
     }
     

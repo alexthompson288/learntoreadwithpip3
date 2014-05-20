@@ -51,7 +51,7 @@ public class UserInfo : Singleton<UserInfo>
 
         WWWForm form = new WWWForm();
 
-        Debug.Log("Posting user data: " + m_accountUsername);
+        //Debug.Log("Posting user data: " + m_accountUsername);
 
         form.AddField(modelName + "[account_username]", m_accountUsername);
         form.AddField(modelName + "[email]", m_userEmail);
@@ -59,8 +59,6 @@ public class UserInfo : Singleton<UserInfo>
         form.AddField(modelName + "[child_usernames]", CollectionHelpers.ConcatList(m_users.Keys.ToList()));
         form.AddField(modelName + "[platform]", Application.platform.ToString());
         form.AddField(modelName + "[ip_address]", m_ipAddress);
-
-        Debug.Log(form.data.ToString());
 
         WWW www = new WWW(url, form);
 
@@ -134,7 +132,7 @@ public class UserInfo : Singleton<UserInfo>
 
 	void Awake()
 	{	
-        Debug.Log("UserInfo.Awake()");
+        //Debug.Log("UserInfo.Awake()");
 
 #if UNITY_STANDALONE || UNITY_ANDROID
         try
@@ -156,15 +154,15 @@ public class UserInfo : Singleton<UserInfo>
 		}
 #endif
 
-        Debug.Log("UserInfo loading");
+        //Debug.Log("UserInfo loading");
 
 		Load();
 
-        Debug.Log("UserInfo loaded");
+        //Debug.Log("UserInfo loaded");
 
 		if (System.String.IsNullOrEmpty(m_accountUsername))
         {
-            Debug.Log("Creating account user");
+            //Debug.Log("Creating account user");
 
             string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
             dateTimeString = dateTimeString.Replace("/", "_");
@@ -174,7 +172,7 @@ public class UserInfo : Singleton<UserInfo>
 
             m_accountUsername = dateTimeString + rand;
 
-            Debug.Log("accountUsername: " + m_accountUsername);
+            //Debug.Log("accountUsername: " + m_accountUsername);
 
             string newUser = "Pip";
             m_currentUser = newUser;
@@ -184,7 +182,7 @@ public class UserInfo : Singleton<UserInfo>
         }
         else
         {
-            Debug.Log("Already has account_username: " + m_accountUsername);
+            //Debug.Log("Already has account_username: " + m_accountUsername);
         }
 	}
 
@@ -251,8 +249,8 @@ public class UserInfo : Singleton<UserInfo>
 		MemoryStream data = ds.Load();
 		BinaryReader br = new BinaryReader(data);
 
-        Debug.Log("UserInfo.Load()");
-        Debug.Log("data.Length: " + data.Length);
+        //Debug.Log("UserInfo.Load()");
+        //Debug.Log("data.Length: " + data.Length);
 		
 		if (data.Length != 0)
 		{

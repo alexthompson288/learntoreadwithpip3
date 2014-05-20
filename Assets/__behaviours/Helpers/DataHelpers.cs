@@ -836,7 +836,7 @@ public static class DataHelpers
 
     public static string GameOrDefault(string defaultDataType)
     {
-        string gameDataType = GetDataType(GameManager.Instance.currentGame);
+        string gameDataType = GetDataType(GetCurrentGame());
 
         return !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
     }
@@ -879,5 +879,16 @@ public static class DataHelpers
         }
 
         return sharedOnsetWords.ToList();
+    }
+
+    public static DataRow GetCurrentGame()
+    {
+        return FindGame(GameManager.Instance.currentGameName);
+    }
+
+    public static DataRow FindGame(string gameName)
+    {
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='" + gameName + "'");
+        return dt.Rows.Count > 0 ? dt.Rows [0] : null;
     }
 }

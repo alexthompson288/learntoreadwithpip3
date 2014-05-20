@@ -109,6 +109,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         hasSpawnedModuleMap = true;
 
                         // If we have not completed the current session then call the SessionBoard
+                        /*
                         if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionId))
                         {
                             Debug.Log("Session Not Complete");
@@ -127,6 +128,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         {
                             Debug.Log("Session Complete");
                         }
+                        */
                     }
                 }
             } 
@@ -278,6 +280,93 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
+    public void StartGames(int sessionId)
+    {
+        m_sessionId = sessionId;
+
+        EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
+        VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, 0);
+
+        DataTable sectionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + m_sessionId);
+
+        if (sectionsTable.Rows.Count > 0)
+        {
+            foreach(DataRow section in sectionsTable.Rows)
+            {
+                DataRow game = DataHelpers.FindGameForSection(section);
+
+                if(game != null)
+                {
+                    GameManager.Instance.AddGame(game);
+                }
+            }
+
+            GameManager.Instance.AddGame("NewSessionComplete");
+
+            // Set return scene
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+            
+            // Set data
+            int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
+            
+            SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
+            
+            // Phonemes
+            DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                List<DataRow> phonemePool = dt.Rows;
+                
+                if(phonemePool.Count < m_minimumDataCount)
+                {
+                    AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(previousModuleId));
+                }
+                
+                GameManager.Instance.AddData("phonemes", phonemePool);
+                GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
+            }
+            
+            // Words/Keywords
+            dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
+            if(dt.Rows.Count > 0)
+            {
+                // Words
+                List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
+                
+                if(words.Count < m_minimumDataCount)
+                {
+                    AddExtraData(words, DataHelpers.GetModuleWords(previousModuleId));
+                    
+                }
+                
+                GameManager.Instance.AddData("words", words);
+                GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+                
+                
+                // Keywords
+                List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+                
+                if(keywords.Count < m_minimumDataCount)
+                {
+                    AddExtraData(keywords, DataHelpers.GetModuleKeywords(previousModuleId));
+                }
+                
+                GameManager.Instance.AddData("keywords", keywords);
+                GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+            }
+            
+            // Quiz Questions and Captions
+            dt = db.ExecuteQuery("select * from datasentences WHERE programsession_id=" + m_sessionId);
+            
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
+            
+            GameManager.Instance.StartGames();
+        }
+    }
+
     public void StartGame(DataRow section)
     {
         m_sectionId = System.Convert.ToInt32(section ["id"]);
@@ -298,76 +387,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If the player has more than one section remaining in this session, then they will not have completed at the end of the game
             if(VoyageInfo.Instance.GetNumRemainingSections(m_sessionId) > 1)
             {
-                GameManager.Instance.AddGames(game);
+                GameManager.Instance.AddGame(game);
             }
             else
             {
-                GameManager.Instance.AddGames(game);
+                GameManager.Instance.AddGame(game);
+                GameManager.Instance.AddGame("NewSessionComplete");
             }
-            
-            // Set return scene
-            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-            
-            // TODO: Set data type
-            
-            // Set data
-            int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
-
-            SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
-
-            // Phonemes
-            DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
-            if(dt.Rows.Count > 0)
-            {
-                List<DataRow> phonemePool = dt.Rows;
-
-                if(phonemePool.Count < m_minimumDataCount)
-                {
-                    AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(previousModuleId));
-                }
-
-                GameManager.Instance.AddData("phonemes", phonemePool);
-                GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
-            }
-            
-            // Words/Keywords
-            dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
-            if(dt.Rows.Count > 0)
-            {
-                // Words
-                List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
-
-                if(words.Count < m_minimumDataCount)
-                {
-                    AddExtraData(words, DataHelpers.GetModuleWords(previousModuleId));
-
-                }
-
-                GameManager.Instance.AddData("words", words);
-                GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
-
-
-                // Keywords
-                List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
-
-                if(keywords.Count < m_minimumDataCount)
-                {
-                    AddExtraData(keywords, DataHelpers.GetModuleKeywords(previousModuleId));
-                }
-
-                GameManager.Instance.AddData("keywords", keywords);
-                GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
-            }
-
-            // Quiz Questions and Captions
-            dt = db.ExecuteQuery("select * from datasentences WHERE programsession_id=" + m_sessionId);
-           
-            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
-            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
-
-            WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
-            
-            GameManager.Instance.StartGames();
         }
     }
 }
