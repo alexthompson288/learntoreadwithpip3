@@ -49,7 +49,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         Debug.Log("sectionId: " + sectionId);
 
         m_bookmark = new Bookmark(moduleId, sessionId, sectionId);
-        GameManager.Instance.OnComplete += OnGameComplete;
+        GameManager.Instance.OnComplete += OnCompleteGames;
     }
     
     public void DestroyBookmark()
@@ -106,6 +106,8 @@ public class VoyageInfo : Singleton<VoyageInfo>
     }
 
     // Voyage Progress. Saved between app launches
+    HashSet<int> m_completedSessions = new HashSet<int>();
+
     HashSet<int> m_completedSections = new HashSet<int>();
 
     public bool HasCompletedSection(int sectionId)
@@ -115,6 +117,8 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     public bool HasCompletedSession(int sessionId)
     {
+        return m_completedSessions.Contains(sessionId);
+        /*
         bool hasCompleted = true;
 
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId);
@@ -128,6 +132,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         }
 
         return hasCompleted;
+        */
     }
 
     public int GetNumRemainingSections(int sessionId)
@@ -163,15 +168,17 @@ public class VoyageInfo : Singleton<VoyageInfo>
         return sessionsComplete;
     }
 
-    void OnGameComplete()
+    void OnCompleteGames()
     {
-        Debug.Log("VoyageInfo.OnGameComplete");
-        GameManager.Instance.OnComplete -= OnGameComplete;
+        Debug.Log("VoyageInfo.OnCompleteGames");
+        GameManager.Instance.OnComplete -= OnCompleteGames;
         
         if (m_bookmark != null)
         {
-            Debug.Log("Completed section: " + m_bookmark.GetSectionId());
-            m_completedSections.Add(m_bookmark.GetSectionId());
+            //Debug.Log("Completed section: " + m_bookmark.GetSectionId());
+            //m_completedSections.Add(m_bookmark.GetSectionId());
+            Debug.Log("Completed session: " + m_bookmark.GetSessionId());
+            m_completedSessions.Add(m_bookmark.GetSessionId());
         }
         
         Save();
@@ -180,7 +187,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
     void OnGameCancel()
     {
         Debug.Log("VoyageInfo.OnGameCancel");
-        GameManager.Instance.OnComplete -= OnGameComplete;
+        GameManager.Instance.OnComplete -= OnCompleteGames;
         
         m_bookmark = null;
     }
@@ -207,10 +214,10 @@ public class VoyageInfo : Singleton<VoyageInfo>
         
         if (data.Length != 0)
         {
-            int numCompletedSections = br.ReadInt32();
-            for(int i = 0; i < numCompletedSections; ++i)
+            int numCompletedSessions = br.ReadInt32();
+            for(int i = 0; i < numCompletedSessions; ++i)
             {
-                m_completedSections.Add(br.ReadInt32());
+                m_completedSessions.Add(br.ReadInt32());
             }
 
             int numSessionBackgrounds = br.ReadInt32();
@@ -230,10 +237,10 @@ public class VoyageInfo : Singleton<VoyageInfo>
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
 
-        bw.Write(m_completedSections.Count);
-        foreach (int section in m_completedSections)
+        bw.Write(m_completedSessions.Count);
+        foreach (int session in m_completedSessions)
         {
-            bw.Write(section);
+            bw.Write(session);
         }
 
         bw.Write(m_sessionBackgrounds.Count);
