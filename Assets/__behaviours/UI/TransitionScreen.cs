@@ -39,32 +39,22 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        Debug.Log("TransitionScreen.Start() - " + Application.loadedLevelName);
+
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("Name", Application.loadedLevelName);
 		FlurryBinding.logEventWithParameters("NewLevel", ep, true);
 #endif
 
-		//Debug.Log("TransitionScreen.Start()");
-
 		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
-		if (m_isEmptyScene)
-		{
-			Debug.Log("EmptyScene");
-		}
-
-		Resources.UnloadUnusedAssets();
-		GC.Collect();
 
         if (m_isEmptyScene)
         {
-			//Debug.Log("Unloading unused assets");
-            //Resources.UnloadUnusedAssets();
-            //GC.Collect();
             yield return new WaitForSeconds(0.2f);
             if (m_loadingToScene == null)
             {
-                Debug.Log("Moving to scene 0");
+                Debug.Log("Moving to default scene; scene to load was null");
 
 #if UNITY_IPHONE
 				ep = new Dictionary<string, string>();
@@ -74,7 +64,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
                 Application.LoadLevel(0);
             }
-            //else if(m_loadingToScene != "NewVoyage")
 			else
             {
                 Debug.Log("Moving to scene " + m_loadingToScene);
@@ -93,15 +82,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 					yield return null;
 				}
             }
-			/*
-			else
-			{
-				Debug.Log("TEMPORARY TEST");
-				Debug.Log("Don't move to NewVoyage");
-				Debug.Log("Stay in DeliberatelyEmptyScene");
-				Debug.Log("Current Scene: " + Application.loadedLevelName);
-			}
-			*/
             yield break;
         }
 
@@ -146,7 +126,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		m_screenHasExited = true;
 	}
 	
-	void Awake () {
+	void Awake () 
+    {
         ScreenCover.SetActive(true);
         ScreenCover.transform.localPosition = Vector3.zero;
 		if ( SettingsHolder.Instance != null )
@@ -185,13 +166,13 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 	public void ChangeLevel(string level, bool addToStack)
 	{
+        Debug.Log("TransitionScreen.ChangeLevel(" + level + ")");
 		int stackCount = m_backStack.Count;
-		Debug.Log("stack.Count: " + stackCount);
 		
 		if(stackCount > 0)
 		{
-			Debug.Log("stackCount: " + stackCount);
-			Debug.Log("stack.Peek(): " + m_backStack.Peek());
+			//Debug.Log("stackCount: " + stackCount);
+			//Debug.Log("stack.Peek(): " + m_backStack.Peek());
 		}
 		
 		if ( SettingsHolder.Instance != null )
@@ -208,13 +189,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SCENE_CHANGE");
         }
-        
-
 
 		m_currentTextureIndex = UnityEngine.Random.Range(0, m_backgroundTextures.Length);
-		//Debug.Log("Current texture: " + m_currentTextureIndex);
+
 		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
-		//ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[UnityEngine.Random.Range(0, m_backgroundTextures.Length)];
 
 		if(m_transitionSounds.Length > 0)
 		{
@@ -232,8 +210,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		var config=new GoTweenConfig()
 			.vector3Prop( "localPosition", newPos )
 			.setEaseType( GoEaseType.QuadInOut );
-
-		Debug.Log("level: " + level);
 
 		GoTween tween=new GoTween(ScreenCover.transform, 0.8f, config);
         if (addToStack)
@@ -261,12 +237,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		Go.addTween(tween);
 	}
 	
-    //public IEnumerator ChangeLevelDelayed(string level, float delay, bool addToBackStack)
-    //{
-    //    yield return new WaitForSeconds(delay);
-    //    ChangeLevel(level, addToBackStack);
-    //}
-	
 	// Reset the cover to the left
 	void FinishedIntro () 
     {
@@ -277,28 +247,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Reset the cover to the left
 	void LoadNextLevel (string level) 
 	{
-		Debug.Log("Next level: " + level + ". Now loading empty scene");
+		Debug.Log("TransitionScreen.LoadNextLevel(" + level + ") - Now loading empty scene");
         m_loadingToScene = level;
-
-		/*
-		// Manually unload all textures from memory (except for the one currently covering the screen).
-		Texture2D screenTex = ScreenCover.GetComponent<UITexture>().mainTexture as Texture2D;
-		Texture2D[] textures = UnityEngine.Object.FindObjectsOfType<Texture2D>() as Texture2D[];
-		Debug.Log("Found " + textures.Length + " textures");
-		foreach(Texture2D tex in textures)
-		{
-			if(tex != screenTex)
-			{
-				Debug.Log("Destroying");
-				NGUITools.Destroy(tex);
-			}
-			else
-			{
-				Debug.Log("Don't delete! tex is screenTex");
-			}
-		}
-		GC.Collect();
-		*/
 
 		UITexture screenTex = ScreenCover.GetComponent<UITexture>() as UITexture;
 		UITexture[] textures = UnityEngine.Object.FindObjectsOfType<UITexture>() as UITexture[];
@@ -316,24 +266,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 				NGUITools.Destroy(textures[i]);
 			}
 		}
-
-		/*
-		UISprite[] sprites = UnityEngine.Object.FindObjectsOfType<UISprite>() as UISprite[];
-		Debug.Log("There are " + sprites.Length + " sprites");
-		for(int i = 0; i < sprites.Length; ++i)
-		{
-			if(sprites[i].mainTexture != null)
-			{
-				Debug.Log("Unloading sprite");
-				Resources.UnloadAsset(sprites[i].mainTexture);
-			}
-
-			NGUITools.Destroy(sprites[i]);
-		}
-		*/
-
-
-		GC.Collect();
 
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();

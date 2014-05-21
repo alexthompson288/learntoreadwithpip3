@@ -257,9 +257,6 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_MINOR");
         yield return new WaitForSeconds(0.5f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("GOOD_TRY");
-
-        yield return new WaitForSeconds(1.5f);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_BLUE_BUTTONS");
 

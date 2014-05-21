@@ -63,7 +63,7 @@ public class LessonInfo : Singleton<LessonInfo>
 	{
 		m_lessons.Remove(m_currentLesson);
 		m_currentLesson = null;
-		System.GC.Collect();
+		//System.GC.Collect();
 	}
 
 	public void SetCurrentLesson(int i)
