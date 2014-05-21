@@ -273,12 +273,16 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        Application.LoadLevel(m_emptySceneName);
+        Debug.Log("DeliberatelyEmptyScene index: " + Application.levelCount - 1);
+
+        Application.LoadLevel(Application.levelCount - 1);
+        //Application.LoadLevel(m_emptySceneName);
 	}
 
     // Reset the cover to the left
     void LoadStartLevel()
     {
+        Debug.Log("TransitionScreen.LoadStartLevel()");
         //m_loadingToScene = null;
 		//m_loadingToScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
 		m_loadingToScene = "NewVoyage";
@@ -289,7 +293,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        Application.LoadLevel(m_emptySceneName);
+        Debug.Log("DeliberatelyEmptyScene index: " + Application.levelCount - 1);
+
+        Application.LoadLevel(Application.levelCount - 1);
+        //Application.LoadLevel(m_emptySceneName);
     }	
 	
 	
