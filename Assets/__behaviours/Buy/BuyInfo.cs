@@ -177,7 +177,7 @@ public class BuyInfo : Singleton<BuyInfo>
 #if UNITY_IPHONE
         Dictionary<string, string> ep = new Dictionary<string, string>();
         ep.Add("BookID: ", bookId.ToString());
-        FlurryBinding.logEventWithParameters("BookPurchased", ep, false);
+        //FlurryBinding.logEventWithParameters("BookPurchased", ep, false);
 #endif
         
         m_boughtBooks.Add(bookId);
@@ -187,7 +187,7 @@ public class BuyInfo : Singleton<BuyInfo>
     public void SetAllBooksPurchased()
     {
 #if UNITY_IPHONE
-        FlurryBinding.logEvent("AllBooksPurchased", false);
+        //FlurryBinding.logEvent("AllBooksPurchased", false);
 #endif
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
@@ -258,7 +258,7 @@ public class BuyInfo : Singleton<BuyInfo>
 #if UNITY_IPHONE
         Dictionary<string, string> ep = new Dictionary<string, string>();
         ep.Add("MapID: ", mapId.ToString());
-        FlurryBinding.logEventWithParameters("MapPurchased", ep, false);
+        //FlurryBinding.logEventWithParameters("MapPurchased", ep, false);
 #endif
         
         Debug.Log(String.Format("SetMapPurchased({0})", mapId));
@@ -269,7 +269,7 @@ public class BuyInfo : Singleton<BuyInfo>
     public void SetAllMapsPurchased()
     {
 #if UNITY_IPHONE
-        FlurryBinding.logEvent("AllMapsPurchased", false);
+        //FlurryBinding.logEvent("AllMapsPurchased", false);
 #endif
         
         for(int i = 0; i < BuyManager.Instance.numMaps; ++i)
@@ -306,7 +306,7 @@ public class BuyInfo : Singleton<BuyInfo>
     public void SetAllGamesPurchased()
     {
 #if UNITY_IPHONE
-        FlurryBinding.logEvent("AllGamesPurchased", false);
+        //FlurryBinding.logEvent("AllGamesPurchased", false);
 #endif
         
         m_boughtGames = true;

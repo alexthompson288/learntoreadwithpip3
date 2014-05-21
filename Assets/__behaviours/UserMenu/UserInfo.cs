@@ -225,7 +225,7 @@ public class UserInfo : Singleton<UserInfo>
 		eventParameters.Add("Image", imageName);
 
 #if UNITY_IPHONE
-		FlurryBinding.logEventWithParameters("New User", eventParameters, false);
+		//FlurryBinding.logEventWithParameters("New User", eventParameters, false);
 #endif
 
 		m_users[user] = imageName;

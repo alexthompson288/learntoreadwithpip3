@@ -91,7 +91,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 //		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
 //		ep.Add("Title", bookData["title"].ToString());
 //		ep.Add("isAlreadyBought", BuyInfo.Instance.IsBookBought(Convert.ToInt32(bookData["id"])).ToString());
-//		FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
+//		//FlurryBinding.logEventWithParameters("Buy Books Panel", ep, false);
 #endif
 
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");

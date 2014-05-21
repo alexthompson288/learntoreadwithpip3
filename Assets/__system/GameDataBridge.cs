@@ -37,17 +37,17 @@ public class GameDataBridge : Singleton<GameDataBridge>
     void Awake()
     {
         //#if UNITY_EDITOR
-        //FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
+        ////FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
         #if UNITY_IPHONE
         
         Debug.Log("DEVELOPMENT BUILD: " + Debug.isDebugBuild);
         
         string apiKey = Debug.isDebugBuild ?  "FV6X7ZZW2B2YVY6BY9RR" : "6Z5K6YT4JSC6KYMD77XQ";
-        FlurryBinding.startSession(apiKey);
+        //FlurryBinding.startSession(apiKey);
         
-        //FlurryBinding.startSession("6Z5K6YT4JSC6KYMD77XQ");
+        ////FlurryBinding.startSession("6Z5K6YT4JSC6KYMD77XQ");
         //#elif UNITY_ANDROID
-        //FlurryBinding.startSession("8QN3YHQ67VWSRRG53WKX");
+        ////FlurryBinding.startSession("8QN3YHQ67VWSRRG53WKX");
         #endif
     }
     

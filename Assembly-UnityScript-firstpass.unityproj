@@ -95,7 +95,6 @@
      <None Include="Assets\HOTween\readme.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\VignetteShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
-     <None Include="Assets\Plugins\InAppBillingAndroid\Manifest.xml" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\MotionBlur.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed) (AlphaClip) .shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBloom.shader" />
@@ -182,7 +181,6 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SimpleClear.shader" />
      <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGB.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (SoftClip).shader" />
-     <None Include="Assets\Editor\Flurry\SDK\Flurry-LICENSE.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />
      <None Include="Assets\MobileMovieTexture\Shaders\YCrCbtoRGBSplitAlpha.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAAPreset2.shader" />
@@ -200,9 +198,6 @@
  </Reference>
  <Reference Include="Assets\Plugins\Mono.Data.SqliteClient">
  <HintPath>Assets\Plugins\Mono.Data.SqliteClient.dll</HintPath>
- </Reference>
- <Reference Include="Assets\Plugins\P31RestKit">
- <HintPath>Assets\Plugins\P31RestKit.dll</HintPath>
  </Reference>
  <Reference Include="Assets\Plugins\System.Configuration">
  <HintPath>Assets\Plugins\System.Configuration.dll</HintPath>

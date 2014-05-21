@@ -31,7 +31,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		AddMissingData("stories", "setstories", "stories");
 
 #if UNITY_IPHONE
-		FlurryBinding.logEventWithParameters("SaveLesson", m_eventParameters, false);
+		//FlurryBinding.logEventWithParameters("SaveLesson", m_eventParameters, false);
 #endif
 		
 		LessonInfo.Instance.SaveLessons();
@@ -112,7 +112,7 @@ public class SaveCurrentLesson : MonoBehaviour
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("LessonName", LessonInfo.Instance.GetName());
-		FlurryBinding.logEvent("NewLesson", false);
+		//FlurryBinding.logEvent("NewLesson", false);
 
 		Dictionary<string, string> gameNamesDictionary = new Dictionary<string, string>();
 		List<string> gameNamesList = LessonInfo.Instance.GetGames();
@@ -122,7 +122,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			string s2 = (i + 1) < gameNamesList.Count ? gameNamesList[i + 1] : "DefaultPastIndex";
 		}
 
-		FlurryBinding.logEventWithParameters("Lesson games", gameNamesDictionary, false);
+		//FlurryBinding.logEventWithParameters("Lesson games", gameNamesDictionary, false);
 #endif
 
 		AddMissingData("phonemes", "setphonemes", "phonemes");
@@ -140,7 +140,7 @@ public class SaveCurrentLesson : MonoBehaviour
 		if(data.Count == 0)
 		{
 #if UNITY_IPHONE
-			FlurryBinding.logEvent("No lesson data for " + dataType, false);
+			//FlurryBinding.logEvent("No lesson data for " + dataType, false);
 #endif
 
 			Debug.Log("Adding: " + columnName.Replace("set", ""));
@@ -198,7 +198,7 @@ public class SaveCurrentLesson : MonoBehaviour
 				string s2 = (i + 1) < data.Count ? data[i + 1][attribute].ToString() : "DefaultPastIndex";
 			}
 
-			FlurryBinding.logEventWithParameters("Lesson data for " + dataType, dataDictionary, false);
+			//FlurryBinding.logEventWithParameters("Lesson data for " + dataType, dataDictionary, false);
 #endif
 		}
 	}

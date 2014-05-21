@@ -17,10 +17,10 @@ public class RestorePurchases : Singleton<RestorePurchases>
 
 	void OnClick()
 	{
-		StartCoroutine(BuyManager.Instance.RestorePurchases(m_restoreDuration));
+		//StartCoroutine(BuyManager.Instance.RestorePurchases(m_restoreDuration));
 
-		m_restoreDisplayParent.SetActive(true);
-		StartCoroutine(WaitForRestore(m_restoreDuration));
+		//m_restoreDisplayParent.SetActive(true);
+		//StartCoroutine(WaitForRestore(m_restoreDuration));
 	}
 
 	IEnumerator WaitForRestore(float timeLeft)

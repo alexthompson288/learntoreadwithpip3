@@ -132,7 +132,7 @@ public class BuyManager : Singleton<BuyManager>
 		
 		if(isCorrect)
 		{
-			StartCoroutine(AttemptPurchase());
+			//StartCoroutine(AttemptPurchase());
 		}
 	}
 
@@ -141,8 +141,12 @@ public class BuyManager : Singleton<BuyManager>
 
 
 #if UNITY_IPHONE
+
+    /*
     IEnumerator Start()
     {
+        yield return null;
+
         if(m_logProductRequests)
             Debug.Log("PRODUCTLIST: Waiting for db");
         
@@ -173,6 +177,7 @@ public class BuyManager : Singleton<BuyManager>
         
         if(m_logProductRequests)
             Debug.Log("PRODUCTLIST: Finished");
+
     }
 
     void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
@@ -286,6 +291,7 @@ public class BuyManager : Singleton<BuyManager>
         
         UnlockProduct(obj.productIdentifier);
     }
+    */
 #else
     IEnumerator Start()
     {

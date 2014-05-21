@@ -14,11 +14,11 @@ public class RetryButton : MonoBehaviour
         else
         {
 #if UNITY_IPHONE
-			FlurryBinding.logEvent("Retry game", false);
+			//FlurryBinding.logEvent("Retry game", false);
 
 			System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
 			ep.Add("Name", Application.loadedLevelName);
-			FlurryBinding.endTimedEvent("NewLevel", ep);
+			//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
             Application.LoadLevel(scene);

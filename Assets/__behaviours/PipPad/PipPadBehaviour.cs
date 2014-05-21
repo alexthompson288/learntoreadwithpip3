@@ -117,7 +117,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("Word", word);
-		FlurryBinding.logEventWithParameters("PipPad", ep, false);
+		//FlurryBinding.logEventWithParameters("PipPad", ep, false);
 #endif
 
 		// EARLY EXIT

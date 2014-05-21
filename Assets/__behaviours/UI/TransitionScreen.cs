@@ -44,7 +44,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("Name", Application.loadedLevelName);
-		FlurryBinding.logEventWithParameters("NewLevel", ep, true);
+		//FlurryBinding.logEventWithParameters("NewLevel", ep, true);
 #endif
 
 		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
@@ -59,7 +59,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #if UNITY_IPHONE
 				ep = new Dictionary<string, string>();
 				ep.Add("Name", Application.loadedLevelName);
-				FlurryBinding.endTimedEvent("NewLevel", ep);
+				//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
                 Application.LoadLevel(0);
@@ -71,7 +71,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #if UNITY_IPHONE
 				ep = new Dictionary<string, string>();
 				ep.Add("Name", Application.loadedLevelName);
-				FlurryBinding.endTimedEvent("NewLevel", ep);
+				//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
                 Application.LoadLevel(m_loadingToScene);
@@ -270,7 +270,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("Name", Application.loadedLevelName);
-		FlurryBinding.endTimedEvent("NewLevel", ep);
+		//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
         int deliberatelyEmptySceneIndex = Application.levelCount - 1;
@@ -291,7 +291,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
 		ep.Add("Name", Application.loadedLevelName);
-		FlurryBinding.endTimedEvent("NewLevel", ep);
+		//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
         int deliberatelyEmptySceneIndex = Application.levelCount - 1;

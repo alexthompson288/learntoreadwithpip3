@@ -96,6 +96,7 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
         m_grid.Reposition();
 	}
 
+    /*
 	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
 	{
 		Debug.Log("PRODUCTLIST: Received " + productList.Count);
@@ -109,6 +110,7 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 		
 		m_productListResolved = true;
 	}
+ */   
 
 	public bool IsBookUnlocked(int bookId)
 	{

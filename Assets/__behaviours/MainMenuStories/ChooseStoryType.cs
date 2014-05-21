@@ -30,7 +30,7 @@ public class ChooseStoryType : MonoBehaviour
         #if UNITY_IPHONE
         //      System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
         //      ep.Add("StoryType", m_storyType);
-        //      FlurryBinding.logEventWithParameters("ChooseStoryType", ep, false);
+        //      //FlurryBinding.logEventWithParameters("ChooseStoryType", ep, false);
         #endif
 
         TransitionScreen.Instance.ChangeLevel("NewStoryBrowser", true);
