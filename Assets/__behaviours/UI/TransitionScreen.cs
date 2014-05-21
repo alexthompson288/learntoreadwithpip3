@@ -273,9 +273,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        Debug.Log("DeliberatelyEmptyScene index: " + (Application.levelCount - 1));
+        int deliberatelyEmptySceneIndex = Application.levelCount - 1;
+        Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
 
-        Application.LoadLevel(Application.levelCount - 1);
+        Application.LoadLevel(deliberatelyEmptySceneIndex);
         //Application.LoadLevel(m_emptySceneName);
 	}
 
@@ -293,9 +294,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        Debug.Log("DeliberatelyEmptyScene index: " + (Application.levelCount - 1));
-
-        Application.LoadLevel(Application.levelCount - 1);
+        int deliberatelyEmptySceneIndex = Application.levelCount - 1;
+        Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        
+        Application.LoadLevel(deliberatelyEmptySceneIndex);
         //Application.LoadLevel(m_emptySceneName);
     }	
 	
