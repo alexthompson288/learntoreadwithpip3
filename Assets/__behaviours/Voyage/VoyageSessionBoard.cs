@@ -14,6 +14,8 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
     [SerializeField]
     private float m_tweenDuration;
     [SerializeField]
+    private Transform m_gameButtonParent;
+    [SerializeField]
     private PipButton m_gameButton;
     [SerializeField]
     private ClickEvent m_pipisodeButton;
@@ -96,8 +98,37 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         }
         */
 
-        m_pipisodeButton.gameObject.SetActive(m_session["pipisode_id"] != null && Convert.ToInt32(m_session["pipisode_id"]) > 0);
-        m_storyButton.gameObject.SetActive(m_session["story_id"] != null && Convert.ToInt32(m_session["story_id"]) > 0);
+        bool foundPipisode = m_session ["pipisode_id"] != null && Convert.ToInt32(m_session ["pipisode_id"]) > 0;
+        bool foundStory = m_session ["story_id"] != null && Convert.ToInt32(m_session ["story_id"]) > 0;
+
+        m_pipisodeButton.gameObject.SetActive(foundPipisode);
+        m_storyButton.gameObject.SetActive(foundStory);
+
+        int numButtons = 1;
+        numButtons += foundPipisode ? 1 : 0;
+        numButtons += foundStory ? 1 : 0;
+
+        Debug.Log("Num Buttons: " + numButtons);
+
+        float horizontalOffset = 255;
+
+        switch (numButtons)
+        {
+            case 1:
+                m_gameButtonParent.localPosition = Vector3.zero;
+                break;
+            case 2:
+                m_gameButtonParent.localPosition = new Vector3(-horizontalOffset / 2, 0, 0);
+
+                Transform activeButton = foundPipisode ? m_pipisodeButton.transform : m_storyButton.transform;
+                activeButton.localPosition = new Vector3(horizontalOffset / 2, 0, 0);
+                break;
+            case 3:
+                m_gameButtonParent.localPosition = new Vector3(-horizontalOffset, 0, 0);
+                m_pipisodeButton.transform.localPosition = Vector3.zero;
+                m_storyButton.transform.localPosition = new Vector3(horizontalOffset, 0, 0);
+                break;
+        }
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
         Hashtable tweenArgs = new Hashtable();
