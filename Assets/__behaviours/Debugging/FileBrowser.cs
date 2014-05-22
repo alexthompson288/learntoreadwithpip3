@@ -4,16 +4,16 @@ using System.IO;
 
 public class FileBrowser : MonoBehaviour 
 {
-    public void LogDataPath()
-    {
-        Debug.Log("LOG DATAPATH");
-        ProcessFolder(Application.dataPath);
-    }
-
     public void LogPersistentDataPath()
     {
         Debug.Log("LOG PERSISTENT DATAPATH");
         ProcessFolder(Application.persistentDataPath);
+    }
+
+    public void LogDataPath()
+    {
+        Debug.Log("LOG DATAPATH");
+        ProcessFolder(Application.dataPath);
     }
 
     void ProcessFolder(string f) 
