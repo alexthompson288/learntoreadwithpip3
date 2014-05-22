@@ -273,11 +273,11 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
+        //Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        //Application.LoadLevel(deliberatelyEmptySceneIndex);
 
-        Application.LoadLevel(deliberatelyEmptySceneIndex);
-        //Application.LoadLevel(m_emptySceneName);
+        Application.LoadLevel(m_emptySceneName);
 	}
 
     // Reset the cover to the left
@@ -294,11 +294,11 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		//FlurryBinding.endTimedEvent("NewLevel", ep);
 #endif
 
-        int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
-        
-        Application.LoadLevel(deliberatelyEmptySceneIndex);
-        //Application.LoadLevel(m_emptySceneName);
+        //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
+        //Debug.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        //Application.LoadLevel(deliberatelyEmptySceneIndex);
+
+        Application.LoadLevel(m_emptySceneName);
     }	
 	
 	
