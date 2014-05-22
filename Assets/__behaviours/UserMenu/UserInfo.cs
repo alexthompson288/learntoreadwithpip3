@@ -62,7 +62,7 @@ public class UserInfo : Singleton<UserInfo>
 
         WWW www = new WWW(url, form);
 
-        UserStats.Instance.WaitForRequest("User", www);
+        //UserStats.Instance.WaitForRequest("User", www);
     }
 
     /*
@@ -130,6 +130,7 @@ public class UserInfo : Singleton<UserInfo>
 
     bool m_waitForIpAddress = false;
 
+    /*
 	void Awake()
 	{	
         //Debug.Log("UserInfo.Awake()");
@@ -195,6 +196,7 @@ public class UserInfo : Singleton<UserInfo>
 
         PostData();
     }
+    */
 
 	public string GetCurrentUser ()
 	{

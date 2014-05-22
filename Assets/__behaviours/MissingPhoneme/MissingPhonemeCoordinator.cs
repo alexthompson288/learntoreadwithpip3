@@ -174,7 +174,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		m_currentWordData = m_wordPool[Random.Range(0, m_wordPool.Count)];
 		string currentWord = m_currentWordData["word"].ToString();
 
-        UserStats.Activity.AddWord(m_currentWordData);
+        //UserStats.Activity.AddWord(m_currentWordData);
 		
 		Debug.Log("currentWord: " + currentWord);
 
@@ -261,7 +261,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
         if (dt.Rows.Count > 0)
         {
             m_currentPhonemeData = dt.Rows[0];
-            UserStats.Activity.AddPhoneme(m_currentPhonemeData);
+            //UserStats.Activity.AddPhoneme(m_currentPhonemeData);
         }
 
         // TODO: Test that these SpellingPadBehaviour calls work
@@ -329,7 +329,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 	
 	void OnRelease(DraggableLabel currentDraggable)
 	{
-        UserStats.Activity.IncrementNumAnswers();
+        //UserStats.Activity.IncrementNumAnswers();
 
 		SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.GetText(), currentDraggable.collider);
 		
@@ -352,8 +352,8 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		}
 		else
 		{
-            UserStats.Activity.AddIncorrectPhoneme(m_currentPhonemeData);
-            UserStats.Activity.AddIncorrectWord(m_currentWordData);
+            //UserStats.Activity.AddIncorrectPhoneme(m_currentPhonemeData);
+            //UserStats.Activity.AddIncorrectWord(m_currentWordData);
 
 			currentDraggable.TweenToStartPos();
 			

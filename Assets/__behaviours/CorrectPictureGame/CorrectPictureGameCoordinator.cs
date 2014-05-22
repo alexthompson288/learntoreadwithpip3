@@ -126,7 +126,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
         if (dt.Rows.Count > 0)
         {
             m_currentWordData = dt.Rows[0];
-            UserStats.Activity.AddWord(m_currentWordData);
+            //UserStats.Activity.AddWord(m_currentWordData);
         }
 
 			Debug.Log("Found target text");
@@ -231,7 +231,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)
     {
-        UserStats.Activity.IncrementNumAnswers();
+        //UserStats.Activity.IncrementNumAnswers();
 
         if (index == m_correctIndex)
         {
@@ -242,7 +242,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
         {
             if(m_currentWordData != null)
             {
-                UserStats.Activity.AddIncorrectWord(m_currentWordData);
+                //UserStats.Activity.AddIncorrectWord(m_currentWordData);
             }
 
             m_gotIncorrect = true;

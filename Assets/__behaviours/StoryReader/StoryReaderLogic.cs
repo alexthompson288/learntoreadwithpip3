@@ -75,7 +75,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
             m_storyId = System.Convert.ToInt32(story["id"]);
         }
 
-		UserStats.Activity.SetStoryId (m_storyId);
+		//UserStats.Activity.SetStoryId (m_storyId);
 
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
 

@@ -24,9 +24,10 @@ namespace Wingrove
             } 
             else
             {
-                Debug.Log("PREFAB MISSING: " + m_prefabName);
+                bool alreadyInstantiated = GameObject.Find(m_prefabName) != null;
+                Debug.Log("PREFAB MISSING: " + m_prefabName + " - alreadyInstantiated: " + alreadyInstantiated);
 
-                if(m_prefabName == "System")
+                if(!alreadyInstantiated && m_fileBrowser != null && m_prefabName == "System")
                 {
                     m_fileBrowser.LogDataPath();
                 }
