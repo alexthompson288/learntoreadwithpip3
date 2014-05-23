@@ -22,6 +22,8 @@ public class VoyageMap : MonoBehaviour
     private UIGrid m_sessionButtonGrid;
     [SerializeField]
     private SimpleSpriteAnim[] m_delayedSpriteAnims;
+    [SerializeField]
+    private AudioSource m_locationNameAudioSource;
 
     // We set the color in the editor instead of the moduleId. This is because of human error: When creating a new map, it is easier to select the correct color from a dropdown menu than to enter the correct moduleId from a wide array of options
 
@@ -43,6 +45,8 @@ public class VoyageMap : MonoBehaviour
 
     public IEnumerator Start()
     {
+        m_locationNameAudioSource.Play();
+
         StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_worldMapButton.OnSingleClick += OnClickWorldMapButton;

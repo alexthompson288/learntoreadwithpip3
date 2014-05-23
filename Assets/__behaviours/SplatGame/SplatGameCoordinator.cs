@@ -33,6 +33,14 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     private TweenOnOffBehaviour[] m_selectSkinButtons;
 	[SerializeField]
 	private ChangeableBennyAudio m_bennyTheBook;
+    [SerializeField]
+    private AudioClip m_chooseChicken;
+    [SerializeField]
+    private AudioClip m_chooseFirefly;
+    [SerializeField]
+    private AudioClip m_chooseMushroom;
+    [SerializeField]
+    private AudioClip m_chooseNut;
 	
 	string m_splatSound;
 	
@@ -110,22 +118,27 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 		switch(skinIndex)
 		{
 		case 0:
-			WingroveAudio.WingroveRoot.Instance.PostEvent("CHOOSE_CHICKEN");
+            m_audioSource.clip = m_chooseChicken;
 			m_splatSound = "SPLAT_CHICKEN";
 			break;
 		case 1:
-			WingroveAudio.WingroveRoot.Instance.PostEvent("CHOOSE_NUT");
+            m_audioSource.clip = m_chooseNut;
 			m_splatSound = "SPLAT_NUT";
 			break;
 		case 2:
-			WingroveAudio.WingroveRoot.Instance.PostEvent("CHOOSE_MUSHROOM");
-			m_splatSound = "SPLAT_MUSHROOM";
+            m_audioSource.clip = m_chooseMushroom;
+            m_splatSound = "SPLAT_MUSHROOM";
 			break;
 		case 3:
-			WingroveAudio.WingroveRoot.Instance.PostEvent("CHOOSE_FIREFLY");
-			m_splatSound = "SPLAT_FIREFLY";
+            m_audioSource.clip = m_chooseFirefly;
+            m_splatSound = "SPLAT_FIREFLY";
 			break;
 		}
+
+        if (m_audioSource.clip != null)
+        {
+            m_audioSource.Play();
+        }
         
         StartCoroutine(StartGame());
     }
@@ -135,10 +148,6 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 		if(m_lettersPool.Count > 0)
 		{
 			yield return new WaitForSeconds(1.5f);
-			
-			WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_INSTRUCTION");
-			
-			yield return new WaitForSeconds(3f);
 			
 			StartCoroutine(SpawnQuestion());
 		}

@@ -11,6 +11,11 @@ public class ScoreScreen : MonoBehaviour {
     [SerializeField]
     private string[] m_videoFilenames;
 
+    [SerializeField]
+    private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip[] m_audioClips;
+
 	// Use this for initialization
 	IEnumerator Start () 
     {
@@ -40,8 +45,13 @@ public class ScoreScreen : MonoBehaviour {
 
         if (SessionInformation.Instance.GetNumPlayers() == 2)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent
-                ("PLAYER_" + SessionInformation.Instance.GetPlayerIndexForPlayer(winningIndex) + "_WINS");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent
+                //("PLAYER_" + SessionInformation.Instance.GetPlayerIndexForPlayer(winningIndex) + "_WINS");
+            m_audioSource.clip = m_audioClips[0];
+            if(m_audioSource.clip != null)
+            {
+                m_audioSource.Play();
+            }
         }
         else
         {

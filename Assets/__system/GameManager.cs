@@ -53,10 +53,11 @@ public class GameManager : Singleton<GameManager>
 
         DataRow currentGame = DataHelpers.FindGame(m_currentGameName);
 
-        if (currentGame != null)
+        if (currentGame != null && currentGame["labeltext"] != null)
         {
-            string audioEvent = "NAV_" + currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
-            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+            //string audioEvent = "NAV_" + currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+            ResourcesAudio.Instance.PlayFromResources(currentGame["labeltext"].ToString());
         }
 
         string sceneName = GameLinker.Instance.GetSceneName(m_currentGameName);

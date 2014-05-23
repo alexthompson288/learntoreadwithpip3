@@ -27,6 +27,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     private GameObject m_worldMap;
     [SerializeField]
     private int m_horizontalMapDistance = 1024;
+    [SerializeField]
+    private AudioSource m_welcomeVocalSource;
 
 #if UNITY_EDITOR
     [SerializeField]
@@ -145,8 +147,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         yield return new WaitForSeconds(0.5f);
 
-        Debug.Log("Posting audio");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_WELCOME_TIMBLE_TOMBLE");
+        m_welcomeVocalSource.Play();
     }
 
     void TweenCamera(Vector3 newPosition)

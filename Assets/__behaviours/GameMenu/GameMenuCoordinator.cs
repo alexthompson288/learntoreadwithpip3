@@ -25,6 +25,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	private GameObject m_chooseGamePrefab;
 	[SerializeField]
 	private UIGrid m_gameGrid;
+    [SerializeField]
+    private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip m_onePlayerAudio;
+    [SerializeField]
+    private AudioClip m_twoPlayerAudio;
 	
 	GameObject m_currentGameMenu = null;
 
@@ -47,8 +53,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         {
             m_numPlayerButtons[i].Unpressed += OnChooseNumPlayers;
 
-            string buttonAudioEvent = i == 0 ? "NAV_ONE_PLAYER" : "NAV_TWO_PLAYER";
-            m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
+            //string buttonAudioEvent = i == 0 ? "NAV_ONE_PLAYER" : "NAV_TWO_PLAYER";
+            //m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
         }
 
         foreach (PipButton button in m_colorButtons)
@@ -69,6 +75,13 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         int numPlayers = System.Array.IndexOf(m_numPlayerButtons, button) + 1;
         SessionInformation.Instance.SetNumPlayers(numPlayers);
+
+        AudioClip clip = numPlayers == 1 ? m_onePlayerAudio : m_twoPlayerAudio;
+        if (clip != null)
+        {
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
+        }
 
         m_isTwoPlayer = numPlayers == 2;
 
