@@ -120,7 +120,7 @@ public class JoinableLineDraw : LineDraw
     public IEnumerator DestroyJoinable()
     {
         iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
         yield return new WaitForSeconds(0.9f);
         Destroy(gameObject);
     }

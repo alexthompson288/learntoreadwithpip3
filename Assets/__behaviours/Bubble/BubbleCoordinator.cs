@@ -121,7 +121,7 @@ public class BubbleCoordinator : MonoBehaviour
 
 			yield return new WaitForSeconds(0.5f);
 
-			WingroveAudio.WingroveRoot.Instance.PostEvent("READY_STEADY_GO");
+			WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
 
 			yield return new WaitForSeconds(2f);
 
@@ -298,8 +298,7 @@ public class BubbleCoordinator : MonoBehaviour
 				
 				if(Random.Range(0,3) == 0) // 1/3 probability to play a burp
 				{
-					string burp = Random.Range(0,2) == 0 ? "TROLL_BURP_1" : "TROLL_BURP_2";
-					WingroveAudio.WingroveRoot.Instance.PostEvent(burp);
+					WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP_RANDOM");
 				}
 
 				if(m_dataType == "words" || m_dataType == "keywords")

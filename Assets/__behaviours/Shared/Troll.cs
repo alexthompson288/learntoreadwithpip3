@@ -65,12 +65,12 @@ public class Troll : MonoBehaviour
 
 		yield return new WaitForSeconds(0.25f);
 
-		WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_RANDOM_BURP");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP_RANDOM");
 	}
 
 	public void Fart ()
 	{
-		WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_RANDOM_FART");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_FART_RANDOM");
 	}
 
 	IEnumerator RandomFart()

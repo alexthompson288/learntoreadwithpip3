@@ -105,7 +105,7 @@ public class SplattableRatKeyword : MonoBehaviour {
     {     
 		yield return new WaitForSeconds(m_splatDuration);
 		WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_SQUEAL");
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 		iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
 		yield return new WaitForSeconds(1.0f);
 		ResetSplattable();
@@ -133,7 +133,7 @@ public class SplattableRatKeyword : MonoBehaviour {
 		{
 			ChangeLetter();
 			rigidbody.AddForce(-rigidbody.velocity + transform.up * Random.Range(m_minSpeed, m_maxSpeed), ForceMode.Impulse);
-			WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+			WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 		}
 	}
 }

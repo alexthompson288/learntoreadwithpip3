@@ -70,7 +70,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 				
 
 		yield return new WaitForSeconds(0.5f);
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SELECT_CHARACTER");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
 		
 		m_percentageProbabilityLetterIsTarget = Mathf.Clamp(m_percentageProbabilityLetterIsTarget, 0, 100);
 		
@@ -201,7 +201,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			m_gamePlayers[index].HideLargeBlackboard();
 		}
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("READY_STEADY_GO");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
 
         yield return new WaitForSeconds(1.0f);
 		

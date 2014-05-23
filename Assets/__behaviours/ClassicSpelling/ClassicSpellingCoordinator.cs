@@ -172,7 +172,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         m_correctLetters = 0;
         m_wrongAnswers = 0;
         
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
         
         yield return new WaitForSeconds(0.5f);
         

@@ -61,12 +61,12 @@ public class PopTarget : Target
     {
         yield return new WaitForSeconds(initialDelay);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
         m_tweenBehaviour.On();
 
         yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDuration() + Random.Range(m_durationOn.x, m_durationOn.y));
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
         m_tweenBehaviour.Off();
 
         yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff() + Random.Range(m_durationOff.x, m_durationOff.y));

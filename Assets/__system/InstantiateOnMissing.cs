@@ -6,10 +6,6 @@ namespace Wingrove
     public class InstantiateOnMissing : MonoBehaviour
     {
         [SerializeField]
-        private FileBrowser m_fileBrowser; // TODO: Delete m_fileBrowser. This is used only for logging in XCode if the prefab is null
-        [SerializeField]
-        private string m_prefabName; // TODO: Delete m_prefabName. This is used only for logging in XCode if the prefab is null
-        [SerializeField]
         private GameObject m_prefabToInstantiate;
 
         void Awake()
@@ -22,16 +18,6 @@ namespace Wingrove
                     newInstance.name = m_prefabToInstantiate.name;
                 }
             } 
-            else
-            {
-                bool alreadyInstantiated = GameObject.Find(m_prefabName) != null;
-                Debug.Log("PREFAB MISSING: " + m_prefabName + " - alreadyInstantiated: " + alreadyInstantiated);
-
-                if(!alreadyInstantiated && m_fileBrowser != null && m_prefabName == "System")
-                {
-                    m_fileBrowser.LogDataPath();
-                }
-            }
         }
     }
 

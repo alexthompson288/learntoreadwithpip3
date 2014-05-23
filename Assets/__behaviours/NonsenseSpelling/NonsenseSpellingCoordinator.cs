@@ -160,7 +160,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		}
 		m_draggables.Clear();
 
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
 		yield return new WaitForSeconds(0.5f);
 		

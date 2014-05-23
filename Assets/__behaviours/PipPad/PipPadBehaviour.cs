@@ -448,7 +448,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			StopAllCoroutines();
 			m_pipWordNotFound.Off();
 			m_multipleBlackboardMode = false;
-			WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_CLOSE");
+			WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_DISAPPEAR");
 			iTween.Stop(m_mainHierarchyTransform.gameObject);
 			iTween.MoveTo(m_mainHierarchyTransform.gameObject, m_offPosition, 1.0f);
 			m_imageBlackboard.Hide();

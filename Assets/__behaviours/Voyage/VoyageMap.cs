@@ -115,7 +115,7 @@ public class VoyageMap : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
     }
 
 	void OnClickWorldMapButton(ClickEvent click)

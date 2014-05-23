@@ -65,7 +65,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 	{
 		Debug.Log("Trumpet()");
 		m_trumpetParent.SetActive(true);
-		WingroveAudio.WingroveRoot.Instance.PostEvent("TRUMPET_1_QUIET");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("TRUMPET_1");
 
 		foreach(TweenOnOffBehaviour trumpet in m_trumpets)
 		{
@@ -273,7 +273,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 	public IEnumerator LevelUp(int level, float readDuration = 0.8f)
 	{
 		m_levelUp.GetComponentInChildren<UILabel>().text = level.ToString();
-		WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 		yield return StartCoroutine(TweenText(m_levelUp, readDuration));
 	}
 

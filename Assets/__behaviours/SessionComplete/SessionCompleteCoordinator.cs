@@ -134,7 +134,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         yield return new WaitForSeconds(m_collector.GetDuration() + 0.2f);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
         float smallScaleDuration = 0.8f;
 
@@ -145,7 +145,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         iTween.MoveTo(m_collector.gameObject, m_collectorEndLocation.position, 0.6f);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
         GameManager.Instance.CompleteGame();
     }

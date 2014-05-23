@@ -35,7 +35,7 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 		Debug.Log("There are " + m_dataRows.Count + " rows");
 
         yield return new WaitForSeconds(1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SELECT_CHARACTER");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
 
 		PipPadBehaviour.Instance.SetDismissable(true);
 
@@ -103,7 +103,7 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
         yield return new WaitForSeconds(1.0f);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("READY_STEADY_GO");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
 
         yield return new WaitForSeconds(1.0f);
 

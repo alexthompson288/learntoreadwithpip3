@@ -175,7 +175,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
             m_progressScore.SetScore(m_score);
             m_blackBoard.Hide();
             m_spriteAnim.PlayAnimation("ON");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
 			if (m_score < m_targetScore)
             {

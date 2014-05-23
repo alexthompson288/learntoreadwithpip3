@@ -87,7 +87,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     IEnumerator Start () 
     {
         yield return new WaitForSeconds(0.5f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SELECT_CHARACTER");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -174,7 +174,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         
         //WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_LETTERS_INSTRUCTION");
         //yield return new WaitForSeconds(4.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("READY_STEADY_GO");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
         
         for(int index = 0; index < numPlayers; ++index)
         {

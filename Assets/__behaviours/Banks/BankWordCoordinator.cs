@@ -104,7 +104,7 @@ public class BankWordCoordinator : MonoBehaviour
         PipPadBehaviour.Instance.EnableButtons(m_buttonsActive);
         PipPadBehaviour.Instance.EnableSayWholeWordButton(m_buttonsActive);
         
-        string audioEvent = m_buttonsActive ? "SOMETHING_APPEARS" : "SOMETHING_DISAPPEARS";
+        string audioEvent = m_buttonsActive ? "SOMETHING_APPEAR" : "SOMETHING_DISAPPEAR";
         WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
     }
     

@@ -200,7 +200,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		
 		yield return new WaitForSeconds(0.25f);
 		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_GULP");
-		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_RANDOM_BURP");
+		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP_RANDOM");
 		iTween.MoveTo(draggable.gameObject, m_eatPosition.position, 0.3f);
 		
 		yield return new WaitForSeconds(0.3f);
@@ -214,14 +214,14 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		string eventString = "TROLL_GULP";
 		if(probability > 7)
 		{
-			eventString = "TROLL_RANDOM_FART";
+			eventString = "TROLL_FART_RANDOM";
 		}
 		else if(probability > 5)
 		{
-			eventString = "TROLL_RANDOM_BURP";
+			eventString = "TROLL_BURP_RANDOM";
 		}
 
-		//string eventString = (Random.Range(0, 2) == 0) ? "TROLL_RANDOM_BURP" : "TROLL_RANDOM_FART";
+		//string eventString = (Random.Range(0, 2) == 0) ? "TROLL_BURP_RANDOM" : "TROLL_FART_RANDOM";
 		WingroveAudio.WingroveRoot.Instance.PostEvent(eventString);
 
 

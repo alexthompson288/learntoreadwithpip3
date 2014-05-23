@@ -290,7 +290,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		}
 		m_draggables.Clear();
 		
-		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEARS");
+		WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 	}
 	
 	IEnumerator OnQuestionEnd(DraggableLabel currentDraggable)

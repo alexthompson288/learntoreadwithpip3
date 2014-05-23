@@ -201,7 +201,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
             m_score++;
             PipPadBehaviour.Instance.SayWholeWord();
             yield return new WaitForSeconds(1.5f);
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT_PLUS");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
             m_characterToPop.PopCharacter();
         }
         else

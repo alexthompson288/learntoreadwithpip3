@@ -126,7 +126,7 @@ public class CatapultAmmo : MonoBehaviour
         {
             if (press)
             {
-                WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_STRETCH_2");
+                WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_STRETCH");
 
                 iTween.Stop(gameObject);
                 
