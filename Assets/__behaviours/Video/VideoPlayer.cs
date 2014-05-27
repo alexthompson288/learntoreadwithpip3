@@ -25,9 +25,19 @@ public class VideoPlayer : MonoBehaviour
     private PipButton m_deleteButton;
     [SerializeField]
     private UISlider m_progressBar;
+    [SerializeField]
+    private GameObject m_progressBarParent;
+
+    WWW m_www;
 
     void Awake()
     {
+        if (m_progressBar != null && m_progressBarParent != null)
+        {
+            m_progressBar.value = 0;
+            m_progressBarParent.transform.localScale = Vector3.zero;
+        }
+
         Debug.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy());
 
         m_playButton.Unpressing += OnPressPlay;
@@ -75,7 +85,8 @@ public class VideoPlayer : MonoBehaviour
 
         string playPath = HasStreamingAssetsCopy() ? m_streamingAssetsRelativePath + m_filename : GetFullPath();
 
-#if UNITY_IPHONE
+#if UNITY_EDITOR
+#elif UNITY_IPHONE
         if(!HasStreamingAssetsCopy())
         {
             playPath = "file://" + GetFullPath();
@@ -124,34 +135,53 @@ public class VideoPlayer : MonoBehaviour
             cam.enabled = false;
         }
 
-        Debug.Log("WAIT");
-        WWW www = new WWW(m_url + "/" + m_filename);
+        float progressTweenDuration = 0.25f; 
 
-        while (!www.isDone)
+        if (m_progressBarParent != null)
         {
-            if(m_progressBar != null)
-            {
-                m_progressBar.sliderValue = www.progress;
-            }
+            iTween.ScaleTo(m_progressBarParent, Vector3.one, progressTweenDuration);
+            yield return new WaitForSeconds(progressTweenDuration);
         }
+
+        Debug.Log("WAIT");
+        Debug.Log("Download url: " + m_url + "/" + m_filename);
+        m_www = new WWW(m_url + "/" + m_filename);
+
+        StartCoroutine("UpdateProgressBar");
+
+        yield return m_www;
         
         Debug.Log("DOWNLOADED");
         
-        if (www.error == null)
+        if (m_www.isDone && m_www.error == null)
         {
             Debug.Log("WRITING");
             FileStream stream = new FileStream(GetFullPath(), FileMode.Create);
-            stream.Write(www.bytes, 0, www.bytes.Length);
+            stream.Write(m_www.bytes, 0, m_www.bytes.Length);
             stream.Close();
         } 
         else
         {
             Debug.Log("DOWNLOAD FAILED");
-            Debug.Log("www.error == null: " + www.error == null);
+            Debug.Log("www.isDone: " + m_www.isDone);
+            Debug.Log("www.error == null: " + m_www.error == null);
             
-            if(www.error != null)
+            if(m_www.error != null)
             {
-                Debug.Log("error: " + www.error);
+                Debug.Log("error: " + m_www.error);
+            }
+        }
+
+        StopCoroutine("UpdateProgressBar");
+
+        if (m_progressBarParent != null)
+        {
+            iTween.ScaleTo(m_progressBarParent, Vector3.zero, progressTweenDuration);
+            yield return new WaitForSeconds(progressTweenDuration);
+
+            if(m_progressBar != null)
+            {
+                m_progressBar.value = 0;
             }
         }
 
@@ -162,5 +192,19 @@ public class VideoPlayer : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    IEnumerator UpdateProgressBar()
+    {
+        if (m_progressBar != null)
+        {
+            m_progressBar.value = m_www.progress;
+            yield return null;
+            StartCoroutine("UpdateProgressBar");
+        } 
+        else
+        {
+            yield break;
+        }
     }
 }

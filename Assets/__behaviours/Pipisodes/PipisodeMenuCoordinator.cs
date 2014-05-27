@@ -15,18 +15,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     [SerializeField]
     private GameObject m_pipisodeButtonPrefab;
     [SerializeField]
-    private ClickEvent m_watchButton;
-    [SerializeField]
-    private ClickEvent m_quizButton;
-    [SerializeField]
-    private GameObject m_playButtons;
-    [SerializeField]
-    private ClickEvent m_buyButton;
-    [SerializeField]
-    private GameObject m_buyButtons;
-    [SerializeField]
-    private float m_buttonTweenDuration = 0.5f;
-    [SerializeField]
     private UITexture m_backgroundTexture;
     [SerializeField]
     private string m_relativePathMp4 = "Pipisodes/mp4";
@@ -36,6 +24,10 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     private UILabel m_overviewLabel;
     [SerializeField]
     private VideoPlayer m_videoPlayer;
+    [SerializeField]
+    private GameObject m_videoButtonsParent;
+    [SerializeField]
+    private PipButton m_quizButton;
     
     DataRow m_currentPipisode;
 
@@ -44,7 +36,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
-        m_quizButton.OnSingleClick += OnClickQuizButton;
+        m_quizButton.Unpressing += OnClickQuizButton;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -62,11 +54,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
                 GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, spawnGrid.transform);
 
                 button.GetComponentInChildren<UILabel>().text = m_pipisodes[i]["label_text"] != null ? m_pipisodes[i]["label_text"].ToString() : "";
-
-                if (BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_pipisodes[i]["id"])))
-                {
-                    button.GetComponentInChildren<UITexture>().gameObject.SetActive(false);
-                }
                 
                 button.GetComponent<ClickEvent>().OnSingleClick += OnChoosePipisode;
                 button.GetComponent<ClickEvent>().SetData(m_pipisodes[i]);
@@ -78,7 +65,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         }
     }
 
-    void OnClickQuizButton(ClickEvent click)
+    void OnClickQuizButton(PipButton button)
     {
         Debug.Log("OnClickQuizButton");
         List<DataRow> quizQuestions = FindQuizQuestions(m_currentPipisode);
@@ -123,30 +110,29 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             m_overviewLabel.text = pipisode["pipisode_overview"].ToString();    
         }
 
-
-        /*
-        Debug.Log("id: " + pipisode ["id"].ToString() + " - " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"])));
-
-        bool isUnlocked = BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"]));
-
+        float tweenDuration = 0.3f;
 
         bool hasQuizQuestions = FindQuizQuestions(pipisode).Count > 0;
-        m_quizButton.gameObject.SetActive(hasQuizQuestions);
-        float watchButtonLocalPosX =  hasQuizQuestions ? -90 : 0;
-        m_watchButton.transform.localPosition = new Vector3(watchButtonLocalPosX, 0, 0);
 
-        Vector3 playScale = isUnlocked ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_playButtons, playScale, m_buttonTweenDuration);
-        
-        Vector3 buyScale = isUnlocked ? Vector3.zero : Vector3.one;
-        iTween.ScaleTo(m_buyButtons, buyScale, m_buttonTweenDuration);
-        */
+        Debug.Log("hasQuizQuestions - " + pipisode ["pipisode_title"] + ": " + hasQuizQuestions);
 
-        m_videoPlayer.SetFilename(pipisode["video_filename"].ToString());
+        Vector3 quizQuestionsScale = hasQuizQuestions ? Vector3.one : Vector3.zero;
+        iTween.ScaleTo(m_quizButton.transform.parent.gameObject, quizQuestionsScale, tweenDuration);
+
+        Vector3 videoButtonsLocalPos = hasQuizQuestions ? Vector3.zero : new Vector3(100, 0);
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("time", tweenDuration);
+        tweenArgs.Add("islocal", true);
+        tweenArgs.Add("position", videoButtonsLocalPos); 
+
+        iTween.MoveTo(m_videoButtonsParent, tweenArgs);
+
+        m_videoPlayer.SetFilename(pipisode["image_filename"].ToString() + ".mp4");
         
         m_currentPipisode = pipisode;
         
-        // Change background texture
+        // TODO: Change background texture
     }
 
     List<DataRow> FindQuizQuestions(DataRow pipisode)
