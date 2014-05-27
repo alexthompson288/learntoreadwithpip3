@@ -20,6 +20,16 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     private GameObject m_picturePrefab;
     [SerializeField]
     private GameObject m_textPrefab;
+    [SerializeField]
+    private bool m_onlyPictures;
+
+    public bool onlyPictures
+    {
+        get
+        {
+            return m_onlyPictures;
+        }
+    }
 
     public string dataType
     {
@@ -93,10 +103,18 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
+        if (m_dataType == "shapes")
+        {
+            m_onlyPictures = true;
+        }
+
         m_dataPool = DataHelpers.GetData(m_dataType);
+
+        Debug.Log("dataPool - preRemoval: " + m_dataPool.Count);
+
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
 
-        Debug.Log("dataPool.Count: " + m_dataPool.Count);
+        Debug.Log("dataPool - postRemoval: " + m_dataPool.Count);
 
         foreach (DataRow data in m_dataPool)
         {
@@ -213,7 +231,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     void CompleteGame()
     {
-        GameManager.Instance.CompleteGame();
+        //GameManager.Instance.CompleteGame();
     }
 
     public Texture2D GetPicture(DataRow data)

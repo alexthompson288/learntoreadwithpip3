@@ -122,6 +122,20 @@ public class JoinPairsPlayer : GamePlayer
         int locatorIndex = 0;
         foreach(DataRow data in dataPool)
         {
+            JoinableLineDraw firstLineDraw = SpawnLineDraw(JoinPairsCoordinator.Instance.picturePrefab, data, locatorIndex);
+            ++locatorIndex;
+
+            if(JoinPairsCoordinator.Instance.dataType == "words" && SessionInformation.Instance.GetNumPlayers() == 1)
+            {
+                firstLineDraw.JoinableClickEventHandler += OnJoinableClicked;
+            }
+
+            GameObject secondPrefab = JoinPairsCoordinator.Instance.onlyPictures ? JoinPairsCoordinator.Instance.picturePrefab : JoinPairsCoordinator.Instance.textPrefab;
+            SpawnLineDraw(secondPrefab, data, locatorIndex);
+            ++locatorIndex;
+
+
+            /*
             GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_locators[locatorIndex]);
             ++locatorIndex;
 
@@ -151,12 +165,29 @@ public class JoinPairsPlayer : GamePlayer
 
             m_spawnedJoinables.Add(newText);
             m_spawnedJoinables.Add(newImage);
+            */
         }
         
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
         
         yield break;
+    }
+
+    JoinableLineDraw SpawnLineDraw(GameObject lineDrawPrefab, DataRow data, int locatorIndex)
+    {
+        GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(lineDrawPrefab, m_locators[locatorIndex]);
+
+        m_spawnedJoinables.Add(newGo);
+
+        JoinableLineDraw lineDraw = newGo.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
+        lineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
+        lineDraw.SetMaterial(m_lineRendererMaterial);
+        lineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
+        lineDraw.JoinableJoinEventHandler += OnJoin;
+        lineDraw.JoinablePressEventHandler += OnJoinablePressed;
+
+        return lineDraw;
     }
 
     void OnJoinableClicked(JoinableLineDraw joinable)
@@ -182,7 +213,7 @@ public class JoinPairsPlayer : GamePlayer
     {
         if (a != b)
         {
-            if (a.isPicture != b.isPicture)
+            if (a.isPicture != b.isPicture || JoinPairsCoordinator.Instance.onlyPictures)
             {
                 if (a.data == b.data)
                 {

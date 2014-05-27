@@ -234,6 +234,7 @@ public static class DataHelpers
 
     public static List<DataRow> GetData(string dataType)
     {
+        Debug.Log("DataHelpers.GetData(" + dataType + ")");
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
         if (dataPool.Count == 0)
@@ -263,6 +264,12 @@ public static class DataHelpers
                     break;
                 case "quizquestions":
                     dataPool = GetQuizQuestions();
+                    break;
+                case "numbers":
+                    dataPool = GetNumbers();
+                    break;
+                case "shapes":
+                    dataPool = GetShapes();
                     break;
             }
         }
@@ -681,6 +688,10 @@ public static class DataHelpers
                     Debug.Log("TEX - " + data["correct_image_name"].ToString() + ": " + tex);
                 }
                 break;
+            case "shapes":
+                tex = Resources.Load<Texture2D>(data["name"].ToString());
+                Debug.Log("tex: " + data["name"] + " - " + tex);
+                break;
             default:
                 break;
         }
@@ -896,5 +907,52 @@ public static class DataHelpers
     {
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='" + gameName + "'");
         return dt.Rows.Count > 0 ? dt.Rows [0] : null;
+    }
+
+    public static List<DataRow> GetNumbers()
+    {
+        return GetNumbers(10, 1);
+    }
+
+    public static List<DataRow> GetNumbers(int highest, int lowest = 1)
+    {
+        List<DataRow> numbers = new List<DataRow>();
+
+        for (int i = lowest; i < highest + 1; ++i)
+        {
+            DataRow row = new DataRow();
+            row["tablename"] = "numbers";
+            row["id"] = i;
+            row["value"] = i;
+            numbers.Add(row);
+        }
+
+        return numbers;
+    }
+
+    public static List<DataRow> GetShapes()
+    {
+        List<string> shapeNames = new List<string>();
+        shapeNames.Add("triangle_equilateral");
+        shapeNames.Add("triangle_isosceles");
+        shapeNames.Add("triangle_scalene");
+        shapeNames.Add("square");
+        shapeNames.Add("rectangle");
+        shapeNames.Add("pentagon");
+        //shapeNames.Add("hexagon");
+        //shapeNames.Add("heptagon");
+        //shapeNames.Add("octagon");
+
+        List<DataRow> shapes = new List<DataRow>();
+        for (int i = 0; i < shapeNames.Count; ++i)
+        {
+            DataRow row = new DataRow();
+            row["tablename"] = "shapes";
+            row["id"] = i + 1;
+            row["name"] = shapeNames[i];
+            shapes.Add(row);
+        }
+
+        return shapes;
     }
 }
