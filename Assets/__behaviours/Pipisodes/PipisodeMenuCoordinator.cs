@@ -34,6 +34,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     private UILabel m_titleLabel;
     [SerializeField]
     private UILabel m_overviewLabel;
+    [SerializeField]
+    private VideoPlayer m_videoPlayer;
     
     DataRow m_currentPipisode;
 
@@ -42,8 +44,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
-        m_watchButton.OnSingleClick += OnClickWatchButton;
-        m_buyButton.OnSingleClick += OnClickBuyButton;
         m_quizButton.OnSingleClick += OnClickQuizButton;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -91,22 +91,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             GameManager.Instance.StartGames();
         }
     }
-    
-    void OnClickWatchButton(ClickEvent click)
-    {
-        Debug.Log("OnClickPlayButton()");
-#if UNITY_ANDROID || UNITY_IPHONE
-        if(BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_currentPipisode["id"])) && m_currentPipisode["pipisode_title"] != null)
-        {
-            PipisodeManager.Instance.PlayPipisode(m_currentPipisode);
-        }
-        else
-        {
-            Debug.Log("Unlocked: " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(m_currentPipisode["id"])));
-            Debug.Log("hasTitle: " + m_currentPipisode["pipisode_title"] != null);
-        }
-#endif
-    }
 
     void OnClickBuyButton(ClickEvent click)
     {
@@ -139,6 +123,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             m_overviewLabel.text = pipisode["pipisode_overview"].ToString();    
         }
 
+
+        /*
         Debug.Log("id: " + pipisode ["id"].ToString() + " - " + BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"])));
 
         bool isUnlocked = BuyInfo.Instance.IsPipisodeBought(Convert.ToInt32(pipisode ["id"]));
@@ -149,13 +135,14 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         float watchButtonLocalPosX =  hasQuizQuestions ? -90 : 0;
         m_watchButton.transform.localPosition = new Vector3(watchButtonLocalPosX, 0, 0);
 
-
-        
         Vector3 playScale = isUnlocked ? Vector3.one : Vector3.zero;
         iTween.ScaleTo(m_playButtons, playScale, m_buttonTweenDuration);
         
         Vector3 buyScale = isUnlocked ? Vector3.zero : Vector3.one;
         iTween.ScaleTo(m_buyButtons, buyScale, m_buttonTweenDuration);
+        */
+
+        m_videoPlayer.SetFilename(pipisode["video_filename"].ToString());
         
         m_currentPipisode = pipisode;
         

@@ -61,7 +61,7 @@ public class PipVideo : Singleton<PipVideo>
         Debug.Log("WAIT");
         WWW www = new WWW(m_url + fileName);
         yield return www;
-
+        
         Debug.Log("DOWNLOADED");
         
         if (www != null && www.isDone && www.error == null)
@@ -76,7 +76,7 @@ public class PipVideo : Singleton<PipVideo>
             Debug.Log("www != null: " + www != null);
             Debug.Log("www.isDone: " + www.isDone);
             Debug.Log("www.error == null: " + www.error == null);
-
+            
             if(www.error != null)
             {
                 Debug.Log("error: " + www.error);
