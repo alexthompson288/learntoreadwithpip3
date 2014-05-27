@@ -21,15 +21,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     [SerializeField]
     private GameObject m_textPrefab;
     [SerializeField]
-    private bool m_onlyPictures;
-
-    public bool onlyPictures
-    {
-        get
-        {
-            return m_onlyPictures;
-        }
-    }
+    private GameObject m_numberPrefab;
 
     public string dataType
     {
@@ -55,12 +47,26 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         }
     }
 
+    public GameObject numberPrefab
+    {
+        get
+        {
+            return m_numberPrefab;
+        }
+    }
+
     public int targetScore
     {
         get
         {
             return m_targetScore;
         }
+    }
+
+    bool m_joinablesAreSameType = false;
+    public bool AreJoinablesSameType()
+    {
+        return m_joinablesAreSameType;
     }
 
     int m_numWaitForPlayers;
@@ -103,16 +109,16 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
-        if (m_dataType == "shapes")
-        {
-            m_onlyPictures = true;
-        }
+        m_joinablesAreSameType = (m_dataType == "numbers" || m_dataType == "shapes");
 
         m_dataPool = DataHelpers.GetData(m_dataType);
 
         Debug.Log("dataPool - preRemoval: " + m_dataPool.Count);
 
-        m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+        if (m_dataType != "numbers")
+        {
+            m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+        }
 
         Debug.Log("dataPool - postRemoval: " + m_dataPool.Count);
 
@@ -137,7 +143,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         for(int index = 0; index < numPlayers; ++index)
         {
-            m_gamePlayers[index].SetUp(m_targetScore); 
+            m_gamePlayers[index].SetUp(m_targetScore, m_dataType); 
         }
         
         if(m_waitForBoth && numPlayers == 2)
@@ -231,7 +237,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     void CompleteGame()
     {
-        //GameManager.Instance.CompleteGame();
+        GameManager.Instance.CompleteGame();
     }
 
     public Texture2D GetPicture(DataRow data)

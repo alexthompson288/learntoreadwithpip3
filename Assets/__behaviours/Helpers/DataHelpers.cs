@@ -653,8 +653,6 @@ public static class DataHelpers
 
         Texture2D tex = null;
 
-        Debug.Log("GetPicture dataType: " + dataType);
-
         switch (dataType)
         {
             case "phonemes":
@@ -690,7 +688,6 @@ public static class DataHelpers
                 break;
             case "shapes":
                 tex = Resources.Load<Texture2D>(data["name"].ToString());
-                Debug.Log("tex: " + data["name"] + " - " + tex);
                 break;
             default:
                 break;

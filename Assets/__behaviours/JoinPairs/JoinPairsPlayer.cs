@@ -28,7 +28,9 @@ public class JoinPairsPlayer : GamePlayer
     [SerializeField]
     private Transform[] m_locators;
 
-    //ThrobGUIElement m_currentThrobBehaviour = null;
+    GameObject m_firstPrefab;
+    GameObject m_secondPrefab;
+
     JoinableLineDraw m_currentJoinable = null;
 
     int m_panelDepthIncrement = 1;
@@ -88,9 +90,25 @@ public class JoinPairsPlayer : GamePlayer
         return (m_selectedCharacter != -1);
     }
 
-    public void SetUp(int targetScore)
+    public void SetUp(int targetScore, string dataType)
     {
         m_scoreKeeper.SetTargetScore(targetScore);
+
+        if (dataType == "numbers")
+        {
+            m_firstPrefab = JoinPairsCoordinator.Instance.numberPrefab;
+            m_secondPrefab = JoinPairsCoordinator.Instance.numberPrefab;
+        } 
+        else if (dataType == "shapes")
+        {
+            m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;
+            m_secondPrefab = JoinPairsCoordinator.Instance.picturePrefab;
+        } 
+        else
+        {
+            m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;
+            m_secondPrefab = JoinPairsCoordinator.Instance.textPrefab;
+        }
     }
 
     public IEnumerator SetUpNext()
@@ -122,7 +140,7 @@ public class JoinPairsPlayer : GamePlayer
         int locatorIndex = 0;
         foreach(DataRow data in dataPool)
         {
-            JoinableLineDraw firstLineDraw = SpawnLineDraw(JoinPairsCoordinator.Instance.picturePrefab, data, locatorIndex);
+            JoinableLineDraw firstLineDraw = SpawnLineDraw(m_firstPrefab, data, locatorIndex);
             ++locatorIndex;
 
             if(JoinPairsCoordinator.Instance.dataType == "words" && SessionInformation.Instance.GetNumPlayers() == 1)
@@ -130,42 +148,9 @@ public class JoinPairsPlayer : GamePlayer
                 firstLineDraw.JoinableClickEventHandler += OnJoinableClicked;
             }
 
-            GameObject secondPrefab = JoinPairsCoordinator.Instance.onlyPictures ? JoinPairsCoordinator.Instance.picturePrefab : JoinPairsCoordinator.Instance.textPrefab;
-            SpawnLineDraw(secondPrefab, data, locatorIndex);
+
+            SpawnLineDraw(m_secondPrefab, data, locatorIndex);
             ++locatorIndex;
-
-
-            /*
-            GameObject newText = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.textPrefab, m_locators[locatorIndex]);
-            ++locatorIndex;
-
-            GameObject newImage = SpawningHelpers.InstantiateUnderWithIdentityTransforms(JoinPairsCoordinator.Instance.picturePrefab, m_locators[locatorIndex]);
-            ++locatorIndex;
-            
-            Texture2D texture = JoinPairsCoordinator.Instance.GetPicture(data);
-
-            JoinableLineDraw textLineDraw = newText.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
-            textLineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
-            textLineDraw.SetMaterial(m_lineRendererMaterial);
-            textLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
-            textLineDraw.JoinableJoinEventHandler += OnJoin;
-            textLineDraw.JoinablePressEventHandler += OnJoinablePressed;
-
-            JoinableLineDraw imageLineDraw = newImage.GetComponent<JoinableLineDraw>() as JoinableLineDraw;
-            imageLineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
-            imageLineDraw.SetMaterial(m_lineRendererMaterial);
-            imageLineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
-            imageLineDraw.JoinableJoinEventHandler += OnJoin;
-            imageLineDraw.JoinablePressEventHandler += OnJoinablePressed;
-
-            if(JoinPairsCoordinator.Instance.dataType == "words" && SessionInformation.Instance.GetNumPlayers() == 1)
-            {
-                imageLineDraw.JoinableClickEventHandler += OnJoinableClicked;
-            }
-
-            m_spawnedJoinables.Add(newText);
-            m_spawnedJoinables.Add(newImage);
-            */
         }
         
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
@@ -213,14 +198,14 @@ public class JoinPairsPlayer : GamePlayer
     {
         if (a != b)
         {
-            if (a.isPicture != b.isPicture || JoinPairsCoordinator.Instance.onlyPictures)
+            if (a.joinableType != b.joinableType || JoinPairsCoordinator.Instance.AreJoinablesSameType()) // shapes are both pictures
             {
                 if (a.data == b.data)
                 {
                     //StartCoroutine(SpeakWellDone(a.word));
                     if(SessionInformation.Instance.GetNumPlayers() == 1)
                     {
-                        DataRow audioData = a.isPicture ? b.data : a.data;
+                        DataRow audioData = a.joinableType == JoinableLineDraw.JoinableType.Picture ? b.data : a.data;
                         JoinPairsCoordinator.Instance.PlayShortAudio(audioData);
                     }
                     
@@ -239,7 +224,7 @@ public class JoinPairsPlayer : GamePlayer
                 else if(SessionInformation.Instance.GetNumPlayers() == 1 && JoinPairsCoordinator.Instance.dataType == "words")
                 {
                     WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
-                    PipPadBehaviour.Instance.Show(a.isPicture ? b.data["word"].ToString() : a.data["word"].ToString());
+                    PipPadBehaviour.Instance.Show(a.joinableType == JoinableLineDraw.JoinableType.Picture ? b.data["word"].ToString() : a.data["word"].ToString());
                     PipPadBehaviour.Instance.SayAll(1.5f);
                 }
             }

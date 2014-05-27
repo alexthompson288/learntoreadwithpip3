@@ -20,13 +20,26 @@ public class JoinableLineDraw : LineDraw
     private UILabel m_label;
     [SerializeField]
     private UISprite m_background;
+    [SerializeField]
+    private JoinableType m_joinableType;
+    [SerializeField]
+    private UISprite[] m_numberSprites;
+    [SerializeField]
+    private string[] m_spriteNames;
 
-    public bool isPicture
+    public JoinableType joinableType
     {
         get
         {
-            return m_isPicture;
+            return m_joinableType;
         }
+    }
+
+    public enum JoinableType
+    {
+        Picture,
+        Text,
+        Number
     }
 
     DataRow m_data;
@@ -47,13 +60,26 @@ public class JoinableLineDraw : LineDraw
     {
         m_data = myData;
 
-        if (m_isPicture)
+        if (m_joinableType == JoinableType.Picture)
         {
             m_pictureTexture.mainTexture = DataHelpers.GetPicture(dataType, m_data);
         } 
-        else
+        else if (m_joinableType == JoinableType.Text)
         {
             m_label.text = DataHelpers.GetLabelText(dataType, m_data);
+        } 
+        else
+        {
+            System.Array.Sort(m_numberSprites, CollectionHelpers.ComparePosYThenX);
+
+            string spriteName = m_spriteNames[Random.Range(0, m_spriteNames.Length)];
+
+            int value = System.Convert.ToInt32(myData["value"]);
+            for(int i = 0; i < m_numberSprites.Length; ++i)
+            {
+                m_numberSprites[i].spriteName = spriteName;
+                m_numberSprites[i].gameObject.SetActive(i < value);
+            }
         }
     }
 

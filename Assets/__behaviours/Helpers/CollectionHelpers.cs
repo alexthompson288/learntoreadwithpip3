@@ -66,6 +66,11 @@ public class CollectionHelpers
 		}
 	}
 
+    public static int ComparePosYThenX(MonoBehaviour a, MonoBehaviour b)
+    {
+        return ComparePosYThenX(a.transform, b.transform);
+    }
+
     public static int ComparePosYThenX(Transform a, Transform b)
     {
         if (a == null && b == null)
