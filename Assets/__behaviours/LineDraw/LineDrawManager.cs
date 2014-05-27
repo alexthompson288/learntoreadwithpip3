@@ -16,7 +16,7 @@ public class LineDrawManager : Singleton<LineDrawManager>
     [SerializeField]
     private Color m_defaultColor;
 
-    Dictionary<LineDraw, DrawRenderer> m_lines = new Dictionary<LineDraw, DrawRenderer>();
+    Dictionary<LineDraw, List<DrawRenderer>> m_lines = new Dictionary<LineDraw, List<DrawRenderer>>();
 
     class DrawRenderer
     {
@@ -107,11 +107,15 @@ public class LineDrawManager : Singleton<LineDrawManager>
 
         if (m_lines.ContainsKey(line))
         {
-            m_lines [line] = new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor);
+            m_lines[line].Add(new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor));
+            //m_lines [line] = new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor);
         } 
         else
         {
-            m_lines.Add(line, new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor));
+            List<DrawRenderer> drawRenderers = new List<DrawRenderer>();
+            drawRenderers.Add(new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor));
+            m_lines.Add(line, drawRenderers);
+            //m_lines.Add(line, new DrawRenderer(lineRenderer, FindWorldPos(line), line.maxNumPositions, startColor, endColor));
         }
     }
 
@@ -125,13 +129,20 @@ public class LineDrawManager : Singleton<LineDrawManager>
         CreateLine(line, mat, m_defaultColor, m_defaultColor);
     }
 
+    DrawRenderer GetLastDrawRenderer(LineDraw line)
+    {
+        List<DrawRenderer> drawRenderers = m_lines [line];
+        return drawRenderers [drawRenderers.Count - 1];
+    }
+
     void OnLineDrag(LineDraw line)
     {
         Vector3 worldPos = FindWorldPos(line);
 
         if (m_lines.ContainsKey(line))
         {
-            m_lines [line].AddPosition(FindWorldPos(line));
+            //m_lines[line].AddPosition(FindWorldPos(line));
+            GetLastDrawRenderer(line).AddPosition(FindWorldPos(line));
         } 
         else
         {
@@ -147,7 +158,12 @@ public class LineDrawManager : Singleton<LineDrawManager>
 
     public void DestroyLine(LineDraw line)
     {
-        StartCoroutine(m_lines [line].Off());
+        List<DrawRenderer> drawRenderers = m_lines [line];
+        foreach (DrawRenderer drawRenderer in drawRenderers)
+        {
+            StartCoroutine(drawRenderer.Off());
+        }
+        //StartCoroutine(m_lines [line].Off());
         m_lines.Remove(line);
     }
 }
