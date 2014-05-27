@@ -270,6 +270,12 @@ public static class DataHelpers
         return dataPool;
     }
 
+    // TODO: This should read from GameManager
+    public static int GetHighestNumber()
+    {
+        return 10;
+    }
+
     public static List<DataRow> GetCorrectCaptions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");

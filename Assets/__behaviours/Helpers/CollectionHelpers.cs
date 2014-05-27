@@ -44,21 +44,7 @@ public class CollectionHelpers
 
 	public static int ComparePosX(MonoBehaviour a, MonoBehaviour b)
 	{
-		float posA = a.transform.position.x;
-		float posB = b.transform.position.x;
-		
-		if(posA < posB)
-		{
-			return -1;
-		}
-		else if(posA > posB)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+        return ComparePosX(a.transform, b.transform);
 	}
 
 	public static int ComparePosX(Transform a, Transform b)
@@ -79,6 +65,59 @@ public class CollectionHelpers
 			return 0;
 		}
 	}
+
+    public static int ComparePosYThenX(Transform a, Transform b)
+    {
+        if (a == null && b == null)
+        {
+            return 0;
+        } 
+        else if (a == null)
+        {
+            return 1;
+        } 
+        else if (b == null)
+        {
+            return -1;
+        } 
+        else
+        {
+            float aX = a.position.x;
+            float aY = a.position.y;
+            float bX = b.position.x;
+            float bY = b.position.y;
+
+            if (Mathf.Approximately(aY, bY))
+            {
+                Debug.Log("yEqual: " + a.name + " - " + b.name);
+                if (Mathf.Approximately(aX, bX))
+                {
+                    return 0;
+                }
+                if (aX < bX)
+                {
+                    return -1;
+                } 
+                else
+                {
+                    return 1;
+                }
+            } 
+            else if (aY > bY)
+            {
+                return -1;
+            } 
+            else
+            {
+                return 1;
+            }
+        }
+    }
+
+    public static int CompareName(UnityEngine.Object a, UnityEngine.Object b)
+    {
+        return String.Compare(a.name, b.name);
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

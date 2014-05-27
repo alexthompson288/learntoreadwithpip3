@@ -12,6 +12,7 @@ public class GameCoordinator : Singleton<GameCoordinator>
     protected AudioSource m_audioSource;
     
     protected int m_score = 0;
+    protected int m_numAnswered = 0;
     
     protected List<DataRow> m_dataPool = new List<DataRow>();
 

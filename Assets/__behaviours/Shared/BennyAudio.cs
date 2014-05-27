@@ -8,7 +8,7 @@ public class BennyAudio : MonoBehaviour
 	public void SetInstruction (string instruction) 
 	{
 		m_instruction = instruction;
-	}
+	}  
 	
 	void OnClick()
 	{
