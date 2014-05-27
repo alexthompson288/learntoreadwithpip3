@@ -911,7 +911,7 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        return GetNumbers(10, 1);
+        return GetNumbers(GetHighestNumber(), 1);
     }
 
     public static List<DataRow> GetNumbers(int highest, int lowest = 1)
