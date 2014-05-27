@@ -473,6 +473,12 @@ public static class DataHelpers
             case "keywords":
                 attributeName = "word";
                 break;
+            case "numbers":
+                attributeName = "value";
+                break;
+            case "shapes":
+                attributeName = "name";
+                break;
             default:
                 break;
         }

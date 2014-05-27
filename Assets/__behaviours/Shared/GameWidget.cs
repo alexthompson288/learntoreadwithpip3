@@ -30,7 +30,14 @@ public class GameWidget : MonoBehaviour
     [SerializeField]
     private bool m_canDrag = true;
     [SerializeField]
-    private bool m_offsetOnClick;
+    private ClickReaction m_clickReaction;
+
+    enum ClickReaction
+    {
+        None,
+        Offset,
+        ChangeSprite
+    }
 
     DataRow m_data;
     public DataRow data
@@ -91,7 +98,10 @@ public class GameWidget : MonoBehaviour
 
     void Start()
     {
-        iTween.ScaleFrom(gameObject, Vector3.zero, m_scaleTweenDuration);
+        //iTween.ScaleFrom(gameObject, Vector3.zero, m_scaleTweenDuration);
+        transform.localScale = Vector3.zero;
+
+        iTween.ScaleTo(gameObject, Vector3.one, m_scaleTweenDuration);
     }
 
     public void SetUp(string dataType, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
@@ -136,17 +146,7 @@ public class GameWidget : MonoBehaviour
         transform.localScale = Vector3.one;
         iTween.ScaleFrom(gameObject, Vector3.zero, 0.5f);
 
-        if (m_backgroundsStateA.Length == 0)
-        {
-            m_backgroundsStateA = new string[1];
-            m_backgroundsStateA[0] = DataHelpers.GetContainerNameA(dataType);
-        }
-
-        if (m_backgroundsStateB.Length == 0)
-        {
-            m_backgroundsStateB = new string[1];
-            m_backgroundsStateB[0] = DataHelpers.GetContainerNameB(dataType);
-        }
+        GuaranteeBackgroundStates();
         
         if(m_backgroundsStateA.Length > 0)
         {
@@ -162,9 +162,28 @@ public class GameWidget : MonoBehaviour
     {
         m_label.text = labelText;
 
+        GuaranteeBackgroundStates();
+
         if (changeBackgroundWidth)
         {
             ChangeBackgroundWidth();
+        }
+    }
+
+    void GuaranteeBackgroundStates()
+    {
+        if (m_backgroundsStateA.Length == 0)
+        {
+            m_backgroundsStateA = new string[1];
+            //m_backgroundsStateA[0] = DataHelpers.GetContainerNameA(dataType);
+            m_backgroundsStateA[0] = m_background.spriteName;
+        }
+        
+        if (m_backgroundsStateB.Length == 0)
+        {
+            m_backgroundsStateB = new string[1];
+            //m_backgroundsStateB[0] = DataHelpers.GetContainerNameB(dataType);
+            m_backgroundsStateB[0] = DataHelpers.GetLinkedSpriteName(m_backgroundsStateA[0]);
         }
     }
 
@@ -216,14 +235,26 @@ public class GameWidget : MonoBehaviour
             }
             else
             {
-                if(m_offsetOnClick)
+                switch(m_clickReaction)
                 {
-                    StartCoroutine(OnClickCo());
+                    case ClickReaction.Offset:
+                        StartCoroutine(OnClickCo());
+                        break;
+                    case ClickReaction.ChangeSprite:
+                        ChangeBackgroundState();
+                        if(OnWidgetClick != null)
+                        {
+                            OnWidgetClick(this);
+                        }
+                        break;
+                    default:
+                        if(OnWidgetClick != null)
+                        {
+                            OnWidgetClick(this);
+                        }
+                        break;
                 }
-                else if(OnWidgetClick != null)
-                {
-                    OnWidgetClick(this);
-                }
+
             }
         }
     }
