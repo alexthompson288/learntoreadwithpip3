@@ -46,6 +46,16 @@ public class CatapultCountingCoordinator : GameCoordinator
     {
         m_target.StoreAmmo(other);
 
+        AudioClip clip = LoaderHelpers.LoadAudioForNumber(m_target.storedAmmoCount);
+
+        if (clip != null)
+        {
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
+        }
+
+        Resources.UnloadUnusedAssets();
+
         if (m_target.storedAmmoCount >= System.Convert.ToInt32(m_currentData ["value"]))
         {
             ++m_score;

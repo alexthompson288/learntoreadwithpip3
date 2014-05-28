@@ -36,11 +36,6 @@ public class NumberFillCoordinator : GameCoordinator
 
         foreach (DataRow number in m_dataPool)
         {
-            m_shortAudio[number] = DataHelpers.GetShortAudio("numbers", number);
-        }
-
-        foreach (DataRow number in m_dataPool)
-        {
             if(System.Convert.ToInt32(number["value"]) > m_maxValue)
             {
                 m_maxValue = System.Convert.ToInt32(number["value"]);
@@ -65,20 +60,6 @@ public class NumberFillCoordinator : GameCoordinator
         return m_locators[0];
     }
 
-    DataRow FindDataWithValue(int value)
-    {
-        DataRow targetNumber = null;
-
-        foreach (DataRow number in m_dataPool)
-        {
-            if(System.Convert.ToInt32(number["value"]) == value)
-            {
-                targetNumber = number;
-            }
-        }
-
-        return targetNumber;
-    }
 
     void AskQuestion()
     {
@@ -133,7 +114,14 @@ public class NumberFillCoordinator : GameCoordinator
             m_unheldWidgets.Add(widget);
         }
 
-        PlayShortAudio(FindDataWithValue(m_currentWidgetHolder.heldWidgetCount), false);
+        AudioClip clip = LoaderHelpers.LoadAudioForNumber(m_currentWidgetHolder.heldWidgetCount);
+        if (clip != null)
+        {
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
+        }
+
+        Resources.UnloadUnusedAssets();
     }
 
     void OnSubmitAnswer(PipButton button)
