@@ -6,6 +6,27 @@ using UnityEngine;
 
 public class CollectionHelpers 
 {
+    public static void DestroyObjects<T>(IList<T> list)
+    {
+        bool hasDestroyed = false;
+
+        for (int i = list.Count - 1; i > -1; --i)
+        {
+            UnityEngine.Object obj = list[i] as UnityEngine.Object;
+
+            if(obj != null)
+            {
+                MonoBehaviour.Destroy(obj);
+                hasDestroyed = true;
+            }
+        }
+
+        if (hasDestroyed)
+        {
+            list.Clear();
+        }
+    }
+
 	public static void Shuffle<T>(IList<T> list)
 	{
 		System.Random rng = new System.Random();

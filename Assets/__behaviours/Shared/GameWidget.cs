@@ -39,7 +39,7 @@ public class GameWidget : MonoBehaviour
         ChangeSprite
     }
 
-    DataRow m_data;
+    protected DataRow m_data;
     public DataRow data
     {
         get
@@ -104,6 +104,8 @@ public class GameWidget : MonoBehaviour
         iTween.ScaleTo(gameObject, Vector3.one, m_scaleTweenDuration);
     }
 
+    public virtual void SetUp(DataRow data) {}
+
     public void SetUp(string dataType, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
@@ -146,23 +148,14 @@ public class GameWidget : MonoBehaviour
         transform.localScale = Vector3.one;
         iTween.ScaleFrom(gameObject, Vector3.zero, 0.5f);
 
-        GuaranteeBackgroundStates();
-        
-        if(m_backgroundsStateA.Length > 0)
-        {
-            m_background.spriteName = m_backgroundsStateA[Random.Range(0, m_backgroundsStateA.Length)];
-        }
-        else
-        {
-            m_background.spriteName = EnviroLoader.Instance.GetContainerOffName();
-        }
+        SetUpBackground();
     }
 
     public void SetUp(string labelText, bool changeBackgroundWidth)
     {
         m_label.text = labelText;
 
-        GuaranteeBackgroundStates();
+        SetUpBackground();
 
         if (changeBackgroundWidth)
         {
@@ -170,24 +163,24 @@ public class GameWidget : MonoBehaviour
         }
     }
 
-    void GuaranteeBackgroundStates()
+    protected void SetUpBackground()
     {
         if (m_backgroundsStateA.Length == 0)
         {
             m_backgroundsStateA = new string[1];
-            //m_backgroundsStateA[0] = DataHelpers.GetContainerNameA(dataType);
             m_backgroundsStateA[0] = m_background.spriteName;
         }
         
         if (m_backgroundsStateB.Length == 0)
         {
             m_backgroundsStateB = new string[1];
-            //m_backgroundsStateB[0] = DataHelpers.GetContainerNameB(dataType);
             m_backgroundsStateB[0] = DataHelpers.GetLinkedSpriteName(m_backgroundsStateA[0]);
         }
+
+        m_background.spriteName = m_backgroundsStateA[Random.Range(0, m_backgroundsStateA.Length)];
     }
 
-    void ChangeBackgroundWidth()
+    protected void ChangeBackgroundWidth()
     {
         if(m_label != null)
         {
