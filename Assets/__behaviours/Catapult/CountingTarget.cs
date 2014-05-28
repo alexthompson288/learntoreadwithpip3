@@ -9,9 +9,15 @@ public class CountingTarget : Target
     [SerializeField]
     private float m_scaleTweenDuration = 0.3f;
 
-    int m_currentLocatorIndex = 0;
-
     List<GameObject> m_storedAmmo = new List<GameObject>();
+
+    public int storedAmmoCount
+    {
+        get
+        {
+            return m_storedAmmo.Count;
+        }
+    }
 
     public int locatorCount
     {
@@ -19,6 +25,11 @@ public class CountingTarget : Target
         {
             return m_locators.Length;
         }
+    }
+
+    void Awake()
+    {
+        System.Array.Sort(m_locators, CollectionHelpers.ComparePosYThenX);
     }
 
     public override void Off()
@@ -39,8 +50,6 @@ public class CountingTarget : Target
         }
 
         m_storedAmmo.Clear();
-
-        m_currentLocatorIndex = 0;
     }
 
     public override IEnumerator On(float initialDelay)
@@ -50,17 +59,21 @@ public class CountingTarget : Target
         yield return null;
     }
 
-    public void StoreAmmo(Collider other)
+    public void StoreAmmo(Collider ammo)
     {
-        if (m_currentLocatorIndex < m_locators.Length)
+        ammo.rigidbody.velocity = Vector3.zero;
+        ammo.rigidbody.isKinematic = true;
+        ammo.GetComponent<CatapultAmmo>().enabled = false;
+
+        if (storedAmmoCount < m_locators.Length)
         {
-            iTween.MoveTo(collider.gameObject, m_locators [m_currentLocatorIndex].position, 0.25f);
-            m_storedAmmo.Add(other.gameObject);
-            ++m_currentLocatorIndex;
+            ammo.transform.parent = m_locators[storedAmmoCount];
+            iTween.MoveTo(ammo.gameObject, m_locators [storedAmmoCount].position, 0.25f);
+            m_storedAmmo.Add(ammo.gameObject);
         } 
         else
         {
-            Destroy(other.gameObject);
+            Destroy(ammo.gameObject);
         }
     }
 }

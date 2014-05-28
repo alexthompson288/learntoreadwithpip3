@@ -61,6 +61,14 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
         }
     }
 
+    public void RemoveBall(CatapultAmmo ball)
+    {
+        if (m_spawnedBalls.Contains(ball))
+        {
+            m_spawnedBalls.Remove(ball);
+        }
+    }
+
     void Update()
     {
         List<CatapultAmmo> ballsToDestroy = m_spawnedBalls.FindAll(IsBallBelowThreshold);

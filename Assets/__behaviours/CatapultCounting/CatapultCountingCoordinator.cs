@@ -4,16 +4,18 @@ using System.Collections;
 public class CatapultCountingCoordinator : GameCoordinator 
 {
     [SerializeField]
+    private CatapultBehaviour m_catapult;
+    [SerializeField]
     private CountingTarget m_target;
     [SerializeField]
     private PictureDisplay m_display;
 
-    int m_numHits = 0;
-
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        m_catapult.MoveToMultiplayerLocation(0);
         m_scoreKeeper.SetTargetScore(m_targetScore);
+        m_target.OnTargetHit += OnTargetHit;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -40,13 +42,11 @@ public class CatapultCountingCoordinator : GameCoordinator
         StartCoroutine(m_target.On(0));
     }
 
-    void OnTargetHit(CountingTarget target, Collider other)
+    void OnTargetHit(Target target, Collider other)
     {
-        target.StoreAmmo(other);
+        m_target.StoreAmmo(other);
 
-        ++m_numHits;
-
-        if (m_numHits >= System.Convert.ToInt32(m_currentData ["value"]))
+        if (m_target.storedAmmoCount >= System.Convert.ToInt32(m_currentData ["value"]))
         {
             ++m_score;
             m_scoreKeeper.UpdateScore();
@@ -57,6 +57,8 @@ public class CatapultCountingCoordinator : GameCoordinator
 
     IEnumerator ClearQuestion()
     {
+        yield return new WaitForSeconds(0.8f);
+
         m_target.Off();
         m_display.Off();
         

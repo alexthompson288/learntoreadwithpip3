@@ -54,6 +54,11 @@ public class CatapultAmmo : MonoBehaviour
             CatapultBehaviour.Instance.ResetLineRenderersPos();
         }
     }
+
+    void OnDestroy()
+    {
+        m_cannon.RemoveBall(this);
+    }
     
     void Start()
     {
