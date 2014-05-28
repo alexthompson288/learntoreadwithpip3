@@ -6,17 +6,27 @@ using UnityEngine;
 
 public class CollectionHelpers 
 {
-    public static void DestroyObjects<T>(IList<T> list)
+    public static void DestroyObjects<T>(IList<T> list, bool sendOffMessage = false)
     {
         bool hasDestroyed = false;
 
         for (int i = list.Count - 1; i > -1; --i)
         {
-            UnityEngine.Object obj = list[i] as UnityEngine.Object;
+            Component comp = list[i] as Component;
 
-            if(obj != null)
+            GameObject go = comp != null ? comp.gameObject : list[i] as GameObject;
+
+            if(go != null)
             {
-                MonoBehaviour.Destroy(obj);
+                if(sendOffMessage)
+                {
+                    go.SendMessage("Off");
+                }
+                else
+                {
+                    MonoBehaviour.Destroy(go);
+                }
+
                 hasDestroyed = true;
             }
         }
@@ -115,7 +125,7 @@ public class CollectionHelpers
 
             if (Mathf.Approximately(aY, bY))
             {
-                Debug.Log("yEqual: " + a.name + " - " + b.name);
+                //Debug.Log("yEqual: " + a.name + " - " + b.name);
                 if (Mathf.Approximately(aX, bX))
                 {
                     return 0;

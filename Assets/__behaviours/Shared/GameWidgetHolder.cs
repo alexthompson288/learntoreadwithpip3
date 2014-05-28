@@ -22,10 +22,26 @@ public class GameWidgetHolder : MonoBehaviour
         }
     }
 
+    Transform FindEmptyLocator()
+    {
+        foreach (Transform locator in m_locators)
+        {
+            if(locator.childCount == 0)
+            {
+                Debug.Log(locator.name + " has no children");
+                return locator;
+            }
+        }
+
+        return m_locators [0];
+    }
+
     public void AddWidget(GameWidget widget)
     {
-        iTween.MoveTo(widget.gameObject, m_locators [m_heldWidgets.Count].position, 0.5f);
-        widget.transform.parent = m_locators [m_heldWidgets.Count];
+        Transform emptyLocator = FindEmptyLocator();
+        iTween.MoveTo(widget.gameObject, emptyLocator.position, 0.5f);
+        //iTween.MoveTo(widget.gameObject, m_locators [m_heldWidgets.Count].position, 0.5f);
+        widget.transform.parent = emptyLocator;
         m_heldWidgets.Add(widget);
     }
 
@@ -39,10 +55,13 @@ public class GameWidgetHolder : MonoBehaviour
         List<GameWidget> newWidgets = new List<GameWidget>();
         int firstLocatorIndex = m_heldWidgets.Count;
 
+        System.Array.Sort(m_locators, CollectionHelpers.ComparePosYThenX);
+
         for (int i = 0; i < numSpawn; ++i)
         {
             GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_widgetPrefab, m_locators[firstLocatorIndex + i]);
             GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
+            widget.SetUpBackground();
             newWidgets.Add(widget);
         }
 

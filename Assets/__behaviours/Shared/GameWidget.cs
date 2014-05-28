@@ -163,7 +163,7 @@ public class GameWidget : MonoBehaviour
         }
     }
 
-    protected void SetUpBackground()
+    public void SetUpBackground()
     {
         if (m_backgroundsStateA.Length == 0)
         {

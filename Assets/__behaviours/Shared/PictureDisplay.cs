@@ -30,7 +30,7 @@ public class PictureDisplay : MonoBehaviour
         Debug.Log("PictureDisplay.dataType: " + dataType);
         Debug.Log("PictureDisplay.data: " + m_data);
 
-        if (m_showPicture)
+        if (m_showPicture && dataType != "numbers") // TODO: != "numbers" is a temporary conditional because there is currently no number art
         {
             m_pictureTexture.mainTexture = DataHelpers.GetPicture(dataType, m_data);
 
@@ -45,6 +45,7 @@ public class PictureDisplay : MonoBehaviour
         } 
         else
         {
+            m_pictureTexture.gameObject.SetActive(false);
             m_label.text = DataHelpers.GetLabelText(dataType, m_data);
             m_tweenBehaviour.On();
         }
