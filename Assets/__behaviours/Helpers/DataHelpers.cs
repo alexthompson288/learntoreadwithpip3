@@ -933,6 +933,21 @@ public static class DataHelpers
         return numbers;
     }
 
+    public static List<DataRow> OnlyLowNumbers(List<DataRow> dataPool, int maxValue)
+    {
+        List<DataRow> lowNumberPool = new List<DataRow>();
+
+        foreach (DataRow number in dataPool)
+        {
+            if(Convert.ToInt32(number["value"]) <= maxValue)
+            {
+                lowNumberPool.Add(number);
+            }
+        }
+
+        return lowNumberPool;
+    }
+
     public static List<DataRow> GetShapes()
     {
         List<string> shapeNames = new List<string>();
