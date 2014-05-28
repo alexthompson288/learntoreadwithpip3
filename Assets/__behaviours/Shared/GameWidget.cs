@@ -8,9 +8,9 @@ public class GameWidget : MonoBehaviour
     [SerializeField]
     private BoxCollider m_collider;
     [SerializeField]
-    private UILabel m_label;
+    protected UILabel m_label;
     [SerializeField]
-    private UIWidget m_icon;
+    protected UIWidget m_icon;
     [SerializeField]
     private UISprite m_background;
     [SerializeField]

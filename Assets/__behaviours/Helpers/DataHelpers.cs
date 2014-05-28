@@ -653,21 +653,18 @@ public static class DataHelpers
         return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
     }
 
-    public static List<Texture2D> GetNumberPictures(DataRow data)
+    public static List<string> GetNumberSpriteNames(DataRow data)
     {
-        string valueString = data ["value"].ToString();
+        List<string> spriteNames = new List<string>();
 
-        List<Texture2D> numberPictures = new List<Texture2D>();
+        string valueString = data ["value"].ToString();
 
         foreach (char c in valueString)
         {
-            int digit = Convert.ToInt32(c);
-            DataRow row = new DataRow();
-            row["value"] = digit;
-            numberPictures.Add(GetPicture("numbers", row));
+            spriteNames.Add("digit_" + c.ToString());
         }
 
-        return numberPictures;
+        return spriteNames;
     }
 
     public static Texture2D GetPicture(string dataType, DataRow data)
@@ -711,9 +708,6 @@ public static class DataHelpers
                 break;
             case "shapes":
                 tex = Resources.Load<Texture2D>(data["name"].ToString());
-                break;
-            case "numbers":
-                tex = Resources.Load<Texture2D>(data["value"].ToString());
                 break;
             default:
                 break;

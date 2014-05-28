@@ -66,7 +66,8 @@ public class NumberSplatCoordinator : GameCoordinator
             GameObject newNumber = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_locators[locatorIndex]);
 
             GameWidget widget = newNumber.GetComponent<GameWidget>() as GameWidget;
-            widget.SetUp("numbers", number, false);
+            //widget.SetUp("numbers", number, false);
+            widget.SetUp(number);
             widget.onAll += OnAnswer;
             m_spawnedWidgets.Add(widget);
             ++locatorIndex;
