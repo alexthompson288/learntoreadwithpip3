@@ -739,6 +739,12 @@ public static class DataHelpers
                 break;
             case "sentences":
                 break;
+            case "numbers":
+                if(data["value"] != null)
+                {
+                    clip = LoaderHelpers.LoadAudioForNumber(data);
+                }
+                break;
             default:
                 break;
         }
@@ -928,10 +934,10 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        return GetNumbers(GetHighestNumber(), 1);
+        return GetNumbers(GetHighestNumber(), 0);
     }
 
-    public static List<DataRow> GetNumbers(int highest, int lowest = 1)
+    public static List<DataRow> GetNumbers(int highest, int lowest = 0)
     {
         List<DataRow> numbers = new List<DataRow>();
 

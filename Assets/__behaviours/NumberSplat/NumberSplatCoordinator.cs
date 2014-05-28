@@ -99,6 +99,8 @@ public class NumberSplatCoordinator : GameCoordinator
 
     IEnumerator ClearAnswers()
     {
+        yield return new WaitForSeconds(0.8f);
+
         float tweenDuration = m_spawnedWidgets [0].scaleTweenDuration;
 
         for(int i = m_spawnedWidgets.Count - 1; i > -1; --i)

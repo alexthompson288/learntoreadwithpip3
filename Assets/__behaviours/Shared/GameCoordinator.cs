@@ -38,33 +38,36 @@ public class GameCoordinator : Singleton<GameCoordinator>
         return m_dataPool.Count > 0 ? m_dataPool[Random.Range(0, m_dataPool.Count)] : null;
     }
 
-    public bool PlayShortAudio(DataRow data = null)
+    public bool PlayShortAudio(DataRow data = null, bool defaultToCurrent = true)
     {
-        return PlayAudio(data, m_shortAudio);
+        return PlayAudio(data, m_shortAudio, defaultToCurrent);
     }
 
-    public bool PlayLongAudio(DataRow data = null)
+    public bool PlayLongAudio(DataRow data = null, bool defaultToCurrent = true)
     {
-        return PlayAudio(data, m_longAudio);
+        return PlayAudio(data, m_longAudio, defaultToCurrent);
     }
 
-    bool PlayAudio(DataRow data, Dictionary<DataRow, AudioClip> audioDictionary)
+    bool PlayAudio(DataRow data, Dictionary<DataRow, AudioClip> audioDictionary, bool defaultToCurrent)
     {
         bool hasPlayed = false; 
         
-        if (data == null)
+        if (data == null && defaultToCurrent)
         {
             data = m_currentData;
         }
-        
-        if(audioDictionary.ContainsKey(data) && m_audioSource != null)
+
+        if (data != null)
         {
-            m_audioSource.clip = audioDictionary[data];
-            
-            if(m_audioSource.clip != null)
+            if (audioDictionary.ContainsKey(data) && m_audioSource != null)
             {
-                m_audioSource.Play();
-                hasPlayed = true;
+                m_audioSource.clip = audioDictionary [data];
+                
+                if (m_audioSource.clip != null)
+                {
+                    m_audioSource.Play();
+                    hasPlayed = true;
+                }
             }
         }
         

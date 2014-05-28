@@ -2,7 +2,17 @@
 using System.Collections;
 using System.IO;
 
-public static class LoaderHelpers {
+public static class LoaderHelpers 
+{
+    public static AudioClip LoadAudioForNumber(DataRow number)
+    {
+        return LoadAudioForWord(StringHelpers.IntegerToWritten(System.Convert.ToInt32(number ["value"])));
+    }
+
+    public static AudioClip LoadAudioForNumber(int value)
+    {
+        return LoadAudioForWord(StringHelpers.IntegerToWritten(value));
+    }
 
     public static AudioClip LoadAudioForWord(string word)
     {
