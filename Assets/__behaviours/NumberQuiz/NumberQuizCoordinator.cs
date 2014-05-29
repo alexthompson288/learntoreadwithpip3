@@ -45,8 +45,7 @@ public class NumberQuizCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        //m_highestNumber = DataHelpers.GetHighestNumber();
-        m_highestNumber = 10;
+        m_highestNumber = DataHelpers.GetHighestNumberValue();
         m_highestNumber = Mathf.Min(m_highestNumber, m_questionLocators.Length);
 
         m_numAnswersToSpawn = Mathf.Min(m_numAnswersToSpawn, m_answerLocators.Length);

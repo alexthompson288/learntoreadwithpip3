@@ -926,6 +926,15 @@ public static class DataHelpers
         return dt.Rows.Count > 0 ? dt.Rows [0] : null;
     }
 
+    public static int GetHighestNumberValue()
+    {
+        List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
+        List<int> boundaryValues = GetNumberValues(boundaryData);
+        boundaryValues.Sort();
+
+        return boundaryValues [boundaryValues.Count - 1];
+    }
+
     public static List<DataRow> GetNumbers()
     {
         List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");

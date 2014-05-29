@@ -45,8 +45,7 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        //m_highestNumber = DataHelpers.GetHighestNumber();
-        m_highestNumber = 10;
+        m_highestNumber = DataHelpers.GetHighestNumberValue();
 
         AskQuestion();
     }
