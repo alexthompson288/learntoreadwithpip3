@@ -945,7 +945,7 @@ public static class DataHelpers
             boundaryValues[1] = 10;
         }
 
-        boundaryValues.Sort();
+        Array.Sort(boundaryValues);
 
         List<DataRow> numbers = new List<DataRow>();
 
