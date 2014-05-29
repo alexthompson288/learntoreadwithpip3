@@ -277,12 +277,6 @@ public static class DataHelpers
         return dataPool;
     }
 
-    // TODO: This should read from GameManager
-    public static int GetHighestNumber()
-    {
-        return 10;
-    }
-
     public static List<DataRow> GetCorrectCaptions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
@@ -934,23 +928,43 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        return GetNumbers(GetHighestNumber());
-    }
+        List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
 
-    public static List<DataRow> GetNumbers(int highest, int lowest = 1)
-    {
+        int[] boundaryValues = new int[2];
+
+        if (boundaryData.Count > 1)
+        {
+            for (int i = 0; i < 2; ++i)
+            {
+                boundaryValues [i] = Convert.ToInt32(boundaryData [i] ["value"]);
+            }
+        }
+        else
+        {
+            boundaryValues[0] = 1;
+            boundaryValues[1] = 10;
+        }
+
+        boundaryValues.Sort();
+
         List<DataRow> numbers = new List<DataRow>();
 
-        for (int i = lowest; i < highest + 1; ++i)
+        for(int i = boundaryValues[0]; i < boundaryValues[1] + 1; ++i)
         {
-            DataRow row = new DataRow();
-            row["tablename"] = "numbers";
-            row["id"] = i;
-            row["value"] = i;
-            numbers.Add(row);
+            numbers.Add(CreateNumber(i));
         }
 
         return numbers;
+    }
+
+    public static DataRow CreateNumber(int value)
+    {
+        DataRow row = new DataRow();
+        row["tablename"] = "numbers";
+        row["id"] = value;
+        row["value"] = value;
+
+        return row;
     }
 
     public static List<DataRow> OnlyLowNumbers(List<DataRow> dataPool, int maxValue)

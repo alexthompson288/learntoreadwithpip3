@@ -361,6 +361,15 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             
             GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
+
+            // Numbers
+            DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id=" + m_sessionId);
+            
+            if(sessionsTable.Rows.Count > 0)
+            {
+                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
+                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
+            }
             
             WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
             
