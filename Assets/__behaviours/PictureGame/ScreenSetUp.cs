@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ScreenSetUp : MonoBehaviour {
-
+public class ScreenSetUp : MonoBehaviour 
+{
     [SerializeField]
     private float m_zRot1Player = 0;
     [SerializeField]
@@ -25,7 +25,8 @@ public class ScreenSetUp : MonoBehaviour {
     private bool m_adjustFor43;
 
 	// Use this for initialization
-	void Awake() 
+	//void Awake() 
+    void Start()
     {
 		bool twoPlayer;
 		
@@ -42,12 +43,17 @@ public class ScreenSetUp : MonoBehaviour {
 		
         if (twoPlayer)
         {
+            // Rotate the anchor
             m_rotateScaleTransform.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, m_zRot2Player));
             m_rotateScaleTransform.transform.localScale = Vector3.one * m_scale2Player;
 
+            // Set the screen coordinates of the camera
             Rect adjust = m_rect2;
             if (m_adjustFor43)
             {
+                adjust.height = 0.9f;
+                adjust.y = 0.05f;
+
                 adjust.width = adjust.width * ((4.0f / 3.0f) / m_cameras[0].aspect);
                 Debug.Log(adjust.width);
                 if (adjust.x == 0)
