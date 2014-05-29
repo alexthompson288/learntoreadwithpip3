@@ -934,10 +934,10 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        return GetNumbers(GetHighestNumber(), 0);
+        return GetNumbers(GetHighestNumber());
     }
 
-    public static List<DataRow> GetNumbers(int highest, int lowest = 0)
+    public static List<DataRow> GetNumbers(int highest, int lowest = 1)
     {
         List<DataRow> numbers = new List<DataRow>();
 
@@ -1050,7 +1050,7 @@ public static class DataHelpers
         return operators;
     }
 
-    public static DataRow[] FindLegalAdditionParts(DataRow sumData, List<DataRow> dataPool)
+    public static List<DataRow> FindLegalAdditionLHS(DataRow sumData, List<DataRow> dataPool)
     {
         List<int> numbers = GetNumberValues(dataPool);
         
@@ -1080,11 +1080,11 @@ public static class DataHelpers
             }
         }
 
-        DataRow[] equationParts = new DataRow[equationPartValues.Length];
+        List<DataRow> equationParts = new List<DataRow>();
 
-        for (int i = 0; i < equationParts.Length; ++i)
+        for (int i = 0; i < equationPartValues.Length; ++i)
         {
-            equationParts[i] = FindNumberWithValue(dataPool, equationPartValues[i]);
+            equationParts.Add(FindNumberWithValue(dataPool, equationPartValues[i]));
         }
 
         return equationParts;
@@ -1098,7 +1098,7 @@ public static class DataHelpers
 
         int minLegal = numbers [0] + numbers [0];
 
-        return FindNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count] + 1));
+        return FindNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count - 1] + 1));
     }
 
     public static List<int> GetNumberValues(List<DataRow> dataPool)
