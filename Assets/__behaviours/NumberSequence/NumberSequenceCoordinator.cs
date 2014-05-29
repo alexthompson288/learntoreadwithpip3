@@ -6,102 +6,99 @@ using Wingrove;
 public class NumberSequenceCoordinator : GameCoordinator
 {
     [SerializeField]
-    private GameObject m_sequenceParent;
-    [SerializeField]
-    private UILabel[] m_sequenceWidgets;
+    private Transform[] m_sequenceLocators;
     [SerializeField]
     private int m_numInSequence = 5;
     [SerializeField]
-    private GameObject m_answerPrefab;
+    private GameObject m_numberPrefab;
     [SerializeField]
     private Transform[] m_answerLocators;
     [SerializeField]
     private int m_numAnswers;
-    [SerializeField]
-    private float m_scaleTweenDuration = 0.35f;
 
     int m_highestNumber = 0;
 
-    int m_currentNumber = 0;
     int m_currentNumberIndex = 0;
 
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
+    List<GameWidget> m_spawnedSequenceNumbers = new List<GameWidget>();
 
     bool m_hasAnsweredIncorrectly = false;
 
-    public int FindLinear(int previous, int increment)
-    {
-        return previous + increment;
-    }
 
     IEnumerator Start()
     {
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
-        m_numInSequence = Mathf.Min(m_numInSequence, m_sequenceWidgets.Length);
+        m_numInSequence = Mathf.Min(m_numInSequence, m_sequenceLocators.Length);
         m_numAnswers = Mathf.Min(m_numAnswers, m_answerLocators.Length);
 
-        System.Array.Sort(m_sequenceWidgets, CollectionHelpers.ComparePosX);
+        System.Array.Sort(m_sequenceLocators, CollectionHelpers.ComparePosX);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_highestNumber = DataHelpers.GetHighestNumberValue();
+        m_dataPool = DataHelpers.GetNumbers();
 
         AskQuestion();
     }
 
     void AskQuestion()
     {
-        int lowestNumber = Random.Range(1, m_highestNumber - 4);
+        int index = Random.Range(0, m_dataPool.Count - m_sequenceLocators.Length);
 
-        List<int> numberSequence = new List<int>();
-        numberSequence.Add(lowestNumber);
+        List<DataRow> numberSequence = new List<DataRow>();
 
         while (numberSequence.Count < m_numInSequence)
         {
-            numberSequence.Add(FindLinear(numberSequence[numberSequence.Count - 1], 1));
+            numberSequence.Add(m_dataPool[index]);
+            ++index;
         }
 
         m_currentNumberIndex = Random.Range(0, numberSequence.Count);
 
-        for(int i = 0; i < numberSequence.Count && i < m_sequenceWidgets.Length; ++i)
+        for(int i = 0; i < numberSequence.Count && i < m_sequenceLocators.Length; ++i)
         {
-            m_sequenceWidgets[i].text = numberSequence[i].ToString();
-            m_sequenceWidgets[i].gameObject.SetActive(i != m_currentNumberIndex);
+            if(i != m_currentNumberIndex)
+            {
+                GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_sequenceLocators[i]);
+
+                GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
+                widget.SetUp(numberSequence[i]);
+                widget.EnableDrag(false);
+                m_spawnedSequenceNumbers.Add(widget);
+            }
         }
 
-        m_currentNumber = numberSequence [m_currentNumberIndex];
+        m_currentData = numberSequence [m_currentNumberIndex];
 
-        HashSet<int> answers = new HashSet<int>();
-        answers.Add(m_currentNumber);
+        HashSet<DataRow> answers = new HashSet<DataRow>();
+        answers.Add(m_currentData);
 
         while (answers.Count < m_numAnswers)
         {
-            answers.Add(Random.Range(1, m_highestNumber));
+            answers.Add(GetRandomData());
         }
 
         CollectionHelpers.Shuffle(m_answerLocators);
 
         int locatorIndex = 0;
-        foreach (int answer in answers)
+        foreach (DataRow answer in answers)
         {
-            GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerPrefab, m_answerLocators[locatorIndex]);
+            GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_answerLocators[locatorIndex]);
 
             GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
 
-            widget.SetUp(answer.ToString(), false);
+            widget.SetUp(answer);
             widget.onAll += OnAnswer;
             m_spawnedAnswers.Add(widget);
 
             ++locatorIndex;
         }
-
-        iTween.ScaleTo(m_sequenceParent, Vector3.one, m_scaleTweenDuration);
     }
 
     void OnAnswer(GameWidget widget)
     {
-        bool isCorrect = System.Convert.ToInt32(widget.labelText) == m_currentNumber;
+        bool isCorrect = widget.data == m_currentData;
 
         if (isCorrect)
         {
@@ -112,7 +109,7 @@ public class NumberSequenceCoordinator : GameCoordinator
             int scoreDelta = m_hasAnsweredIncorrectly ? 0 : 1; 
             m_scoreKeeper.UpdateScore(scoreDelta);
 
-            widget.TweenToPos(m_sequenceWidgets[m_currentNumberIndex].transform.position);
+            widget.TweenToPos(m_sequenceLocators[m_currentNumberIndex].position);
 
             StartCoroutine(ClearQuestions());
         } 
@@ -132,16 +129,10 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         m_hasAnsweredIncorrectly = false;
 
-        for(int i = m_spawnedAnswers.Count - 1; i > -1; --i)
-        {
-            m_spawnedAnswers[i].Off();
-        }
-        
-        m_spawnedAnswers.Clear();
+        CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
+        CollectionHelpers.DestroyObjects(m_spawnedSequenceNumbers, true);
 
-        iTween.ScaleTo(m_sequenceParent, new Vector3(0, m_sequenceParent.transform.localScale.y, 0), m_scaleTweenDuration);
-
-        yield return new WaitForSeconds(m_scaleTweenDuration * 2);
+        yield return new WaitForSeconds(0.5f);
 
         if (m_numAnswered >= m_targetScore)
         {
