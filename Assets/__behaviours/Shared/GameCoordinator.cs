@@ -23,7 +23,7 @@ public class GameCoordinator : Singleton<GameCoordinator>
 
     protected void ClampTargetScore()
     {
-        m_targetScore = Mathf.Clamp(m_targetScore, 0, m_dataPool.Count);
+        m_targetScore = Mathf.Min(m_targetScore, m_dataPool.Count);
     }
 
     protected virtual IEnumerator CompleteGame()

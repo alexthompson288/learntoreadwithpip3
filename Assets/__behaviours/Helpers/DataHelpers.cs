@@ -993,4 +993,138 @@ public static class DataHelpers
 
         return shapes;
     }
+
+    public static List<DataRow> GetArithmeticOperators()
+    {
+        List<DataRow> operators = new List<DataRow>();
+
+        // Addition
+        DataRow add = new DataRow();
+        add ["tablename"] = "arithmetic_operators";
+        add ["id"] = 1;
+        add ["name"] = "add";
+        add ["symbol"] = "+";
+        Func <int, int, int> addFunc = (x, y) => x + y;
+        add ["operation"] = addFunc;
+
+
+        operators.Add(add);
+
+        /*
+        // Subtraction
+        DataRow subtract = new DataRow();
+        subtract ["tablename"] = "arithmetic_operators";
+        subtract ["id"] = 2;
+        subtract ["name"] = "subtract";
+        subtract ["symbol"] = "-";
+        Func <int, int, int> subtractFunc = (x, y) => x - y;
+        subtract ["operation"] = subtractFunc;
+         
+        operators.Add(subtract);
+
+
+        // Multiplication
+        DataRow multiply = new DataRow();
+        multiply ["tablename"] = "arithmetic_operators";
+        multiply ["id"] = 3;
+        multiply ["name"] = "multiply";
+        multiply ["symbol"] = "x";
+        Func <int, int, int> multiplyFunc = (x, y) => x * y;
+        multiply ["operation"] = multiplyFunc;
+        
+        operators.Add(multiply);
+
+
+        // Division
+        DataRow divide = new DataRow();
+        divide ["tablename"] = "arithmetic_operators";
+        divide ["id"] = 4;
+        divide ["name"] = "divide";
+        divide ["symbol"] = "/";
+        Func <int, int, int> divideFunc = (x, y) => x / y;
+        divide ["operation"] = divideFunc;
+        
+        operators.Add(divide);
+        */
+
+        return operators;
+    }
+
+    public static DataRow[] FindLegalAdditionParts(DataRow sumData, List<DataRow> dataPool)
+    {
+        List<int> numbers = GetNumberValues(dataPool);
+        
+        numbers.Sort();
+
+        int sum = Convert.ToInt32(sumData ["value"]);
+
+        int[] equationPartValues = new int[2];
+
+        bool foundEquationParts = false;
+
+        while (!foundEquationParts)
+        {
+            int firstPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
+
+            for(int i = 0; i < 100; ++i)
+            {
+                int secondPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
+
+                if((firstPart + secondPart) == sum)
+                {
+                    equationPartValues[0] = firstPart;
+                    equationPartValues[1] = secondPart;
+                    foundEquationParts = true;
+                    break;
+                }
+            }
+        }
+
+        DataRow[] equationParts = new DataRow[equationPartValues.Length];
+
+        for (int i = 0; i < equationParts.Length; ++i)
+        {
+            equationParts[i] = FindNumberWithValue(dataPool, equationPartValues[i]);
+        }
+
+        return equationParts;
+    }
+
+    public static DataRow FindLegalSum(List<DataRow> dataPool)
+    {
+        List<int> numbers = GetNumberValues(dataPool);
+
+        numbers.Sort();
+
+        int minLegal = numbers [0] + numbers [0];
+
+        return FindNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count] + 1));
+    }
+
+    public static List<int> GetNumberValues(List<DataRow> dataPool)
+    {
+        List<int> numbers = new List<int>();
+        foreach (DataRow data in dataPool)
+        {
+            if(data["value"] != null)
+            {
+                numbers.Add(Convert.ToInt32(data["value"]));
+            }
+        }
+
+        return numbers;
+    }
+
+    public static DataRow FindNumberWithValue(List<DataRow> dataPool, int value)
+    {
+        foreach (DataRow data in dataPool)
+        {
+            if(data["value"] != null && Convert.ToInt32(data["value"]) == value)
+            {
+                return data;
+            }
+        }
+
+        return null;
+    }
 }
