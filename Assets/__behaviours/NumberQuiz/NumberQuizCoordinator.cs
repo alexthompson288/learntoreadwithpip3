@@ -22,9 +22,6 @@ public class NumberQuizCoordinator : GameCoordinator
     [SerializeField]
     private float m_scaleTweenDuration = 0.3f;
 
-    int m_highestNumber = 0;
-
-    int m_currentNumber = 0;
 
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
 
@@ -32,10 +29,6 @@ public class NumberQuizCoordinator : GameCoordinator
 
     bool m_hasAnsweredIncorrectly = false;
 
-    int FindRandomNumber()
-    {
-        return Random.Range(1, m_highestNumber + 1);
-    }
 
 	IEnumerator Start () 
     {
@@ -45,8 +38,7 @@ public class NumberQuizCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_highestNumber = DataHelpers.GetHighestNumberValue();
-        m_highestNumber = Mathf.Min(m_highestNumber, m_questionLocators.Length);
+        m_dataPool = DataHelpers.GetNumbers();
 
         m_numAnswersToSpawn = Mathf.Min(m_numAnswersToSpawn, m_answerLocators.Length);
 
@@ -55,40 +47,40 @@ public class NumberQuizCoordinator : GameCoordinator
 
     void AskQuestion()
     {
-        m_currentNumber = FindRandomNumber();
+        m_currentData = GetRandomData();
 
         string spriteName = m_questionSpriteNames [Random.Range(0, m_questionSpriteNames.Length)];
 
-        for (int i = 0; i < m_currentNumber; ++i)
+        int currentNumber = System.Convert.ToInt32(m_currentData ["value"]);
+        for (int i = 0; i < currentNumber; ++i)
         {
             GameObject newQuestionObject = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_questionSpritePrefab, m_questionLocators[i]);
             m_spawnedQuestionSprites.Add(newQuestionObject);
             newQuestionObject.GetComponent<UISprite>().spriteName = spriteName;
         }
 
-        HashSet<int> answers = new HashSet<int>();
+        HashSet<DataRow> answers = new HashSet<DataRow>();
 
-        answers.Add(m_currentNumber);
+        answers.Add(m_currentData);
 
         while (answers.Count < m_numAnswersToSpawn)
         {
-            answers.Add(FindRandomNumber());
+            answers.Add(GetRandomData());
         }
 
         CollectionHelpers.Shuffle(m_answerLocators);
 
         int locatorIndex = 0;
-        foreach (int answer in answers)
+        foreach (DataRow answer in answers)
         {
             GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerLabelPrefab, m_answerLocators[locatorIndex]);
 
             GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
-            widget.SetUp(answer.ToString(), false);
+            widget.SetUp(answer);
             widget.onAll += OnAnswer;
             m_spawnedAnswers.Add(widget);
 
             ++locatorIndex;
-
         }
 
         iTween.ScaleTo(m_questionParent, Vector3.one, m_scaleTweenDuration);
@@ -96,7 +88,7 @@ public class NumberQuizCoordinator : GameCoordinator
 
     void OnAnswer(GameWidget widget)
     {
-        bool isCorrect = System.Convert.ToInt32(widget.labelText) == m_currentNumber;
+        bool isCorrect = widget.data == m_currentData;
 
         if (isCorrect)
         {
