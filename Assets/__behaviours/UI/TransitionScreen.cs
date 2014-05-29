@@ -114,12 +114,12 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 		//Debug.Log("FINISHED TransitionScreen.Start()");
 
-		/*
+		
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_ON");
         }
-        */
+
 
 		yield return new WaitForSeconds(0.8f); // 0.8f is duration of ScreenCover tween
 
@@ -184,13 +184,13 @@ public class TransitionScreen : Singleton<TransitionScreen>
 			}
 		}
 
-        /*
+
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SCENE_CHANGE");
         }
-        */
+
 
 		m_currentTextureIndex = UnityEngine.Random.Range(0, m_backgroundTextures.Length);
 
