@@ -62,6 +62,19 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
         return (this ["tablename"].ToString() + this ["id"].ToString()).GetHashCode();
 		//return Convert.ToInt32(this["id"]);
 	}
+
+    public int GetInt(string attributeName)
+    {
+        try
+        {
+            return Convert.ToInt32(this[attributeName]);
+        }
+        catch
+        {
+            Debug.LogError(this["tablename"].ToString() + " has no int attribute called " + attributeName);
+            return -1;
+        }
+    }
 }
 
 public class SectionComparer : IComparer<DataRow>
