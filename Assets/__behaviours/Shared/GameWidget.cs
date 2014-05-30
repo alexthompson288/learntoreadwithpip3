@@ -96,11 +96,9 @@ public class GameWidget : MonoBehaviour
 
     int m_backgroundIndex;
 
-    void Start()
+    void Awake()
     {
-        //iTween.ScaleFrom(gameObject, Vector3.zero, m_scaleTweenDuration);
         transform.localScale = Vector3.zero;
-
         iTween.ScaleTo(gameObject, Vector3.one, m_scaleTweenDuration);
     }
 

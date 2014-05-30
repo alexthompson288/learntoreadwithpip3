@@ -10,22 +10,11 @@ public class GameLinker : Singleton<GameLinker>
 
     void Awake()
     {
-        /*
-        string allGameNames = m_gameNameFile.text;
-        string[] separatedGameNames = allGameNames.Split(',');
-        
-        for(int i = 0; i < separatedGameNames.Length; ++i)
-        {
-            separatedGameNames[i] = StringHelpers.Edit(separatedGameNames[i], new string[] { "_" } );
-        }
-        
-        for(int i = 0; i < separatedGameNames.Length - 1; i += 2)
-        {
-            m_gameNames[separatedGameNames[i]] = separatedGameNames[i + 1];
-        }
-        */
+        string path = Application.dataPath;
+        path = path.Replace("Assets", ""); // Application.dataPath has "Assets" appended and GetAssetPath has "Assets" prepended, we need to remove one of these 
+        path += UnityEditor.AssetDatabase.GetAssetPath(m_gameNameFile);
 
-        using (CsvFileReader reader = new CsvFileReader(Application.dataPath + "/__system/GameNames.csv"))
+        using (CsvFileReader reader = new CsvFileReader(path))
         {
             CsvRow row = new CsvRow();
             while (reader.ReadRow(row))

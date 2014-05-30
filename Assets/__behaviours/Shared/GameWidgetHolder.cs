@@ -28,7 +28,6 @@ public class GameWidgetHolder : MonoBehaviour
         {
             if(locator.childCount == 0)
             {
-                Debug.Log(locator.name + " has no children");
                 return locator;
             }
         }
