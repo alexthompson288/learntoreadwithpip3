@@ -6,7 +6,10 @@ public class UserMenuButton : MonoBehaviour
 	[SerializeField]
 	UILabel m_label;
 	[SerializeField]
-	UITexture m_profilePic;
+    UISprite m_picture;
+
+    string m_spriteNameA;
+    string m_spriteNameB;
 
 	// Use this for initialization
 	public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
@@ -15,12 +18,16 @@ public class UserMenuButton : MonoBehaviour
 
 		m_label.text = userName;
 
-		Texture2D image = Resources.Load<Texture2D>("userPictures/" + imageName);
+        m_spriteNameA = imageName;
+        m_spriteNameB = DataHelpers.GetLinkedSpriteName(m_spriteNameA);
 
-		if(image != null)
-		{
-			m_profilePic.mainTexture = image;
-		}
+        bool isCurrentUser = userName == UserInfo.Instance.GetCurrentUser();
+        m_picture.spriteName = isCurrentUser ? m_spriteNameB : m_spriteNameA;
+
+        if (isCurrentUser)
+        {
+            UserMenuCoordinator.Instance.SelectButton(this);
+        }
 
 		GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;
 	}
@@ -28,6 +35,11 @@ public class UserMenuButton : MonoBehaviour
 	void OnClick()
 	{
 		UserInfo.Instance.SetCurrentUser(m_label.text);
-        TransitionScreen.Instance.ChangeLevel("NewVoyage", true);
+        UserMenuCoordinator.Instance.SelectButton(this);
 	}
+
+    public void ChangeSprite(bool toStateB)
+    {
+        m_picture.spriteName = toStateB ? m_spriteNameB : m_spriteNameA;
+    }
 }

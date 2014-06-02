@@ -130,7 +130,7 @@ public class UserInfo : Singleton<UserInfo>
 
     bool m_waitForIpAddress = false;
 
-    /*
+  
 	void Awake()
 	{	
         //Debug.Log("UserInfo.Awake()");
@@ -155,16 +155,10 @@ public class UserInfo : Singleton<UserInfo>
 		}
 #endif
 
-        //Debug.Log("UserInfo loading");
-
 		Load();
-
-        //Debug.Log("UserInfo loaded");
 
 		if (System.String.IsNullOrEmpty(m_accountUsername))
         {
-            //Debug.Log("Creating account user");
-
             string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
             dateTimeString = dateTimeString.Replace("/", "_");
             dateTimeString = dateTimeString.Replace(":", "_");
@@ -173,17 +167,11 @@ public class UserInfo : Singleton<UserInfo>
 
             m_accountUsername = dateTimeString + rand;
 
-            //Debug.Log("accountUsername: " + m_accountUsername);
-
             string newUser = "Pip";
             m_currentUser = newUser;
-            CreateUser(newUser, "pip_state_b");
+            CreateUser(newUser, "pip_state_a");
 			
             Save();
-        }
-        else
-        {
-            //Debug.Log("Already has account_username: " + m_accountUsername);
         }
 	}
 
@@ -196,7 +184,7 @@ public class UserInfo : Singleton<UserInfo>
 
         PostData();
     }
-    */
+   
 
 	public string GetCurrentUser ()
 	{

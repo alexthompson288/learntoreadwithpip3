@@ -15,6 +15,8 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	private UIDraggablePanel m_draggablePanel;
 	[SerializeField]
 	private UILabel m_inputLabel;
+    [SerializeField]
+    private string[] m_spriteNames;
 	
 	string m_imageName;
 
@@ -43,29 +45,17 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
-		m_imageName = "pip_state_a";
+        foreach (string spriteName in m_spriteNames)
+        {
+            GameObject newPicture = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_choosePictureButtonPrefab, m_grid.transform);
+            m_spawnedPictures.Add(newPicture);
+            
+            newPicture.GetComponent<UserPictureButton>().SetUp(spriteName, m_draggablePanel);
+        }
 
-		Object[] textures = Resources.LoadAll("userPictures");
-		Debug.Log("textures.Length: " + textures.Length);
-
-		if(textures != null)
-		{
-			foreach(Object texture in textures)
-			{
-				GameObject newPicture = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_choosePictureButtonPrefab, m_grid.transform);
-				m_spawnedPictures.Add(newPicture);
-
-				newPicture.GetComponent<UserPictureButton>().SetUp((Texture2D)texture, m_draggablePanel);
-			}
-
-			m_grid.Reposition();
-
-			m_tweenBehaviour.On();
-		}
-		else
-		{
-			Debug.Log("Could not find any textures");
-		}
+        m_grid.Reposition();
+        
+        m_tweenBehaviour.On();     
 	}
 
 	public void Off (bool createUser) 
@@ -99,15 +89,15 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	{
 		if(m_selectedPictureButton != button)
 		{
-			m_imageName = button.GetPictureName();
+            m_imageName = button.GetSpriteNameA();
 
 			if(m_selectedPictureButton != null)
 			{
-				m_selectedPictureButton.GetComponent<ThrobGUIElement>().Off();
+                m_selectedPictureButton.ChangeSprite(false);
 			}
 
 			m_selectedPictureButton = button;
-			m_selectedPictureButton.GetComponent<ThrobGUIElement>().On();
+            m_selectedPictureButton.ChangeSprite(true);
 		}
 
         Debug.Log("imageName: " + m_imageName);
