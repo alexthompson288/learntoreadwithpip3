@@ -68,10 +68,6 @@ public class VoyageSessionButton : MonoBehaviour
                 }
             }
         }
-        else
-        {
-
-        }
 
         if(!hasSetLabel)
         {
