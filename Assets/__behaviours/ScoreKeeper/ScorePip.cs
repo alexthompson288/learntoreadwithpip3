@@ -12,9 +12,11 @@ public class ScorePip : ScoreKeeper
     [SerializeField]
     private float m_platformTweenDuration = 0.3f;
     [SerializeField]
-    private iTween.EaseType m_platformEaseType = iTween.EaseType.linear;
+    private iTween.EaseType m_platformEaseType = iTween.EaseType.easeOutQuad;
     [SerializeField]
-    private float m_collectibleTweenSpeed = 2f;
+    private float m_collectableTweenSpeed = 2f;
+    [SerializeField]
+    private iTween.EaseType m_collectableEaseType = iTween.EaseType.easeOutQuad;
     [SerializeField]
     private Transform m_collectionPoint;
     [SerializeField]
@@ -35,6 +37,32 @@ public class ScorePip : ScoreKeeper
     {
         base.UpdateScore(delta);
         UpdatePlatformLevel(); 
+    }
+
+    public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
+    {
+        targetGo.transform.parent = m_collectionPoint;
+        targetGo.layer = m_collectionPoint.gameObject.layer;
+        
+        base.UpdateScore(delta);
+
+        iTween.Stop(targetGo);
+        
+        yield return null;
+        
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", m_collectionPoint.position);
+        tweenArgs.Add("speed", m_collectableTweenSpeed);
+        tweenArgs.Add("easetype", m_collectableEaseType);
+        iTween.MoveTo(targetGo, tweenArgs);
+        
+        float cauldronTweenDuration = Mathf.Abs(((m_collectionPoint.transform.position - targetGo.transform.position).magnitude) / m_collectableTweenSpeed);
+
+        yield return new WaitForSeconds(cauldronTweenDuration);
+        
+        Destroy(targetGo);
+        
+        UpdatePlatformLevel();
     }
 
     void UpdatePlatformLevel()
