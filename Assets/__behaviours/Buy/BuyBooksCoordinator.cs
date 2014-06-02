@@ -53,8 +53,8 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		if(BuyInfo.Instance.IsEverythingBought())
 		{
 			m_buyButtonsParent.SetActive(false);
-			m_infoText.position = m_infoNoBuyLocation.position;
-			m_background.transform.localScale = Vector3.one * 0.7f;
+			//m_infoText.position = m_infoNoBuyLocation.position;
+			//m_background.transform.localScale = Vector3.one * 0.7f;
 		}
 	}
 
