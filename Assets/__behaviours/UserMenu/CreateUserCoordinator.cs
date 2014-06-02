@@ -64,7 +64,11 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 
 		if(createUser && !UserInfo.Instance.HasUser(m_inputLabel.text))
 		{
-            Debug.Log("Creating imageName: " + m_imageName);
+            if(System.String.IsNullOrEmpty(m_imageName))
+            {
+                m_imageName = m_spawnedPictures[0].GetComponent<UserPictureButton>().GetSpriteNameA();
+            }
+
 			UserInfo.Instance.CreateUser(m_inputLabel.text, m_imageName);
 			UserMenuCoordinator.Instance.CreateUser(m_inputLabel.text, m_imageName);
 		}
@@ -99,7 +103,5 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 			m_selectedPictureButton = button;
             m_selectedPictureButton.ChangeSprite(true);
 		}
-
-        Debug.Log("imageName: " + m_imageName);
 	}
 }
