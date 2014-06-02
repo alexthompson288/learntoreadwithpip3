@@ -8,6 +8,8 @@ public class VoyageSessionButton : MonoBehaviour
     private UISprite m_background;
     [SerializeField]
     private UILabel m_label;
+    [SerializeField]
+    private RotateConstantly m_rotationBehaviour;
 
     DataRow m_session;
 
@@ -26,6 +28,10 @@ public class VoyageSessionButton : MonoBehaviour
         */
 
         m_background.spriteName = VoyageInfo.Instance.GetSessionBackground(sessionId);
+
+        m_rotationBehaviour.enabled = VoyageInfo.Instance.HasCompletedSession(sessionId);
+
+
         //m_background.MakePixelPerfect();
 
         bool hasSetLabel = false;
