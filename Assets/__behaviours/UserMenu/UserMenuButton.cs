@@ -3,10 +3,16 @@ using System.Collections;
 
 public class UserMenuButton : MonoBehaviour 
 {
+    [SerializeField]
+    private UISprite m_background;
 	[SerializeField]
 	UILabel m_label;
 	[SerializeField]
     UISprite m_picture;
+    [SerializeField]
+    private ColorInfo.PipColor m_pipColorA = ColorInfo.PipColor.Blue;
+    [SerializeField]
+    private ColorInfo.PipColor m_pipColorB = ColorInfo.PipColor.Green;
 
     string m_spriteNameA;
     string m_spriteNameB;
@@ -23,6 +29,7 @@ public class UserMenuButton : MonoBehaviour
 
         bool isCurrentUser = userName == UserInfo.Instance.GetCurrentUser();
         m_picture.spriteName = isCurrentUser ? m_spriteNameB : m_spriteNameA;
+        m_background.color = isCurrentUser ? ColorInfo.GetColor(m_pipColorB) : ColorInfo.GetColor(m_pipColorA);
 
         if (isCurrentUser)
         {
@@ -41,5 +48,6 @@ public class UserMenuButton : MonoBehaviour
     public void ChangeSprite(bool toStateB)
     {
         m_picture.spriteName = toStateB ? m_spriteNameB : m_spriteNameA;
+        m_background.color = toStateB ? ColorInfo.GetColor(m_pipColorB) : ColorInfo.GetColor(m_pipColorA);
     }
 }
