@@ -21,4 +21,14 @@ public static class NGUIHelpers
     {
         return label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None).x * label.transform.localScale.x;
     }
+
+    public static void MaxLabelWidth(UILabel label, float maxWidth)
+    {
+        float width = GetLabelWidth(label);
+
+        if (width > maxWidth)
+        {
+            label.transform.localScale *= (maxWidth / width);
+        }
+    }
 }

@@ -5,6 +5,8 @@ using System;
 public class NewStoryBrowserBookButton : MonoBehaviour
 {
     [SerializeField]
+    private UISprite m_background;
+    [SerializeField]
     private UITexture m_coverSprite;
     [SerializeField]
     private float m_loadWithinRange = 2.0f;
@@ -31,25 +33,16 @@ public class NewStoryBrowserBookButton : MonoBehaviour
     public void SetUpWith(DataRow dataRow)
     {
         m_storyData = dataRow;
-        if (Convert.ToInt32(dataRow["difficulty"]) == 1)
-        {
-            m_stars[0].SetActive(true);
-        }
-        else if ( Convert.ToInt32(dataRow["difficulty"]) == 2 )
-        {
-            m_stars[1].SetActive(true);
-        }
-        else
-        {
-            m_stars[2].SetActive(true);
-        }
+
+        m_background.spriteName = "storycover_" + m_storyData ["storytype"].ToString();
+
 		
         Refresh();
     }
 
     public void Refresh()
     {
-		m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
+		//m_coverSprite.GetComponent<UITexture>().material.SetFloat("_DesatAmount", 0.0f);
 
         int bookId = Convert.ToInt32(m_storyData["id"]);
         if (BuyInfo.Instance.IsBookBought(bookId))
@@ -82,7 +75,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
                     Texture2D texture = LoaderHelpers.LoadObject<Texture2D>("Images/story_covers/" + artworkFile);
                     if (texture != null)
                     {
-                        m_coverSprite.mainTexture = texture;
+                        //m_coverSprite.mainTexture = texture;
                     }
 
                     m_isLoaded = true;
@@ -94,7 +87,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
         {
             if ((Mathf.Abs(transform.position.x) > m_loadWithinRange * 1.5f)&&(m_dynamicLoad))
             {
-                m_coverSprite.mainTexture = null;
+                //m_coverSprite.mainTexture = null;
                 Resources.UnloadUnusedAssets();
                 m_isLoaded = false;
             }
@@ -119,7 +112,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 		}
 		else
 		{
-			BuyBooksCoordinator.Instance.Show(this);
+			//BuyBooksCoordinator.Instance.Show(this);
 		}
 	}
 
@@ -130,6 +123,16 @@ public class NewStoryBrowserBookButton : MonoBehaviour
 
 	public void ShowBuyPanel()
 	{
-		BuyBooksCoordinator.Instance.Show(this);
+		//BuyBooksCoordinator.Instance.Show(this);
 	}
+
+    public IEnumerator Off()
+    {
+        float tweenDuration = 0.25f;
+        iTween.ScaleTo(gameObject, Vector3.zero, tweenDuration);
+
+        yield return new WaitForSeconds(tweenDuration);
+
+        Destroy(gameObject);
+    }
 }

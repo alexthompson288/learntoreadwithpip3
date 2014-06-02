@@ -35,7 +35,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	GameObject m_currentGameMenu = null;
 
 	bool m_isTwoPlayer;
-    ColorInfo.PipColor m_color;
+    ColorInfo.PipColor m_pipColor;
 
     void Start()
     {
@@ -69,6 +69,16 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             button.AddPressedAudio("COLOR_" + colorName.ToUpper());
             button.Unpressing += OnChooseColor;
         }
+
+        if (GameMenuInfo.Instance.HasBookmark())
+        {
+            m_isTwoPlayer = GameMenuInfo.Instance.IsBookmarkTwoPlayer();
+            m_pipColor = GameMenuInfo.Instance.GetBookmarkPipColor();
+
+            SpawnGameButtons();
+
+            m_camera.transform.position = m_gameMenu.transform.position;
+        }
     }
 
     void OnChooseNumPlayers(PipButton button)
@@ -96,7 +106,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
     void OnChooseColor(PipButton button)
     {
-        m_color = button.pipColor;
+        m_pipColor = button.pipColor;
 
         DestroyGameButtons();
         
@@ -116,10 +126,10 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             Debug.Log("Found game");
             GameManager.Instance.AddGame(game);
 
-            GameManager.Instance.SetReturnScene("NewScoreDanceScene");
+            GameManager.Instance.SetReturnScene("NewGameMenu");
 
             // Get and set all the data associated with the color
-            int moduleId = DataHelpers.GetModuleId(m_color);
+            int moduleId = DataHelpers.GetModuleId(m_pipColor);
 
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
             GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
@@ -138,6 +148,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
+
+            GameMenuInfo.Instance.CreateBookmark(m_isTwoPlayer, m_pipColor);
 
             GameManager.Instance.StartGames();
         } 
@@ -167,7 +179,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
     void SpawnGameButtons()
     {
-        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + DataHelpers.GetModuleId(m_color)); 
+        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + DataHelpers.GetModuleId(m_pipColor)); 
 
         foreach (DataRow join in joinTable.Rows)
         {
@@ -176,10 +188,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             if(gameTable.Rows.Count > 0)
             {
                 DataRow game = gameTable.Rows[0];
-                Debug.Log("game: " + game);
 
-                // TODO: Temporary fix, remove when database is correct - game["name"].ToString() != "NewSplatGame" 
-                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t" && game["name"].ToString() != "NewSplatGame";
+                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
 
                 if(!m_isTwoPlayer || m_isTwoPlayer && gameIsMultiplayer)
                 {

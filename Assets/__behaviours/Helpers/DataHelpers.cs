@@ -642,9 +642,16 @@ public static class DataHelpers
 
     public static string GetLinkedSpriteName(string spriteName)
     {
-        string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
+        if (spriteName.Length > 0)
+        {
+            string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
 
-        return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
+            return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
+        } 
+        else
+        {
+            return "";
+        }
     }
 
     public static List<string> GetNumberSpriteNames(DataRow data)
@@ -702,6 +709,10 @@ public static class DataHelpers
                 break;
             case "shapes":
                 tex = Resources.Load<Texture2D>(data["name"].ToString());
+                break;
+            case "stories":
+                Debug.Log("Finding: " + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
+                tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
             default:
                 break;

@@ -11,7 +11,6 @@ public class WrapDragPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         m_dragPanelContents = GetComponentsInChildren<UIDragPanelContents>();
         UIGrid grid = GetComponent<UIGrid>();
 

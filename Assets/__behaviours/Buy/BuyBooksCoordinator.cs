@@ -37,7 +37,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	Texture2D m_defaultBackgroundTex;
 	Color m_defaultBackgroundColor;
 	
-    NewStoryBrowserBookButton m_currentBook;
+    //NewStoryBrowserBookButton m_currentBook;
 
 	void Awake()
 	{
@@ -45,7 +45,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		m_defaultBackgroundColor = m_background.color;
 
 		m_backCollider.OnSingleClick += OnClickBackCollider;
-		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
+		//m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
 	}
 
 	void Start()
@@ -58,13 +58,9 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		}
 	}
 
-	public void BuyBook(ClickEvent click)
-	{
-        m_currentBook.Buy(); // Call Buy() method on book because there is another script called BuyBookButton which lets user buy individual book.
-	}
-
 	public override void RefreshBuyButton()
 	{
+        /*
         if (BuyInfo.Instance != null && m_currentBook != null && m_currentBook.storyData != null)
         {
             Debug.Log("m_currentBook: " + m_currentBook);
@@ -77,15 +73,14 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
                 buyButtonSprite.color = bookIsLocked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
             }
         }
+        */
 	}
 
-	public void Show(NewStoryBrowserBookButton currentBook)
+    public void Show(DataRow storyData)
 	{
 		m_buyAllBooksLabel.text = String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
-		DisableUICams();
-
-		DataRow storyData = currentBook.storyData;
+		//DisableUICams();
 
 #if UNITY_IPHONE
 //		System.Collections.Generic.Dictionary<string, string> ep = new System.Collections.Generic.Dictionary<string, string>();
@@ -129,7 +124,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	public void OnClickBackCollider(ClickEvent click)
 	{
 		m_tweenBehaviour.Off(false);
-		NGUIHelpers.EnableUICams();
+		//NGUIHelpers.EnableUICams();
 	}
 
 	void SetFromText(UILabel label, DataRow dr, string field, string preface = "")

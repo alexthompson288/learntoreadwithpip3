@@ -15,10 +15,6 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
 	[SerializeField]
 	private GameObject m_loadingIcon;
 
-	// Use this for initialization
-
-	bool m_productListResolved = false;
-
 	IEnumerator Start () 
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -41,45 +37,8 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
         DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
 			"select * from stories WHERE storytype=" + "\'" + storyType +  "\'" + " ORDER BY fontsize, difficulty");
 
-		/*
-		if(dataTable.Rows.Count > 0)
-		{
-			foreach(DataRow story in dataTable.Rows)
-			{
-				try
-				{
-					Debug.Log(story["title"].ToString() + " - " + story["fontsize"].ToString() + " - " + story["difficulty"].ToString());
-				}
-				catch
-				{
-					Debug.Log("MISSING FIELD");
-					Debug.Log(story["title"].ToString());
-
-					if(story["fontsize"] != null)
-					{
-						Debug.Log(story["fontsize"].ToString());
-					}
-					else
-					{
-						Debug.Log("fontsize is null");
-					}
-
-					if(story["difficulty"] != null)
-					{
-						Debug.Log(story["difficulty"].ToString());
-					}
-					else
-					{
-						Debug.Log("difficulty is null");
-					}
-				}
-			}
-		}
-		*/
-
         int bookIndex = 0;
 
-        //List<string> bookProductIds = new List<string>();
 
         foreach (DataRow row in dataTable.Rows)
         {
@@ -94,23 +53,7 @@ public class NewStoryBrowserBookPopulator : Singleton<NewStoryBrowserBookPopulat
         }
 
         m_grid.Reposition();
-	}
-
-    /*
-	void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
-	{
-		Debug.Log("PRODUCTLIST: Received " + productList.Count);
-		m_productListResolved = true;
-	}
-	
-	void StoreKitManager_productListFailedEvent(string s)
-	{
-		Debug.Log("PRODUCTLIST: Failed");
-		Debug.Log("Failed Message: " + s);
-		
-		m_productListResolved = true;
-	}
- */   
+	}   
 
 	public bool IsBookUnlocked(int bookId)
 	{

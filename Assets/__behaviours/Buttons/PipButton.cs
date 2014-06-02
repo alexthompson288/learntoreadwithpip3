@@ -72,10 +72,27 @@ public class PipButton : MonoBehaviour
     
     string m_unpressedSpriteName;
 
+    bool m_hasSetSpriteNames = false; // Defensive: It is possible for a menu Coordinator to call ChangeSprite before Start method has set m_pressedSpriteName
+
     public void ChangeSprite(bool toStateB)
     {
+        if (!m_hasSetSpriteNames) // Defensive: It is possible for a menu Coordinator to call ChangeSprite before Start method has set m_pressedSpriteName
+        {
+            m_hasSetSpriteNames = true;
+
+            m_unpressedSpriteName = m_pressableButton.spriteName;
+            
+            if (System.String.IsNullOrEmpty(m_pressedSpriteName))
+            {
+                m_pressedSpriteName = DataHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
+            }
+        } 
+
+        Debug.Log(transform.parent.name + " - toStateB: " + toStateB);
+
         m_pressableButton.spriteName = toStateB ? m_pressedSpriteName : m_unpressedSpriteName;
     }
+
     
     // ColorChange Variables
     [SerializeField]
@@ -188,8 +205,10 @@ public class PipButton : MonoBehaviour
                 m_positionTweenArgs.Add("easetype", m_positionEaseType);
             }
             
-            if (m_changeSprite)
+            if (m_changeSprite && !m_hasSetSpriteNames)
             {
+                m_hasSetSpriteNames = true;
+
                 m_unpressedSpriteName = m_pressableButton.spriteName;
                 
                 if (System.String.IsNullOrEmpty(m_pressedSpriteName))
