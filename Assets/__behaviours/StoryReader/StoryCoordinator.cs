@@ -79,7 +79,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         m_currentPage += button.GetInt();
 
-        if (m_currentPage >= m_numPages)
+        if (m_currentPage > m_numPages)
         {
             GameManager.Instance.CompleteGame();
         } 
@@ -170,6 +170,12 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_storyPicture.mainTexture = bgImage != null ? bgImage : image;
     }
 
+    void UpdatePicture()
+    {
+        Texture2D tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/the_end");
+        m_storyPicture.mainTexture = tex;
+    }
+
     void UpdateText(DataRow storyPage)
     {
         if (m_showWords)
@@ -242,13 +248,20 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void UpdatePage()
     {
-        DataRow storyPage = FindStoryPage();
-        
-        if (storyPage != null)
+        if (m_currentPage < m_numPages)
         {
-            UpdateText(storyPage);
-            UpdatePicture(storyPage);
-            UpdateAudio(storyPage);
+            DataRow storyPage = FindStoryPage();
+            
+            if (storyPage != null)
+            {
+                UpdateText(storyPage);
+                UpdatePicture(storyPage);
+                UpdateAudio(storyPage);
+            }
+        }
+        else
+        {
+            UpdatePicture();
         }
     }
 
