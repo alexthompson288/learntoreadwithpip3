@@ -77,6 +77,7 @@ public class VoyageSessionButton : MonoBehaviour
 
     void OnClick()
     {
-        VoyageSessionBoard.Instance.On(m_session);
+        VoyageCoordinator.Instance.StartGames(m_session.GetInt("id"));
+        //VoyageSessionBoard.Instance.On(m_session);
     }
 }
