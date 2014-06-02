@@ -37,6 +37,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 	bool m_isTwoPlayer;
     ColorInfo.PipColor m_pipColor;
 
+    PipButton m_currentColorButton = null;
+
     void Start()
     {
         EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
@@ -57,6 +59,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             //m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
         }
 
+        System.Array.Sort(m_colorButtons, CollectionHelpers.ComparePosX);
+
         foreach (PipButton button in m_colorButtons)
         {
             Transform buttonParent = button.transform.parent;
@@ -67,7 +71,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
             button.SetPipColor(ColorInfo.GetPipColor(colorName), true);
             button.AddPressedAudio("COLOR_" + colorName.ToUpper());
-            button.Unpressing += OnChooseColor;
+            button.Pressing += OnChooseColor;
         }
 
         if (GameMenuInfo.Instance.HasBookmark())
@@ -95,7 +99,10 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
         m_isTwoPlayer = numPlayers == 2;
 
-        StartCoroutine(MoveCamera(m_numPlayerMenu, m_colorMenu));
+        OnChooseColor(m_colorButtons [0]);
+        m_colorButtons [0].ChangeSprite(true);
+
+        iTween.MoveTo(m_camera, m_colorMenu.transform.position, m_cameraTweenDuration);
     }
 
     IEnumerator ResetChooseNumPlayersButton(PerspectiveButton button, float delay)
@@ -106,12 +113,27 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
 
     void OnChooseColor(PipButton button)
     {
-        m_pipColor = button.pipColor;
+        if (button != m_currentColorButton)
+        {
+            StartCoroutine(OnChooseColorCo(button));
+        }
+    }
+
+    IEnumerator OnChooseColorCo(PipButton button)
+    {
+        if (m_currentColorButton != null)
+        {
+            m_currentColorButton.ChangeSprite(false);
+        }
+
+        m_currentColorButton = button;
+
+        m_pipColor = m_currentColorButton.pipColor;
 
         DestroyGameButtons();
         
-        StartCoroutine(MoveCamera(m_colorMenu, m_gameMenu));
-
+        yield return new WaitForSeconds(0.25f);
+        
         SpawnGameButtons();
     }
 
@@ -181,6 +203,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + DataHelpers.GetModuleId(m_pipColor)); 
 
+        int numGames = 0;
+
         foreach (DataRow join in joinTable.Rows)
         {
             DataTable gameTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE id=" + System.Convert.ToInt32(join["game_id"]));
@@ -199,9 +223,12 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                     //newButton.GetComponent<ClickEvent>().SetData(game);
                     //newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
                     newButton.GetComponent<ChooseGameButton>().SetUp(game);
+                    ++numGames;
                 }
             }
         }
+
+        m_gameGrid.transform.localPosition = new Vector3((numGames - 1) * -100, m_gameGrid.transform.localPosition.y);
 
         m_gameGrid.Reposition();
     }
@@ -210,24 +237,24 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
     {
         if (TransformHelpers.ApproxPos(m_camera, m_colorMenu))
         {
-            StartCoroutine(MoveCamera(m_colorMenu, m_numPlayerMenu));
+            iTween.MoveTo(m_camera, m_numPlayerMenu.transform.position, m_cameraTweenDuration);
         } 
         else if (TransformHelpers.ApproxPos(m_camera, m_gameMenu))
         {
-            StartCoroutine(MoveCamera(m_gameMenu, m_colorMenu));
+            iTween.MoveTo(m_camera, m_colorMenu.transform.position, m_cameraTweenDuration);
             StartCoroutine(DestroyGameButtonsCo(m_cameraTweenDuration));
         }
     }
 
-    IEnumerator MoveCamera(GameObject from, GameObject to, float delay = 0)
+    IEnumerator ResetCurrentColorButton()
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(m_cameraTweenDuration);
 
-        //to.SetActive(true);
-        iTween.MoveTo(m_camera, to.transform.position, m_cameraTweenDuration);
-        
-        //yield return new WaitForSeconds(m_cameraTweenDuration);
-        
-        //from.SetActive(false);
-    }  
+        if (m_currentColorButton != null)
+        {
+            m_currentColorButton.ChangeSprite(false);
+        }
+
+        m_currentColorButton = null;
+    }
 }

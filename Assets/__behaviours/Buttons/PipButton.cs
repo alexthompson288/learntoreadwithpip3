@@ -88,8 +88,6 @@ public class PipButton : MonoBehaviour
             }
         } 
 
-        Debug.Log(transform.parent.name + " - toStateB: " + toStateB);
-
         m_pressableButton.spriteName = toStateB ? m_pressedSpriteName : m_unpressedSpriteName;
     }
 
@@ -134,7 +132,6 @@ public class PipButton : MonoBehaviour
     public void SetData(DataRow newData)
     {
         m_data = newData;
-        Debug.Log("Button.SetData: " + m_data);
     }
 
     public DataRow data
