@@ -25,17 +25,14 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     private AudioSource m_audioSource;
     [SerializeField]
     private DataDisplay m_dataDisplay;
-    [SerializeField]
-    private UIPanel m_picturePanel;
-    [SerializeField]
-    private UITexture m_pictureTexture;
     
     int m_score;
     
     List<DataRow> m_wordsPool = new List<DataRow>();
 
     DataRow m_currentWord;
-    Dictionary<int, DataRow> m_currentPhonemes = new Dictionary<int, DataRow>();
+
+    Dictionary<int, string> m_currentLetters = new Dictionary<int, string>();
     
     List<GameWidget> m_draggables = new List<GameWidget>();
     
@@ -59,7 +56,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             m_targetScore = m_wordsPool.Count;
         }
         
-        //m_scoreBar.SetStarsTarget(m_targetScore);
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
         
@@ -91,35 +87,30 @@ public class ClassicSpellingCoordinator : MonoBehaviour
   
         m_wordsPool.Remove(m_currentWord);
 
-        //SetPicture();
         m_dataDisplay.On("words", m_currentWord);
   
-        string[] phonemeIds = m_currentWord["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        string word = m_currentWord ["word"].ToString();
 
-        for(int i = 0; i < phonemeIds.Length; ++i)
+        for (int i = 0; i < word.Length; ++i)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes where id='" + phonemeIds[i] + "'");
-
-            if(dt.Rows.Count > 0)
-            {
-                m_currentPhonemes.Add(i, dt.Rows[0]);
-            }
+            m_currentLetters.Add(i, word[i].ToString());
         }
         
-        m_targetCorrectLetters = m_currentPhonemes.Count;
+        m_targetCorrectLetters = word.Length;
         
-        SpellingPadBehaviour.Instance.DisplayNewWord(m_currentWord["word"].ToString());
+        SpellingPadBehaviour.Instance.DisplayNewWord(word);
+        SpellingPadBehaviour.Instance.ChangeStateAll(PadLetter.State.Unanswered);
         
         List<Transform> locators = m_locators.ToList();
         
-        for(int i = 0; i < m_currentPhonemes.Count; ++i)
+        for(int i = 0; i < m_currentLetters.Count; ++i)
         {
             int locatorIndex = Random.Range(0, locators.Count);
             GameWidget newDraggable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggablePrefab, locators[locatorIndex]).GetComponent<GameWidget>() as GameWidget;
             
             locators.RemoveAt(locatorIndex);
 
-            newDraggable.SetUp("phonemes", m_currentPhonemes[i], false);
+            newDraggable.SetUp(m_currentLetters[i], false);
 
             m_draggables.Add(newDraggable);
             
@@ -127,27 +118,10 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         
         SpellingPadBehaviour.Instance.SayWholeWord();
+
+
         
         yield return null;
-    }
-
-    void SetPicture()
-    {
-        Texture2D tex = null;
-        if(m_currentWord["image"] != null)
-        {
-            tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_currentWord["image"].ToString());
-        }
-        if(tex == null)
-        {
-            tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_currentWord["word"].ToString());
-        }
-        Debug.Log("tex: " + tex);
-
-        m_pictureTexture.mainTexture = tex;
-        m_pictureTexture.gameObject.SetActive(tex != null);
-        float picturePanelAlpha = tex != null ? 1 : 0;
-        TweenAlpha.Begin(m_picturePanel.gameObject, 0.25f, picturePanelAlpha);
     }
     
     IEnumerator CompleteGame ()
@@ -172,7 +146,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         m_draggables.Clear();
 
-        m_currentPhonemes.Clear();
+        m_currentLetters.Clear();
         
         m_correctLetters = 0;
         m_wrongAnswers = 0;
@@ -193,38 +167,52 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     void OnDraggableRelease(GameWidget currentDraggable)
     {
-        SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
+        PadLetter padLetter = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
 
-        //Debug.Log("first attempt: " + spellingPadPhoneme);
+        //Debug.Log("first attempt: " + padLetter);
 
-        bool foundPhoneme = currentDraggable.data == m_currentPhonemes.First().Value || spellingPadPhoneme != null;
+        int firstLetterIndex = int.MaxValue;
+        foreach(KeyValuePair<int, string> kvp in m_currentLetters)
+        {
+            if(kvp.Key < firstLetterIndex)
+            {
+                firstLetterIndex = kvp.Key;
+            }
+        }
+
+        bool foundPhoneme = currentDraggable.labelText == m_currentLetters[firstLetterIndex] || padLetter != null;
 
         if(foundPhoneme)
         {
             //Debug.Log("Correct");
             m_draggables.Remove(currentDraggable);
 
-            if(spellingPadPhoneme == null)
+            foreach(GameWidget draggable in m_draggables)
             {
-                spellingPadPhoneme = SpellingPadBehaviour.Instance.GetFirstNonAnsweredPhoneme();
-
-                //Debug.Log("second attempt: " + spellingPadPhoneme);
+                draggable.TintDefault();
+                draggable.ChangeBackgroundState(false);
             }
 
-            if(spellingPadPhoneme != null)
+            if(padLetter == null)
             {
-                m_currentPhonemes.Remove(spellingPadPhoneme.positionIndex);
-                currentDraggable.TweenToPos(spellingPadPhoneme.transform.position);
-                spellingPadPhoneme.ChangeState(SpellingPadPhoneme.State.Answered);
+                padLetter = SpellingPadBehaviour.Instance.GetFirstUnansweredPhoneme();
+                //Debug.Log("second attempt: " + padLetter);
+            }
+
+            if(padLetter != null)
+            {
+                m_currentLetters.Remove(padLetter.GetPositionIndex()); 
+                currentDraggable.TweenToPos(padLetter.transform.position);
+                padLetter.ChangeState(PadLetter.State.Answered);
             }
             else // Defensive: This should never execute
             {
                 Debug.LogError("No spelling pad phoneme!");
-                m_currentPhonemes.Remove(m_currentPhonemes.First().Key);
+                m_currentLetters.Remove(firstLetterIndex);
             }
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-            currentDraggable.TweenToPos(spellingPadPhoneme.transform.position);
+            currentDraggable.TweenToPos(padLetter.transform.position);
             currentDraggable.ChangeBackgroundState();
 
             currentDraggable.EnableDrag(false);
@@ -236,8 +224,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             if(m_correctLetters >= m_targetCorrectLetters)
             {
                 ++m_score;
-                //m_scoreBar.SetStarsCompleted(m_score);
-                //m_scoreBar.SetScore(m_score);
                 m_scoreKeeper.UpdateScore();
                 
                 StartCoroutine(OnQuestionEnd());
@@ -257,6 +243,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             SpeakCurrentWord();
             
             currentDraggable.TweenToStartPos();
+            currentDraggable.TintIncorrect();
             
             ++m_wrongAnswers;
             

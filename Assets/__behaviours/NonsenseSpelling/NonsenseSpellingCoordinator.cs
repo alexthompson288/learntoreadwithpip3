@@ -176,6 +176,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 	
 	void OnRelease(DraggableLabel currentDraggable)
 	{
+        /*
 		SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.GetText(), currentDraggable.collider);
 
 		if(spellingPadPhoneme != null)
@@ -230,5 +231,6 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 				break;
 			}
 		}
+        */
 	}
 }

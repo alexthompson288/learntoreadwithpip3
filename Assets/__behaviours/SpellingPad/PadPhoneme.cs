@@ -15,13 +15,60 @@ public class PadPhoneme : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
 
+    PadPhoneme m_linkedObject = null;
+
     float m_width;
-    private GameObject m_linkedObject = null;
 
     bool m_isActive = false;
-    private AudioClip m_audioClip;
+    AudioClip m_audioClip;
     
-    private string m_phoneme;
+    string m_phoneme;
+
+    int m_positionIndex;
+
+    List<PadLetter> m_padLetters = new List<PadLetter>();
+
+    public void SetUp(SpellingPadBehaviour.PhonemeBuildInfo pbi)
+    {
+        Resources.UnloadUnusedAssets();
+
+        if (pbi.m_audioFilename != null)
+        {
+            m_audioClip = AudioBankManager.Instance.GetAudioClip(pbi.m_audioFilename);
+            m_audioSource.clip = m_audioClip;
+        }
+        else
+        {
+            m_audioClip = null;
+            m_audioSource.clip = null;
+        }
+        
+        if (pbi.m_displayString.Length == 1)
+        {
+            m_singleButton.SetActive(true);
+            m_width = 100;
+        }
+        else if (pbi.m_displayString.Length == 2)
+        {
+            m_doubleButton.SetActive(true);
+            m_width = 128;
+        }
+        else
+        {
+            m_tripleButton.SetActive(true);
+            m_width = 170;
+        }
+        
+        m_phoneme = pbi.m_fullPhoneme;
+        m_positionIndex = pbi.m_positionIndex;
+        
+        //Debug.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
+    }
+
+    public void AddPadLetter(PadLetter padLetter)
+    {
+        m_padLetters.Add(padLetter);
+    }
 
     public void Activate()
     {
@@ -29,7 +76,7 @@ public class PadPhoneme : MonoBehaviour
         {
             if (m_linkedObject != null)
             {
-                m_linkedObject.GetComponent<SpellingPadPhoneme>().ActivateFinal();
+                m_linkedObject.ActivateFinal();
             }
             ActivateFinal();
             m_audioSource.Play();
@@ -83,5 +130,15 @@ public class PadPhoneme : MonoBehaviour
     public string GetPhoneme()
     {
         return m_phoneme;
+    }
+
+    public float GetWidth()
+    {
+        return m_width;
+    }
+
+    public void Link(PadPhoneme other)
+    {
+        m_linkedObject = other;
     }
 }

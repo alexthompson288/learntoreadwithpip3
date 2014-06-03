@@ -345,6 +345,16 @@ public class GameWidget : MonoBehaviour
         m_collider.enabled = enable;
     }
 
+    public void TintDefault()
+    {
+        m_background.color = Color.white;
+    }
+
+    public void TintIncorrect()
+    {
+        m_background.color = Color.gray;
+    }
+
     public void Tint(Color newCol)
     {
         m_background.color = newCol;

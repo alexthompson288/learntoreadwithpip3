@@ -53,7 +53,7 @@ public class SpellingPadPhoneme : MonoBehaviour
         }
     }
 
-	public void SetUpPhoneme(SpellingPadBehaviour.PhonemeBuildInfo pbi)
+	public void SetUp(SpellingPadBehaviour.PhonemeBuildInfo pbi)
 	{
 		Resources.UnloadUnusedAssets();
 		m_highlight.enabled = false;
