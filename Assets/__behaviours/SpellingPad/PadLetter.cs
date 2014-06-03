@@ -30,20 +30,20 @@ public class PadLetter : MonoBehaviour
         }
     }
 
-    public void SetUp(string letter, int positionIndex)
+    public void SetUp(string letter, int positionIndex, State startingState)
     {
         m_label.text = letter;
         m_positionIndex = positionIndex;
+        m_state = startingState;
+        ChangeState(m_state, 0);
     }
 
-    public void ChangeState(State newState, bool useLock = false)
+    public void ChangeState(State newState, float alphaTweenDuration = 0.25f, bool useLock = false)
     {
         // if useLock is true, m_state will not change to a lower state 
         if (!useLock || newState > m_state)
         {
             m_state = newState;
-            
-            float alphaTweenDuration = 0.25f;
             
             switch(m_state)
             {

@@ -17,7 +17,9 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	[SerializeField]
 	private PlayWordSpellingButton m_sayWholeWordButton;
 	[SerializeField]
-	private GameObject m_trickyStars;
+	private GameObject m_starsParent;
+    [SerializeField]
+    private UISprite[] m_starsSprites;
 
     // TODO: Possibly deprecate
     [SerializeField]
@@ -59,7 +61,13 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		}
 	}
 
-	public void DisplayNewWord(string word)
+    void Awake()
+    {
+        m_starsSprites = m_starsParent.GetComponentsInChildren<UISprite>() as UISprite[];
+        m_starsParent.SetActive(false);
+    }
+
+	public void DisplayNewWord(string word, PadLetter.State letterStartingState = PadLetter.State.Unanswered)
 	{
         CollectionHelpers.DestroyObjects(m_spawnedLetters);
         CollectionHelpers.DestroyObjects(m_spawnedPhonemes);
@@ -79,110 +87,139 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			
 			List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
 			
-			bool starsActive = (((row["tricky"] != null && row["tricky"].ToString() == "t")
-			                    || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
-			                    && (row["nonsense"] == null || row["nonsense"].ToString() == "f"));
+            bool isTricky = row["tricky"] != null && row["tricky"].ToString() == "t";
+            bool isHighFrequency = row["highfrequency"] != null && row["highfrequency"].ToString() == "t";
 
-				
-            m_trickyStars.SetActive(starsActive);
+            if(isTricky || isHighFrequency)
+            {
+                m_starsParent.SetActive(true);
+
+                Color starsColor = isTricky ? ColorInfo.GetTricky() : ColorInfo.GetHighFrequency();
+
+                foreach(UISprite star in m_starsSprites)
+                {
+                    star.color = starsColor;
+                }
+            }
+            else
+            {
+                m_starsParent.SetActive(false);
+            }
 			
             int index = 0;
+            float totalWidth = 0;
 			
-            foreach (string phoneme in phonemes) // phoneme is an: int id.ToString
+            if(!isTricky)
             {
-                DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");			
-                if (phT.Rows.Count > 0)			
-                {	
-                    PhonemeBuildInfo pbi = new PhonemeBuildInfo();
+                foreach (string phoneme in phonemes) // phoneme is an: int id.ToString
+                {
+                    DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");			
+                    if (phT.Rows.Count > 0)			
+                    {	
+                        PhonemeBuildInfo pbi = new PhonemeBuildInfo();
 
-                    DataRow myPh = phT[0];
-                    pbi.m_phonemeData = myPh;
+                        DataRow myPh = phT[0];
+                        pbi.m_phonemeData = myPh;
 
-                    string phonemeString = myPh["phoneme"].ToString();    
-                    pbi.m_fullPhoneme = phonemeString;
-							
-                    string audioFilename = string.Format("{0}", myPh["grapheme"]);
-				    if(starsActive)
-					{
-						audioFilename = "lettername_" + audioFilename;
-					}	
-                    pbi.m_audioFilename = audioFilename;
+                        string phonemeString = myPh["phoneme"].ToString();    
+                        pbi.m_fullPhoneme = phonemeString;
+    					
+                        string audioFilename = string.Format("{0}", myPh["grapheme"]);
+                        pbi.m_audioFilename = audioFilename;
 
+                        if (phonemeString.Contains("-"))
+    					{
+    						//Debug.Log(myPh["phoneme"].ToString() + " contains \"-\"");
+                            pbi.m_displayString = phonemeString[0].ToString();
+    						PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
+                            pbi2.m_phonemeData = myPh;
+                            pbi2.m_displayString = phonemeString[2].ToString();
+    						pbi2.m_positionIndex = index + 2;
+    						pbi.m_linkedPhoneme = pbi2;
+    						pbi2.m_linkedPhoneme = pbi;
+    						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+    						pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
+    						pbi2.m_audioFilename = audioFilename;
+    						pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
+    						pbiList.Add(pbi2);
+    					}
+    					else
+    					{
+    						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+                            pbi.m_displayString = phonemeString;
+    					}
+    					pbi.m_positionIndex = index;
+    					pbiList.Add(pbi);
+    				}
+    				index++;
+    			}
+    			
+    			pbiList.Sort(SortPhonemes);
+    			
+    			
+                Dictionary<PhonemeBuildInfo, PadPhoneme> createdInfos = new Dictionary<PhonemeBuildInfo, PadPhoneme>();
+    			foreach (PhonemeBuildInfo pbi in pbiList)
+    			{
+    				GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemePrefab, m_phonemeParent);
+    				
+                    PadPhoneme phonemeBehaviour = newPhoneme.GetComponent<PadPhoneme>() as PadPhoneme;
+                    phonemeBehaviour.SetUp(pbi);
+    				
+                    totalWidth += phonemeBehaviour.GetWidth() / 2.0f;
+                    newPhoneme.transform.localPosition = new Vector3(totalWidth, 0, 0);
+                    totalWidth += phonemeBehaviour.GetWidth() / 2.0f;
+    				
+                    m_spawnedPhonemes.Add(phonemeBehaviour);
+                    createdInfos[pbi] = phonemeBehaviour;
+    			}
+    			
+                int letterIndex = 0;
+                float letterPosX = 0;
+    			foreach (PhonemeBuildInfo pbi in pbiList)
+    			{
+    				if (pbi.m_linkedPhoneme != null)
+    				{
+    					createdInfos[pbi.m_linkedPhoneme].Link(createdInfos[pbi]);
+    				}
 
-                    if (phonemeString.Contains("-"))
-					{
-						//Debug.Log(myPh["phoneme"].ToString() + " contains \"-\"");
-                        pbi.m_displayString = phonemeString[0].ToString();
-						PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
-                        pbi2.m_phonemeData = myPh;
-                        pbi2.m_displayString = phonemeString[2].ToString();
-						pbi2.m_positionIndex = index + 2;
-						pbi.m_linkedPhoneme = pbi2;
-						pbi2.m_linkedPhoneme = pbi;
-						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-						pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
-						pbi2.m_audioFilename = audioFilename;
-						pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
-						pbiList.Add(pbi2);
-					}
-					else
-					{
-						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-                        pbi.m_displayString = phonemeString;
-					}
-					pbi.m_positionIndex = index;
-					pbiList.Add(pbi);
-				}
-				index++;
-			}
-			
-			pbiList.Sort(SortPhonemes);
-			float totalWidth = 0;
-			
-            Dictionary<PhonemeBuildInfo, PadPhoneme> createdInfos = new Dictionary<PhonemeBuildInfo, PadPhoneme>();
-			foreach (PhonemeBuildInfo pbi in pbiList)
-			{
-				GameObject newPhoneme = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_phonemePrefab, m_phonemeParent);
-				
-                PadPhoneme phonemeBehaviour = newPhoneme.GetComponent<PadPhoneme>() as PadPhoneme;
-                phonemeBehaviour.SetUp(pbi);
-				
-                totalWidth += phonemeBehaviour.GetWidth() / 2.0f;
-                newPhoneme.transform.localPosition = new Vector3(totalWidth, 0, 0);
-                totalWidth += phonemeBehaviour.GetWidth() / 2.0f;
-				
-                m_spawnedPhonemes.Add(phonemeBehaviour);
-                createdInfos[pbi] = phonemeBehaviour;
-			}
-			
-            int letterIndex = 0;
-            float letterPosX = 0;
-			foreach (PhonemeBuildInfo pbi in pbiList)
-			{
-				if (pbi.m_linkedPhoneme != null)
-				{
-					createdInfos[pbi.m_linkedPhoneme].Link(createdInfos[pbi]);
-				}
+                    string displayString = pbi.m_displayString;
+                    foreach(char c in displayString)
+                    {
+                        GameObject newLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_letterPrefab, m_letterParent);
 
-                string displayString = pbi.m_displayString;
-                foreach(char c in displayString)
+                        PadLetter letterBehaviour = newLetter.GetComponent<PadLetter>() as PadLetter;
+                        letterBehaviour.SetUp(c.ToString(), letterIndex, letterStartingState);
+                        m_spawnedLetters.Add(letterBehaviour);
+                        createdInfos[pbi].AddPadLetter(letterBehaviour);
+
+                        ++letterIndex;
+
+                        float halfLetterWidth = createdInfos[pbi].GetWidth() / (float)displayString.Length / 2.0f;
+
+                        letterPosX += halfLetterWidth;
+                        newLetter.transform.localPosition = new Vector3(letterPosX, 0);
+                        letterPosX += halfLetterWidth;
+                    }
+    			}
+            }
+            else
+            {
+                for(int i = 0; i < m_editedWord.Length; ++i)
                 {
                     GameObject newLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_letterPrefab, m_letterParent);
-
+                    
                     PadLetter letterBehaviour = newLetter.GetComponent<PadLetter>() as PadLetter;
-                    letterBehaviour.SetUp(c.ToString(), letterIndex);
+                    letterBehaviour.SetUp(m_editedWord[i].ToString(), i, letterStartingState);
                     m_spawnedLetters.Add(letterBehaviour);
-                    createdInfos[pbi].AddPadLetter(letterBehaviour);
 
-                    ++letterIndex;
-
-                    float halfLetterWidth = createdInfos[pbi].GetWidth() / (float)displayString.Length / 2.0f;
-
-                    letterPosX += halfLetterWidth;
-                    newLetter.transform.localPosition = new Vector3(letterPosX, 0);
-                    letterPosX += halfLetterWidth;
+                    float halfLetterWidth = letterBehaviour.GetWidth() / 2.0f;
+                    
+                    totalWidth += halfLetterWidth;
+                    newLetter.transform.localPosition = new Vector3(totalWidth, 0);
+                    totalWidth += halfLetterWidth;
+                    totalWidth += 10;
                 }
-			}
+            }
 			
             float maxWidth = 600;
 
@@ -269,7 +306,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		}
 	}
 
-	public void ChangeStateAll(PadLetter.State newState, string exceptionLetter = "", bool singleException = true)
+	public void ChangeStateAll(PadLetter.State newState, float tweenDuration = 0.25f, string exceptionLetter = "", bool singleException = true)
 	{
         // Don't change the state of the exceptionPhoneme
         // if singleException is true, after the first exceptionPhoneme ALL subsequent phonemes will change state
@@ -278,7 +315,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		{
             if(exceptionLetter != padLetter.GetLetter())
 			{
-                padLetter.ChangeState(newState);
+                padLetter.ChangeState(newState, tweenDuration);
 			}
             else if(singleException)
             {

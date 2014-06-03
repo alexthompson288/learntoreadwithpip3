@@ -99,7 +99,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         m_targetCorrectLetters = word.Length;
         
         SpellingPadBehaviour.Instance.DisplayNewWord(word);
-        SpellingPadBehaviour.Instance.ChangeStateAll(PadLetter.State.Unanswered);
         
         List<Transform> locators = m_locators.ToList();
         
@@ -119,8 +118,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         SpellingPadBehaviour.Instance.SayWholeWord();
 
-
-        
         yield return null;
     }
     

@@ -19,6 +19,10 @@ public class ColorInfo : Singleton<ColorInfo>
     private Color m_lightBlue;
     [SerializeField]
     private Color m_deepPink; //f577c1
+    [SerializeField]
+    private Color m_tricky;
+    [SerializeField]
+    private Color m_highFrequency;
 
     public enum PipColor
     {
@@ -173,5 +177,15 @@ public class ColorInfo : Singleton<ColorInfo>
         }
 
         return index;
+    }
+
+    public static Color GetTricky()
+    {
+        return Instance.m_tricky;
+    }
+
+    public static Color GetHighFrequency()
+    {
+        return Instance.m_highFrequency;
     }
 }
