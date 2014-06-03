@@ -224,29 +224,31 @@ public class GameWidget : MonoBehaviour
                     OnDragRelease(this);
                 }
             }
-            else
-            {
-                switch(m_clickReaction)
-                {
-                    case ClickReaction.Offset:
-                        StartCoroutine(OnClickCo());
-                        break;
-                    case ClickReaction.ChangeSprite:
-                        ChangeBackgroundState();
-                        if(OnWidgetClick != null)
-                        {
-                            OnWidgetClick(this);
-                        }
-                        break;
-                    default:
-                        if(OnWidgetClick != null)
-                        {
-                            OnWidgetClick(this);
-                        }
-                        break;
-                }
 
-            }
+            ReactToClick();
+        }
+    }
+
+    void ReactToClick()
+    {
+        switch(m_clickReaction)
+        {
+            case ClickReaction.Offset:
+                StartCoroutine(OnClickCo());
+                break;
+            case ClickReaction.ChangeSprite:
+                ChangeBackgroundState();
+                if(OnWidgetClick != null)
+                {
+                    OnWidgetClick(this);
+                }
+                break;
+            default:
+                if(OnWidgetClick != null)
+                {
+                    OnWidgetClick(this);
+                }
+                break;
         }
     }
 

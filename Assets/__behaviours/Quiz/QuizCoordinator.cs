@@ -18,6 +18,7 @@ public class QuizCoordinator : MonoBehaviour
     [SerializeField]
     private Transform[] m_locators;
 
+    int m_numAnswered = 0;
     int m_score = 0;
 
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
@@ -100,7 +101,8 @@ public class QuizCoordinator : MonoBehaviour
                 GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerLabelPrefab, m_locators[i]);
                 GameWidget answerBehaviour = newAnswer.GetComponent<GameWidget>() as GameWidget;
                 answerBehaviour.SetUp(answerStrings[i], true);
-                answerBehaviour.onAll += OnAnswer;
+                answerBehaviour.onClick += OnAnswer;
+                answerBehaviour.EnableDrag(false);
                 m_spawnedAnswers.Add(answerBehaviour);
             }
         }
@@ -126,7 +128,9 @@ public class QuizCoordinator : MonoBehaviour
         
         m_spawnedAnswers.Clear();
 
-        if (m_score < m_targetScore && m_dataPool.Count > 0)
+        ++m_numAnswered;
+
+        if (m_numAnswered < m_targetScore && m_dataPool.Count > 0)
         {
             AskQuestion();
         } 
@@ -138,6 +142,8 @@ public class QuizCoordinator : MonoBehaviour
 
     IEnumerator CompleteGame()
     {
+        ScoreInfo.Instance.SetQuiz(m_score);
+
         yield return new WaitForSeconds(2f);
 
         GameManager.Instance.CompleteGame();

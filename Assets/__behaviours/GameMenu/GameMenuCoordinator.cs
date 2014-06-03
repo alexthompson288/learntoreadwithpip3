@@ -171,6 +171,8 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
 
+            GameManager.Instance.SetScoreKey(ColorInfo.GetColorString(m_pipColor));
+
             GameMenuInfo.Instance.CreateBookmark(m_isTwoPlayer, m_pipColor);
 
             GameManager.Instance.StartGames();

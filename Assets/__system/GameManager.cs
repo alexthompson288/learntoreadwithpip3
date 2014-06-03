@@ -82,6 +82,7 @@ public class GameManager : Singleton<GameManager>
 
         m_currentGameName = "";
         m_returnScene = "";
+        m_scoreKey = "";
     }
 
     public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene") // TODO: Deprecate the parameters passed to this method
@@ -129,6 +130,18 @@ public class GameManager : Singleton<GameManager>
                 }
                 break;
         }
+    }
+
+    string m_scoreKey = "";
+
+    public string GetScoreKey()
+    {
+        return m_scoreKey;
+    }
+
+    public void SetScoreKey(string scoreKey)
+    {
+        m_scoreKey = scoreKey;
     }
 
     //Queue<DataRow> m_gameNames = new Queue<DataRow>();

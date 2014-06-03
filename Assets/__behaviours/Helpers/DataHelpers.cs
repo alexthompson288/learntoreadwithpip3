@@ -1174,4 +1174,9 @@ public static class DataHelpers
 
         return null;
     }
+
+    public static string GetScoreKey()
+    {
+        return GameManager.Instance.GetScoreKey();
+    }
 }

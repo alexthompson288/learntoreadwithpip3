@@ -38,6 +38,15 @@ public class PadLetter : MonoBehaviour
         ChangeState(m_state, 0);
     }
 
+    public void SetColliderWidth(float newWidth)
+    {
+        BoxCollider boxCollider = collider as BoxCollider;
+        
+        Vector3 size = boxCollider.size;
+        size.x = newWidth;
+        boxCollider.size = size;
+    }
+
     public void ChangeState(State newState, float alphaTweenDuration = 0.25f, bool useLock = false)
     {
         // if useLock is true, m_state will not change to a lower state 

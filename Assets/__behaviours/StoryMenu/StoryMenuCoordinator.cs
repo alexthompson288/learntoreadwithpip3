@@ -206,6 +206,8 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.AddData("stories", m_story);
 
+        GameManager.Instance.SetScoreKey(m_story ["title"].ToString());
+
         GameManager.Instance.StartGames();
     }
 

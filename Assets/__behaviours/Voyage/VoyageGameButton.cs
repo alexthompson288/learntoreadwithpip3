@@ -71,6 +71,6 @@ public class VoyageGameButton : MonoBehaviour
 
     void OnClick()
     {
-        VoyageCoordinator.Instance.StartGame(m_section);
+        //VoyageCoordinator.Instance.StartGame(m_section);
     }
 }

@@ -88,7 +88,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
 			
             bool isTricky = row["tricky"] != null && row["tricky"].ToString() == "t";
-            bool isHighFrequency = row["highfrequency"] != null && row["highfrequency"].ToString() == "t";
+            bool isHighFrequency = row["highfrequencyword"] != null && row["highfrequencyword"].ToString() == "t";
 
             if(isTricky || isHighFrequency)
             {
@@ -212,7 +212,9 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
                     letterBehaviour.SetUp(m_editedWord[i].ToString(), i, letterStartingState);
                     m_spawnedLetters.Add(letterBehaviour);
 
-                    float halfLetterWidth = letterBehaviour.GetWidth() / 2.0f;
+                    float halfLetterWidth = 35;
+
+                    letterBehaviour.SetColliderWidth(halfLetterWidth * 2);
                     
                     totalWidth += halfLetterWidth;
                     newLetter.transform.localPosition = new Vector3(totalWidth, 0);

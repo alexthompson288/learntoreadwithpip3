@@ -370,40 +370,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
+
+            GameManager.Instance.SetScoreKey(m_sessionId.ToString());
             
             WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
             
             GameManager.Instance.StartGames();
-        }
-    }
-
-    public void StartGame(DataRow section)
-    {
-        m_sectionId = System.Convert.ToInt32(section ["id"]);
-
-        EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
-        VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, m_sectionId);
-
-        Debug.Log(System.String.Format("Voyage: {0} - {1} - {2}", (int)(m_currentModuleMap.color), m_sessionId, m_sectionId));
-
-        DataRow game = DataHelpers.FindGameForSection(section);
-
-        if (game != null)
-        {
-            string dbGameName = game["name"].ToString();
-            string sceneName = GameLinker.Instance.GetSceneName(dbGameName);
-            
-            // Set scenes
-            // If the player has more than one section remaining in this session, then they will not have completed at the end of the game
-            if(VoyageInfo.Instance.GetNumRemainingSections(m_sessionId) > 1)
-            {
-                GameManager.Instance.AddGame(game);
-            }
-            else
-            {
-                GameManager.Instance.AddGame(game);
-                GameManager.Instance.AddGame("NewSessionComplete");
-            }
         }
     }
 }

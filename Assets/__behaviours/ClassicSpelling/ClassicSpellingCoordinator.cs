@@ -51,6 +51,11 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         m_wordsPool = m_useNonsenseWords ? DataHelpers.GetSillywords() : DataHelpers.GetWords();
 
+        // TODO: Delete. Only used for debugging tricky words
+#if UNITY_EDITOR
+        //m_wordsPool = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE tricky='t'").Rows;
+#endif
+
         if(m_targetScore > m_wordsPool.Count)
         {
             m_targetScore = m_wordsPool.Count;

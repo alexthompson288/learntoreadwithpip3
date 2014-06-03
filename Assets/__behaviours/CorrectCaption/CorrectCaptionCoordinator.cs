@@ -218,6 +218,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     
     protected override IEnumerator CompleteGame()
     {
+        ScoreInfo.Instance.SetCaption(m_score);
+
         //Debug.Log("GameCoordinator.CompleteGame()");
         yield return null;
 
