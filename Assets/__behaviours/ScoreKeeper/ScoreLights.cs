@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class ScoreQuiz : ScoreKeeper
+public class ScoreLights : ScoreKeeper
 {
     [SerializeField]
     private GameObject m_scoreQuizMarkerPrefab;

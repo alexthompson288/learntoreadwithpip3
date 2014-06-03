@@ -39,6 +39,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 	private GameObject m_newHighScore;
 	[SerializeField]
 	private GameObject m_levelUp;
+    [SerializeField]
+    private string[] m_characterNames;
 
 	Vector3 m_textDefaultPos;
 
@@ -252,7 +254,13 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		yield return new WaitForSeconds(3f);
 	}
 
-	public IEnumerator PopCharacter(string characterName)
+    public void PopCharacter(int characterIndex)
+    {
+        string characterName = characterIndex < m_characterNames.Length ? m_characterNames [characterIndex] : "pip";
+        PopCharacter(characterName);
+    }
+
+	public void PopCharacter(string characterName)
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
 
@@ -260,8 +268,6 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		m_characterPopper.GetComponentInChildren<UISprite>().spriteName = spriteName;
 
 		m_characterPopper.PopCharacter();
-
-		yield return null;
 	}
 
 	public IEnumerator NewHighScore(int score, float readDuration = 3f)
@@ -344,22 +350,22 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 		if(Input.GetKeyDown(KeyCode.V))
 		{
-			StartCoroutine(PopCharacter("rod"));
+			PopCharacter("rod");
 		}
 
 		if(Input.GetKeyDown(KeyCode.B))
 		{
-			StartCoroutine(PopCharacter("Pip"));
+			PopCharacter("Pip");
 		}
 
 		if(Input.GetKeyDown(KeyCode.N))
 		{
-			StartCoroutine(PopCharacter("DOT"));
+			PopCharacter("DOT");
 		}
 
 		if(Input.GetKeyDown(KeyCode.M))
 		{
-			StartCoroutine(PopCharacter("bunny"));
+			PopCharacter("bunny");
 		}
 	}
 #endif
