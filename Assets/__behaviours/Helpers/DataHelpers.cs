@@ -361,7 +361,7 @@ public static class DataHelpers
 
         if(dataPool.Count == 0)
         {
-            dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Pink));
+            dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Blue));
         }
 
         return dataPool;
@@ -679,7 +679,6 @@ public static class DataHelpers
             case "phonemes":
                 if(data["phoneme"] != null && data["mneumonic"] != null)
                 {
-                    Debug.Log("Checking Picture for " + data["id"].ToString());
                     tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
                     Debug.Log("Found picture: " + tex != null);
                 }
@@ -689,7 +688,6 @@ public static class DataHelpers
                 Debug.Log("Searching words");
                 if(data["word"] != null)
                 {
-                    Debug.Log("Finding picture for: " + data["word"].ToString());
                     tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
                 }
                 break;
@@ -711,7 +709,6 @@ public static class DataHelpers
                 tex = Resources.Load<Texture2D>(data["name"].ToString());
                 break;
             case "stories":
-                Debug.Log("Finding: " + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
             default:
@@ -719,6 +716,22 @@ public static class DataHelpers
         }
 
         return tex;
+    }
+
+    public static string GetSpriteName(string dataType, DataRow data)
+    {
+        string spriteName = "";
+
+        switch (dataType)
+        {
+            case "numbers":
+                spriteName = "digit_" + data["value"].ToString();
+                break;
+            default:
+                break;
+        }
+
+        return spriteName;
     }
 
     public static AudioClip GetShortAudio(string dataType, DataRow data)

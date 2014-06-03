@@ -6,24 +6,11 @@ public class PlayWordSpellingButton : MonoBehaviour
 	[SerializeField]
 	private AudioSource m_audioSource;
 	[SerializeField]
-	private SimpleSpriteAnim m_spriteAnim;
-	[SerializeField]
 	private GameObject m_hideObject;
 	
 	public void SetWordAudio(string audioFilename)
 	{
-		AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(audioFilename);
-		if (loadedAudio == null)
-		{
-			m_hideObject.SetActive(false);
-		}
-		else
-		{
-			m_hideObject.SetActive(true);
-			//m_spriteAnim.PlayAnimation("ON");
-			m_audioSource.clip = loadedAudio;
-			collider.enabled = true;
-		}
+        m_audioSource.clip = LoaderHelpers.LoadAudioForWord(audioFilename);
 	}
 	
 	public void OnDisable()
@@ -50,17 +37,13 @@ public class PlayWordSpellingButton : MonoBehaviour
 	IEnumerator PlayWord()
 	{
 		SpellingPadBehaviour.Instance.HighlightWholeWord();
-		collider.enabled = false;
-		//m_spriteAnim.PlayAnimation("OFF");
+
 		m_audioSource.Play();
 		while (m_audioSource.isPlaying)
 		{
 			yield return null;
 		}
-		yield return new WaitForSeconds(0.2f);
-		collider.enabled = true;
-		//m_spriteAnim.PlayAnimation("ON");
-		
+		yield return new WaitForSeconds(0.2f);		
 	}
 
 	public float GetClipLength()

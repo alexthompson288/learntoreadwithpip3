@@ -21,12 +21,14 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	[SerializeField]
 	private UITexture m_background;
 
-	List<GameObject> m_createdPhonemeButtons = new List<GameObject>();
+	List<GameObject> m_spawnedLetters = new List<GameObject>();
+    List<GameObject> m_spawnedPhonemeButton = new List<GameObject>();
 
 	string m_editedWord;
 
 	public class PhonemeBuildInfo
 	{
+        public DataRow m_phonemeData;
 		public string m_displayString;
 		public int m_fullPhonemeId;
 		public int m_positionIndex;
@@ -34,20 +36,6 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		public string m_audioFilename;
 		public string m_fullPhoneme;
 	}
-
-    /*
-	void Start()
-	{
-		EnviroManager.Environment enviro = EnviroManager.Instance.GetEnvironment();
-		SpellingPadEnviro padEnviro = Resources.Load<SpellingPadEnviro>(String.Format("SpellingPad/{0}_SpellingPad", enviro));
-
-		if(padEnviro != null)
-		{
-			Texture2D tex = padEnviro.GetSpellingPadTexture();
-			m_background.mainTexture = tex;
-		}
-	}
-    */
 
 	int SortPhonemes(PhonemeBuildInfo a, PhonemeBuildInfo b)
 	{
@@ -68,11 +56,11 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	public void DisplayNewWord(string word)
 	{
 		//WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_APPEAR");
-		foreach (GameObject go in m_createdPhonemeButtons)
+		foreach (GameObject go in m_spawnedLetters)
 		{
 			Destroy(go);
 		}
-		m_createdPhonemeButtons.Clear();
+		m_spawnedLetters.Clear();
 		
 		m_editedWord = word.Replace("!", "").Replace(".", "").Replace(",", "").Replace(";", "").ToLower();
 		
@@ -93,71 +81,59 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 			                    || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
 			                    && (row["nonsense"] == null || row["nonsense"].ToString() == "f"));
 
-			//if (((row["tricky"] != null && row["tricky"].ToString() == "t")
-			    // || (row["nondecodable"] != null && row["nondecodable"].ToString() == "t"))
-			    //&& (row["nonsense"] == null || row["nonsense"].ToString() == "f"))
-			//if(starsActive)
-			//{
-				//PhonemeBuildInfo pbi = new PhonemeBuildInfo();
-				//pbi.m_displayString = row["word"].ToString();
-				//pbi.m_positionIndex = 0;
-				//pbi.m_fullPhonemeId = -1;
-				//pbiList.Add(pbi);
-				//m_trickyStars.SetActive(true);
-			//}
-			//else
-			//{
-				//m_trickyStars.SetActive(false);
-				m_trickyStars.SetActive(starsActive);
-				int index = 0;
-				foreach (string phoneme in phonemes) // phoneme is an: int id.ToString
-				{
-					DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");
-					if (phT.Rows.Count > 0)
+				
+            m_trickyStars.SetActive(starsActive);
+			
+            int index = 0;
+			
+            foreach (string phoneme in phonemes) // phoneme is an: int id.ToString
+            {
+			
+                DataTable phT = database.ExecuteQuery("select * from phonemes where id='" + phoneme + "'");			
+                if (phT.Rows.Count > 0)			
+                {	
+                    PhonemeBuildInfo pbi = new PhonemeBuildInfo();
+
+                    DataRow myPh = phT[0];
+                    pbi.m_phonemeData = myPh;
+
+                    string phonemeString = myPh["phoneme"].ToString();    
+                    pbi.m_fullPhoneme = phonemeString;
+							
+                    string audioFilename = string.Format("{0}", myPh["grapheme"]);
+				    if(starsActive)
 					{
-						DataRow myPh = phT[0];
-						string phonemeData = myPh["phoneme"].ToString();
-						PhonemeBuildInfo pbi = new PhonemeBuildInfo();
-						
-						string audioFilename =
-							string.Format("{0}",
-							              myPh["grapheme"]);
+						audioFilename = "lettername_" + audioFilename;
+					}	
+                    pbi.m_audioFilename = audioFilename;
 
-						if(starsActive)
-						{
-							audioFilename = "lettername_" + audioFilename;
-						}
 
-						
-						pbi.m_audioFilename = audioFilename;
-						pbi.m_fullPhoneme = myPh["phoneme"].ToString();
-
-						if (phonemeData.Contains("-"))
-						{
-							//Debug.Log(myPh["phoneme"].ToString() + " contains \"-\"");
-							pbi.m_displayString = phonemeData[0].ToString();
-							PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
-							pbi2.m_displayString = phonemeData[2].ToString();
-							pbi2.m_positionIndex = index + 2;
-							pbi.m_linkedPhoneme = pbi2;
-							pbi2.m_linkedPhoneme = pbi;
-							pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-							pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
-							pbi2.m_audioFilename = audioFilename;
-							pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
-							pbiList.Add(pbi2);
-						}
-						else
-						{
-							pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
-							pbi.m_displayString = phonemeData;
-						}
-						pbi.m_positionIndex = index;
-						pbiList.Add(pbi);
+                    if (phonemeString.Contains("-"))
+					{
+						//Debug.Log(myPh["phoneme"].ToString() + " contains \"-\"");
+                        pbi.m_displayString = phonemeString[0].ToString();
+						PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
+                        pbi2.m_phonemeData = myPh;
+                        pbi2.m_displayString = phonemeString[2].ToString();
+						pbi2.m_positionIndex = index + 2;
+						pbi.m_linkedPhoneme = pbi2;
+						pbi2.m_linkedPhoneme = pbi;
+						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+						pbi2.m_fullPhonemeId = Convert.ToInt32(phoneme);
+						pbi2.m_audioFilename = audioFilename;
+						pbi2.m_fullPhoneme = myPh["phoneme"].ToString();
+						pbiList.Add(pbi2);
 					}
-					index++;
+					else
+					{
+						pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
+                        pbi.m_displayString = phonemeString;
+					}
+					pbi.m_positionIndex = index;
+					pbiList.Add(pbi);
 				}
-			//}
+				index++;
+			}
 			
 			pbiList.Sort(SortPhonemes);
 			float width = 0;
@@ -172,15 +148,8 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 				width += newPhoneme.GetComponent<SpellingPadPhoneme>().GetWidth() / 2.0f;
 				newPhoneme.transform.localPosition = new Vector3(width, 0, 0);
 				width += newPhoneme.GetComponent<SpellingPadPhoneme>().GetWidth() / 2.0f;
-
-				/*
-				if(starsActive)
-				{
-					newPhoneme.GetComponent<SpellingPadPhoneme>().EnableButtons(false);
-				}
-				*/
 				
-				m_createdPhonemeButtons.Add(newPhoneme);
+				m_spawnedLetters.Add(newPhoneme);
 				createdInfos[pbi] = newPhoneme;
 			}
 			
@@ -192,26 +161,17 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 				}
 			}
 			
-			
-			//width /= pbiList.Count;
-			//width *= (pbiList.Count - 1);
-			
-			if (width > 512)
-			{
-				m_textPosition.transform.localScale = new Vector3(0.8f, 1, 1);
-				//m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) * 0.8f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
-			}
-			else
-			{
-                m_textPosition.transform.localScale = Vector3.one;
-				//m_textPosition.transform.localPosition = new Vector3(-width / 2.0f, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
-			}
+            float maxWidth = 600;
+
+            m_textPosition.transform.localScale = width < maxWidth ? Vector3.one : Vector3.one * maxWidth / width;
+
+            m_textPosition.transform.localPosition = new Vector3(-width / 2.0f * m_textPosition.transform.localScale.x, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
 		}
 	}
 
 	public void HighlightWholeWord()
 	{
-		foreach (GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach (GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 			if (spellingPadPhoneme != null)
@@ -236,7 +196,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	public IEnumerator Segment(float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		foreach (GameObject phonemeButton in m_createdPhonemeButtons)
+		foreach (GameObject phonemeButton in m_spawnedLetters)
 		{
 			phonemeButton.BroadcastMessage("OnClick", SendMessageOptions.DontRequireReceiver);
 			yield return new WaitForSeconds(0.4f);
@@ -246,7 +206,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	public void SayShowAll(bool temporary)
 	{
 		SayAll();
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
             if(createdPhoneme.GetComponent<SpellingPadPhoneme>().state != SpellingPadPhoneme.State.Answered)
 			{
@@ -263,7 +223,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	IEnumerator HideAll(float delay)
 	{
 		yield return new WaitForSeconds(delay);
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme phonemeBehaviour = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
 
@@ -277,7 +237,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	public void SayShowSequential()
 	{
 		Debug.Log("SpellingPadBehaviour.SayShowSequential()");
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme phonemeBehaviour = createdPhoneme.GetComponent<SpellingPadPhoneme>() as SpellingPadPhoneme;
 			if(phonemeBehaviour.state == SpellingPadPhoneme.State.Unanswered)
@@ -294,7 +254,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
         // Don't change the state of the exceptionPhoneme
         // if singleException is true, after the first exceptionPhoneme ALL subsequent phonemes will change state
 
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 
@@ -314,7 +274,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
         // Don't disable the collider of the exceptionPhoneme
         // if singleException is true, after the first exceptionPhoneme ALL subsequent phonemes will disable their collider
 
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 			
@@ -331,19 +291,19 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	public SpellingPadPhoneme CheckLetters(string phoneme, Collider draggable)
 	{
-        Debug.Log("Checking for: " + phoneme);
+        //Debug.Log("Checking for: " + phoneme);
 
-		foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+		foreach(GameObject createdPhoneme in m_spawnedLetters)
 		{
 			SpellingPadPhoneme spellingPadPhoneme = createdPhoneme.GetComponent<SpellingPadPhoneme>();
 
             if(draggable == spellingPadPhoneme.GetOther())
             {
-                Debug.Log("Collider is inside " + spellingPadPhoneme.GetPhoneme());
+                //Debug.Log("Collider is inside " + spellingPadPhoneme.GetPhoneme());
             }
             else if(spellingPadPhoneme.GetOther() != null)
             {
-                Debug.Log("PadPhoneme has different: " + spellingPadPhoneme.GetOther());
+                //Debug.Log("PadPhoneme has different: " + spellingPadPhoneme.GetOther());
             }
 
 			if(draggable == spellingPadPhoneme.GetOther() && phoneme == spellingPadPhoneme.GetPhoneme())
@@ -359,7 +319,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
     {
         SpellingPadPhoneme padPhoneme = null;
 
-        foreach(GameObject createdPhoneme in m_createdPhonemeButtons)
+        foreach(GameObject createdPhoneme in m_spawnedLetters)
         {
             if(createdPhoneme.GetComponent<SpellingPadPhoneme>().state != SpellingPadPhoneme.State.Answered)
             {
@@ -374,7 +334,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 	public GameObject DetachWord()
 	{
 		GameObject detached = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_emptyPrefab, m_textPosition);
-		foreach(GameObject button in m_createdPhonemeButtons)
+		foreach(GameObject button in m_spawnedLetters)
 		{
 			GameObject label = button.GetComponent<SpellingPadPhoneme>().GetLabelGo();
 			label.transform.parent = detached.transform;

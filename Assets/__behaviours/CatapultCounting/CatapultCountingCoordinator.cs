@@ -8,7 +8,7 @@ public class CatapultCountingCoordinator : GameCoordinator
     [SerializeField]
     private CountingTarget m_target;
     [SerializeField]
-    private PictureDisplay m_display;
+    private DataDisplay m_display;
 
 	// Use this for initialization
 	IEnumerator Start () 

@@ -25,7 +25,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private bool m_isAnswerAlwaysCorrect;
     [SerializeField]
-    private PictureDisplay m_pictureDisplay;
+    private DataDisplay m_pictureDisplay;
     [SerializeField]
     private bool m_targetsShowPicture;
     [SerializeField]

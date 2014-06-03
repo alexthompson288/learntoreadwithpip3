@@ -8,7 +8,7 @@ public class NumberFillCoordinator : GameCoordinator
     [SerializeField]
     private Transform[] m_locators;
     [SerializeField]
-    private PictureDisplay m_display;
+    private DataDisplay m_display;
     [SerializeField]
     private GameObject m_widgetPrefab;
     [SerializeField]

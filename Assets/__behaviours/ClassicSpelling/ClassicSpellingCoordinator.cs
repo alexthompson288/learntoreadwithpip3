@@ -24,6 +24,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
+    private DataDisplay m_dataDisplay;
+    [SerializeField]
     private UIPanel m_picturePanel;
     [SerializeField]
     private UITexture m_pictureTexture;
@@ -89,7 +91,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
   
         m_wordsPool.Remove(m_currentWord);
 
-        SetPicture();
+        //SetPicture();
+        m_dataDisplay.On("words", m_currentWord);
   
         string[] phonemeIds = m_currentWord["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
 
@@ -116,7 +119,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             
             locators.RemoveAt(locatorIndex);
 
-            newDraggable.SetUp("phonemes", m_currentPhonemes[i], true);
+            newDraggable.SetUp("phonemes", m_currentPhonemes[i], false);
 
             m_draggables.Add(newDraggable);
             
@@ -159,6 +162,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator OnQuestionEnd()
     {
+        m_dataDisplay.Off();
+
         yield return new WaitForSeconds(1f);
         
         foreach(GameWidget draggable in m_draggables)
@@ -190,20 +195,20 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     {
         SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
 
-        Debug.Log("first attempt: " + spellingPadPhoneme);
+        //Debug.Log("first attempt: " + spellingPadPhoneme);
 
         bool foundPhoneme = currentDraggable.data == m_currentPhonemes.First().Value || spellingPadPhoneme != null;
 
         if(foundPhoneme)
         {
-            Debug.Log("Correct");
+            //Debug.Log("Correct");
             m_draggables.Remove(currentDraggable);
 
             if(spellingPadPhoneme == null)
             {
                 spellingPadPhoneme = SpellingPadBehaviour.Instance.GetFirstNonAnsweredPhoneme();
 
-                Debug.Log("second attempt: " + spellingPadPhoneme);
+                //Debug.Log("second attempt: " + spellingPadPhoneme);
             }
 
             if(spellingPadPhoneme != null)
@@ -247,7 +252,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
-            Debug.Log("Incorrect");
+            //Debug.Log("Incorrect");
             
             SpeakCurrentWord();
             

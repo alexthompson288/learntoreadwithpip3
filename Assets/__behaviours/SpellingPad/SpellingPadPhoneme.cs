@@ -98,7 +98,7 @@ public class SpellingPadPhoneme : MonoBehaviour
 		m_phoneme = pbi.m_fullPhoneme;
         m_positionIndex = pbi.m_positionIndex;
 
-        Debug.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
+        //Debug.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
 	}
 
 	void OnDestroy()
