@@ -22,8 +22,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
-    private AudioSource m_audioSource;
-    [SerializeField]
     private DataDisplay m_dataDisplay;
     
     int m_score;
@@ -138,9 +136,11 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator OnQuestionEnd()
     {
-        m_dataDisplay.Off();
+        SpellingPadBehaviour.Instance.SayWholeWord();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.8f);
+
+        m_dataDisplay.Off();
         
         foreach(GameWidget draggable in m_draggables)
         {
