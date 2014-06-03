@@ -20,7 +20,7 @@ public class ScorePip : ScoreKeeper
     [SerializeField]
     private Transform m_collectionPoint;
     [SerializeField]
-    private SimpleSpriteAnim m_anim;
+    private SimpleSpriteAnim m_pipAnim;
 
     float m_pointDistance;
 
@@ -74,5 +74,22 @@ public class ScorePip : ScoreKeeper
         tweenArgs.Add("islocal", true);
         
         iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
+    }
+
+    public override IEnumerator On()
+    {
+        Debug.Log("ScorePip.On()");
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("speed", 500);
+        tweenArgs.Add("easetype", iTween.EaseType.easeInOutBack);
+        //tweenArgs.Add("easetype", iTween.EaseType.easeInBounce);
+        tweenArgs.Add("position", new Vector3(m_pipAnim.transform.localPosition.x + 500, m_pipAnim.transform.localPosition.y));
+        tweenArgs.Add("islocal", true);
+
+        iTween.MoveTo(m_pipAnim.gameObject, tweenArgs);             
+
+        yield return null;
+
     }
 }
