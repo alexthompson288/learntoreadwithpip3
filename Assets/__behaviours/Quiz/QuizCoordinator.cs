@@ -75,7 +75,7 @@ public class QuizCoordinator : MonoBehaviour
 
         Texture2D tex = DataHelpers.GetPicture("quizquestions", m_currentQuestion);
         m_questionTexture.mainTexture = tex;
-        m_questionTexture.MakePixelPerfect();
+        //m_questionTexture.MakePixelPerfect();
         m_questionTexture.gameObject.SetActive(tex != null);
 
         List<string> answerStrings = new List<string>();
