@@ -96,6 +96,70 @@ public class LineDrawManager : Singleton<LineDrawManager>
         }
     }
 
+    public IEnumerator DestroyLineRenderer(LineRenderer lineRenderer, Color color, float totalFadeTime = 0.25f)
+    {
+        float remainingFadeTime = totalFadeTime;
+        
+        float colorInitialAlpha = color.a;
+        
+        while (!Mathf.Approximately(color.a, 0) || !Mathf.Approximately(color.a, 0))
+        {
+            remainingFadeTime = Mathf.Clamp(remainingFadeTime -= Time.deltaTime, 0, remainingFadeTime);
+            
+            color.a = Mathf.Lerp(0, colorInitialAlpha, remainingFadeTime / totalFadeTime);
+
+            lineRenderer.SetColors(color, color);
+            
+            yield return null;
+        }
+        
+        Destroy(lineRenderer.gameObject);
+    }
+    
+    public IEnumerator DrawDemoLine(Vector3 originalPosA, Vector3 originalPosB, Camera cam, Material mat, Color col)
+    {
+        GameObject newRendererGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_linePrefab, m_lineParent);
+        LineRenderer lineRenderer = newRendererGo.GetComponent<LineRenderer>() as LineRenderer;
+
+        lineRenderer.material = mat;
+        lineRenderer.SetColors(col, col);
+
+        float updateTime = 0.01f;
+        float totalTime = 0.5f;
+        float timeElapsed = 0f;
+
+        //Vector3 posA = FindWorldPos(joinableA);
+
+        originalPosA.z = -0.5f;
+        originalPosB.z = -0.5f;
+
+        Vector3 screenPosA = cam.WorldToScreenPoint(originalPosA);
+        Vector3 worldPosA = m_lineCamera.ScreenToWorldPoint(screenPosA);
+
+        Vector3 screenPosB = cam.WorldToScreenPoint(originalPosB);
+        Vector3 worldPosB = m_lineCamera.ScreenToWorldPoint(screenPosB);
+
+        Vector3 nextLinePos = worldPosA;
+        Vector3 updateDelta = (worldPosB - worldPosA) * updateTime / totalTime;
+        int vertexCount = 1;
+
+        while (timeElapsed < totalTime)
+        {
+            lineRenderer.SetVertexCount(vertexCount);
+            lineRenderer.SetPosition(vertexCount - 1, nextLinePos);
+
+            nextLinePos += updateDelta;
+            ++vertexCount;
+
+            timeElapsed += updateTime;
+            yield return new WaitForSeconds(updateTime);
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        StartCoroutine(DestroyLineRenderer(lineRenderer, col));
+    }
+
     public void CreateLine(LineDraw line, Material mat, Color startColor, Color endColor)
     {
         line.LineDragEventHandler += OnLineDrag;

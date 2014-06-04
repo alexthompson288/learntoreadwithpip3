@@ -6,6 +6,8 @@ using Wingrove;
 public class JoinPairsPlayer : GamePlayer
 {
     [SerializeField]
+    private Camera m_cam;
+    [SerializeField]
     private int m_playerIndex;
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
@@ -90,6 +92,30 @@ public class JoinPairsPlayer : GamePlayer
         return (m_selectedCharacter != -1);
     }
 
+    public IEnumerator DrawDemoLine()
+    {
+        Debug.Log("DrawDemoLine()");
+        yield return StartCoroutine(SetUpNext(true));
+
+        JoinableLineDraw[] joinables = new JoinableLineDraw[2];
+        Debug.Log("m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
+        for (int i = 0; i < joinables.Length && i < m_spawnedJoinables.Count; ++i)
+        {
+            joinables[i] = m_spawnedJoinables[i].GetComponent<JoinableLineDraw>() as JoinableLineDraw;
+            //joinables[i].EnableCollider(false);
+        }
+
+        //LineDrawManager.Instance.CreateLine(joinables[0], m_lineRendererMaterial, m_lineRendererColor, m_lineRendererColor);
+        joinables [0].Tint(Color.grey);
+
+        yield return StartCoroutine(LineDrawManager.Instance.DrawDemoLine(joinables[0].transform.position, joinables[1].transform.position, m_cam, 
+                                                                          m_lineRendererMaterial, m_lineRendererColor));
+
+        OnJoin(joinables [0], joinables [1], true);
+
+        yield return new WaitForSeconds(1f);
+    }
+
     public void SetUp(int targetScore, string dataType)
     {
         Debug.Log("JoinPairsPlayer.SetUp(): " + dataType);
@@ -116,14 +142,18 @@ public class JoinPairsPlayer : GamePlayer
         }
     }
 
-    public IEnumerator SetUpNext()
+    public IEnumerator SetUpNext(bool isDemonstration = false)
     {
+        Debug.Log("SetUpNext()");
+
         m_panelDepthIncrement = 1;
         
-        Dictionary<string, DataRow> letters = new Dictionary<string, DataRow>();
         HashSet<DataRow> dataPool = new HashSet<DataRow>();
         
-        int pairsToShowAtOnce = JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
+        int pairsToShowAtOnce = isDemonstration ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
+
+        Debug.Log("pairsToShowAtOnce:" + pairsToShowAtOnce);
+
 
         if (pairsToShowAtOnce > (m_locators.Length / 2))
         {
@@ -140,6 +170,8 @@ public class JoinPairsPlayer : GamePlayer
             yield return null;
         }
 
+        Debug.Log("dataPool.Count: " + dataPool.Count);
+
         CollectionHelpers.Shuffle(m_locators);
 
         int locatorIndex = 0;
@@ -148,14 +180,19 @@ public class JoinPairsPlayer : GamePlayer
             JoinableLineDraw firstLineDraw = SpawnLineDraw(m_firstPrefab, data, locatorIndex);
             ++locatorIndex;
 
-            if(JoinPairsCoordinator.Instance.dataType == "words" && SessionInformation.Instance.GetNumPlayers() == 1)
+            if(JoinPairsCoordinator.Instance.dataType == "words" && JoinPairsCoordinator.Instance.GetNumPlayers() == 1)
             {
-                firstLineDraw.JoinableClickEventHandler += OnJoinableClicked;
+                firstLineDraw.JoinableClickEventHandler += OnPictureClicked;
             }
 
 
-            SpawnLineDraw(m_secondPrefab, data, locatorIndex);
+            JoinableLineDraw secondLineDraw = SpawnLineDraw(m_secondPrefab, data, locatorIndex);
             ++locatorIndex;
+
+            if(JoinPairsCoordinator.Instance.dataType == "words" && JoinPairsCoordinator.Instance.GetNumPlayers() == 1)
+            {
+                secondLineDraw.JoinableClickEventHandler += OnWordClicked;
+            }
         }
         
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
@@ -180,7 +217,12 @@ public class JoinPairsPlayer : GamePlayer
         return lineDraw;
     }
 
-    void OnJoinableClicked(JoinableLineDraw joinable)
+    void OnWordClicked(JoinableLineDraw joinable)
+    {
+        PipPadBehaviour.Instance.Show(joinable.data["word"].ToString());
+    }
+
+    void OnPictureClicked(JoinableLineDraw joinable)
     {
         JoinPairsCoordinator.Instance.PlayShortAudio(joinable.data);
     }
@@ -199,7 +241,7 @@ public class JoinPairsPlayer : GamePlayer
         }
     }
 
-    void OnJoin(JoinableLineDraw a, JoinableLineDraw b)
+    void OnJoin(JoinableLineDraw a, JoinableLineDraw b, bool isDemonstration = false)
     {
         if (a != b)
         {
@@ -221,7 +263,7 @@ public class JoinPairsPlayer : GamePlayer
 
                     WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
                     
-                    if (m_spawnedJoinables.Count == 0)
+                    if (m_spawnedJoinables.Count == 0 && !isDemonstration)
                     {                        
                         StartCoroutine(AddPoint());
                     }

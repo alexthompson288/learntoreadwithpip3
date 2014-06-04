@@ -360,7 +360,7 @@ public static class DataHelpers
 
         if(dataPool.Count == 0)
         {
-            dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Blue));
+            dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Pink));
         }
 
         return dataPool;
@@ -683,7 +683,6 @@ public static class DataHelpers
                 break;
             case "words":
             case "keywords":
-                Debug.Log("Searching words");
                 if(data["word"] != null)
                 {
                     tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());

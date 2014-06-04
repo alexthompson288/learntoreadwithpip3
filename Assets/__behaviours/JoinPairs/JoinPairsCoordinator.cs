@@ -86,7 +86,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, Texture2D> m_pictures = new Dictionary<DataRow, Texture2D>();
 
-    int GetNumPlayers()
+    public int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
     }
@@ -202,6 +202,10 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
             {
                 m_gamePlayers [index].HideAll();
             }
+        } 
+        else
+        {
+            yield return StartCoroutine(m_gamePlayers[0].DrawDemoLine());
         }
 
         for(int index = 0; index < numPlayers; ++index)

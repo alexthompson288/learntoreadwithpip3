@@ -150,4 +150,9 @@ public class JoinableLineDraw : LineDraw
         yield return new WaitForSeconds(0.9f);
         Destroy(gameObject);
     }
+
+    public void EnableCollider(bool enabled)
+    {
+        collider.enabled = enabled;
+    }
 }
