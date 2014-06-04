@@ -80,8 +80,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         DataRow story = DataHelpers.GetStory();
         if (story != null)
         {
-            Debug.Log("Found story");
-
             m_storyId = System.Convert.ToInt32(story ["id"]);
 
             int numDisabled = 0;
@@ -114,10 +112,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             m_colorGrid.transform.localPosition = new Vector3(m_colorGrid.transform.localPosition.x + (m_colorGrid.cellWidth / 2 * numDisabled), m_colorGrid.transform.localPosition.y);
             m_colorGrid.Reposition();
         } 
-        else
-        {
-            Debug.Log("NO STORY FOUND");
-        }
 
         //UserStats.Activity.SetStoryId (m_storyId);
         
@@ -189,13 +183,10 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void OnClickColorButton(PipButton button)
     {
-        Debug.Log("OnClickColorButton()");
         if (button != m_currentColorButton)
         {
-            Debug.Log("Changing");
             if (m_currentColorButton != null)
             {
-                Debug.Log("Resetting Old");
                 m_currentColorButton.ChangeSprite(false);
             }
 
@@ -267,9 +258,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         if (m_showWords && storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
-            Debug.Log("SETTING TEXT");
-
-            //textposition
             string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n");
             
             string[] lines = textToDisplay.Split('\n');
@@ -333,25 +321,16 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                 m_textAnchors [0].transform.localScale = Vector3.one;
             }
         } 
-        else
-        {
-            Debug.Log("CANNOT SET TEXT");
-            Debug.Log("storyPage != null: " + storyPage != null);
-            Debug.Log("storyPage [m_currentTextAttribute] != null: " + storyPage [m_currentTextAttribute] != null);
-        }
     }
 
     void UpdatePage()
     {
-        Debug.Log("UpdatePage()");
         if (m_currentPage < m_numPages)
         {
-            Debug.Log("m_currentPage < m_numPages");
             DataRow storyPage = FindStoryPage();
             
             if (storyPage != null)
             {
-                Debug.Log("storyPage != null");
                 UpdateText(storyPage);
                 UpdatePicture(storyPage);
                 UpdateAudio(storyPage);
