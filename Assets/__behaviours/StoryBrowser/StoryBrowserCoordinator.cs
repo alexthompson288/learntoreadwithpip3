@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class StoryBrowserCoordinator : MonoBehaviour 
+public class StoryBrowserCoordinator : Singleton<StoryBrowserCoordinator> 
 {
     [SerializeField]
     private PipButton[] m_colorButtons;
@@ -15,6 +15,11 @@ public class StoryBrowserCoordinator : MonoBehaviour
     List<StoryBrowserBook> m_spawnedBooks = new List<StoryBrowserBook>();
 
     PipButton m_currentColorButton = null;
+
+    public string GetCurrentColorName()
+    {
+        return m_currentColorButton != null ? ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower() : "pink";
+    }
 
     void Start()
     {
@@ -59,9 +64,9 @@ public class StoryBrowserCoordinator : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
 
-        string colorName = ColorInfo.GetColorString(pipColor);
+        string colorName = ColorInfo.GetColorString(pipColor).ToLower();
         
-        DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE storytype=" + "\'" + colorName +  "\'" + " ORDER BY fontsize, difficulty");
+        DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE " + colorName + "='t' ORDER BY fontsize, difficulty");
 
         int bookIndex = 0;
 
@@ -72,7 +77,7 @@ public class StoryBrowserCoordinator : MonoBehaviour
                 GameObject bookInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_bookPrefab, m_bookGrid.transform);
                 bookInstance.name = bookIndex.ToString() + "_Book";
                 //NewStoryBrowserBookButton bookButton = bookInstance.GetComponent<NewStoryBrowserBookButton>();
-                bookInstance.GetComponent<StoryBrowserBook>().SetUp(row);
+                bookInstance.GetComponent<StoryBrowserBook>().SetUp(row, colorName);
                 m_spawnedBooks.Add(bookInstance.GetComponent<StoryBrowserBook>() as StoryBrowserBook);
                 //bookButton.SetUpWith(row);
                 ++bookIndex;

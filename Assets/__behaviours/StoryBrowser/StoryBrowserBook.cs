@@ -12,18 +12,9 @@ public class StoryBrowserBook : MonoBehaviour
     private UISprite m_background;
     [SerializeField]
     private PipButton m_infoButton;
-
     [SerializeField]
     private DataRow m_storyData;
-    /*
-    public DataRow storyData
-    {
-        get
-        {
-            return m_storyData;
-        }
-    }
-    */
+
 
     void Awake()
     {
@@ -35,11 +26,11 @@ public class StoryBrowserBook : MonoBehaviour
         BuyBooksCoordinator.Instance.Show(m_storyData);
     }
 
-    public void SetUp(DataRow dataRow)
+    public void SetUp(DataRow dataRow, string colorName)
     {
         m_storyData = dataRow;
         
-        m_background.spriteName = "storycover_" + m_storyData ["storytype"].ToString().ToLower();
+        m_background.spriteName = "storycover_" + colorName;
 
         m_label.text = m_storyData["title"].ToString();
 
@@ -55,6 +46,7 @@ public class StoryBrowserBook : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + Convert.ToInt32(m_storyData["id"]));
         if(dt.Rows.Count > 0)
         {
+            StoryMenuCoordinator.SetStartColor(StoryBrowserCoordinator.Instance.GetCurrentColorName());
             StoryMenuCoordinator.SetStory(dt.Rows[0]);  
             TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
         }

@@ -26,6 +26,20 @@ public class StoryMenuCoordinator : MonoBehaviour
     [SerializeField]
     private float m_buttonDistance = 240;
 
+    //////////////////////////////////////////////////////////////////////
+    // TODO: Put this in a DataSaver called StoryInfo
+    static string m_startColor = "pink";
+
+    public static void SetStartColor(string startColor)
+    {
+        m_startColor = startColor;
+    }
+
+    public static string GetStartColor()
+    {
+        return m_startColor;
+    }
+
     static bool m_isReadingOrPictures;
 
     static DataRow m_story;
@@ -41,6 +55,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         m_story = newStory;
     }
+    ////////////////////////////////////////////////////////////////////// 
+
 
     string m_readButtonString = "Read";
 

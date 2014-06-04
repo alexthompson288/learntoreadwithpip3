@@ -9,6 +9,6 @@ public class SetStoryLanguage : MonoBehaviour {
 	void OnClick () 
 	{
 		//StoryReaderLogic.Instance.SetLanguage(m_language);
-        StoryCoordinator.Instance.SetLanguage(m_language);
+        StoryCoordinator.Instance.SetTextAttribute(m_language);
 	}
 }

@@ -97,6 +97,30 @@ public class CollectionHelpers
 		}
 	}
 
+    public static int ComparePosY(MonoBehaviour a, MonoBehaviour b)
+    {
+        return ComparePosX(a.transform, b.transform);
+    }
+    
+    public static int ComparePosY(Transform a, Transform b)
+    {
+        float posA = a.position.y;
+        float posB = b.position.y;
+        
+        if(posA < posB)
+        {
+            return -1;
+        }
+        else if(posA > posB)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     public static int ComparePosYThenX(MonoBehaviour a, MonoBehaviour b)
     {
         return ComparePosYThenX(a.transform, b.transform);

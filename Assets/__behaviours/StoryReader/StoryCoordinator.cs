@@ -25,6 +25,16 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     private PipButton[] m_pageTurnButtons;
     [SerializeField]
     private PipButton[] m_languageButtons;
+    [SerializeField]
+    private PipButton m_callColorButton;
+    [SerializeField]
+    private TweenOnOffBehaviour m_colorButtonMoveable;
+    [SerializeField]
+    private UIGrid m_colorGrid;
+    [SerializeField]
+    private ClickEvent m_colorBackBlocker;
+    [SerializeField]
+    private PipButton[] m_colorButtons;
 
 
     static bool m_showWords = true;
@@ -38,16 +48,22 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     int m_numPages;
     int m_currentPage;
 
-    string m_currentLanguage = "text";
+    string m_currentTextAttribute;
 
     List<GameObject> m_textObjects = new List<GameObject>();
     
     List<string> m_decodeList = new List<string>();
 
+    PipButton m_currentColorButton = null;
+
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        System.Array.Sort(m_colorButtons, CollectionHelpers.ComparePosY);
         System.Array.Sort(m_pageTurnButtons, CollectionHelpers.ComparePosX);
+
+        m_colorBackBlocker.OnSingleClick += DismissColorGrid;
+        m_callColorButton.Unpressing += CallColorGrid;
 
         for (int i = 0; i < m_pageTurnButtons.Length; ++i)
         {
@@ -59,10 +75,48 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
+        m_currentTextAttribute = "text_" + StoryMenuCoordinator.GetStartColor();
+
         DataRow story = DataHelpers.GetStory();
         if (story != null)
         {
-            m_storyId = System.Convert.ToInt32(story["id"]);
+            Debug.Log("Found story");
+
+            m_storyId = System.Convert.ToInt32(story ["id"]);
+
+            int numDisabled = 0;
+
+            foreach (PipButton button in m_colorButtons)
+            {
+                button.Pressing += OnClickColorButton;
+
+                if(StoryMenuCoordinator.GetStartColor() == ColorInfo.GetColorString(button.pipColor).ToLower())
+                {
+                    m_currentColorButton = button;
+                    m_currentColorButton.ChangeSprite(true);
+                }
+
+                string colorAttribute = ColorInfo.GetColorString(button.pipColor).ToLower();
+                bool storyHasColor = story [colorAttribute] != null && story [colorAttribute].ToString() == "t";
+                button.gameObject.SetActive(storyHasColor);
+
+                if(!storyHasColor)
+                {
+                    ++numDisabled;
+                }
+            }
+
+            if(numDisabled >= m_colorButtons.Length - 1)
+            {
+                m_callColorButton.gameObject.SetActive(false);
+            }
+
+            m_colorGrid.transform.localPosition = new Vector3(m_colorGrid.transform.localPosition.x + (m_colorGrid.cellWidth / 2 * numDisabled), m_colorGrid.transform.localPosition.y);
+            m_colorGrid.Reposition();
+        } 
+        else
+        {
+            Debug.Log("NO STORY FOUND");
         }
 
         //UserStats.Activity.SetStoryId (m_storyId);
@@ -123,18 +177,46 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_textObjects.Clear();
     }
 
-    public void SetLanguage(string language)
+    void CallColorGrid(PipButton button)
     {
-        StartCoroutine(SetLanguageCo(language));
+        m_colorButtonMoveable.On();
     }
 
-    IEnumerator SetLanguageCo(string language)
+    void DismissColorGrid(ClickEvent click)
+    {
+        m_colorButtonMoveable.Off();
+    }
+
+    void OnClickColorButton(PipButton button)
+    {
+        Debug.Log("OnClickColorButton()");
+        if (button != m_currentColorButton)
+        {
+            Debug.Log("Changing");
+            if (m_currentColorButton != null)
+            {
+                Debug.Log("Resetting Old");
+                m_currentColorButton.ChangeSprite(false);
+            }
+
+            m_currentColorButton = button;
+
+            SetTextAttribute(ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower());
+        }
+    }
+
+    public void SetTextAttribute(string textAttribute)
+    {
+        StartCoroutine(SetLanguageCo(textAttribute));
+    }
+
+    IEnumerator SetLanguageCo(string textAttribute)
     {
         DataRow storyPage = FindStoryPage();
 
         if (storyPage != null)
         {
-            m_currentLanguage = language;
+            m_currentTextAttribute = textAttribute;
             EnableButtons(false);
 
             TweenAlpha.Begin(m_textPanel, m_fadeDuration, 0);
@@ -143,19 +225,24 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             ClearText();
             UpdateText(storyPage);
-            UpdateAudio(storyPage, "_" + language.Replace("text", ""));
+            UpdateAudio(storyPage);
 
             TweenAlpha.Begin(m_textPanel, m_fadeDuration, 0);
         }
     }
 
-    void UpdateAudio(DataRow storyPage, string modifier = "")
+    void UpdateAudio(DataRow storyPage)
     {
-        string audioSetting = storyPage["audio"] == null ? null : storyPage["audio"].ToString();
-        if (!string.IsNullOrEmpty(audioSetting))
+        if (storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
-            m_audioPlayButton.SetActive(true);
-            m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + storyPage["audio"].ToString() + modifier);
+            string audioFileName = storyPage ["audio"] != null ? System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), m_currentTextAttribute) : null;
+
+            m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
+            m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + audioFileName);
+        } 
+        else
+        {
+            m_audioPlayButton.SetActive(false);
         }
     }
 
@@ -178,10 +265,12 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void UpdateText(DataRow storyPage)
     {
-        if (m_showWords)
+        if (m_showWords && storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
+            Debug.Log("SETTING TEXT");
+
             //textposition
-            string textToDisplay = storyPage [m_currentLanguage].ToString().Replace("\\n", "\n");
+            string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n");
             
             string[] lines = textToDisplay.Split('\n');
             
@@ -218,7 +307,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                         ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
                         bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
                         
-                        showPipPadForWord.SetUp(newWord, wordSize, m_currentLanguage == "text");
+                        showPipPadForWord.SetUp(newWord, wordSize, m_currentTextAttribute == "text");
                         
                         // Highlight if word is on the decode list
                         if (isOnDecodeList)
@@ -243,17 +332,26 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             {
                 m_textAnchors [0].transform.localScale = Vector3.one;
             }
+        } 
+        else
+        {
+            Debug.Log("CANNOT SET TEXT");
+            Debug.Log("storyPage != null: " + storyPage != null);
+            Debug.Log("storyPage [m_currentTextAttribute] != null: " + storyPage [m_currentTextAttribute] != null);
         }
     }
 
     void UpdatePage()
     {
+        Debug.Log("UpdatePage()");
         if (m_currentPage < m_numPages)
         {
+            Debug.Log("m_currentPage < m_numPages");
             DataRow storyPage = FindStoryPage();
             
             if (storyPage != null)
             {
+                Debug.Log("storyPage != null");
                 UpdateText(storyPage);
                 UpdatePicture(storyPage);
                 UpdateAudio(storyPage);
@@ -273,7 +371,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         {
             m_pageCountLabel.text = oneBasedCurrentPage.ToString() + " \\ " + m_numPages.ToString();
         }
-        
+
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + oneBasedCurrentPage + "'");
 
         return dt.Rows.Count > 0 ? dt.Rows [0] : null;

@@ -33,6 +33,10 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 	private Transform m_infoNoBuyLocation;
 	[SerializeField]
 	private GameObject m_buyButtonsParent;
+    [SerializeField]
+    private UIGrid m_colorGrid;
+    [SerializeField]
+    private PipColorWidgets[] m_colorSprites;
 
 	Texture2D m_defaultBackgroundTex;
 	Color m_defaultBackgroundColor;
@@ -46,6 +50,8 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
 		m_backCollider.OnSingleClick += OnClickBackCollider;
 		//m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
+
+        Array.Sort(m_colorSprites, CollectionHelpers.ComparePosX);
 	}
 
 	void Start()
@@ -78,6 +84,24 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 
     public void Show(DataRow storyData)
 	{
+        int numDisabled = 0;
+        foreach (PipColorWidgets sprite in m_colorSprites)
+        {
+            string colorName = ColorInfo.GetColorString(sprite.color).ToLower();
+
+            bool storyHasColor = storyData[colorName] != null && storyData[colorName].ToString() == "t";
+
+            sprite.gameObject.SetActive(storyHasColor);
+
+            if(!storyHasColor)
+            {
+                ++numDisabled;
+            }
+        }
+
+        m_colorGrid.transform.localPosition = new Vector3(-250 + (50 * numDisabled), m_colorGrid.transform.localPosition.y);
+        m_colorGrid.Reposition();
+
 		m_buyAllBooksLabel.text = String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
 		//DisableUICams();
