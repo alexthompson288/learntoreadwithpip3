@@ -41,8 +41,6 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
     List<GameObject> m_spawnedQuestionText = new List<GameObject>();
 
-    int m_numAnswered = 0;
-
     string m_goodAttribute;
 
     IEnumerator Start()
@@ -66,6 +64,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
             m_captionTextAttributes.Add("dummyword1");
             m_captionTextAttributes.Add("dummyword2");
+
+            m_questionImage.height = 512;
         } 
         else
         {
@@ -78,6 +78,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
             m_captionTextAttributes.Add("bad_sentence1");
             m_captionTextAttributes.Add("bad_sentence2");
             m_captionTextAttributes.Add("bad_sentence4");
+
+            m_questionImage.height = 384;
         }
 
         m_captionTextAttributes.Add(m_goodAttribute);
