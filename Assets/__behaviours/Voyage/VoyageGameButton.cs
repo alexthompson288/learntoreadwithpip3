@@ -27,7 +27,8 @@ public class VoyageGameButton : MonoBehaviour
 
         int sectionId = System.Convert.ToInt32(m_section["id"]);
 
-        bool hasCompleted = VoyageInfo.Instance.HasCompletedSection(sectionId);
+        //bool hasCompleted = VoyageInfo.Instance.HasCompletedSection(sectionId);
+        bool hasCompleted = false;
 
         m_background.spriteName = hasCompleted ? m_completeName : m_incompleteName;
         m_background.color = hasCompleted ? completedColor : Color.white;

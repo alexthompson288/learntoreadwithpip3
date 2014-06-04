@@ -22,6 +22,14 @@ public class BankInfo : Singleton<BankInfo>
 #endif
 
         Load();
+
+        UserInfo.Instance.ChangingUser += OnChangeUser;
+    }
+
+    void OnChangeUser()
+    {
+        m_answers.Clear();
+        Load();
     }
 
     // Answer string stores both id and datatype, they need to be stored in a single string because ids are shared between tables and so keys would not be unique if they were kept separate

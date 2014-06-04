@@ -371,7 +371,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
 
-            GameManager.Instance.SetScoreKey(m_sessionId.ToString());
+            GameManager.Instance.SetScoreLevel(m_sessionId.ToString());
             
             WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
             

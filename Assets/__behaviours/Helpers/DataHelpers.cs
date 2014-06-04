@@ -1175,8 +1175,13 @@ public static class DataHelpers
         return null;
     }
 
-    public static string GetScoreKey()
+    public static string GetScoreLevel()
     {
-        return GameManager.Instance.GetScoreKey();
+        return GameManager.Instance.GetScoreLevel();
+    }
+
+    public static string GetGameName()
+    {
+        return GameManager.Instance.currentGameName;
     }
 }

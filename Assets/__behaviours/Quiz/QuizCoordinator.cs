@@ -142,7 +142,7 @@ public class QuizCoordinator : MonoBehaviour
 
     IEnumerator CompleteGame()
     {
-        ScoreInfo.Instance.SetQuiz(m_score);
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore);
 
         yield return new WaitForSeconds(2f);
 

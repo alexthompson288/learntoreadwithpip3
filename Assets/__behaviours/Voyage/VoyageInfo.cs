@@ -108,47 +108,9 @@ public class VoyageInfo : Singleton<VoyageInfo>
     // Voyage Progress. Saved between app launches
     HashSet<int> m_completedSessions = new HashSet<int>();
 
-    HashSet<int> m_completedSections = new HashSet<int>();
-
-    public bool HasCompletedSection(int sectionId)
-    {
-        return m_completedSections.Contains(sectionId);
-    }
-
     public bool HasCompletedSession(int sessionId)
     {
         return m_completedSessions.Contains(sessionId);
-        /*
-        bool hasCompleted = true;
-
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId);
-        foreach (DataRow section in dt.Rows)
-        {
-            if(!m_completedSections.Contains(System.Convert.ToInt32(section["id"])) && DataHelpers.FindGameForSection(section) != null)
-            {
-                hasCompleted = false;
-                break;
-            }
-        }
-
-        return hasCompleted;
-        */
-    }
-
-    public int GetNumRemainingSections(int sessionId)
-    {
-        int remainingSections = 0;
-
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + sessionId);
-        foreach (DataRow section in dt.Rows)
-        {
-            if(!m_completedSections.Contains(System.Convert.ToInt32(section["id"])) && DataHelpers.FindGameForSection(section) != null)
-            {
-                ++remainingSections;
-            }
-        }
-
-        return remainingSections;
     }
 
     public int GetNumSessionsComplete(int moduleId)
@@ -175,8 +137,6 @@ public class VoyageInfo : Singleton<VoyageInfo>
         
         if (m_bookmark != null)
         {
-            //Debug.Log("Completed section: " + m_bookmark.GetSectionId());
-            //m_completedSections.Add(m_bookmark.GetSectionId());
             Debug.Log("Completed session: " + m_bookmark.GetSessionId());
             m_completedSessions.Add(m_bookmark.GetSessionId());
         }
@@ -194,6 +154,8 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void Start()
     {
+        UserInfo.Instance.ChangingUser += OnChangeUser;
+
 #if UNITY_EDITOR
         if(m_overwrite)
         {
@@ -204,6 +166,14 @@ public class VoyageInfo : Singleton<VoyageInfo>
         Load();
 
         GameManager.Instance.OnCancel += OnGameCancel;
+    }
+
+    void OnChangeUser()
+    {
+        m_completedSessions.Clear();
+        m_sessionBackgrounds.Clear();
+
+        Load();
     }
 
     void Load()

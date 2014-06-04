@@ -7,6 +7,9 @@ using System.Linq;
 
 public class UserInfo : Singleton<UserInfo> 
 {
+    public delegate void UserChangeEventHandler();
+    public event UserChangeEventHandler ChangingUser;
+
 	private string m_accountUsername = "";
 	public string accountUsername
 	{
@@ -201,11 +204,18 @@ public class UserInfo : Singleton<UserInfo>
 		return m_users;
 	}
 
-	// Use this for initialization
 	public void SetCurrentUser (string user) 
 	{
-		m_currentUser = user;
-		Save ();
+        if (user != m_currentUser)
+        {
+            m_currentUser = user;
+            Save();
+
+            if(ChangingUser != null)
+            {
+                ChangingUser();
+            }
+        }
 	}
 
 	public void CreateUser(string user, string imageName)

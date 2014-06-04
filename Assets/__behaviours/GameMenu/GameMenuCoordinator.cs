@@ -79,9 +79,18 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
             m_isTwoPlayer = GameMenuInfo.Instance.IsBookmarkTwoPlayer();
             m_pipColor = GameMenuInfo.Instance.GetBookmarkPipColor();
 
+            foreach(PipButton button in m_colorButtons)
+            {
+                if(button.pipColor == m_pipColor)
+                {
+                    button.ChangeSprite(true);
+                    break;
+                }
+            }
+
             SpawnGameButtons();
 
-            m_camera.transform.position = m_gameMenu.transform.position;
+            m_camera.transform.position = m_colorMenu.transform.position;
         }
     }
 
@@ -171,7 +180,7 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
 
-            GameManager.Instance.SetScoreKey(ColorInfo.GetColorString(m_pipColor));
+            GameManager.Instance.SetScoreLevel(ColorInfo.GetColorString(m_pipColor));
 
             GameMenuInfo.Instance.CreateBookmark(m_isTwoPlayer, m_pipColor);
 
