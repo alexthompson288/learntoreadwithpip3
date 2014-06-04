@@ -25,6 +25,14 @@ public class StoryMenuCoordinator : MonoBehaviour
     private Transform[] m_buttonParents;
     [SerializeField]
     private float m_buttonDistance = 240;
+    [SerializeField]
+    private UILabel m_quizScoreLabel;
+    [SerializeField]
+    private UILabel m_captionsScoreLabel;
+    [SerializeField]
+    private string m_captionsGameName = "NewCorrectCaption";
+    [SerializeField]
+    private string m_quizGameName = "NewQuizGame";
 
     //////////////////////////////////////////////////////////////////////
     // TODO: Put this in a DataSaver called StoryInfo
@@ -81,6 +89,29 @@ public class StoryMenuCoordinator : MonoBehaviour
    
         if(m_story != null)
         {
+            string title = m_story["title"].ToString();
+
+            int captionsTargetScore = ScoreInfo.Instance.GetTargetScore(m_captionsGameName, title); 
+            if(captionsTargetScore > 0)
+            {
+                m_captionsScoreLabel.text = System.String.Format("{0}/{1}", ScoreInfo.Instance.GetScore(m_captionsGameName, title), captionsTargetScore);
+            }
+            else
+            {
+                m_captionsScoreLabel.gameObject.SetActive(false);
+            }
+
+            int quizTargetScore = ScoreInfo.Instance.GetTargetScore(m_quizGameName, title);
+            if(quizTargetScore > 0)
+            {
+                m_quizScoreLabel.text = System.String.Format("{0}/{1}", ScoreInfo.Instance.GetScore(m_quizGameName, title), quizTargetScore);
+
+            }
+            else
+            {
+                m_quizScoreLabel.gameObject.SetActive(false);
+            }
+
             Debug.Log("Title: " + m_story["title"].ToString());
 
             int numButtons = 4;
@@ -180,7 +211,7 @@ public class StoryMenuCoordinator : MonoBehaviour
             if(correctCaptions.Count > 0)
             {
                 m_isReadingOrPictures = false;
-                GameManager.Instance.AddGame("NewCorrectCaption");
+                GameManager.Instance.AddGame(m_captionsGameName);
                 GameManager.Instance.AddData("correctcaptions", correctCaptions);
 
                 WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_CAPTIONS");
@@ -200,7 +231,7 @@ public class StoryMenuCoordinator : MonoBehaviour
             if(quizQuestions.Count > 0)
             {
                 m_isReadingOrPictures = false;
-                GameManager.Instance.AddGame("NewQuizGame");
+                GameManager.Instance.AddGame(m_quizGameName);
                 GameManager.Instance.AddData("quizquestions", quizQuestions);
 
                 WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
