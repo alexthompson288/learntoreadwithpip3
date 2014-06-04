@@ -892,7 +892,11 @@ public static class DataHelpers
     {
         string gameDataType = GetDataType(GetCurrentGame());
 
-        return !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
+        string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
+
+        //Debug.Log("GameOrDefault:" + dataType);
+
+        return dataType;
     }
 
     public static string GetDataType(DataRow game)

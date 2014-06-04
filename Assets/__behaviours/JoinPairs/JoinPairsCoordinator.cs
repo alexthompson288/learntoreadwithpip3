@@ -112,13 +112,15 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         } 
         else
         {
-            // always pip, always winner
-            SessionInformation.Instance.SetPlayerIndex(0, 3);
-            SessionInformation.Instance.SetWinner(0);
-
+            SessionInformation.SetDefaultPlayerVar();
             CharacterSelectionParent.DisableAll();
         }
-        
+
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        m_dataType = DataHelpers.GameOrDefault(m_dataType);
+
+
         for(int index = 0; index < numPlayers; ++index)
         {
             m_gamePlayers[index].SetUp(m_targetScore, m_dataType); 
@@ -132,10 +134,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             m_numWaitForPlayers = 1;
         }
-
-        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-        m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
         m_joinablesAreSameType = (m_dataType == "numbers" || m_dataType == "shapes");
 

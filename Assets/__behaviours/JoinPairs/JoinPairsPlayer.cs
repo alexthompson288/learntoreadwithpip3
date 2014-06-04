@@ -92,6 +92,8 @@ public class JoinPairsPlayer : GamePlayer
 
     public void SetUp(int targetScore, string dataType)
     {
+        Debug.Log("JoinPairsPlayer.SetUp(): " + dataType);
+
         m_scoreKeeper.SetTargetScore(targetScore);
 
         if (dataType == "numbers")
