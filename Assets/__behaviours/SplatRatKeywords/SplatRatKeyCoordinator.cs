@@ -46,6 +46,12 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
 	{	
+        if (GetNumPlayers() == 1)
+        {
+            CharacterSelectionParent.DisableAll();
+            SessionInformation.SetDefaultPlayerVar();
+        }
+
 		string enviro = EnviroManager.Instance.GetEnvironment().ToString();
 		SplatRatEnviro ratEnviro = Resources.Load<SplatRatEnviro>(System.String.Format("SplatRat/{0}_SplatRat", enviro));
 		
@@ -82,10 +88,9 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		{
 			m_numWaitForPlayers = 1;
 		}
-		
+
+
 		List<DataRow> lettersPool = new List<DataRow>();
-
-
 		lettersPool.AddRange(DataHelpers.GetKeywords());
 
 		
@@ -139,33 +144,40 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
     {
         int numPlayers = GetNumPlayers();
 		Debug.Log("numPlayers: " + numPlayers);
-        while (true)
+        if (numPlayers == 2)
         {
-            bool allSelected = true;
-            for(int index = 0; index < numPlayers; ++index)
+            while (true)
             {
-                if (!m_gamePlayers[index].HasSelectedCharacter())
+                bool allSelected = true;
+                for (int index = 0; index < numPlayers; ++index)
                 {
-                    allSelected = false;
+                    if (!m_gamePlayers [index].HasSelectedCharacter())
+                    {
+                        allSelected = false;
+                    }
                 }
+
+                if (allSelected)
+                {
+                    break;
+                }
+
+                yield return null;
             }
 
-            if (allSelected)
+            yield return new WaitForSeconds(0.8f);
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
+
+            yield return new WaitForSeconds(2.8f);
+
+            for (int index = 0; index < numPlayers; ++index)
             {
-                break;
+                m_gamePlayers [index].HideAll();
             }
-
-            yield return null;
+    		
+            yield return new WaitForSeconds(0.8f);
         }
-
-        yield return new WaitForSeconds(2.0f);
-
-        for (int index = 0; index < numPlayers; ++index)
-        {
-            m_gamePlayers[index].HideAll();
-        }
-		
-		yield return new WaitForSeconds(1.0f);
 		
 		for(int index = 0; index < numPlayers; ++index)
 		{
@@ -185,10 +197,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		{
 			m_gamePlayers[index].HideLargeBlackboard();
 		}
-
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-
-        yield return new WaitForSeconds(1.0f);
 		
 		for(int index = 0; index < numPlayers; ++index)
 		{
