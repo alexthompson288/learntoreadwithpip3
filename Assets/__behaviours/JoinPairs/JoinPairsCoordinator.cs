@@ -102,45 +102,23 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     // Use this for initialization
     IEnumerator Start () 
     {
-        yield return new WaitForSeconds(0.5f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-
-        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-        m_dataType = DataHelpers.GameOrDefault(m_dataType);
-
-        m_joinablesAreSameType = (m_dataType == "numbers" || m_dataType == "shapes");
-
-        m_dataPool = DataHelpers.GetData(m_dataType);
-
-        Debug.Log("dataPool - preRemoval: " + m_dataPool.Count);
-
-        if (m_dataType != "numbers")
-        {
-            m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
-        }
-
-        Debug.Log("dataPool - postRemoval: " + m_dataPool.Count);
-
-        foreach (DataRow data in m_dataPool)
-        {
-            m_pictures[data] = DataHelpers.GetPicture(m_dataType, data);
-
-            m_shortAudio[data] = DataHelpers.GetShortAudio(m_dataType, data);
-
-            if(m_dataType == "phonemes")
-            {
-                m_longAudio[data] = DataHelpers.GetLongAudio(m_dataType, data);
-            }
-        }
-
         int numPlayers = GetNumPlayers();
 
         if (numPlayers == 2)
         {
             m_targetScore = 4;
-        }
+            yield return new WaitForSeconds(0.5f);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+        } 
+        else
+        {
+            // always pip, always winner
+            SessionInformation.Instance.SetPlayerIndex(0, 3);
+            SessionInformation.Instance.SetWinner(0);
 
+            CharacterSelectionParent.DisableAll();
+        }
+        
         for(int index = 0; index < numPlayers; ++index)
         {
             m_gamePlayers[index].SetUp(m_targetScore, m_dataType); 
@@ -154,7 +132,32 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             m_numWaitForPlayers = 1;
         }
-        
+
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        m_dataType = DataHelpers.GameOrDefault(m_dataType);
+
+        m_joinablesAreSameType = (m_dataType == "numbers" || m_dataType == "shapes");
+
+        m_dataPool = DataHelpers.GetData(m_dataType);
+
+        if (m_dataType != "numbers")
+        {
+            m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+        }
+
+        foreach (DataRow data in m_dataPool)
+        {
+            m_pictures[data] = DataHelpers.GetPicture(m_dataType, data);
+
+            m_shortAudio[data] = DataHelpers.GetShortAudio(m_dataType, data);
+
+            if(m_dataType == "phonemes")
+            {
+                m_longAudio[data] = DataHelpers.GetLongAudio(m_dataType, data);
+            }
+        }
+
         if(m_dataPool.Count > 0)
         {
             StartCoroutine(PlayGame());
@@ -169,37 +172,40 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     {
         int numPlayers = GetNumPlayers();
         Debug.Log("numPlayers: " + numPlayers);
-        while (true)
+        if (numPlayers == 2)
         {
-            bool allSelected = true;
-            for(int index = 0; index < numPlayers; ++index)
+            while (true)
             {
-                if (!m_gamePlayers[index].HasSelectedCharacter())
+                bool allSelected = true;
+                for (int index = 0; index < numPlayers; ++index)
                 {
-                    allSelected = false;
+                    if (!m_gamePlayers [index].HasSelectedCharacter())
+                    {
+                        allSelected = false;
+                    }
                 }
+                
+                if (allSelected)
+                {
+                    Debug.Log("All Selected");
+                    break;
+                }
+                
+                yield return null;
             }
+
+            yield return new WaitForSeconds(0.8f);
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
+
+            yield return new WaitForSeconds(2.5f);
             
-            if (allSelected)
+            for (int index = 0; index < numPlayers; ++index)
             {
-                Debug.Log("All Selected");
-                break;
+                m_gamePlayers [index].HideAll();
             }
-            
-            yield return null;
         }
-        
-        yield return new WaitForSeconds(2.0f);
-        
-        for (int index = 0; index < numPlayers; ++index)
-        {
-            m_gamePlayers[index].HideAll();
-        }
-        
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("MATCH_LETTERS_INSTRUCTION");
-        //yield return new WaitForSeconds(4.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-        
+
         for(int index = 0; index < numPlayers; ++index)
         {
             StartCoroutine(m_gamePlayers[index].SetUpNext());

@@ -234,7 +234,6 @@ public static class DataHelpers
 
     public static List<DataRow> GetData(string dataType)
     {
-        Debug.Log("DataHelpers.GetData(" + dataType + ")");
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
         if (dataPool.Count == 0)
@@ -680,7 +679,6 @@ public static class DataHelpers
                 if(data["phoneme"] != null && data["mneumonic"] != null)
                 {
                     tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
-                    Debug.Log("Found picture: " + tex != null);
                 }
                 break;
             case "words":
@@ -701,8 +699,6 @@ public static class DataHelpers
                     {
                         tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
                     }
-
-                    Debug.Log("TEX - " + data["correct_image_name"].ToString() + ": " + tex);
                 }
                 break;
             case "shapes":

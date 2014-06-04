@@ -55,7 +55,6 @@ public class ScreenSetUp : MonoBehaviour
                 adjust.y = 0.05f;
 
                 adjust.width = adjust.width * ((4.0f / 3.0f) / m_cameras[0].aspect);
-                Debug.Log(adjust.width);
                 if (adjust.x == 0)
                 {
                     adjust.x += m_rect2.width - adjust.width;

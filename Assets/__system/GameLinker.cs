@@ -37,11 +37,6 @@ public class GameLinker : Singleton<GameLinker>
                 }
             }
         }
-
-        foreach (KeyValuePair<string, string> kvp in m_gameNames)
-        {
-            Debug.Log(kvp.Key + " - " + kvp.Value);
-        }
     }
 	
 	// Set from file

@@ -154,8 +154,6 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void Start()
     {
-        UserInfo.Instance.ChangingUser += OnChangeUser;
-
 #if UNITY_EDITOR
         if(m_overwrite)
         {
@@ -166,6 +164,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
         Load();
 
         GameManager.Instance.OnCancel += OnGameCancel;
+        UserInfo.Instance.ChangingUser += OnChangeUser;
     }
 
     void OnChangeUser()
@@ -193,7 +192,9 @@ public class VoyageInfo : Singleton<VoyageInfo>
             int numSessionBackgrounds = br.ReadInt32();
             for(int i = 0; i < numSessionBackgrounds; ++i)
             {
-                m_sessionBackgrounds.Add(br.ReadInt32(), br.ReadString());
+                int sessionId = br.ReadInt32();
+                string backgroundName = br.ReadString();
+                m_sessionBackgrounds[sessionId] = backgroundName;
             }
         }
         

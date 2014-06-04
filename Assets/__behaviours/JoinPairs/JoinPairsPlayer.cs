@@ -108,6 +108,9 @@ public class JoinPairsPlayer : GamePlayer
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;
             m_secondPrefab = JoinPairsCoordinator.Instance.textPrefab;
+            Debug.Log("m_firstPrefab: " + m_firstPrefab.name);
+            Debug.Log("m_secondPrefab: " + m_secondPrefab.name);
+
         }
     }
 
