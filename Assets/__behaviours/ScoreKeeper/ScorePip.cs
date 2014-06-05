@@ -25,6 +25,8 @@ public class ScorePip : ScoreKeeper
     private AnimRandomizer m_pipAnimRandomizer;
     [SerializeField]
     private AnimRandomizer m_popAnimRandomizer;
+    [SerializeField]
+    private SplineFollower m_popSplineFollower;
 
     float m_pointDistance;
 
@@ -92,6 +94,8 @@ public class ScorePip : ScoreKeeper
         Debug.Log("ScorePip.On()");
 
         m_popAnimRandomizer.Off();
+
+        m_popSplineFollower.ChangePath("WIN");
 
         m_pipAnimRandomizer.Off();
 
