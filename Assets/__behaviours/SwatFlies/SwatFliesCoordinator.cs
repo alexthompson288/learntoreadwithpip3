@@ -9,47 +9,28 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
     [SerializeField]
     private GameObject m_flyPrefab;
     [SerializeField]
-    private GamePlayer[] m_gamePlayers;
+    private SwatFliesPlayer[] m_gamePlayers;
     [SerializeField]
     private int m_targetScore;
     [SerializeField]
+    private Vector2 m_spawnDelay = new Vector2(1, 3);
+    [SerializeField]
     private float m_probabilityDataIsCurrent;
+    [SerializeField]
+    private bool m_waitForBoth;
+    int m_numWaitForPlayers;
 
     List<DataRow> m_dataPool = new List<DataRow>();
 
     DataRow m_currentData = null;
 
-    public DataRow GetCurrentData()
-    {
-        return m_currentData;
-    }
-
-    public int GetCurrentId()
-    {
-        return System.Convert.ToInt32(m_currentData ["id"]);
-    }
-
-    public DataRow GetRandomData()
-    {
-        return m_dataPool [Random.Range(0, m_dataPool.Count)];
-    }
-
-    public int GetNumPlayers()
-    {
-        return SessionInformation.Instance.GetNumPlayers();
-    }
-    
-    public void CharacterSelected(int characterIndex)
-    {
-        for (int index = 0; index < GetNumPlayers(); ++index)
-        {
-            m_gamePlayers[index].HideCharacter(characterIndex);
-        }
-    }
+    int m_numFinished = 0;
+    int m_winningIndex = -1;
 
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        m_numWaitForPlayers = m_waitForBoth ? 2 : 1;
         m_probabilityDataIsCurrent = Mathf.Clamp01(m_probabilityDataIsCurrent);
 
         if (GetNumPlayers() == 1)
@@ -69,9 +50,14 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
 
         m_dataPool = DataHelpers.GetData(m_dataType);
         m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
+
+        //Debug.Log("dataPool.Count: " + m_dataPool.Count);
+        //Debug.Log("currentData: " + m_currentData);
+
+        StartCoroutine(StartGame());
 	}
 
-    IEnumerator PlayGame()
+    IEnumerator StartGame()
     {
         yield return null;
 
@@ -111,10 +97,119 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
             
             yield return new WaitForSeconds(1.0f);
         }
+
+        for(int index = 0; index < numPlayers; ++index)
+        {
+            m_gamePlayers[index].SetUp();
+            m_gamePlayers[index].ShowDataDisplay(m_dataType, m_currentData);
+        }
+
+        yield return new WaitForSeconds(3f);
+
+        for(int index = 0; index < numPlayers; ++index)
+        {
+            m_gamePlayers[index].HideDataDisplay();
+        }
+
+        for(int index = 0; index < numPlayers; ++index)
+        {
+            StartCoroutine(m_gamePlayers[index].SpawnFly());
+        }
     }
-    
+
+    public void OnPlayerFinish(int playerIndex)
+    {
+        if (m_winningIndex == -1)
+        {
+            m_winningIndex = -1;
+        }
+
+        ++m_numFinished;
+
+        if (m_numFinished >= m_numWaitForPlayers)
+        {
+            for(int index = 0; index < GetNumPlayers(); ++index)
+            {
+                m_gamePlayers[index].StopGame();
+            }
+
+            StartCoroutine(CompleteGame());
+        }
+    }
+
+    bool winningPlayerHasCompletedSequence = false;
+
+    public void OnWinningPlayerCompleteSequence()
+    {
+        winningPlayerHasCompletedSequence = true;
+    }
+
     IEnumerator CompleteGame()
     {
-        yield return null;
+        while (!winningPlayerHasCompletedSequence)
+        {
+            yield return null;
+        }
+
+        GameManager.Instance.CompleteGame();
+    }
+
+    public void CharacterSelected(int characterIndex)
+    {
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
+        }
+    }
+
+    // Getters
+    public DataRow GetCurrentData()
+    {
+        return m_currentData;
+    }
+    
+    public int GetCurrentId()
+    {
+        return System.Convert.ToInt32(m_currentData ["id"]);
+    }
+    
+    public DataRow GetRandomData()
+    {
+        return m_dataPool [Random.Range(0, m_dataPool.Count)];
+    }
+    
+    public string GetDataType()
+    {
+        return m_dataType;
+    }
+    
+    public int GetNumPlayers()
+    {
+        return SessionInformation.Instance.GetNumPlayers();
+    }
+    
+    public int GetTargetScore()
+    {
+        return m_targetScore;
+    }
+    
+    public float GetMinSpawnDelay()
+    {
+        return m_spawnDelay.x;
+    }
+    
+    public float GetMaxSpawnDelay()
+    {
+        return m_spawnDelay.y;
+    }
+
+    public float GetProbabilityDataIsCurrent()
+    {
+        return m_probabilityDataIsCurrent;
+    }
+    
+    public GameObject GetFlyPrefab()
+    {
+        return m_flyPrefab;
     }
 }

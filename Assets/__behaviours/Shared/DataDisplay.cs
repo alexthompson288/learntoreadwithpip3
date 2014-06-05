@@ -28,11 +28,9 @@ public class DataDisplay : MonoBehaviour
 
     public void On(string dataType, DataRow data)
     {
+        Debug.Log("DataDisplay.On(): " + m_showPicture);
         m_dataType = dataType;
         m_data = data;
-
-        Debug.Log("DataDisplay.dataType: " + m_dataType);
-        Debug.Log("DataDisplay.data: " + m_data);
 
         SetDisplaysActive();
 

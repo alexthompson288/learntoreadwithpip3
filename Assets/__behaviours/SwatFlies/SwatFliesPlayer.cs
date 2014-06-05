@@ -1,15 +1,130 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Wingrove;
 
 public class SwatFliesPlayer : GamePlayer
 {
     [SerializeField]
-    private int m_playerIndex;
-    [SerializeField]
     private ScoreKeeper m_scoreKeeper;
+    [SerializeField]
+    private DataDisplay m_dataDisplay;
+    [SerializeField]
+    private Spline[] m_splines;
+    [SerializeField]
+    private Transform m_spawnParent;
 
     int m_score;
 
-    List<GameWidget> m_spawnedFlies = new List<GameWidget>();
+    List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
+
+    public int GetScore()
+    {
+        return m_score;
+    }
+
+    public void ShowDataDisplay(string dataType, DataRow data)
+    {
+        m_dataDisplay.On(dataType, data);
+    }
+
+    public void HideDataDisplay()
+    {
+        m_dataDisplay.Off();
+    }
+
+    public void SetUp()
+    {
+        m_dataDisplay.SetShowPicture(false);
+        m_scoreKeeper.SetTargetScore(SwatFliesCoordinator.Instance.GetTargetScore());
+    }
+
+    public IEnumerator SpawnFly()
+    {
+        SwatFliesCoordinator coordinator = SwatFliesCoordinator.Instance; // Temporary variable saves lots of typing
+
+        DataRow currentData = coordinator.GetCurrentData();
+        DataRow data = currentData;
+
+        if (Random.Range(0f, 1f) < coordinator.GetProbabilityDataIsCurrent())
+        {
+            while(data == currentData)
+            {
+                data = coordinator.GetRandomData();
+            }
+        }
+
+        GameObject newFly = SpawningHelpers.InstantiateUnderWithIdentityTransforms(coordinator.GetFlyPrefab(), m_spawnParent);
+
+        GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
+        widget.SetUp(coordinator.GetDataType(), data, false);
+        widget.EnableDrag(false);
+        widget.onClick += OnSwatFly;
+        m_spawnedWidgets.Add(widget);
+
+        SplineFollower follower = newFly.GetComponent<SplineFollower>() as SplineFollower;
+        follower.AddSpline(m_splines[Random.Range(0, m_splines.Length)]);
+        StartCoroutine(follower.On());
+
+        yield return new WaitForSeconds(Random.Range(coordinator.GetMinSpawnDelay(), coordinator.GetMaxSpawnDelay()));
+
+        StartCoroutine(SpawnFly());
+    }
+
+    void OnSwatFly(GameWidget widget)
+    {
+        if (widget.data.GetId() == SwatFliesCoordinator.Instance.GetCurrentId())
+        {
+            StartCoroutine(OnCorrect(widget));
+        } 
+        else
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            widget.EnableCollider(false);
+            widget.Shake();
+            widget.Tint(Color.grey);
+        }
+    }
+
+    IEnumerator OnCorrect(GameWidget widget)
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+
+        widget.ChangeBackgroundState();
+
+        StartCoroutine(DestroyFly(widget));
+
+        ++m_score;
+
+        m_scoreKeeper.UpdateScore();
+
+        if (m_score >= SwatFliesCoordinator.Instance.GetTargetScore())
+        {
+            StopGame();
+            SwatFliesCoordinator.Instance.OnPlayerFinish(m_playerIndex);
+            yield return StartCoroutine(m_scoreKeeper.On());
+            SwatFliesCoordinator.Instance.OnWinningPlayerCompleteSequence();
+        }
+
+        yield return null;
+    }
+
+    IEnumerator DestroyFly(GameWidget widget)
+    {
+        GameObject fly = widget.transform.parent.gameObject;
+
+        m_spawnedWidgets.Remove(widget);
+
+        yield return StartCoroutine(widget.OffCo());
+
+        Destroy(fly);
+    }
+
+    public void StopGame()
+    {
+        for (int i = m_spawnedWidgets.Count - 1; i > -1; --i)
+        {
+            DestroyFly(m_spawnedWidgets[i]);
+        }
+    }
 }

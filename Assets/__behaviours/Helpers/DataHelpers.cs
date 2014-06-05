@@ -143,7 +143,7 @@ public static class DataHelpers
 
         if (data == null && allowNonTarget)
         {
-            List<DataRow> dataPool =  GameManager.Instance.GetData(dataType);
+            List<DataRow> dataPool =  GetData(dataType);
 
             if(dataPool.Count > 0)
             {

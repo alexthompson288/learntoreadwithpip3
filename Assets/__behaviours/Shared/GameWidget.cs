@@ -312,7 +312,7 @@ public class GameWidget : MonoBehaviour
         StartCoroutine(OffCo());
     }
 
-    IEnumerator OffCo()
+    public IEnumerator OffCo()
     {
         collider.enabled = false;
         iTween.Stop(gameObject);
@@ -364,7 +364,12 @@ public class GameWidget : MonoBehaviour
 
     public void Shake()
     {
-        iTween.ShakePosition(gameObject, Vector3.one * 0.01f, 0.5f);
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("islocal", true);
+        tweenArgs.Add("amount", Vector3.one * 20);
+        tweenArgs.Add("time", 0.5f);
+
+        iTween.ShakePosition(gameObject, tweenArgs);
     }
 
     public delegate void GameWidgetEvent(GameWidget widget);

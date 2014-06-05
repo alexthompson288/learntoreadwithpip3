@@ -215,10 +215,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		{
 			m_gamePlayers[index].HideLargeBlackboard();
 		}
-
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-
-        yield return new WaitForSeconds(1.0f);
 		
 		for(int index = 0; index < numPlayers; ++index)
 		{

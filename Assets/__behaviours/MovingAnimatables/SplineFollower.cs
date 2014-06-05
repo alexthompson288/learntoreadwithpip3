@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class SplineFollower : MonoBehaviour 
 {
@@ -17,9 +18,6 @@ public class SplineFollower : MonoBehaviour
     private UIWidget[] m_alphaWidgets;
     [SerializeField]
     private Path[] m_paths;
-
-
-    // TODO: changeSpeed should be speed of next Follower, easetype is determined by whether speed is greater or less than current
 
     int m_pathIndex = 0;
 
@@ -40,6 +38,14 @@ public class SplineFollower : MonoBehaviour
         Down
     }
 
+    public enum OnCompleteAction
+    {
+        Restart,
+        Stop,
+        DestroySelf,
+        DestroySelfAndSplines
+    }
+
     [System.Serializable]
     class Path
     {
@@ -54,7 +60,7 @@ public class SplineFollower : MonoBehaviour
         [SerializeField]
         public ForwardDirection m_forwardDirection;
         [SerializeField]
-        public bool m_destroyOnComplete = false;
+        public OnCompleteAction m_onCompleteAction;
 
         public void ClampVar()
         {
@@ -94,13 +100,26 @@ public class SplineFollower : MonoBehaviour
     {
         if (m_startOn && m_paths.Length > 0)
         {
-            StartCoroutine(Follow());
+            StartCoroutine(On());
+        }
+    }
+
+    public void AddSpline(Spline spline, string pathName = "")
+    {
+        if(m_paths.Length > 0)
+        {
+            Path path = !String.IsNullOrEmpty(pathName) ? Array.Find(m_paths, x => x.m_name == pathName) : m_paths[0];
+
+            if(path != null)
+            {
+                path.m_spline = spline;
+            }
         }
     }
 
     public void ChangePath(string pathName)
     {
-        int pathIndex = System.Array.FindIndex(m_paths, x => x.m_name == pathName);
+        int pathIndex = Array.FindIndex(m_paths, x => x.m_name == pathName);
 
         if (pathIndex != -1)
         {
@@ -155,12 +174,12 @@ public class SplineFollower : MonoBehaviour
         
         yield return new WaitForSeconds(tweenDuration);
         
-        StartCoroutine(Follow());
+        StartCoroutine(On());
 
         yield break;
     }
     
-    public IEnumerator Follow () 
+    public IEnumerator On () 
     {
         if (m_pathIndex < m_paths.Length)
         {
@@ -214,23 +233,30 @@ public class SplineFollower : MonoBehaviour
                 
             if (m_currentTime > path.m_totalTime)
             {
-                if (path.m_destroyOnComplete)
+                switch(path.m_onCompleteAction)
                 {
-                    foreach(Path p in m_paths)
-                    {
-                        Destroy(p.m_spline.gameObject);
-                    }
-
-                    Destroy(gameObject);
-                } 
-                else
-                {
-                    m_currentTime = 0.0f;
+                    case OnCompleteAction.Restart:
+                        m_currentTime = 0.0f;
+                        StartCoroutine(On());
+                        break;
+                    case OnCompleteAction.DestroySelf:
+                        Destroy(gameObject);
+                        break;
+                    case OnCompleteAction.DestroySelfAndSplines:
+                        foreach(Path p in m_paths)
+                        {
+                            Destroy(p.m_spline.gameObject);
+                        }
+                        Destroy(gameObject);
+                        break;
+                    case OnCompleteAction.Stop:
+                        StopAllCoroutines();
+                        break;
                 }
             }
         }
 
-        yield return null;            
-        StartCoroutine(Follow());
+        yield return null;
+        StartCoroutine(On());
     }
 }
