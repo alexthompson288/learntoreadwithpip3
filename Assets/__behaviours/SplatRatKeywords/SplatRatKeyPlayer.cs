@@ -22,9 +22,6 @@ public class SplatRatKeyPlayer : GamePlayer
 	private Blackboard m_largeBlackboard;
 
 	
-	List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
-	int m_selectedCharacter = -1;
-	
 	List<SplattableRatKeyword> m_spawnedSplattables = new List<SplattableRatKeyword>();
 	
 	int m_score;
@@ -39,49 +36,7 @@ public class SplatRatKeyPlayer : GamePlayer
 		m_frontTexture.mainTexture = frontTex;
 		m_rearTexture.mainTexture = rearTex;
 	}
-	
-	public override void RegisterCharacterSelection(CharacterSelection characterSelection)
-    {
-        m_characterSelections.Add(characterSelection);
-    }
-
-    public override void SelectCharacter(int characterIndex)
-    {
-		Debug.Log("SelectCharacter");
-        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
-        m_selectedCharacter = characterIndex;
-		Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(false);
-        }
-        SplatRatKeyCoordinator.Instance.CharacterSelected(characterIndex);
-    }
-	
-	public void HideCharacter(int index)
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            if (cs.GetCharacterIndex() == index)
-            {
-                cs.DeactivatePress(false);
-            }
-        }
-    }
-
-    public void HideAll()
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(true);
-        }
-    }
-
-    public bool HasSelectedCharacter()
-    {
-        return (m_selectedCharacter != -1);
-    }
-	
+		
 	public IEnumerator DisplayLargeBlackboard(string word)
 	{
 		Debug.Log("DisplayInitialBlackBoard()");

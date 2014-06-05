@@ -28,14 +28,12 @@ public class PictureGamePlayer : GamePlayer
     [SerializeField]
     private int[] m_wordsToSpawnForDifficulty;
 
-    private int m_selectedCharacter = -1;
     private int m_score = 0;
     private int m_numLives = 3;
 
     List<DataRow> m_remainingWords = null;
     List<DataRow> m_allWords = null;
 
-    List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
     List<WordSelectionButton> m_selectionButtons = new List<WordSelectionButton>();
 
     AudioClip m_wordAudio;
@@ -44,48 +42,6 @@ public class PictureGamePlayer : GamePlayer
     string m_currentWord;
 
 	int m_maxSpawn = 0;
-
-    public override void RegisterCharacterSelection(CharacterSelection characterSelection)
-    {
-        m_characterSelections.Add(characterSelection);
-    }
-
-    public override void SelectCharacter(int characterIndex)
-    {
-        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
-        m_selectedCharacter = characterIndex;
-        m_livesDisplay.SetLifeIcon(m_selectedCharacter);
-        m_livesDisplay.SetLives(m_numLives);
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(false);
-        }
-        PictureGameCoordinator.Instance.CharacterSelected(characterIndex);
-    }
-
-    public void HideCharacter(int index)
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            if (cs.GetCharacterIndex() == index)
-            {
-                cs.DeactivatePress(false);
-            }
-        }
-    }
-
-    public void HideAll()
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(true);
-        }
-    }
-
-    public bool HasSelectedCharacter()
-    {
-        return (m_selectedCharacter != -1);
-    }
 
     public void SetTimer(float timerT)
     {
