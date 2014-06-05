@@ -82,14 +82,25 @@ public class ScorePip : ScoreKeeper
 
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("speed", 500);
-        tweenArgs.Add("easetype", iTween.EaseType.easeInOutBack);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+        //tweenArgs.Add("easetype", iTween.EaseType.easeInOutBack);
         //tweenArgs.Add("easetype", iTween.EaseType.easeInBounce);
         tweenArgs.Add("position", new Vector3(m_pipAnim.transform.localPosition.x + 500, m_pipAnim.transform.localPosition.y));
         tweenArgs.Add("islocal", true);
 
-        iTween.MoveTo(m_pipAnim.gameObject, tweenArgs);             
+        iTween.MoveTo(m_pipAnim.gameObject, tweenArgs);  
+
+        m_pipAnim.PlayAnimation("WALK");
 
         yield return null;
 
+    }
+
+    void Update ()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            StartCoroutine(On());
+        }
     }
 }

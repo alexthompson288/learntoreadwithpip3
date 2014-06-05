@@ -48,49 +48,6 @@ public class JoinPairsPlayer : GamePlayer
 
     List<GameObject> m_spawnedJoinables = new List<GameObject>();
 
-    List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
-    [SerializeField] private int m_selectedCharacter = -1;
-
-    public override void RegisterCharacterSelection(CharacterSelection characterSelection)
-    {
-        m_characterSelections.Add(characterSelection);
-    }
-    
-    public override void SelectCharacter(int characterIndex)
-    {
-        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
-        m_selectedCharacter = characterIndex;
-        
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(false);
-        }
-        JoinPairsCoordinator.Instance.CharacterSelected(characterIndex);
-    }
-
-    public void HideCharacter(int index)
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            if (cs.GetCharacterIndex() == index)
-            {
-                cs.DeactivatePress(false);
-            }
-        }
-    }
-    
-    public void HideAll()
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(true);
-        }
-    }
-    
-    public bool HasSelectedCharacter()
-    {
-        return (m_selectedCharacter != -1);
-    }
 
     public IEnumerator DrawDemoLine()
     {

@@ -67,11 +67,13 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		{
 			Debug.LogError("ratEnviro is null");
 		}
-				
 
-		yield return new WaitForSeconds(0.5f);
-		WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-		
+        if (GetNumPlayers() == 2)
+        {
+            yield return new WaitForSeconds(0.5f);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+        }
+
 		m_percentageProbabilityLetterIsTarget = Mathf.Clamp(m_percentageProbabilityLetterIsTarget, 0, 100);
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());

@@ -6,9 +6,6 @@ using Wingrove;
 public class SplatRatGamePlayer : GamePlayer 
 {
 	[SerializeField]
-	private int m_playerIndex;
-	
-	[SerializeField]
     private GameObject m_splatPrefab;
 	[SerializeField]
     private Blackboard m_blackboard;
@@ -32,9 +29,6 @@ public class SplatRatGamePlayer : GamePlayer
 		m_rearTexture.mainTexture = rearTex;
 	}
 	
-	List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
-	int m_selectedCharacter = -1;
-	
 	List<SplattableRatLetter> m_spawnedSplattables = new List<SplattableRatLetter>();
 	
 	int m_score;
@@ -43,48 +37,6 @@ public class SplatRatGamePlayer : GamePlayer
 	{
 		m_blackboard.MoveWidgets();
 	}
-	
-	public override void RegisterCharacterSelection(CharacterSelection characterSelection)
-    {
-        m_characterSelections.Add(characterSelection);
-    }
-
-    public override void SelectCharacter(int characterIndex)
-    {
-		Debug.Log("SelectCharacter");
-        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
-        m_selectedCharacter = characterIndex;
-		Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(false);
-        }
-        SplatRatGameCoordinator.Instance.CharacterSelected(characterIndex);
-    }
-	
-	public void HideCharacter(int index)
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            if (cs.GetCharacterIndex() == index)
-            {
-                cs.DeactivatePress(false);
-            }
-        }
-    }
-
-    public void HideAll()
-    {
-        foreach (CharacterSelection cs in m_characterSelections)
-        {
-            cs.DeactivatePress(true);
-        }
-    }
-
-    public bool HasSelectedCharacter()
-    {
-        return (m_selectedCharacter != -1);
-    }
 	
 	public IEnumerator DisplayLargeBlackboard(Texture2D texture, string letter, string colorReplace)
 	{

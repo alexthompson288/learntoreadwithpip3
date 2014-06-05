@@ -145,6 +145,8 @@ public class SimpleSpriteAnim : MonoBehaviour
     public class AnimDetails
     {
         [SerializeField]
+        public UIAtlas m_spriteAtlas;
+        [SerializeField]
         public string m_name;
         [SerializeField]
         public string m_prefix;
@@ -193,6 +195,11 @@ public class SimpleSpriteAnim : MonoBehaviour
             {
                 m_currentAnimation = index;
                 m_currentFrame = 0;
+
+                if(ad.m_spriteAtlas != null)
+                {
+                    m_sprite.atlas = ad.m_spriteAtlas;
+                }
             }
             ++index;
         }
