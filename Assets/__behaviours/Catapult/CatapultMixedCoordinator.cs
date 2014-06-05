@@ -305,7 +305,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
-        yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+        yield return StartCoroutine(m_scoreKeeper.On());
+
         GameManager.Instance.CompleteGame();
     }
     

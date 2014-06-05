@@ -126,9 +126,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator CompleteGame ()
     {
-        StartCoroutine(m_scoreKeeper.On());
-
-        yield return new WaitForSeconds(2.5f);
+        yield return StartCoroutine(m_scoreKeeper.On());
 
         SessionInformation.SetDefaultPlayerVar();
         GameManager.Instance.CompleteGame();

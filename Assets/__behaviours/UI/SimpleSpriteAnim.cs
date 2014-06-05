@@ -199,6 +199,9 @@ public class SimpleSpriteAnim : MonoBehaviour
                 if(ad.m_spriteAtlas != null)
                 {
                     m_sprite.atlas = ad.m_spriteAtlas;
+
+                    // TODO: Set the spriteName
+                    SetSpriteName();
                 }
             }
             ++index;
@@ -244,21 +247,27 @@ public class SimpleSpriteAnim : MonoBehaviour
 
 				if(m_currentFrame < m_availableAnimations[m_currentAnimation].m_numFrames)
 				{
-	                int frame = m_currentFrame + m_availableAnimations[m_currentAnimation].m_lowFrame;
-	                if (m_availableAnimations[m_currentAnimation].m_oneBased)
-	                {
-	                    frame++;
-	                }
-	                string frameString = string.Format(m_format, frame);
-	                if (m_availableAnimations[m_currentAnimation].m_toLetter)
-	                {
-	                    frameString = ((char)('a' + frame)).ToString();
-	                }
-	                m_sprite.spriteName = m_availableAnimations[m_currentAnimation].m_prefix + frameString;
+                    SetSpriteName();
 				}
             }
         }
 	}
+
+    void SetSpriteName()
+    {
+        int frame = m_currentFrame + m_availableAnimations[m_currentAnimation].m_lowFrame;
+        if (m_availableAnimations[m_currentAnimation].m_oneBased)
+        {
+            frame++;
+        }
+        string frameString = string.Format(m_format, frame);
+        if (m_availableAnimations[m_currentAnimation].m_toLetter)
+        {
+            frameString = ((char)('a' + frame)).ToString();
+        }
+
+        m_sprite.spriteName = m_availableAnimations [m_currentAnimation].m_prefix + frameString;
+    }
 
 	public string[] GetAnimNames()
 	{

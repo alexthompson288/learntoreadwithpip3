@@ -21,6 +21,10 @@ public class ScorePip : ScoreKeeper
     private Transform m_collectionPoint;
     [SerializeField]
     private SimpleSpriteAnim m_pipAnim;
+    [SerializeField]
+    private AnimRandomizer m_pipAnimRandomizer;
+    [SerializeField]
+    private AnimRandomizer m_popAnimRandomizer;
 
     float m_pointDistance;
 
@@ -74,14 +78,38 @@ public class ScorePip : ScoreKeeper
         tweenArgs.Add("islocal", true);
         
         iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
+
+        m_pipAnimRandomizer.Off();
+        m_pipAnim.OnAnimFinish += OnScoreAnimFinish;
+        string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
+        m_pipAnim.PlayAnimation(animName);
     }
+
+    bool m_hasFinishedJumpAnim = false;
 
     public override IEnumerator On()
     {
         Debug.Log("ScorePip.On()");
 
+        m_popAnimRandomizer.Off();
+
+        m_pipAnimRandomizer.Off();
+
+        m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
+        m_pipAnim.OnAnimFinish += OnJumpAnimFinish;
+        
+        m_pipAnim.PlayAnimation("JUMP");
+        
+        while (!m_hasFinishedJumpAnim)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
         Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("speed", 500);
+        //tweenArgs.Add("speed", 500);
+        tweenArgs.Add("speed", 400);
         tweenArgs.Add("easetype", iTween.EaseType.linear);
         //tweenArgs.Add("easetype", iTween.EaseType.easeInOutBack);
         //tweenArgs.Add("easetype", iTween.EaseType.easeInBounce);
@@ -92,8 +120,19 @@ public class ScorePip : ScoreKeeper
 
         m_pipAnim.PlayAnimation("WALK");
 
-        yield return null;
+        yield return new WaitForSeconds(1f);
+    }
 
+    void OnScoreAnimFinish(string animName)
+    {
+        m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
+        m_pipAnimRandomizer.On();
+    }
+
+    void OnJumpAnimFinish(string animName)
+    {
+        m_pipAnim.OnAnimFinish -= OnJumpAnimFinish;
+        m_hasFinishedJumpAnim = true;
     }
 
     void Update ()

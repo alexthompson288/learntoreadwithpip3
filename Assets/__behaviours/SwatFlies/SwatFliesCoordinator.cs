@@ -24,6 +24,11 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
         return m_currentData;
     }
 
+    public int GetCurrentId()
+    {
+        return System.Convert.ToInt32(m_currentData ["id"]);
+    }
+
     public DataRow GetRandomData()
     {
         return m_dataPool [Random.Range(0, m_dataPool.Count)];
