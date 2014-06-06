@@ -83,6 +83,7 @@ public class SwatFliesPlayer : GamePlayer
         GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
         widget.SetUp(coordinator.GetDataType(), data, false);
         widget.onClick += OnSwatFly;
+        widget.onDestroy += OnWidgetDestroy;
         m_spawnedWidgets.Add(widget);
 
         SplineFollower follower = newFly.GetComponent<SplineFollower>() as SplineFollower;
@@ -147,15 +148,25 @@ public class SwatFliesPlayer : GamePlayer
         yield return null;
     }
 
+    void OnWidgetDestroy(GameWidget widget)
+    {
+        m_spawnedWidgets.Remove(widget);
+    }
+
     IEnumerator DestroyFly(GameWidget widget)
     {
-        GameObject fly = widget.transform.parent.gameObject;
+        if (widget != null)
+        {
+            m_spawnedWidgets.Remove(widget);
 
-        m_spawnedWidgets.Remove(widget);
+            GameObject fly = widget.transform.parent.gameObject;
 
-        yield return StartCoroutine(widget.OffCo());
+            yield return StartCoroutine(widget.OffCo());
 
-        Destroy(fly);
+            Destroy(fly);
+        }
+
+        yield break;
     }
 
     public void StopGame()

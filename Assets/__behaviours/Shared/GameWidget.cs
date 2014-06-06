@@ -374,6 +374,22 @@ public class GameWidget : MonoBehaviour
 
     public delegate void GameWidgetEvent(GameWidget widget);
 
+    private event GameWidgetEvent OnWidgetDestroy;
+    public event GameWidgetEvent onDestroy
+    {
+        add
+        {
+            if(OnWidgetDestroy == null || !OnWidgetDestroy.GetInvocationList().Contains(value))
+            {
+                OnWidgetDestroy += value;
+            }
+        }
+        remove
+        {
+            OnWidgetDestroy -= value;
+        }
+    }
+
     private event GameWidgetEvent OnWidgetClick;
     public event GameWidgetEvent onClick
     {

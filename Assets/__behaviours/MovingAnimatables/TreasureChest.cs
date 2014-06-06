@@ -58,7 +58,7 @@ public class TreasureChest : MonoBehaviour
             GameObject newBubble = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_bubblePrefabs[Random.Range(0, m_bubblePrefabs.Length)], locator);
             float bubbleScale = Random.Range(0.5f, 1f);
             newBubble.transform.localScale = new Vector3(bubbleScale, bubbleScale, bubbleScale);
-            newBubble.GetComponentInChildren<SplineFollower>().SetSpeedModifier(Random.Range(0.85f, 1.15f));
+            newBubble.GetComponentInChildren<SingleSplineFollower>().SetSpeedModifier(Random.Range(0.85f, 1.15f));
         }
 
         yield return new WaitForSeconds(m_closeDelay);
