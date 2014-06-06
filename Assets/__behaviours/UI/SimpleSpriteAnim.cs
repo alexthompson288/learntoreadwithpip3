@@ -292,5 +292,20 @@ public class SimpleSpriteAnim : MonoBehaviour
 			animDetail.m_fps = newFPS;
 		}
 	}
-}
 
+    public bool HasAnim(string animName)
+    {
+        bool foundAnim = false;
+
+        foreach (AnimDetails anim in m_availableAnimations)
+        {
+            if(anim.m_name == animName)
+            {
+                foundAnim = true;
+                break;
+            }
+        }
+       
+        return foundAnim;
+    }
+}

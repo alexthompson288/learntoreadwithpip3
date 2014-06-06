@@ -27,11 +27,14 @@ public class AnimManager : MonoBehaviour
 
     public void PlayAnimation(string animName)
     {
-        StopRandom();
+        if (m_spriteAnim.HasAnim(animName))
+        {
+            StopRandom();
 
-        m_spriteAnim.OnAnimFinish += OnNamedFinish;
+            m_spriteAnim.OnAnimFinish += OnNamedFinish;
 
-        m_spriteAnim.PlayAnimation(animName);
+            m_spriteAnim.PlayAnimation(animName);
+        }
     }
 
     void OnNamedFinish(string animName)

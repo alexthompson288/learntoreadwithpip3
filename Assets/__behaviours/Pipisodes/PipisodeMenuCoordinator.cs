@@ -28,6 +28,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     private PipButton m_downloadButton;
     [SerializeField]
     private PipButton m_deleteButton;
+    [SerializeField]
+    private AnimManager m_pipAnimManager;
     
     DataRow m_currentPipisode;
 
@@ -77,6 +79,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
             GameManager.Instance.StartGames();
         }
+
+        m_pipAnimManager.PlayAnimation("JUMP");
     }
     
     void OnChoosePipisode(ClickEvent click)
@@ -140,6 +144,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         m_downloadButton.EnableCollider(!hasLocalVideo);
         Vector3 downloadButtonScale = hasLocalVideo ? Vector3.zero : Vector3.one;
         iTween.ScaleTo(m_downloadButton.gameObject, downloadButtonScale, tweenDuration);
+
+        m_pipAnimManager.PlayAnimation("THUMBS_UP");
     }
 
     List<DataRow> FindQuizQuestions(DataRow pipisode)
