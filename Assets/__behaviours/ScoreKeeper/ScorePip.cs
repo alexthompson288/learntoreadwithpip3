@@ -22,9 +22,9 @@ public class ScorePip : ScoreKeeper
     [SerializeField]
     private SimpleSpriteAnim m_pipAnim;
     [SerializeField]
-    private AnimRandomizer m_pipAnimRandomizer;
+    private AnimManager m_pipAnimManager;
     [SerializeField]
-    private AnimRandomizer m_popAnimRandomizer;
+    private AnimManager m_popAnimManager;
     [SerializeField]
     private SplineFollower m_popSplineFollower;
 
@@ -81,7 +81,7 @@ public class ScorePip : ScoreKeeper
         
         iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
 
-        m_pipAnimRandomizer.Off();
+        m_pipAnimManager.StopRandom();
         m_pipAnim.OnAnimFinish += OnScoreAnimFinish;
         string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
         m_pipAnim.PlayAnimation(animName);
@@ -93,11 +93,11 @@ public class ScorePip : ScoreKeeper
     {
         Debug.Log("ScorePip.On()");
 
-        m_popAnimRandomizer.Off();
+        m_popAnimManager.StopRandom();
 
         m_popSplineFollower.ChangePath("WIN");
 
-        m_pipAnimRandomizer.Off();
+        m_pipAnimManager.StopRandom();
 
         m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
         m_pipAnim.OnAnimFinish += OnJumpAnimFinish;
@@ -130,7 +130,7 @@ public class ScorePip : ScoreKeeper
     void OnScoreAnimFinish(string animName)
     {
         m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
-        m_pipAnimRandomizer.On();
+        m_pipAnimManager.StartRandom();
     }
 
     void OnJumpAnimFinish(string animName)
