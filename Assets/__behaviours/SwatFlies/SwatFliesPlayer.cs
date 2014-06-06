@@ -13,6 +13,10 @@ public class SwatFliesPlayer : GamePlayer
     private Spline[] m_splines;
     [SerializeField]
     private Transform m_spawnParent;
+    [SerializeField]
+    private Transform m_swatter;
+    [SerializeField]
+    private Transform m_swatterOff;
 
     int m_score;
 
@@ -33,10 +37,30 @@ public class SwatFliesPlayer : GamePlayer
         m_dataDisplay.Off();
     }
 
+    // Separate Coroutine for delay so that we can stop the coroutine without stopping all coroutines
+    public IEnumerator HideDataDisplayDelay()
+    {
+        yield return new WaitForSeconds(2);
+        m_dataDisplay.Off();
+    }
+
     public void SetUp()
     {
+        m_swatter.position = m_swatterOff.position;
         m_dataDisplay.SetShowPicture(false);
         m_scoreKeeper.SetTargetScore(SwatFliesCoordinator.Instance.GetTargetScore());
+    }
+
+    IEnumerator ResetSwatter()
+    {
+        yield return new WaitForSeconds(0.2f);
+        m_swatter.position = m_swatterOff.position;
+    }
+
+    // Start coroutine with string so that we can stop it without stopping all coroutines
+    public void StartGame()
+    {
+        StartCoroutine("SpawnFly");
     }
 
     public IEnumerator SpawnFly()
@@ -46,7 +70,7 @@ public class SwatFliesPlayer : GamePlayer
         DataRow currentData = coordinator.GetCurrentData();
         DataRow data = currentData;
 
-        if (Random.Range(0f, 1f) < coordinator.GetProbabilityDataIsCurrent())
+        if (Random.Range(0f, 1f) >= coordinator.GetProbabilityDataIsCurrent())
         {
             while(data == currentData)
             {
@@ -58,7 +82,6 @@ public class SwatFliesPlayer : GamePlayer
 
         GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
         widget.SetUp(coordinator.GetDataType(), data, false);
-        widget.EnableDrag(false);
         widget.onClick += OnSwatFly;
         m_spawnedWidgets.Add(widget);
 
@@ -68,7 +91,7 @@ public class SwatFliesPlayer : GamePlayer
 
         yield return new WaitForSeconds(Random.Range(coordinator.GetMinSpawnDelay(), coordinator.GetMaxSpawnDelay()));
 
-        StartCoroutine(SpawnFly());
+        StartCoroutine("SpawnFly");
     }
 
     void OnSwatFly(GameWidget widget)
@@ -80,6 +103,14 @@ public class SwatFliesPlayer : GamePlayer
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+
+            SwatFliesCoordinator.Instance.PlayAudio();
+
+            StopCoroutine("HideDataDisplayDelay");
+            ShowDataDisplay(SwatFliesCoordinator.Instance.GetDataType(), SwatFliesCoordinator.Instance.GetCurrentData());
+            StartCoroutine("HideDataDisplayDelay");
+
             widget.EnableCollider(false);
             widget.Shake();
             widget.Tint(Color.grey);
@@ -88,7 +119,14 @@ public class SwatFliesPlayer : GamePlayer
 
     IEnumerator OnCorrect(GameWidget widget)
     {
+        HideDataDisplay();
+
+        StopCoroutine("ResetSwatter");
+        m_swatter.transform.position = widget.transform.position;
+        StartCoroutine("ResetSwatter");
+
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
         widget.ChangeBackgroundState();
 
@@ -122,9 +160,12 @@ public class SwatFliesPlayer : GamePlayer
 
     public void StopGame()
     {
+        StopCoroutine("SpawnFly");
+
+        Debug.Log("widgets.Count: " + m_spawnedWidgets.Count);
         for (int i = m_spawnedWidgets.Count - 1; i > -1; --i)
         {
-            DestroyFly(m_spawnedWidgets[i]);
+            StartCoroutine(DestroyFly(m_spawnedWidgets[i]));
         }
     }
 }

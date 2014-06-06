@@ -11,6 +11,8 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
     [SerializeField]
     private SwatFliesPlayer[] m_gamePlayers;
     [SerializeField]
+    private AudioSource m_audioSource;
+    [SerializeField]
     private int m_targetScore;
     [SerializeField]
     private Vector2 m_spawnDelay = new Vector2(1, 3);
@@ -104,7 +106,9 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
             m_gamePlayers[index].ShowDataDisplay(m_dataType, m_currentData);
         }
 
-        yield return new WaitForSeconds(3f);
+        PlayAudio();
+
+        yield return new WaitForSeconds(1f);
 
         for(int index = 0; index < numPlayers; ++index)
         {
@@ -113,7 +117,7 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
 
         for(int index = 0; index < numPlayers; ++index)
         {
-            StartCoroutine(m_gamePlayers[index].SpawnFly());
+            m_gamePlayers[index].StartGame();
         }
     }
 
@@ -159,6 +163,20 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
         for (int index = 0; index < GetNumPlayers(); ++index)
         {
             m_gamePlayers[index].HideCharacter(characterIndex);
+        }
+    }
+
+    public void PlayAudio()
+    {
+        if (!m_audioSource.isPlaying)
+        {
+            AudioClip clip = DataHelpers.GetShortAudio(m_dataType, m_currentData);
+
+            if (clip != null)
+            {
+                m_audioSource.clip = clip;
+                m_audioSource.Play();
+            }
         }
     }
 
