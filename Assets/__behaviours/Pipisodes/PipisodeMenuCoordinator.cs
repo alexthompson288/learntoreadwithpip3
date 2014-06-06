@@ -77,18 +77,24 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     void OnClickQuizButton(PipButton button)
     {
-        Debug.Log("OnClickQuizButton");
+        m_pipAnimManager.PlayAnimation("JUMP");
+
         List<DataRow> quizQuestions = FindQuizQuestions(m_currentPipisode);
 
         if (quizQuestions.Count > 0)
         {
-            GameManager.Instance.AddGame("NewQuizGame");
-            GameManager.Instance.AddData("quizquestions", quizQuestions);
-            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-            GameManager.Instance.StartGames();
+            StartCoroutine(OnClickQuizCo(quizQuestions));
         }
+    }
 
-        m_pipAnimManager.PlayAnimation("JUMP");
+    IEnumerator OnClickQuizCo(List<DataRow> quizQuestions)
+    {
+        yield return new WaitForSeconds(1.5f);
+        GameManager.Instance.AddGame("NewQuizGame");
+        GameManager.Instance.AddData("quizquestions", quizQuestions);
+        GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+
+        GameManager.Instance.StartGames();
     }
     
     void OnChoosePipisode(ClickEvent click)
