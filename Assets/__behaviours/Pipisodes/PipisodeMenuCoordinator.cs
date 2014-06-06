@@ -17,11 +17,15 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     [SerializeField]
     private UILabel m_titleLabel;
     [SerializeField]
+    private GameObject m_overviewScale;
+    [SerializeField]
     private UILabel m_overviewLabel;
     [SerializeField]
     private VideoPlayer m_videoPlayer;
     [SerializeField]
     private GameObject m_watchButton;
+    [SerializeField]
+    private GameObject m_quizButtonParent;
     [SerializeField]
     private PipButton m_quizButton;
     [SerializeField]
@@ -30,6 +34,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     private PipButton m_deleteButton;
     [SerializeField]
     private AnimManager m_pipAnimManager;
+    [SerializeField]
+    private float m_tweenDuration = 0.5f;
     
     DataRow m_currentPipisode;
 
@@ -38,6 +44,9 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
+        m_videoPlayer.Downloaded += OnVideoDownloadOrDelete;
+        m_videoPlayer.Deleted += OnVideoDownloadOrDelete;
+
         m_quizButton.Unpressing += OnClickQuizButton;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -53,14 +62,13 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             {
                 GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, m_grid.transform);
 
-                //button.GetComponentInChildren<UILabel>().text = m_pipisodes[i]["label_text"] != null ? m_pipisodes[i]["label_text"].ToString() : "";
-
-                button.GetComponentInChildren<UITexture>().mainTexture = DataHelpers.GetPicture("pipisodes", m_pipisodes[i]);
+                button.GetComponent<PipisodeButton>().SetUp(m_pipisodes[i], m_draggablePanel, m_videoPlayer);
+                //button.GetComponentInChildren<UITexture>().mainTexture = DataHelpers.GetPicture("pipisodes", m_pipisodes[i]);
                 
                 button.GetComponent<ClickEvent>().OnSingleClick += OnChoosePipisode;
                 button.GetComponent<ClickEvent>().SetData(m_pipisodes[i]);
                 
-                button.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
+                //button.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
             }
             
             m_grid.Reposition();
@@ -90,8 +98,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     void SelectPipisode(DataRow pipisode)
     {
-        float tweenDuration = 0.25f;
-
         m_currentPipisode = pipisode;
 
         // Labels
@@ -100,50 +106,49 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             Debug.Log("Chose Pipisode: " + m_currentPipisode["pipisode_title"].ToString());
             
             m_titleLabel.text = pipisode["pipisode_title"].ToString();
+
+            NGUIHelpers.MaxLabelWidth(m_titleLabel, 866);
         }
 
-        if (m_currentPipisode["pipisode_overview"] != null)
+        string overviewText = m_currentPipisode ["pipisode_overview"] != null ? m_currentPipisode ["pipisode_overview"].ToString() : "";
+
+        if (!String.IsNullOrEmpty(overviewText))
         {
-            m_overviewLabel.text = m_currentPipisode["pipisode_overview"].ToString();    
+            m_overviewLabel.text = overviewText;
         }
+
+        Vector3 overviewScale = System.String.IsNullOrEmpty(overviewText) ? Vector3.zero : Vector3.one;
+        iTween.ScaleTo(m_overviewScale, overviewScale, m_tweenDuration);
 
 
         // Image
         m_pipisodeImage.mainTexture = DataHelpers.GetPicture("pipisodes", m_currentPipisode);
 
         Vector3 imageScale = m_pipisodeImage.mainTexture != null ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_pipisodeImage.gameObject, imageScale, tweenDuration);
+        iTween.ScaleTo(m_pipisodeImage.gameObject, imageScale, m_tweenDuration);
 
 
         // Watch and Quiz Buttons
         bool hasQuizQuestions = FindQuizQuestions(m_currentPipisode).Count > 0;
 
         Vector3 quizButtonScale = hasQuizQuestions ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_quizButton.transform.parent.gameObject, quizButtonScale, tweenDuration);
+        iTween.ScaleTo(m_quizButtonParent, quizButtonScale, m_tweenDuration);
 
         Vector3 watchButtonScale = hasQuizQuestions ? Vector3.one : Vector3.one * 1.5f;
-        iTween.ScaleTo(m_watchButton, watchButtonScale, tweenDuration);
+        iTween.ScaleTo(m_watchButton, watchButtonScale, m_tweenDuration);
 
         Vector3 watchButtonPos = hasQuizQuestions ? new Vector3(0, 70) : Vector3.zero;
         Hashtable watchTweenArgs = new Hashtable();
         watchTweenArgs.Add("position", watchButtonPos);
-        watchTweenArgs.Add("time", tweenDuration);
+        watchTweenArgs.Add("time", m_tweenDuration);
         watchTweenArgs.Add("isLocal", true);
         iTween.MoveTo(m_watchButton, watchTweenArgs);
 
 
         // Delete and Download Buttons
-        m_videoPlayer.SetFilename(m_currentPipisode["image_filename"].ToString() + ".mp4");
+        m_videoPlayer.SetFilename(m_videoPlayer.GetPipisodeFilename(m_currentPipisode));
+        RefreshDownloadAndDeleteButtons();
 
-        bool hasLocalVideo = m_videoPlayer.HasLocalCopy();
-
-        m_deleteButton.EnableCollider(hasLocalVideo);
-        Vector3 deleteButtonScale = hasLocalVideo ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_deleteButton.gameObject, deleteButtonScale, tweenDuration);
-
-        m_downloadButton.EnableCollider(!hasLocalVideo);
-        Vector3 downloadButtonScale = hasLocalVideo ? Vector3.zero : Vector3.one;
-        iTween.ScaleTo(m_downloadButton.gameObject, downloadButtonScale, tweenDuration);
 
         m_pipAnimManager.PlayAnimation("THUMBS_UP");
     }
@@ -155,5 +160,23 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         List<DataRow> quizQuestions = dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t");
 
         return quizQuestions;
+    }
+
+    void RefreshDownloadAndDeleteButtons()
+    {
+        bool hasLocalVideo = m_videoPlayer.HasLocalCopy();
+        
+        m_deleteButton.EnableCollider(hasLocalVideo);
+        Vector3 deleteButtonScale = hasLocalVideo ? Vector3.one : Vector3.zero;
+        iTween.ScaleTo(m_deleteButton.gameObject, deleteButtonScale, m_tweenDuration);
+        
+        m_downloadButton.EnableCollider(!hasLocalVideo);
+        Vector3 downloadButtonScale = hasLocalVideo ? Vector3.zero : Vector3.one;
+        iTween.ScaleTo(m_downloadButton.gameObject, downloadButtonScale, m_tweenDuration);
+    }
+
+    void OnVideoDownloadOrDelete(VideoPlayer videoPlayer)
+    {
+        RefreshDownloadAndDeleteButtons();
     }
 }

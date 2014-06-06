@@ -5,6 +5,10 @@ using System.IO;
 
 public class VideoPlayer : MonoBehaviour 
 {
+    public delegate void VideoPlayerEventHandler(VideoPlayer videoPlayer);
+    public event VideoPlayerEventHandler Downloaded;
+    public event VideoPlayerEventHandler Deleted;
+
     [SerializeField]
     private string m_filename;
     [SerializeField]
@@ -38,21 +42,31 @@ public class VideoPlayer : MonoBehaviour
             m_progressBarParent.transform.localScale = Vector3.zero;
         }
 
-        Debug.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy());
+        Debug.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy(m_filename));
 
         m_playButton.Unpressing += OnPressPlay;
         m_deleteButton.Unpressing += OnPressDelete;
         m_downloadButton.Unpressing += OnPressDownload;
     }
 
-    bool HasStreamingAssetsCopy()
+    string GetFullPath(string filename)
     {
-        return File.Exists(Application.dataPath + "/StreamingAssets" + m_streamingAssetsRelativePath + m_filename);
+        return (Application.persistentDataPath + "/" + filename);
     }
 
-    public bool HasLocalCopy()
+    bool HasStreamingAssetsCopy(string filename)
     {
-        return HasStreamingAssetsCopy() || File.Exists(GetFullPath());
+        return File.Exists(Application.dataPath + "/StreamingAssets" + m_streamingAssetsRelativePath + filename);
+    }
+
+    public bool HasLocalCopy(string filename = "")
+    {
+        if (String.IsNullOrEmpty(filename))
+        {
+            filename = m_filename;
+        }
+
+        return HasStreamingAssetsCopy(filename) || File.Exists(GetFullPath(filename));
     }
 
     public void SetFilename(string newFilename)
@@ -60,9 +74,9 @@ public class VideoPlayer : MonoBehaviour
         m_filename = newFilename;
     }
 
-    string GetFullPath()
+    public string GetPipisodeFilename(DataRow pipisode)
     {
-        return (Application.persistentDataPath + "/" + m_filename);
+        return pipisode ["image_filename"] != null ? pipisode ["image_filename"].ToString() + ".mp4" : "";
     }
 
     void OnPressPlay(PipButton button)
@@ -83,13 +97,13 @@ public class VideoPlayer : MonoBehaviour
             Debug.Log("Found local copy");
         }
 
-        string playPath = HasStreamingAssetsCopy() ? m_streamingAssetsRelativePath + m_filename : GetFullPath();
+        string playPath = HasStreamingAssetsCopy(m_filename) ? m_streamingAssetsRelativePath + m_filename : GetFullPath(m_filename);
 
 #if UNITY_EDITOR
 #elif UNITY_IPHONE
-        if(!HasStreamingAssetsCopy())
+        if(!HasStreamingAssetsCopy(m_filename))
         {
-            playPath = "file://" + GetFullPath();
+            playPath = "file://" + GetFullPath(m_filename);
         }
 #endif
 
@@ -113,11 +127,17 @@ public class VideoPlayer : MonoBehaviour
     void OnPressDelete(PipButton button)
     {
         Debug.Log("OnPressDelete()");
-        if (File.Exists(GetFullPath())) // Don't call HasLocalCopy(), we need to ignore StreamingAssets because the directory is not writable
+        if (File.Exists(GetFullPath(m_filename))) // Don't call HasLocalCopy(), we need to ignore StreamingAssets because the directory is not writable
         {
             Debug.Log("Found local copy, deleting");
-            File.Delete(GetFullPath());
-        } else
+            File.Delete(GetFullPath(m_filename));
+
+            if(Deleted != null)
+            {
+                Deleted(this);
+            }
+        } 
+        else
         {
             Debug.Log("No local copy found");
         }
@@ -156,7 +176,7 @@ public class VideoPlayer : MonoBehaviour
         if (m_www.isDone && m_www.error == null)
         {
             Debug.Log("WRITING");
-            FileStream stream = new FileStream(GetFullPath(), FileMode.Create);
+            FileStream stream = new FileStream(GetFullPath(m_filename), FileMode.Create);
             stream.Write(m_www.bytes, 0, m_www.bytes.Length);
             stream.Close();
         } 
@@ -192,6 +212,11 @@ public class VideoPlayer : MonoBehaviour
         }
 
         yield return null;
+
+        if (Downloaded != null)
+        {
+            Downloaded(this);
+        }
     }
 
     IEnumerator UpdateProgressBar()
