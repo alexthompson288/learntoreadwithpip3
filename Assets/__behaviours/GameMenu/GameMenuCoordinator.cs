@@ -1,134 +1,71 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using Wingrove;
+using System;
 
-public class GameMenuCoordinator : Singleton<GameMenuCoordinator> 
+public class GameMenuCoordinator : MonoBehaviour 
 {
-	[SerializeField]
-	private GameObject m_camera;
-	[SerializeField]
-	private float m_cameraTweenDuration = 0.5f;
-	[SerializeField]
-	private GameObject m_numPlayerMenu;
-    [SerializeField]
-    private PipButton[] m_numPlayerButtons;
-	[SerializeField]
-	private GameObject m_colorMenu;
     [SerializeField]
     private PipButton[] m_colorButtons;
     [SerializeField]
-    private GameObject m_gameMenu;
-	[SerializeField]
-	private ClickEvent[] m_backButtons;
-	[SerializeField]
-	private GameObject m_chooseGamePrefab;
-	[SerializeField]
-	private UIGrid m_gameGrid;
+    private PipButton[] m_gameButtons;
     [SerializeField]
-    private AudioSource m_audioSource;
+    private PipButton[] m_playButtons;
     [SerializeField]
-    private AudioClip m_onePlayerAudio;
+    private GameObject m_onePlayerButtonParent;
     [SerializeField]
-    private AudioClip m_twoPlayerAudio;
-	
-	GameObject m_currentGameMenu = null;
-
-	bool m_isTwoPlayer;
-    ColorInfo.PipColor m_pipColor;
+    private GameObject m_twoPlayerButtonParent;
+    [SerializeField]
+    private UILabel m_gameLabel;
+    [SerializeField]
+    private UITexture m_temporaryGameIcon;
 
     PipButton m_currentColorButton = null;
+    PipButton m_currentGameButton = null;
 
-    void Start()
+    IEnumerator Start()
     {
-        EnviroManager.Instance.SetEnvironment(EnviroManager.Environment.Forest);
-        NavMenu.Instance.HideCallButton();
-
-        foreach(ClickEvent click in m_backButtons)
-        {
-            click.OnSingleClick += OnClickBack;
-        }
-
-        System.Array.Sort(m_numPlayerButtons, CollectionHelpers.ComparePosX);
-
-        for (int i = 0; i < m_numPlayerButtons.Length; ++i)
-        {
-            m_numPlayerButtons[i].Unpressed += OnChooseNumPlayers;
-
-            //string buttonAudioEvent = i == 0 ? "NAV_ONE_PLAYER" : "NAV_TWO_PLAYER";
-            //m_numPlayerButtons[i].AddUnpressedAudio(buttonAudioEvent);
-        }
-
-        System.Array.Sort(m_colorButtons, CollectionHelpers.ComparePosX);
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         foreach (PipButton button in m_colorButtons)
         {
-            Transform buttonParent = button.transform.parent;
-
-            string colorName = buttonParent.name;
-
-            buttonParent.GetComponentInChildren<UILabel>().text = colorName;
-
-            button.SetPipColor(ColorInfo.GetPipColor(colorName), true);
-            button.AddPressedAudio("COLOR_" + colorName.ToUpper());
-            button.Pressing += OnChooseColor;
+            button.Pressing += OnPressColorButton;
         }
-
-        if (GameMenuInfo.Instance.HasBookmark())
+        
+        foreach (PipButton button in m_gameButtons)
         {
-            m_isTwoPlayer = GameMenuInfo.Instance.IsBookmarkTwoPlayer();
-            m_pipColor = GameMenuInfo.Instance.GetBookmarkPipColor();
-
-            foreach(PipButton button in m_colorButtons)
-            {
-                if(button.pipColor == m_pipColor)
-                {
-                    button.ChangeSprite(true);
-                    break;
-                }
-            }
-
-            SpawnGameButtons();
-
-            m_camera.transform.position = m_colorMenu.transform.position;
+            button.GetComponent<ChooseGameButton>().SetUp(DataHelpers.FindGame(button.GetString()));
+            button.Pressing += OnPressGameButton;
         }
-    }
-
-    void OnChooseNumPlayers(PipButton button)
-    {
-        int numPlayers = System.Array.IndexOf(m_numPlayerButtons, button) + 1;
-        SessionInformation.Instance.SetNumPlayers(numPlayers);
-
-        AudioClip clip = numPlayers == 1 ? m_onePlayerAudio : m_twoPlayerAudio;
-        if (clip != null)
+        
+        foreach (PipButton button in m_playButtons)
         {
-            m_audioSource.clip = clip;
-            m_audioSource.Play();
+            button.Unpressed += OnPressPlayButton;
         }
 
-        m_isTwoPlayer = numPlayers == 2;
 
-        OnChooseColor(m_colorButtons [0]);
-        m_colorButtons [0].ChangeSprite(true);
+        ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
+        m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);
 
-        iTween.MoveTo(m_camera, m_colorMenu.transform.position, m_cameraTweenDuration);
-    }
-
-    IEnumerator ResetChooseNumPlayersButton(PerspectiveButton button, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        button.Reset();
-    }
-
-    void OnChooseColor(PipButton button)
-    {
-        if (button != m_currentColorButton)
+        if (m_currentColorButton != null)
         {
-            StartCoroutine(OnChooseColorCo(button));
+            m_currentColorButton.ChangeSprite(true);
         }
-    }
 
-    IEnumerator OnChooseColorCo(PipButton button)
+
+        string currentGameName = GameMenuInfo.Instance.GetGameName();
+        m_currentGameButton = Array.Find(m_gameButtons, x => x.GetString() == currentGameName);
+        
+        if (m_currentGameButton == null)
+        {
+            Array.Sort(m_gameButtons, CollectionHelpers.ComparePosX);
+            m_currentGameButton = m_gameButtons[0];
+        }
+
+        m_currentGameButton.ChangeSprite(true);
+        ChooseGame(m_currentGameButton);
+    }
+    
+    void OnPressColorButton(PipButton button)
     {
         if (m_currentColorButton != null)
         {
@@ -136,136 +73,95 @@ public class GameMenuCoordinator : Singleton<GameMenuCoordinator>
         }
 
         m_currentColorButton = button;
-
-        m_pipColor = m_currentColorButton.pipColor;
-
-        DestroyGameButtons();
-        
-        yield return new WaitForSeconds(0.25f);
-        
-        SpawnGameButtons();
     }
 
-    void OnChooseGame(PipButton button)
+    void OnPressGameButton(PipButton button)
     {
-        Debug.Log("OnChooseGame");
-        DataRow game = button.data;
-        
-        // Set the game scene
-        if (game != null)
-        {
-            Debug.Log("Found game");
-            GameManager.Instance.AddGame(game);
-
-            GameManager.Instance.SetReturnScene("NewGameMenu");
-
-            // Get and set all the data associated with the color
-            int moduleId = DataHelpers.GetModuleId(m_pipColor);
-
-            GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
-            GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
-            GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
-            GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
-
-
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
-            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
-            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
-
-            DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number DESC");
-
-            if(sessionsTable.Rows.Count > 0)
-            {
-                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
-                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
-            }
-
-            GameManager.Instance.SetScoreLevel(ColorInfo.GetColorString(m_pipColor));
-
-            GameMenuInfo.Instance.CreateBookmark(m_isTwoPlayer, m_pipColor);
-
-            GameManager.Instance.StartGames();
-        } 
-        else
-        {
-            Debug.LogError("Game button has no data!");
-        }
-    }
-
-    IEnumerator DestroyGameButtonsCo(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        DestroyGameButtons();
-    }
-
-    void DestroyGameButtons()
-    {
-        Transform grid = m_gameGrid.transform;
-        
-        int gameCount = grid.childCount;
-        for (int i = gameCount - 1; i > -1; --i)
-        {
-            Destroy(grid.GetChild(i).gameObject);
-        }
-    }
-
-    void SpawnGameButtons()
-    {
-        DataTable joinTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from gamecolourjoins WHERE programmodule_id=" + DataHelpers.GetModuleId(m_pipColor)); 
-
-        int numGames = 0;
-
-        foreach (DataRow join in joinTable.Rows)
-        {
-            DataTable gameTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE id=" + System.Convert.ToInt32(join["game_id"]));
-
-            if(gameTable.Rows.Count > 0)
-            {
-                DataRow game = gameTable.Rows[0];
-
-                bool gameIsMultiplayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
-
-                if(!m_isTwoPlayer || m_isTwoPlayer && gameIsMultiplayer)
-                {
-                    GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseGamePrefab, m_gameGrid.transform);
-                    newButton.GetComponent<PipButton>().SetData(game);
-                    newButton.GetComponent<PipButton>().Unpressed += OnChooseGame;
-                    //newButton.GetComponent<ClickEvent>().SetData(game);
-                    //newButton.GetComponent<ClickEvent>().OnSingleClick += OnChooseGame;
-                    newButton.GetComponent<ChooseGameButton>().SetUp(game);
-                    ++numGames;
-                }
-            }
-        }
-
-        m_gameGrid.transform.localPosition = new Vector3((numGames - 1) * -100, m_gameGrid.transform.localPosition.y);
-
-        m_gameGrid.Reposition();
-    }
-
-    void OnClickBack(ClickEvent click)
-    {
-        if (TransformHelpers.ApproxPos(m_camera, m_colorMenu))
-        {
-            iTween.MoveTo(m_camera, m_numPlayerMenu.transform.position, m_cameraTweenDuration);
-        } 
-        else if (TransformHelpers.ApproxPos(m_camera, m_gameMenu))
-        {
-            iTween.MoveTo(m_camera, m_colorMenu.transform.position, m_cameraTweenDuration);
-            StartCoroutine(DestroyGameButtonsCo(m_cameraTweenDuration));
-        }
-    }
-
-    IEnumerator ResetCurrentColorButton()
-    {
-        yield return new WaitForSeconds(m_cameraTweenDuration);
-
         if (m_currentColorButton != null)
         {
-            m_currentColorButton.ChangeSprite(false);
+            m_currentGameButton.ChangeSprite(false);
         }
 
-        m_currentColorButton = null;
+        ChooseGame(button);
+    }
+
+    void ChooseGame(PipButton button)
+    {
+        m_currentGameButton = button;
+
+        DataRow game = DataHelpers.FindGame(button.GetString());
+
+        if (game != null)
+        {
+            if(game["labeltext"] != null)
+            {
+                m_gameLabel.text = game["labeltext"].ToString();
+                NGUIHelpers.MaxLabelWidth(m_gameLabel, 400);
+            }
+
+            m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
+           
+            bool isTwoPlayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
+            float tweenDuration = 0.5f;
+
+            Vector3 twoPlayerScale = isTwoPlayer ? Vector3.one : Vector3.zero;
+            iTween.ScaleTo(m_twoPlayerButtonParent, twoPlayerScale, tweenDuration);
+
+            Vector3 onePlayerScale = isTwoPlayer ? Vector3.one : Vector3.one * 1.5f;
+            iTween.ScaleTo(m_onePlayerButtonParent, onePlayerScale, tweenDuration);
+            
+            Vector3 onePlayerPos = isTwoPlayer ? new Vector3(0, 70) : Vector3.zero;
+            Hashtable tweenArgs = new Hashtable();
+            tweenArgs.Add("position", onePlayerPos);
+            tweenArgs.Add("time", tweenDuration);
+            tweenArgs.Add("isLocal", true);
+            iTween.MoveTo(m_onePlayerButtonParent, tweenArgs);
+        }
+    }
+
+    void OnPressPlayButton(PipButton button)
+    {
+        if (m_currentGameButton != null)
+        {
+            DataRow game = DataHelpers.FindGame(m_currentGameButton.GetString());
+
+            if (game != null && m_currentColorButton != null)
+            {
+                SessionInformation.Instance.SetNumPlayers(button.GetInt());
+
+                ColorInfo.PipColor pipColor = ColorInfo.GetPipColor(m_currentColorButton.GetString());
+
+                GameManager.Instance.AddGame(game);
+                
+                GameManager.Instance.SetReturnScene("NewGameMenu");
+                
+                // Get and set all the data associated with the color
+                int moduleId = DataHelpers.GetModuleId(pipColor);
+                
+                GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+                GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+                GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
+                GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
+                
+                
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+                GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+                GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
+                
+                DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number DESC");
+                
+                if (sessionsTable.Rows.Count > 0)
+                {
+                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
+                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
+                }
+                
+                GameManager.Instance.SetScoreLevel(ColorInfo.GetColorString(pipColor));
+                
+                GameMenuInfo.Instance.CreateBookmark(m_currentGameButton.GetString(), pipColor);
+                
+                GameManager.Instance.StartGames();
+            }
+        }
     }
 }

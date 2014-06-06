@@ -33,10 +33,6 @@ public class PipButton : MonoBehaviour
     private SimpleSpriteAnim m_sheenAnimation;
     [SerializeField]
     private SimpleSpriteAnim m_pressAnimation;
-    [SerializeField]
-    private UIGrid m_colorGrid;
-    [SerializeField]
-    private PipButton[] m_colorButtons;
 
     bool m_isTransitioning;
 
