@@ -7,17 +7,13 @@ using System;
 public class PipisodeMenuCoordinator : MonoBehaviour 
 {
     [SerializeField]
-    private UIGrid m_doubleGrid;
-    [SerializeField]
-    private UIGrid m_singleGrid;
+    private UIGrid m_grid;
     [SerializeField]
     private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private GameObject m_pipisodeButtonPrefab;
     [SerializeField]
-    private UITexture m_backgroundTexture;
-    [SerializeField]
-    private string m_relativePathMp4 = "Pipisodes/mp4";
+    private UITexture m_pipisodeImage;
     [SerializeField]
     private UILabel m_titleLabel;
     [SerializeField]
@@ -25,9 +21,13 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     [SerializeField]
     private VideoPlayer m_videoPlayer;
     [SerializeField]
-    private GameObject m_videoButtonsParent;
+    private GameObject m_watchButton;
     [SerializeField]
     private PipButton m_quizButton;
+    [SerializeField]
+    private PipButton m_downloadButton;
+    [SerializeField]
+    private PipButton m_deleteButton;
     
     DataRow m_currentPipisode;
 
@@ -43,17 +43,17 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes WHERE publishable='t' ORDER BY order_number");
         m_pipisodes = dt.Rows;
 
-        UIGrid spawnGrid = m_pipisodes.Count > 5 ? m_doubleGrid : m_singleGrid;
-
         if (m_pipisodes.Count > 0)
         {
             SelectPipisode(m_pipisodes[0]);
 
             for (int i = 0; i < m_pipisodes.Count; ++i)
             {
-                GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, spawnGrid.transform);
+                GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, m_grid.transform);
 
-                button.GetComponentInChildren<UILabel>().text = m_pipisodes[i]["label_text"] != null ? m_pipisodes[i]["label_text"].ToString() : "";
+                //button.GetComponentInChildren<UILabel>().text = m_pipisodes[i]["label_text"] != null ? m_pipisodes[i]["label_text"].ToString() : "";
+
+                button.GetComponentInChildren<UITexture>().mainTexture = DataHelpers.GetPicture("pipisodes", m_pipisodes[i]);
                 
                 button.GetComponent<ClickEvent>().OnSingleClick += OnChoosePipisode;
                 button.GetComponent<ClickEvent>().SetData(m_pipisodes[i]);
@@ -61,7 +61,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
                 button.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
             }
             
-            spawnGrid.Reposition();
+            m_grid.Reposition();
         }
     }
 
@@ -78,11 +78,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             GameManager.Instance.StartGames();
         }
     }
-
-    void OnClickBuyButton(ClickEvent click)
-    {
-        Debug.Log("OnClickBuyButton()");
-    }
     
     void OnChoosePipisode(ClickEvent click)
     {
@@ -91,48 +86,60 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     void SelectPipisode(DataRow pipisode)
     {
-        if (pipisode["pipisode_title"] != null)
+        float tweenDuration = 0.25f;
+
+        m_currentPipisode = pipisode;
+
+        // Labels
+        if (m_currentPipisode["pipisode_title"] != null)
         {
-            Debug.Log("Chose Pipisode: " + pipisode["pipisode_title"].ToString());
+            Debug.Log("Chose Pipisode: " + m_currentPipisode["pipisode_title"].ToString());
             
             m_titleLabel.text = pipisode["pipisode_title"].ToString();
-            
-            Texture2D tex = Resources.Load<Texture2D>(String.Format("Backgrounds/pipisode_{0}", pipisode["pipisode_title"]));
-            
-            if(tex != null)
-            {
-                m_backgroundTexture.mainTexture = tex;
-            }
         }
-        
-        if (pipisode["pipisode_overview"] != null)
+
+        if (m_currentPipisode["pipisode_overview"] != null)
         {
-            m_overviewLabel.text = pipisode["pipisode_overview"].ToString();    
+            m_overviewLabel.text = m_currentPipisode["pipisode_overview"].ToString();    
         }
 
-        float tweenDuration = 0.3f;
 
-        bool hasQuizQuestions = FindQuizQuestions(pipisode).Count > 0;
+        // Image
+        m_pipisodeImage.mainTexture = DataHelpers.GetPicture("pipisodes", m_currentPipisode);
 
-        Debug.Log("hasQuizQuestions - " + pipisode ["pipisode_title"] + ": " + hasQuizQuestions);
+        Vector3 imageScale = m_pipisodeImage.mainTexture != null ? Vector3.one : Vector3.zero;
+        iTween.ScaleTo(m_pipisodeImage.gameObject, imageScale, tweenDuration);
 
-        Vector3 quizQuestionsScale = hasQuizQuestions ? Vector3.one : Vector3.zero;
-        iTween.ScaleTo(m_quizButton.transform.parent.gameObject, quizQuestionsScale, tweenDuration);
 
-        Vector3 videoButtonsLocalPos = hasQuizQuestions ? Vector3.zero : new Vector3(100, 0);
+        // Watch and Quiz Buttons
+        bool hasQuizQuestions = FindQuizQuestions(m_currentPipisode).Count > 0;
 
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("time", tweenDuration);
-        tweenArgs.Add("islocal", true);
-        tweenArgs.Add("position", videoButtonsLocalPos); 
+        Vector3 quizButtonScale = hasQuizQuestions ? Vector3.one : Vector3.zero;
+        iTween.ScaleTo(m_quizButton.transform.parent.gameObject, quizButtonScale, tweenDuration);
 
-        iTween.MoveTo(m_videoButtonsParent, tweenArgs);
+        Vector3 watchButtonScale = hasQuizQuestions ? Vector3.one : Vector3.one * 1.5f;
+        iTween.ScaleTo(m_watchButton, watchButtonScale, tweenDuration);
 
-        m_videoPlayer.SetFilename(pipisode["image_filename"].ToString() + ".mp4");
-        
-        m_currentPipisode = pipisode;
-        
-        // TODO: Change background texture
+        Vector3 watchButtonPos = hasQuizQuestions ? new Vector3(0, 70) : Vector3.zero;
+        Hashtable watchTweenArgs = new Hashtable();
+        watchTweenArgs.Add("position", watchButtonPos);
+        watchTweenArgs.Add("time", tweenDuration);
+        watchTweenArgs.Add("isLocal", true);
+        iTween.MoveTo(m_watchButton, watchTweenArgs);
+
+
+        // Delete and Download Buttons
+        m_videoPlayer.SetFilename(m_currentPipisode["image_filename"].ToString() + ".mp4");
+
+        bool hasLocalVideo = m_videoPlayer.HasLocalCopy();
+
+        m_deleteButton.EnableCollider(hasLocalVideo);
+        Vector3 deleteButtonScale = hasLocalVideo ? Vector3.one : Vector3.zero;
+        iTween.ScaleTo(m_deleteButton.gameObject, deleteButtonScale, tweenDuration);
+
+        m_downloadButton.EnableCollider(!hasLocalVideo);
+        Vector3 downloadButtonScale = hasLocalVideo ? Vector3.zero : Vector3.one;
+        iTween.ScaleTo(m_downloadButton.gameObject, downloadButtonScale, tweenDuration);
     }
 
     List<DataRow> FindQuizQuestions(DataRow pipisode)

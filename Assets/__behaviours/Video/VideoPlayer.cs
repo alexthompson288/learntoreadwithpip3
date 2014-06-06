@@ -50,7 +50,7 @@ public class VideoPlayer : MonoBehaviour
         return File.Exists(Application.dataPath + "/StreamingAssets" + m_streamingAssetsRelativePath + m_filename);
     }
 
-    bool HasLocalCopy()
+    public bool HasLocalCopy()
     {
         return HasStreamingAssetsCopy() || File.Exists(GetFullPath());
     }

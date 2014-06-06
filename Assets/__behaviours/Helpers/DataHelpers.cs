@@ -706,6 +706,12 @@ public static class DataHelpers
             case "stories":
                 tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
+            case "pipisodes":
+                if(data["image_filename"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(String.Format("Pictures/{0}", data["image_filename"]));
+                }
+                break;
             default:
                 break;
         }

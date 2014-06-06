@@ -20,6 +20,8 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_deepPink; //f577c1
     [SerializeField]
+    private Color m_cream;
+    [SerializeField]
     private Color m_tricky;
     [SerializeField]
     private Color m_highFrequency;
@@ -34,7 +36,8 @@ public class ColorInfo : Singleton<ColorInfo>
         Orange,
         White,
         LightBlue,
-        DeepPink
+        DeepPink,
+        Cream
     }
 
     public class NoColor : System.Exception {}
@@ -79,6 +82,8 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.DeepPink:
                 return Instance.m_deepPink;
                 break;
+            case PipColor.Cream:
+                return Instance.m_cream;
             default:
                 return Color.white;
                 break;
@@ -121,6 +126,9 @@ public class ColorInfo : Singleton<ColorInfo>
             case "DeepPink":
                 return PipColor.DeepPink;
                 break;
+            case "Cream":
+                return PipColor.Cream;
+                break;
             default:
                 throw new NoColor();
                 break;
@@ -157,6 +165,9 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case PipColor.DeepPink:
                 return "DeepPink";
+            case PipColor.Cream:
+                return "Cream";
+                break;
             default:
                 return "White";
                 break;
