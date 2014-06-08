@@ -48,6 +48,19 @@ public class JoinPairsPlayer : GamePlayer
 
     List<GameObject> m_spawnedJoinables = new List<GameObject>();
 
+    public override void SelectCharacter(int characterIndex)
+    {
+        Debug.Log("SelectCharacter");
+        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
+        m_selectedCharacter = characterIndex;
+        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        foreach (CharacterSelection cs in m_characterSelections)
+        {
+            cs.DeactivatePress(false);
+        }
+        JoinPairsCoordinator.Instance.CharacterSelected(characterIndex);
+    }
+
 
     public IEnumerator DrawDemoLine()
     {

@@ -22,6 +22,19 @@ public class SwatFliesPlayer : GamePlayer
 
     List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
 
+    public override void SelectCharacter(int characterIndex)
+    {
+        Debug.Log("SelectCharacter");
+        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
+        m_selectedCharacter = characterIndex;
+        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        foreach (CharacterSelection cs in m_characterSelections)
+        {
+            cs.DeactivatePress(false);
+        }
+        SwatFliesCoordinator.Instance.CharacterSelected(characterIndex);
+    }
+
     public int GetScore()
     {
         return m_score;

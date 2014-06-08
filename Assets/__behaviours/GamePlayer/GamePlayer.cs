@@ -15,7 +15,7 @@ public abstract class GamePlayer : MonoBehaviour
         m_characterSelections.Add(characterSelection);
     }
     
-    public void SelectCharacter(int characterIndex)
+    public virtual void SelectCharacter(int characterIndex)
     {
         Debug.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);

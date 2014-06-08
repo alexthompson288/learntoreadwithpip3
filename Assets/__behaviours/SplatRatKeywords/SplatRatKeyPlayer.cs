@@ -30,6 +30,19 @@ public class SplatRatKeyPlayer : GamePlayer
 	private UITexture m_frontTexture;
 	[SerializeField]
 	private UITexture m_rearTexture;
+
+    public override void SelectCharacter(int characterIndex)
+    {
+        Debug.Log("SelectCharacter");
+        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
+        m_selectedCharacter = characterIndex;
+        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        foreach (CharacterSelection cs in m_characterSelections)
+        {
+            cs.DeactivatePress(false);
+        }
+        SplatRatKeyCoordinator.Instance.CharacterSelected(characterIndex);
+    }
 	
 	public void SetTextures(Texture2D frontTex, Texture2D rearTex)
 	{

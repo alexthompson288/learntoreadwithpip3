@@ -43,6 +43,19 @@ public class PictureGamePlayer : GamePlayer
 
 	int m_maxSpawn = 0;
 
+    public override void SelectCharacter(int characterIndex)
+    {
+        Debug.Log("SelectCharacter");
+        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
+        m_selectedCharacter = characterIndex;
+        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        foreach (CharacterSelection cs in m_characterSelections)
+        {
+            cs.DeactivatePress(false);
+        }
+        PictureGameCoordinator.Instance.CharacterSelected(characterIndex);
+    }
+
     public void SetTimer(float timerT)
     {
         m_scoreBar.SetTimer(timerT);
