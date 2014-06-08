@@ -129,7 +129,7 @@ public class GameMenuCoordinator : MonoBehaviour
             {
                 SessionInformation.Instance.SetNumPlayers(button.GetInt());
 
-                ColorInfo.PipColor pipColor = ColorInfo.GetPipColor(m_currentColorButton.GetString());
+                ColorInfo.PipColor pipColor = m_currentColorButton.pipColor;
 
                 GameManager.Instance.AddGame(game);
                 
@@ -156,7 +156,7 @@ public class GameMenuCoordinator : MonoBehaviour
                     GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
                 }
                 
-                GameManager.Instance.SetScoreLevel(ColorInfo.GetColorString(pipColor));
+                GameManager.Instance.SetScoreLevel(game["name"].ToString() + "_" + ColorInfo.GetColorString(pipColor));
                 
                 GameMenuInfo.Instance.CreateBookmark(m_currentGameButton.GetString(), pipColor);
                 
