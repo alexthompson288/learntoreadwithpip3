@@ -75,7 +75,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_currentTextAttribute = "text_" + StoryMenuCoordinator.GetStartColor();
+        m_currentTextAttribute = "text_" + OldStroyMenuCoordinator.GetStartColor();
 
         DataRow story = DataHelpers.GetStory();
         if (story != null)
@@ -88,7 +88,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             {
                 button.Pressing += OnClickColorButton;
 
-                if(StoryMenuCoordinator.GetStartColor() == ColorInfo.GetColorString(button.pipColor).ToLower())
+                if(OldStroyMenuCoordinator.GetStartColor() == ColorInfo.GetColorString(button.pipColor).ToLower())
                 {
                     m_currentColorButton = button;
                     m_currentColorButton.ChangeSprite(true);

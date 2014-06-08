@@ -46,8 +46,8 @@ public class StoryBrowserBook : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + Convert.ToInt32(m_storyData["id"]));
         if(dt.Rows.Count > 0)
         {
-            StoryMenuCoordinator.SetStartColor(StoryBrowserCoordinator.Instance.GetCurrentColorName());
-            StoryMenuCoordinator.SetStory(dt.Rows[0]);  
+            OldStroyMenuCoordinator.SetStartColor(StoryBrowserCoordinator.Instance.GetCurrentColorName());
+            OldStroyMenuCoordinator.SetStory(dt.Rows[0]);  
             TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
         }
     }
