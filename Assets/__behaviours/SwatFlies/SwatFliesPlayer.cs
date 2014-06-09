@@ -66,8 +66,10 @@ public class SwatFliesPlayer : GamePlayer
 
     IEnumerator ResetSwatter()
     {
-        yield return new WaitForSeconds(0.2f);
-        m_swatter.position = m_swatterOff.position;
+        yield return new WaitForSeconds(0.3f);
+        //m_swatter.position = m_swatterOff.position;
+        iTween.MoveTo(m_swatter.gameObject, m_swatterOff.position, 0.2f);
+        yield return null;
     }
 
     // Start coroutine with string so that we can stop it without stopping all coroutines
@@ -136,6 +138,7 @@ public class SwatFliesPlayer : GamePlayer
         HideDataDisplay();
 
         StopCoroutine("ResetSwatter");
+        iTween.Stop(m_swatter.gameObject);
         m_swatter.transform.position = widget.transform.position;
         StartCoroutine("ResetSwatter");
 
