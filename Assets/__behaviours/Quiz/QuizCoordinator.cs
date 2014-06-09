@@ -27,6 +27,7 @@ public class QuizCoordinator : MonoBehaviour
 
     DataRow m_currentQuestion = null;
 
+    float m_startTime;
 
     IEnumerator Start()
     {
@@ -54,6 +55,7 @@ public class QuizCoordinator : MonoBehaviour
 
         if (m_dataPool.Count > 0)
         {
+            m_startTime = Time.time;
             AskQuestion();
         } 
         else
@@ -142,7 +144,9 @@ public class QuizCoordinator : MonoBehaviour
 
     IEnumerator CompleteGame()
     {
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore);
+        float timeTaken = Time.time - m_startTime;
+
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 30, 60);
 
         yield return new WaitForSeconds(2f);
 

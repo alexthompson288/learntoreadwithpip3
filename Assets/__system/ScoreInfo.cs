@@ -8,18 +8,22 @@ public class ScoreInfo : Singleton<ScoreInfo>
     class ScoreTracker
     {
         string m_game;
-        string m_level;
+        string m_type;
         int m_score;
         int m_targetScore;
         float m_time;
+        float m_twoStar;
+        float m_threeStar;
 
-        public ScoreTracker(string game, string level, int score, int targetScore, float time)
+        public ScoreTracker(string game, string type, int score, int targetScore, float time, float twoStar, float threeStar)
         {
             m_game = game;
-            m_level = level;
+            m_type = type;
             m_score = score;
             m_targetScore = targetScore;
             m_time = time;
+            m_twoStar = twoStar;
+            m_threeStar = threeStar;
         }
 
         public string GetGame()
@@ -27,9 +31,9 @@ public class ScoreInfo : Singleton<ScoreInfo>
             return m_game;
         }
 
-        public string GetLevel()
+        public string GetType()
         {
-            return m_level;
+            return m_type;
         }
 
         public int GetScore()
@@ -51,36 +55,58 @@ public class ScoreInfo : Singleton<ScoreInfo>
         {
             return m_time;
         }
+
+        public float GetTwoStar()
+        {
+            return m_twoStar;
+        }
+
+        public float GetThreeStar()
+        {
+            return m_threeStar;
+        }
     }
 
     List<ScoreTracker> m_scoreTrackers = new List<ScoreTracker>();
 
-    public int GetScore(string game, string level)
+    public int GetScore(string game, string type)
     {
-        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetLevel() == level);
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
         return tracker != null ? tracker.GetScore() : 0;
     }
 
-    public int GetTargetScore(string game, string level)
+    public int GetTargetScore(string game, string type)
     {
-        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetLevel() == level);
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
         return tracker != null ? tracker.GetTargetScore() : 0;
     }
 
-    public float GetTime(string game, string level)
+    public float GetTime(string game, string type)
     {
-        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetLevel() == level);
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
         return tracker != null ? tracker.GetTime() : 0f;
     }
 
-    public void NewScore(int score, int targetScore, float time = 0f)
+    public float GetTwoStar(string game, string type)
+    {
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
+        return tracker != null ? tracker.GetTwoStar() : 0f;
+    }
+
+    public float GetThreeStar(string game, string type)
+    {
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
+        return tracker != null ? tracker.GetThreeStar() : 0f;
+    }
+
+    public void NewScore(int score, int targetScore, float time, float twoStar, float threeStar)
     {
         string game = DataHelpers.GetGameName();
-        string level = DataHelpers.GetScoreLevel();
+        string type = DataHelpers.GetScoreType();
 
-        ScoreTracker newTracker = new ScoreTracker(game, level, score, targetScore, time);
+        ScoreTracker newTracker = new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar);
 
-        ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetLevel() == level);
+        ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
 
         if (oldTracker == null)
         {
@@ -93,6 +119,38 @@ public class ScoreInfo : Singleton<ScoreInfo>
         }
 
         Save();
+    }
+
+    public static void RefreshStarSprites(UISprite[] starSprites, string game, string type)
+    {
+        System.Array.Sort(starSprites, CollectionHelpers.ComparePosX);
+
+        int numStars = 0;
+        int targetScore = ScoreInfo.Instance.GetTargetScore(game, type);
+        
+        if (targetScore > 0)
+        {
+            float time = ScoreInfo.Instance.GetTime(game, type);
+            
+            if(time < ScoreInfo.Instance.GetThreeStar(game, type))
+            {
+                numStars = 3;
+            }
+            else if(time < ScoreInfo.Instance.GetTwoStar(game, type))
+            {
+                numStars = 2;
+            }
+            else
+            {
+                numStars = 1;
+            }
+        }
+        
+        for (int i = 0; i < starSprites.Length; ++i)
+        {
+            string spriteName = i < numStars ? "star_gold" : "star_grayscale";
+            starSprites[i].spriteName = spriteName;
+        }
     }
 
 #if UNITY_EDITOR
@@ -132,12 +190,14 @@ public class ScoreInfo : Singleton<ScoreInfo>
             for(int i = 0; i < numTrackers; ++i)
             {
                 string game = br.ReadString();
-                string level = br.ReadString();
+                string type = br.ReadString();
                 int score = br.ReadInt32();
                 int targetScore = br.ReadInt32();
                 float time = br.ReadSingle();
+                float twoStar = br.ReadSingle();
+                float threeStar = br.ReadSingle();
 
-                m_scoreTrackers.Add(new ScoreTracker(game, level, score, targetScore, time));
+                m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar));
             }
         }
         
@@ -155,10 +215,12 @@ public class ScoreInfo : Singleton<ScoreInfo>
         foreach (ScoreTracker tracker in m_scoreTrackers)
         {
             bw.Write(tracker.GetGame());
-            bw.Write(tracker.GetLevel());
+            bw.Write(tracker.GetType());
             bw.Write(tracker.GetScore());
             bw.Write(tracker.GetTargetScore());
             bw.Write(tracker.GetTime());
+            bw.Write(tracker.GetTwoStar());
+            bw.Write(tracker.GetThreeStar());
         }
 
         ds.Save(newData);
@@ -166,84 +228,4 @@ public class ScoreInfo : Singleton<ScoreInfo>
         bw.Close();
         newData.Close();
     }
-
-    /*
-    void SaveDictionary(BinaryWriter bw, Dictionary<string, ScoreTracker> dictionary)
-    {
-        bw.Write(dictionary.Count);
-        foreach (KeyValuePair<string, ScoreTracker> kvp in dictionary)
-        {
-            bw.Write(kvp.Key);
-            bw.Write(kvp.Value.GetScore());
-            bw.Write(kvp.Value.GetTargetScore());
-            bw.Write(kvp.Value.GetTime());
-        }
-    }
-
-    void LoadDictionary(BinaryReader br, Dictionary<string, ScoreTracker> dictionary)
-    {
-        int numTrackers = br.ReadInt32();
-        for (int i = 0; i < numTrackers; ++i)
-        {
-            string key = br.ReadString();
-            int score = br.ReadInt32();
-            int targetScore = br.ReadInt32();
-            float time = br.ReadSingle();
-
-            dictionary[key] = new ScoreTracker(score, targetScore, time);
-        }
-    }
-
-    Dictionary<string, ScoreTracker> m_quizScores = new Dictionary<string, ScoreTracker>(); // Use strings as key so that we can use it with stories, colors and sessions
-    Dictionary<string, ScoreTracker> m_captionScores = new Dictionary<string, ScoreTracker>(); // Use strings as key so that we can use it with stories, colors and sessions
-    
-    void SetScore(ScoreTracker score, Dictionary<string, ScoreTracker> dictionary)
-    {
-        string key = DataHelpers.GetScoreKey();
-
-        if (dictionary.ContainsKey(key))
-        {
-            if(score.GetProportionalScore() > m_quizScores[key].GetProportionalScore())
-            {
-                dictionary[key] = score;
-            }
-        } 
-        else
-        {
-            dictionary.Add(key, score);
-        }
-        
-        Save();
-    }
-
-    public int GetQuizScore(string key)
-    {
-        return m_quizScores.ContainsKey(key) ? m_quizScores [key].GetScore() : 0;
-    }
-
-    public int GetQuizTargetScore(string key)
-    {
-        return m_quizScores.ContainsKey(key) ? m_quizScores [key].GetTargetScore() : 0;
-    }
-
-    public void SetQuiz(int score, int targetScore, float time = 0)
-    {
-        SetScore(new ScoreTracker(score, targetScore, time), m_quizScores);
-    }
-
-    public int GetCaptionScore(string key)
-    {
-        return m_captionScores.ContainsKey(key) ? m_captionScores [key].GetScore() : 0;
-    }
-
-    public int GetCaptionTargetScore(string key)
-    {
-        return m_captionScores.ContainsKey(key) ? m_captionScores [key].GetTargetScore() : 0;
-    }
-
-    public void SetCaption(int score, int targetScore, float time = 0)
-    {
-        SetScore(new ScoreTracker(score, targetScore, time), m_captionScores);
-    }
-    */
 }

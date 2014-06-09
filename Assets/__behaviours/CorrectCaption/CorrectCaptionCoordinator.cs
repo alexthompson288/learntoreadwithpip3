@@ -102,6 +102,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         if (m_dataPool.Count > 0)
         {
+            SetStartTime();
             StartCoroutine(AskQuestion());
         }
         else
@@ -216,7 +217,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     
     protected override IEnumerator CompleteGame()
     {
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore);
+        float timeTaken = Time.time - m_startTime;
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 30, 60);
 
         //Debug.Log("GameCoordinator.CompleteGame()");
         yield return null;

@@ -180,7 +180,7 @@ public class OldGameMenuCoordinator : MonoBehaviour
                 GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
             }
 
-            GameManager.Instance.SetScoreLevel(ColorInfo.GetColorString(m_pipColor));
+            GameManager.Instance.SetScoreType(ColorInfo.GetColorString(m_pipColor));
 
             GameMenuInfo.Instance.CreateBookmark(m_isTwoPlayer, m_pipColor);
 

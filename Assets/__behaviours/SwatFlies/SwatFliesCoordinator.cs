@@ -29,6 +29,8 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
     int m_numFinished = 0;
     int m_winningIndex = -1;
 
+    float m_startTime;
+
 	// Use this for initialization
 	IEnumerator Start () 
     {
@@ -115,6 +117,8 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
             m_gamePlayers[index].HideDataDisplay();
         }
 
+        m_startTime = Time.time;
+
         for(int index = 0; index < numPlayers; ++index)
         {
             m_gamePlayers[index].StartGame();
@@ -150,6 +154,10 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
 
     IEnumerator CompleteGame()
     {
+        float timeTaken = Time.time - m_startTime;
+
+        ScoreInfo.Instance.NewScore(m_gamePlayers [m_winningIndex].GetScore(), m_targetScore, timeTaken, 30, 60);
+
         while (!winningPlayerHasCompletedSequence)
         {
             yield return null;

@@ -80,6 +80,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         if (m_currentBookButton != null)
         {
+            ColorInfo.PipColor startPipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
+            StoryMenuInfo.Instance.SetStartPipColor(startPipColor);
             StoryMenuInfo.Instance.SetShowText(button.GetString() == m_readingString);
 
             GameManager.Instance.AddGame("NewStories");
@@ -103,7 +105,7 @@ public class StoryMenuCoordinator : MonoBehaviour
                 GameManager.Instance.AddData("quizquestions", quizQuestions);
                 
                 WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
-                
+
                 StartActivity();
             }
         }
@@ -113,14 +115,14 @@ public class StoryMenuCoordinator : MonoBehaviour
     {
         StoryMenuInfo.Instance.SubscribeGameComplete();
 
+        GameManager.Instance.SetScoreType(m_currentBookButton.GetData() ["title"].ToString() + "_" + ColorInfo.GetColorString(m_currentColorButton.pipColor));
+
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
         DataRow story = m_currentBookButton.GetData();
 
         GameManager.Instance.AddData("stories", story);
-        
-        GameManager.Instance.SetScoreLevel(story ["title"].ToString());
-        
+
         GameManager.Instance.StartGames();
     }
 

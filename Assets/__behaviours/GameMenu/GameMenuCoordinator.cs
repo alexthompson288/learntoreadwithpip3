@@ -18,6 +18,8 @@ public class GameMenuCoordinator : MonoBehaviour
     private UILabel m_gameLabel;
     [SerializeField]
     private UITexture m_temporaryGameIcon;
+    [SerializeField]
+    private UISprite[] m_starSprites;
 
     PipButton m_currentColorButton = null;
     PipButton m_currentGameButton = null;
@@ -51,6 +53,8 @@ public class GameMenuCoordinator : MonoBehaviour
             m_currentColorButton.ChangeSprite(true);
         }
 
+        RefreshGameButtons();
+
 
         string currentGameName = GameMenuInfo.Instance.GetGameName();
         m_currentGameButton = Array.Find(m_gameButtons, x => x.GetString() == currentGameName);
@@ -73,6 +77,8 @@ public class GameMenuCoordinator : MonoBehaviour
         }
 
         m_currentColorButton = button;
+
+        RefreshGameButtons();
     }
 
     void OnPressGameButton(PipButton button)
@@ -117,6 +123,8 @@ public class GameMenuCoordinator : MonoBehaviour
             tweenArgs.Add("isLocal", true);
             iTween.MoveTo(m_onePlayerButtonParent, tweenArgs);
         }
+
+        RefreshBoardStars();
     }
 
     void OnPressPlayButton(PipButton button)
@@ -156,12 +164,35 @@ public class GameMenuCoordinator : MonoBehaviour
                     GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
                 }
                 
-                GameManager.Instance.SetScoreLevel(game["name"].ToString() + "_" + ColorInfo.GetColorString(pipColor));
+                GameManager.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
                 
                 GameMenuInfo.Instance.CreateBookmark(m_currentGameButton.GetString(), pipColor);
                 
                 GameManager.Instance.StartGames();
             }
         }
+    }
+
+    void RefreshBoardStars()
+    {
+        if (m_currentGameButton != null)
+        {
+            ColorInfo.PipColor pipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
+            ScoreInfo.RefreshStarSprites(m_starSprites, DataHelpers.FindGame(m_currentGameButton.GetString())["name"].ToString(), ColorInfo.GetColorString(pipColor));
+        }
+    }
+
+    void RefreshGameButtons()
+    {
+        ColorInfo.PipColor pipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
+
+        string colorName = ColorInfo.GetColorString(pipColor);
+
+        foreach (PipButton button in m_gameButtons)
+        {
+            button.GetComponent<ChooseGameButton>().Refresh(colorName);
+        }
+
+        RefreshBoardStars();
     }
 }

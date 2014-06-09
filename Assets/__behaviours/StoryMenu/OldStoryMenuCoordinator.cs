@@ -253,7 +253,7 @@ public class OldStoryMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.AddData("stories", m_story);
 
-        GameManager.Instance.SetScoreLevel(m_story ["title"].ToString());
+        GameManager.Instance.SetScoreType(m_story ["title"].ToString());
 
         GameManager.Instance.StartGames();
     }

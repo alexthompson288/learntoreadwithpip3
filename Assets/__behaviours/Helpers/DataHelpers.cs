@@ -1190,9 +1190,9 @@ public static class DataHelpers
         return null;
     }
 
-    public static string GetScoreLevel()
+    public static string GetScoreType()
     {
-        return GameManager.Instance.GetScoreLevel();
+        return GameManager.Instance.GetScoreType();
     }
 
     public static string GetGameName()

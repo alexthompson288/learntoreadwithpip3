@@ -21,6 +21,13 @@ public class GameCoordinator : Singleton<GameCoordinator>
     protected Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
     protected Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
 
+    protected float m_startTime;
+
+    protected void SetStartTime()
+    {
+        m_startTime = Time.time;
+    }
+
     protected void ClampTargetScore()
     {
         m_targetScore = Mathf.Min(m_targetScore, m_dataPool.Count);

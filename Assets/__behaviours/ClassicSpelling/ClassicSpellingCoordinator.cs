@@ -23,6 +23,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private DataDisplay m_dataDisplay;
+
+    float m_startTime;
     
     int m_score;
     
@@ -66,6 +68,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         if(m_wordsPool.Count > 0)
         {
+            m_startTime = Time.time;
             StartCoroutine(SpawnQuestion());
         }
         else
@@ -126,6 +129,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator CompleteGame ()
     {
+        float timeTaken = Time.time - m_startTime;
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 30, 60);
+
         yield return StartCoroutine(m_scoreKeeper.On());
 
         SessionInformation.SetDefaultPlayerVar();

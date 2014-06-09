@@ -31,6 +31,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private ImageBlackboard m_blackboard;
    
+    float m_startTime;
     
     int m_score = 0;
     
@@ -150,6 +151,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
             InitializeTargets(UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
             PlayShortAudio();
+
+            m_startTime = Time.time;
         } 
         else
         {
@@ -305,6 +308,10 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
+        float timeTaken = Time.time - m_startTime;
+
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 20, 40);
+
         yield return StartCoroutine(m_scoreKeeper.On());
 
         GameManager.Instance.CompleteGame();

@@ -23,6 +23,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     [SerializeField]
     private GameObject m_numberPrefab;
 
+    float m_startTime;
+
     public string dataType
     {
         get
@@ -208,6 +210,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
             yield return StartCoroutine(m_gamePlayers[0].DrawDemoLine());
         }
 
+        m_startTime = Time.time;
+
         for(int index = 0; index < numPlayers; ++index)
         {
             StartCoroutine(m_gamePlayers[index].SetUpNext());
@@ -245,6 +249,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     void CompleteGame()
     {
+        float timeTaken = Time.time - m_startTime;
+        ScoreInfo.Instance.NewScore(m_targetScore, m_targetScore, timeTaken, 30 / m_targetScore, 60 / m_targetScore);
         GameManager.Instance.CompleteGame();
     }
 
