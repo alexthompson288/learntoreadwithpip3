@@ -104,7 +104,16 @@ public class ScoreInfo : Singleton<ScoreInfo>
         if (SessionInformation.Instance.GetNumPlayers() < 2)
         {
             string game = DataHelpers.GetGameName();
+            if(System.String.IsNullOrEmpty(game))
+            {
+                game = "default";
+            }
+
             string type = DataHelpers.GetScoreType();
+            if(System.String.IsNullOrEmpty(type))
+            {
+                type = "default";
+            }
 
             ScoreTracker newTracker = new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar);
 
