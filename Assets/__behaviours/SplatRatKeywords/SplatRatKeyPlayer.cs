@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using Wingrove;
 
 public class SplatRatKeyPlayer : GamePlayer 
-{
-	[SerializeField]
-	private int m_playerIndex;
-	
+{	
 	[SerializeField]
     private GameObject m_splatPrefab;
 	[SerializeField]

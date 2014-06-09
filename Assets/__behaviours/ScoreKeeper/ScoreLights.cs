@@ -31,34 +31,34 @@ public class ScoreLights : ScoreKeeper
 
     public override void SetTargetScore(int targetScore)
     {
+        base.SetTargetScore(targetScore);
+
         for (int i = m_spawnedMarkers.Count - 1; i > -1; --i)
         {
             Destroy(m_spawnedMarkers[i]);
         }
         m_spawnedMarkers.Clear();
 
-        int deltaModifier = m_targetScore > 1 ? 1 : 0;
+        int divisor = m_targetScore > 1 ? m_targetScore - 1 : m_targetScore;
+        Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition) / divisor;
 
-        Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition)
-            / (targetScore - deltaModifier);
-        
         for (int index = 0; index < targetScore; ++index)
         {
             GameObject newMarker = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_scoreQuizMarkerPrefab, m_lowTransform);
             newMarker.transform.localPosition = delta * index;
-            newMarker.GetComponentInChildren<UISprite>().color = m_unansweredColor;
+            //newMarker.GetComponentInChildren<UISprite>().color = m_unansweredColor;
             m_spawnedMarkers.Add(newMarker);
         }
-
-        base.SetTargetScore(targetScore);
     }
 
     public override void UpdateScore(int delta)
     {
+
         if (m_markerIndex < m_targetScore)
         {
-            Color col = delta == 0 ? m_incorrectColor : m_correctColor;
-            TweenColor.Begin(m_spawnedMarkers[m_markerIndex].gameObject, 0.3f, col);
+            //Color col = delta == 0 ? m_incorrectColor : m_correctColor;
+            //TweenColor.Begin(m_spawnedMarkers[m_markerIndex].gameObject, 0.3f, col);
+            m_spawnedMarkers[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
         }
 
         ++m_markerIndex;

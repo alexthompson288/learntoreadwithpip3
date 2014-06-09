@@ -73,6 +73,7 @@ public class QuizCoordinator : MonoBehaviour
         if (m_currentQuestion ["question"] != null)
         {
             m_questionLabel.text = m_currentQuestion["question"].ToString();
+            NGUIHelpers.MaxLabelWidth(m_questionLabel, 1600);
         }
 
         Texture2D tex = DataHelpers.GetPicture("quizquestions", m_currentQuestion);
