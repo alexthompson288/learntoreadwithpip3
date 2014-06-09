@@ -105,7 +105,7 @@ public class NewStoryBrowserBookButton : MonoBehaviour
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + bookId);
             if(dt.Rows.Count > 0)
             {
-                OldStroyMenuCoordinator.SetStory(dt.Rows[0]);
+                OldStoryMenuCoordinator.SetStory(dt.Rows[0]);
 
     			TransitionScreen.Instance.ChangeLevel("NewStoryMenu", false);
             }

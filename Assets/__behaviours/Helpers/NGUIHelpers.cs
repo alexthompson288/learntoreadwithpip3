@@ -28,7 +28,28 @@ public static class NGUIHelpers
 
         if (width > maxWidth)
         {
+            Debug.Log(label.name + " - width: " + width);
+            Debug.Log("maxWidth: " + maxWidth);
+            Debug.Log("preLocalScale: " + label.transform.localScale);
             label.transform.localScale *= (maxWidth / width);
+            Debug.Log("postLocalScale: " + label.transform.localScale);
+        }
+    }
+
+    public static void SetLabel(UILabel label, DataRow dr, string field, float maxWidth = -1, string preface = "")
+    {
+        if ( dr[field] != null )
+        {
+            label.text = preface + dr[field].ToString();
+
+            if(maxWidth > 0)
+            {
+                MaxLabelWidth(label, maxWidth);
+            }
+        }
+        else
+        {
+            label.text = "";
         }
     }
 }

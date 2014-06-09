@@ -7,7 +7,7 @@ public class EditorAudioVolume : MonoBehaviour
 	[SerializeField]
 	private float m_editorVolume;
 
-	void Start () 
+	void Update () 
 	{
 		AudioListener.volume = m_editorVolume;
 	}

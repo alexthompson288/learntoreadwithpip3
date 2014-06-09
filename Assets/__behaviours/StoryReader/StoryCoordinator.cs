@@ -36,13 +36,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     [SerializeField]
     private PipButton[] m_colorButtons;
 
-
-    static bool m_showWords = true;
-    public static void SetShowWords(bool showWords)
-    {
-        m_showWords = showWords;
-    }
-
     int m_storyId = 85;
 
     int m_numPages;
@@ -75,9 +68,14 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_currentTextAttribute = "text_" + OldStroyMenuCoordinator.GetStartColor();
+        ColorInfo.PipColor startPipColor = StoryMenuInfo.Instance.GetStartPipColor();
+
+        m_currentTextAttribute = "text_" + ColorInfo.GetColorString(startPipColor).ToLower();
 
         DataRow story = DataHelpers.GetStory();
+
+        Debug.Log("title: " + story["title"].ToString());
+
         if (story != null)
         {
             m_storyId = System.Convert.ToInt32(story ["id"]);
@@ -88,7 +86,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             {
                 button.Pressing += OnClickColorButton;
 
-                if(OldStroyMenuCoordinator.GetStartColor() == ColorInfo.GetColorString(button.pipColor).ToLower())
+                if(startPipColor == button.pipColor)
                 {
                     m_currentColorButton = button;
                     m_currentColorButton.ChangeSprite(true);
@@ -239,13 +237,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void UpdatePicture(DataRow storyPage)
     {
-        string imageName = storyPage["image"] == null ? "" : storyPage["image"].ToString().Replace(".png", "");
-        string bgImageName = storyPage["backgroundart"] == null ? "" : storyPage["backgroundart"].ToString().Replace(".png", "");
-        
-        Texture2D image = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
-        Texture2D bgImage = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
-        
-        m_storyPicture.mainTexture = bgImage != null ? bgImage : image;
+        m_storyPicture.mainTexture = DataHelpers.GetPicture("storypages", storyPage);
     }
 
     void UpdatePicture()
@@ -256,7 +248,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void UpdateText(DataRow storyPage)
     {
-        if (m_showWords && storyPage != null && storyPage [m_currentTextAttribute] != null)
+        if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
             string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n");
             

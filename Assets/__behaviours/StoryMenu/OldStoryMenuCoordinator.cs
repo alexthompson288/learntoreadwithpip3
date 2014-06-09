@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class OldStroyMenuCoordinator : MonoBehaviour 
+public class OldStoryMenuCoordinator : MonoBehaviour 
 {
     [SerializeField]
     private PipButton m_readButton;
@@ -189,7 +189,7 @@ public class OldStroyMenuCoordinator : MonoBehaviour
     {
         if(m_story != null)
         {
-            StoryCoordinator.SetShowWords(button.GetString() == m_readButtonString);
+            //StoryCoordinator.SetShowWords(button.GetString() == m_readButtonString);
 
             GameManager.Instance.AddGame("NewStories");
 

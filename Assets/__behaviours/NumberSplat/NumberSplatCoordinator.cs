@@ -92,7 +92,7 @@ public class NumberSplatCoordinator : GameCoordinator
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-
+            widget.Tint(Color.grey);
             widget.TweenToStartPos();
         }
     }

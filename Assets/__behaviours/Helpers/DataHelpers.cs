@@ -706,6 +706,16 @@ public static class DataHelpers
             case "stories":
                 tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
+            case "storypages":
+                string bgImageName = data["backgroundart"] == null ? "" : data["backgroundart"].ToString().Replace(".png", "");
+                tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
+
+                if(tex == null)
+                {
+                    string imageName = data["image"] == null ? "" : data["image"].ToString().Replace(".png", "");
+                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
+                }
+                break;
             case "pipisodes":
                 if(data["image_filename"] != null)
                 {
