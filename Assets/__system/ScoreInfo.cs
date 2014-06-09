@@ -148,7 +148,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         
         for (int i = 0; i < starSprites.Length; ++i)
         {
-            string spriteName = i < numStars ? "star_gold" : "star_grayscale";
+            string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
             starSprites[i].spriteName = spriteName;
         }
     }
