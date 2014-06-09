@@ -45,6 +45,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     private float m_tweenDuration = 0.3f;
     [SerializeField]
     private string m_quizGameName = "NewQuizGame";
+    [SerializeField]
+    private UISprite[] m_starSprites;
 
     PipButton m_currentColorButton = null;
     StoryMenuBook m_currentBookButton = null;
@@ -111,11 +113,16 @@ public class StoryMenuCoordinator : MonoBehaviour
         }
     }
 
+    string CreateScoreType()
+    {
+        return m_currentBookButton.GetData() ["title"].ToString() + "_" + ColorInfo.GetColorString(m_currentColorButton.pipColor);
+    }
+
     void StartActivity()
     {
         StoryMenuInfo.Instance.SubscribeGameComplete();
 
-        GameManager.Instance.SetScoreType(m_currentBookButton.GetData() ["title"].ToString() + "_" + ColorInfo.GetColorString(m_currentColorButton.pipColor));
+        GameManager.Instance.SetScoreType(CreateScoreType());
 
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
@@ -210,6 +217,8 @@ public class StoryMenuCoordinator : MonoBehaviour
             Vector3 activeButtonScale = hasQuizQuestions ? Vector3.one : Vector3.one * 1.2f;
             iTween.ScaleTo(m_readButtonParent, activeButtonScale, m_tweenDuration);
             iTween.ScaleTo(m_picturesButtonParent, activeButtonScale, m_tweenDuration);
+
+            ScoreInfo.RefreshStarSprites(m_starSprites, m_quizGameName, CreateScoreType());
         }
     }
 
