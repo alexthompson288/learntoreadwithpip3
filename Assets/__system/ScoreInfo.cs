@@ -101,24 +101,26 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     public void NewScore(int score, int targetScore, float time, float twoStar, float threeStar)
     {
-        string game = DataHelpers.GetGameName();
-        string type = DataHelpers.GetScoreType();
-
-        ScoreTracker newTracker = new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar);
-
-        ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
-
-        if (oldTracker == null)
+        if (SessionInformation.Instance.GetNumPlayers() < 2)
         {
-            m_scoreTrackers.Add(newTracker);
-        } 
-        else if (newTracker.GetTime() < oldTracker.GetTime())
-        {
-            m_scoreTrackers.Remove(oldTracker);
-            m_scoreTrackers.Add(newTracker);
+            string game = DataHelpers.GetGameName();
+            string type = DataHelpers.GetScoreType();
+
+            ScoreTracker newTracker = new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar);
+
+            ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
+
+            if (oldTracker == null)
+            {
+                m_scoreTrackers.Add(newTracker);
+            } else if (newTracker.GetTime() < oldTracker.GetTime())
+            {
+                m_scoreTrackers.Remove(oldTracker);
+                m_scoreTrackers.Add(newTracker);
+            }
+
+            Save();
         }
-
-        Save();
     }
 
     public static void RefreshStarSprites(UISprite[] starSprites, string game, string type)
