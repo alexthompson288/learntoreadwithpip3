@@ -21,11 +21,9 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
-    private bool m_areBallsSingleUse;
-    [SerializeField]
     private bool m_isAnswerAlwaysCorrect;
     [SerializeField]
-    private DataDisplay m_pictureDisplay;
+    private DataDisplay m_dataDisplay;
     [SerializeField]
     private bool m_targetsShowPicture;
     [SerializeField]
@@ -75,7 +73,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             }
         }
         
-        m_pictureDisplay.SetShowPicture(!m_targetsShowPicture);
+        m_dataDisplay.SetShowPicture(!m_targetsShowPicture);
 
         if (System.String.IsNullOrEmpty(m_dataType))
         {
@@ -141,11 +139,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
             if(m_dataType == "words" && m_targetsShowPicture)
             {
                 // Picture display should only show the first phoneme of the target word
-                m_pictureDisplay.On("phonemes", DataHelpers.GetFirstPhonemeInWord(m_currentData));
+                m_dataDisplay.On("phonemes", DataHelpers.GetFirstPhonemeInWord(m_currentData));
             }
             else
             {
-                m_pictureDisplay.On(m_dataType, m_currentData);
+                m_dataDisplay.On(m_dataType, m_currentData);
             }
             
             InitializeTargets(UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[]);
@@ -210,7 +208,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         } 
         else
         {
-            return data == m_currentData;
+            return data.Equals(m_currentData);
         }
     }
     
@@ -239,29 +237,15 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         if (IsDataCorrect(target.data))
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_SQUEAL");
-
             ball.GetComponent<CatapultAmmo>().Explode();
 
             target.OnHit();
             
             GameObject targetDetachable = target.SpawnDetachable();
 
-            //iTween.ScaleFrom(targetDetachable, Vector3.zero, 0.15f);
-
-            //yield return new WaitForSeconds(0.16f);
-
             StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
 
             target.ApplyHitForce(ball.transform);
-
-            /*
-            if(m_changeCurrentData)
-            {
-                m_currentData = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
-                PlayShortAudio();
-            }
-            */
 
             if(!m_targetsShowPicture && m_dataType == "phonemes")
             {
@@ -290,18 +274,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 StartCoroutine(OnGameComplete());
             }
         } 
-        else
-        {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
-            
-            //target.Off();
-            //StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
-        }
-        
-        if (m_areBallsSingleUse)
-        {
-            ball.GetComponent<CatapultAmmo>().Explode();
-        }
 
         yield break;
     }
