@@ -129,7 +129,7 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
     {
         if (m_winningIndex == -1)
         {
-            m_winningIndex = -1;
+            m_winningIndex = playerIndex;
         }
 
         ++m_numFinished;

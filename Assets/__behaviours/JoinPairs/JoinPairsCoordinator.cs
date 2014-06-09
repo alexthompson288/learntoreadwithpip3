@@ -171,7 +171,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     IEnumerator PlayGame()
     {
         int numPlayers = GetNumPlayers();
-        Debug.Log("numPlayers: " + numPlayers);
         if (numPlayers == 2)
         {
             while (true)
@@ -187,7 +186,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
                 
                 if (allSelected)
                 {
-                    Debug.Log("All Selected");
                     break;
                 }
                 
@@ -247,6 +245,16 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         CompleteGame();
     }
 
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CompleteGame();
+        }
+    }
+#endif
+
     void CompleteGame()
     {
         float timeTaken = Time.time - m_startTime;
@@ -261,7 +269,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     public void PlayShortAudio(DataRow data)
     {
-        Debug.Log("PLAY SHORT");
         PlayAudio(data, m_shortAudio);
     }
 
@@ -275,7 +282,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         if (audioDictionary.ContainsKey(data))
         {
             AudioClip clip = audioDictionary [data];
-            Debug.Log("clip: " + clip);
             if (clip != null)
             {
                 m_audioSource.clip = clip;

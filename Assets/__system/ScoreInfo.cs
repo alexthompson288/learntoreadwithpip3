@@ -112,7 +112,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         {
             m_scoreTrackers.Add(newTracker);
         } 
-        else if (newTracker.GetProportionalScore() > oldTracker.GetProportionalScore())
+        else if (newTracker.GetTime() < oldTracker.GetTime())
         {
             m_scoreTrackers.Remove(oldTracker);
             m_scoreTrackers.Add(newTracker);
@@ -163,6 +163,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 #if UNITY_EDITOR
         if(m_overwrite)
         {
+            Debug.Log("OVERWRITING SCOREINFO");
             Save();
         }
 #endif
@@ -180,13 +181,16 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
-        
+
+        Debug.Log("ScoreInfo.Load: " + System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+
         if (data.Length != 0)
         {
             int numTrackers = br.ReadInt32();
+            Debug.Log("LOADING DATA: " + numTrackers);
             for(int i = 0; i < numTrackers; ++i)
             {
                 string game = br.ReadString();
@@ -197,7 +201,10 @@ public class ScoreInfo : Singleton<ScoreInfo>
                 float twoStar = br.ReadSingle();
                 float threeStar = br.ReadSingle();
 
+                Debug.Log("time: " + time);
+
                 m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar));
+                //m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, 30, 60));
             }
         }
         
@@ -207,9 +214,13 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     void Save()
     {
-        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
+
+        Debug.Log("ScoreInfo.Save: " + System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+
+        Debug.Log("SAVING DATA: " + m_scoreTrackers.Count);
 
         bw.Write(m_scoreTrackers.Count);
         foreach (ScoreTracker tracker in m_scoreTrackers)
