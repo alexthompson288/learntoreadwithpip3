@@ -50,7 +50,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
         CatapultBehaviour cannonBehaviour = UnityEngine.Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
-        cannonBehaviour.MoveToMultiplayerLocation(0);
+        //cannonBehaviour.MoveToMultiplayerLocation(0);
 
         m_probabilityTargetIsCorrect = Mathf.Clamp01(m_probabilityTargetIsCorrect);
         

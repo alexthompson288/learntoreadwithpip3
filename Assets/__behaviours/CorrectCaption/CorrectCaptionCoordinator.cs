@@ -212,7 +212,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
         }
 
         m_textPosition.localPosition = new Vector3(-length / 2, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
-        m_questionBackground.width = (int)length + 50;
+        //m_questionBackground.width = (int)length + 50;
     }
     
     protected override IEnumerator CompleteGame()
@@ -276,6 +276,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
                 m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
 
+                SpawnQuestionText();
+                /*
                 iTween.ScaleTo(m_questionLabelParent, Vector3.zero, m_questionTweenDuration);
                 WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
@@ -285,6 +287,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
                 iTween.ScaleTo(m_questionLabelParent, Vector3.one, m_questionTweenDuration);
                 WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
+                */
             }
         } 
         else
@@ -299,7 +302,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
     void TweenQuestionParents(Vector3 newScale)
     {
         iTween.ScaleTo(m_questionImageParent, newScale, m_questionTweenDuration);
-        iTween.ScaleTo(m_questionLabelParent, newScale, m_questionTweenDuration);
+        //iTween.ScaleTo(m_questionLabelParent, newScale, m_questionTweenDuration);
 
         string audioString = Mathf.Approximately(newScale.x, 0) ? "SOMETHING_APPEAR" : "SOMETHING_DISAPPEAR";
         WingroveAudio.WingroveRoot.Instance.PostEvent(audioString);
