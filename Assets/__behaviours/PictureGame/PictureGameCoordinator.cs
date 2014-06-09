@@ -34,8 +34,16 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 		Debug.Log("There are " + m_dataRows.Count + " rows");
 
-        yield return new WaitForSeconds(1.0f);
-        WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+        if (GetNumPlayers() == 2)
+        {
+            yield return new WaitForSeconds(0.5f);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+        } 
+        else
+        {
+            SessionInformation.SetDefaultPlayerVar();
+            CharacterSelectionParent.DisableAll();
+        }
 
 		PipPadBehaviour.Instance.SetDismissable(true);
 
@@ -66,46 +74,35 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
     IEnumerator PlayGame()
     {
         int numPlayers = GetNumPlayers();
-        while (true)
+        if (numPlayers == 2)
         {
-            bool allSelected = true;
-            for(int index = 0; index < numPlayers; ++index)
+            while (true)
             {
-                if (!m_gamePlayers[index].HasSelectedCharacter())
+                bool allSelected = true;
+                for (int index = 0; index < numPlayers; ++index)
                 {
-                    allSelected = false;
+                    if (!m_gamePlayers [index].HasSelectedCharacter())
+                    {
+                        allSelected = false;
+                    }
                 }
+
+                if (allSelected)
+                {
+                    break;
+                }
+
+                yield return null;
             }
 
-            if (allSelected)
+            for (int index = 0; index < numPlayers; ++index)
             {
-                break;
+                m_gamePlayers[index].HideAll();
             }
 
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(1.0f);
-
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_WORD_INSTRUCTION");
-        yield return new WaitForSeconds(4.0f);
-		
-		if ( numPlayers == 2 )
-		{
-			WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_WORD_INSTRUCTION_MULTI");
-			yield return new WaitForSeconds(3.0f);
+			WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
+			yield return new WaitForSeconds(3.5f);
 		}
-
-        for (int index = 0; index < numPlayers; ++index)
-        {
-            m_gamePlayers[index].HideAll();
-        }
-
-        yield return new WaitForSeconds(1.0f);
-
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-
-        yield return new WaitForSeconds(1.0f);
 
 		Debug.Log("m_gamePlayers.Length: " + m_gamePlayers.Length);
 		Debug.Log("numPlayers: " + numPlayers);

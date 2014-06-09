@@ -24,12 +24,10 @@ public class PictureGamePlayer : GamePlayer
     [SerializeField]
     private GameObject m_retryPrompt;
     [SerializeField]
-    private int m_playerIndex;
-    [SerializeField]
     private int[] m_wordsToSpawnForDifficulty;
 
     private int m_score = 0;
-    private int m_numLives = 3;
+    //private int m_numLives = 3;
 
     List<DataRow> m_remainingWords = null;
     List<DataRow> m_allWords = null;
@@ -267,8 +265,8 @@ public class PictureGamePlayer : GamePlayer
             //UserStats.Activity.AddIncorrectWord(m_currentWordData);
 
             // remove lives
-            m_numLives--;
-            m_livesDisplay.SetLives(m_numLives);
+            //m_numLives--;
+            //m_livesDisplay.SetLives(m_numLives);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
             if (SessionInformation.Instance.GetNumPlayers() != 2)
@@ -289,7 +287,8 @@ public class PictureGamePlayer : GamePlayer
 
     public bool HasFinished()
     {
-        return ((m_numLives == 0) || (m_score == m_targetScore));
+        //return ((m_numLives == 0) || (m_score == m_targetScore));
+        return m_score >= m_targetScore;
     }
 
     public bool HasWon()
