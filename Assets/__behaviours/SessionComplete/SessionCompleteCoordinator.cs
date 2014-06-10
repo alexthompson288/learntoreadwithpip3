@@ -106,6 +106,9 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         m_grid.Reposition();
 
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+        yield return new WaitForSeconds(0.5f);
+
         WingroveAudio.WingroveRoot.Instance.PostEvent("BENNY_ANOTHER_LETTER_2");
 
         m_pipAnimManager.PlayAnimation("WALK");
@@ -132,8 +135,6 @@ public class SessionCompleteCoordinator : MonoBehaviour
     IEnumerator CompleteGame()
     {
         m_bennySprite.depth = 15;
-
-
 
         m_bennyTween.On();
 
@@ -174,7 +175,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
-        //GameManager.Instance.CompleteGame();
+        GameManager.Instance.CompleteGame();
     }
 
     void OnButtonClick(ClickEvent click)
