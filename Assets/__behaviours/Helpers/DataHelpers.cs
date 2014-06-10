@@ -296,6 +296,11 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("stories");
 
+        if (dataPool.Count == 0)
+        {
+            dataPool = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + 1).Rows;
+        }
+
         return dataPool.Count > 0 ? dataPool [0] : null;
     }
 

@@ -174,9 +174,16 @@ public class SplineFollower : MonoBehaviour
         
         yield return new WaitForSeconds(tweenDuration);
         
-        StartCoroutine(On());
+        StartCoroutine("On");
 
         yield break;
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("currentTime: " + m_currentTime);
+        GUILayout.Label("path.totalTime: " + m_paths [m_pathIndex].m_totalTime);
+        GUILayout.Label("proportionalDistance: " + m_currentTime / (m_paths [m_pathIndex].m_totalTime));
     }
     
     public IEnumerator On () 
@@ -237,7 +244,6 @@ public class SplineFollower : MonoBehaviour
                 {
                     case OnCompleteAction.Restart:
                         m_currentTime = 0.0f;
-                        StartCoroutine(On());
                         break;
                     case OnCompleteAction.DestroySelf:
                         Destroy(gameObject);
@@ -257,6 +263,6 @@ public class SplineFollower : MonoBehaviour
         }
 
         yield return null;
-        StartCoroutine(On());
+        StartCoroutine("On");
     }
 }

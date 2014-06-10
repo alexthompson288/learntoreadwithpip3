@@ -16,9 +16,9 @@ public class ScaleTarget : Target
     }
 
 	public override void ApplyHitForce(Transform ball)
-	{
-		StopAllCoroutines();
-		
+	{		
+        StopAllCoroutines();
+
 		base.ApplyHitForce(ball);
 		
 		StartCoroutine(Restart());
@@ -43,11 +43,13 @@ public class ScaleTarget : Target
         //Debug.Log("Restart Invoking");
 		InvokeOnCompleteMove();
 		
-		StartCoroutine(On(0));
+		//StartCoroutine(On(0));
+        StartCoroutine(On(0.5f));
 	}
 
-	public override IEnumerator On(float initialDelay)
+    public override IEnumerator On(float initialDelay)
 	{
+        Debug.Log("On");
 		yield return new WaitForSeconds(initialDelay);
 		
 		iTween.ScaleTo(gameObject, Vector3.one, m_tweenDuration);
@@ -58,10 +60,10 @@ public class ScaleTarget : Target
 		
 		yield return new WaitForSeconds(m_tweenDuration + Random.Range(m_durationOff.x, m_durationOff.y));
 		
-        //Debug.Log("On Invoking");
+        Debug.Log("Invoking OnCompleteMove");
 		InvokeOnCompleteMove();
 		
-		StartCoroutine(On(0));
+		StartCoroutine(On(0.2f));
 	}
 	
 	public override void Off()

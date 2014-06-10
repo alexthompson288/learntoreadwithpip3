@@ -196,12 +196,9 @@ public class ScoreInfo : Singleton<ScoreInfo>
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
 
-        Debug.Log("ScoreInfo.Load: " + System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
-
         if (data.Length != 0)
         {
             int numTrackers = br.ReadInt32();
-            Debug.Log("LOADING DATA: " + numTrackers);
             for(int i = 0; i < numTrackers; ++i)
             {
                 string game = br.ReadString();
@@ -211,8 +208,6 @@ public class ScoreInfo : Singleton<ScoreInfo>
                 float time = br.ReadSingle();
                 float twoStar = br.ReadSingle();
                 float threeStar = br.ReadSingle();
-
-                Debug.Log("time: " + time);
 
                 m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar));
                 //m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, 30, 60));

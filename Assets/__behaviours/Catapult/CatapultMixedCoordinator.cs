@@ -256,16 +256,16 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 PlayLongAudio(target.data);
             }
 
+            /*
             if(m_targetsShowPicture)
             {
                 if(m_dataType == "words")
                 {
-                    yield return null;
-                    
                     Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
                     m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
                 }
             }
+            */
 
             m_score++;
             

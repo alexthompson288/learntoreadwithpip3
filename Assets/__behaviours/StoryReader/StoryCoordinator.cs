@@ -74,7 +74,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         DataRow story = DataHelpers.GetStory();
 
-        Debug.Log("title: " + story["title"].ToString());
+        //Debug.Log("title: " + story["title"].ToString());
 
         if (story != null)
         {
