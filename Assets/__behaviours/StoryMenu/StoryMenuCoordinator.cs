@@ -64,7 +64,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        ColorInfo.PipColor pipColor = StoryMenuInfo.Instance.GetStartPipColor();
+        ColorInfo.PipColor pipColor = StoryMenuInfo.Instance.HasBookmark() ? StoryMenuInfo.Instance.GetBookmarkPipColor() : ColorInfo.PipColor.Pink;
 
         m_currentColorButton = System.Array.Find(m_colorButtons, x => x.pipColor == pipColor);
 
@@ -129,6 +129,8 @@ public class StoryMenuCoordinator : MonoBehaviour
         DataRow story = m_currentBookButton.GetData();
 
         GameManager.Instance.AddData("stories", story);
+
+        StoryMenuInfo.Instance.CreateBookmark(System.Convert.ToInt32(story["id"]), m_currentColorButton.pipColor);
 
         GameManager.Instance.StartGames();
     }
@@ -251,7 +253,18 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         m_bookGrid.Reposition();
 
-        m_currentBookButton = m_spawnedBooks.Count > 0 ? m_spawnedBooks[0] : null;
+        if (StoryMenuInfo.Instance.HasBookmark())
+        {
+            int storyId = StoryMenuInfo.Instance.GetBookmarkStoryId();
+            Debug.Log("Finding story with id: " + storyId);
+            m_currentBookButton = m_spawnedBooks.Find(x => System.Convert.ToInt32(x.GetData()["id"]) == storyId);
+            StoryMenuInfo.Instance.DestroyBookmark();
+        } 
+        else
+        {
+            m_currentBookButton = m_spawnedBooks.Count > 0 ? m_spawnedBooks[0] : null;
+        }
+
         OnPressStoryButton(m_currentBookButton);
     }
 }
