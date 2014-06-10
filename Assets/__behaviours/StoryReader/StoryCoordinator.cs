@@ -236,7 +236,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         if (storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
             string audioFileName = storyPage ["audio"] != null ? System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), m_currentColor) : null;
-            //Debug.Log("audioFileName: " + audioFileName);
+            Debug.Log("audioFileName: " + audioFileName);
 
             m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
             m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + audioFileName);
