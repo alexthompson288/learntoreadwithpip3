@@ -15,7 +15,7 @@ public class StoryMenuInfo : Singleton<StoryMenuInfo>
         return m_startPipColor;
     }
     
-    bool m_showText;
+    bool m_showText = true;
 
     public bool GetShowText()
     {

@@ -48,7 +48,6 @@ public class ShowPipPadForWord : MonoBehaviour {
 
     void OnClick()
     {
-		Debug.Log("ShowPipPadForWord.OnClick() - " + m_showPad);
 		if(m_showPad)
 		{
         	PipPadBehaviour.Instance.Show(m_word.ToLower(), true);

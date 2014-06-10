@@ -287,7 +287,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                         ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
                         bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
                         
-                        showPipPadForWord.SetUp(newWord, wordSize, m_currentTextAttribute == "text");
+                        showPipPadForWord.SetUp(newWord, wordSize, true);
                         
                         // Highlight if word is on the decode list
                         if (isOnDecodeList)
