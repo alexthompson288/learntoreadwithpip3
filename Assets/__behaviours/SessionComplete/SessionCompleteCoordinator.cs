@@ -19,13 +19,22 @@ public class SessionCompleteCoordinator : MonoBehaviour
     [SerializeField]
     private UITexture m_collectableIcon;
     [SerializeField]
-    private TweenOnOffBehaviour m_collector;
+    private TweenOnOffBehaviour m_bennyTween;
     [SerializeField]
-    private Transform m_collectorBackpack;
+    private SimpleSpriteAnim m_bennyAnim;
     [SerializeField]
-    private Transform m_collectorEndLocation;
+    private UISprite m_bennySprite;
+    [SerializeField]
+    private Transform m_bennyCollectionLocation;
+    [SerializeField]
+    private Transform m_bennyEndLocation;
+    [SerializeField]
+    private AnimManager m_pipAnimManager;
+    [SerializeField]
+    private Transform m_pipLocation;
     [SerializeField]
     private ClickEvent m_nextButton;
+
 
     RotateConstantly m_currentRotateBehaviour = null;
 
@@ -38,6 +47,13 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         bool hasSetLabel = false;
         bool hasSetIcon = false;
+
+#if UNITY_EDITOR
+        if(!VoyageInfo.Instance.hasBookmark)
+        {
+            VoyageInfo.Instance.CreateBookmark(1, 301, 1);
+        }
+#endif
 
         if (VoyageInfo.Instance.hasBookmark)
         {
@@ -88,8 +104,24 @@ public class SessionCompleteCoordinator : MonoBehaviour
         m_collectableLabel.gameObject.SetActive(hasSetLabel);
         m_collectableIcon.gameObject.SetActive(hasSetIcon);
 
-
         m_grid.Reposition();
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BENNY_ANOTHER_LETTER_2");
+
+        m_pipAnimManager.PlayAnimation("WALK");
+
+        float pipTweenDuration = 1f;
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", m_pipLocation.position);
+        tweenArgs.Add("time", pipTweenDuration);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+
+        iTween.MoveTo(m_pipAnimManager.gameObject, tweenArgs);
+
+        yield return new WaitForSeconds(pipTweenDuration);
+
+        m_pipAnimManager.PlayAnimation("THUMBS_UP");
 	}
 
     void OnNextButtonClick(ClickEvent click)
@@ -99,31 +131,50 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
     IEnumerator CompleteGame()
     {
-        m_collector.On();
+        m_bennySprite.depth = 15;
+
+
+
+        m_bennyTween.On();
 
         float largeScaleDuration = 0.5f;
 
         //iTween.ScaleTo(m_collectable, Vector3.one * 1.2f, largeScaleDuration);
-        iTween.ShakePosition(m_collectable, Vector3.one * 0.1f, m_collector.GetDuration());
+        iTween.ShakePosition(m_collectable, Vector3.one * 0.1f, m_bennyTween.GetDuration());
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_DISAPPEAR");
 
-        yield return new WaitForSeconds(m_collector.GetDuration() + 0.2f);
+        yield return new WaitForSeconds(m_bennyTween.GetDuration());
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+        m_pipAnimManager.PlayAnimation("JUMP");
+
+        m_bennyAnim.PlayAnimation("OPEN");
+
+        yield return new WaitForSeconds(0.5f);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
-        float smallScaleDuration = 0.8f;
+        m_bennySprite.depth = 5;
+
+        float smallScaleDuration = 0.5f;
 
         iTween.ScaleTo(m_collectable, Vector3.zero, smallScaleDuration);
-        iTween.MoveTo(m_collectable, m_collectorBackpack.position, smallScaleDuration);
+        iTween.MoveTo(m_collectable, m_bennyCollectionLocation.position, smallScaleDuration);
 
-        yield return new WaitForSeconds(smallScaleDuration + 0.5f);
 
-        iTween.MoveTo(m_collector.gameObject, m_collectorEndLocation.position, 0.6f);
+        yield return new WaitForSeconds(smallScaleDuration);
+
+        m_bennyAnim.PlayAnimation("CLOSE");
+
+        yield return new WaitForSeconds(0.5f);
+
+        iTween.MoveTo(m_bennyTween.gameObject, m_bennyEndLocation.position, 1f);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
-        GameManager.Instance.CompleteGame();
+        //GameManager.Instance.CompleteGame();
     }
 
     void OnButtonClick(ClickEvent click)
