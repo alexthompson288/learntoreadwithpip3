@@ -31,8 +31,15 @@ public class VideoPlayer : MonoBehaviour
     private UISlider m_progressBar;
     [SerializeField]
     private GameObject m_progressBarParent;
+    [SerializeField]
+    private UICamera m_loadingBarCamera;
+    [SerializeField]
+    private PipButton m_cancelButton;
 
     WWW m_www;
+
+    float m_progressTweenDuration = 0.25f;
+
 
     void Awake()
     {
@@ -47,6 +54,7 @@ public class VideoPlayer : MonoBehaviour
         m_playButton.Unpressing += OnPressPlay;
         m_deleteButton.Unpressing += OnPressDelete;
         m_downloadButton.Unpressing += OnPressDownload;
+        m_cancelButton.Unpressing += OnPressCancel;
     }
 
     string GetFullPath(string filename)
@@ -90,7 +98,7 @@ public class VideoPlayer : MonoBehaviour
         if (!HasLocalCopy())
         {
             Debug.Log("No local copy found, downloading");
-            yield return StartCoroutine(DownloadVideo());
+            yield return StartCoroutine("DownloadVideo");
         } 
         else
         {
@@ -116,7 +124,7 @@ public class VideoPlayer : MonoBehaviour
         if (!HasLocalCopy())
         {
             Debug.Log("No local copy found, downloading");
-            StartCoroutine(DownloadVideo());
+            StartCoroutine("DownloadVideo");
         }
         else
         {
@@ -143,6 +151,20 @@ public class VideoPlayer : MonoBehaviour
         }
     }
 
+    void OnPressCancel(PipButton button)
+    {
+        StopCoroutine("DownloadVideo");
+        StopCoroutine("UpdateProgressBar");
+
+        StartCoroutine(ResetProgressBar());
+
+        UICamera[] uiCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
+        foreach (UICamera cam in uiCams)
+        {
+            cam.enabled = true;
+        }
+    }
+
     IEnumerator DownloadVideo()
     {
         Debug.Log("VideoPlayer.DownloadVideo(): " + m_filename);
@@ -152,15 +174,16 @@ public class VideoPlayer : MonoBehaviour
         
         foreach (UICamera cam in uiCams)
         {
-            cam.enabled = false;
+            if(cam != m_loadingBarCamera)
+            {
+                cam.enabled = false;
+            }
         }
-
-        float progressTweenDuration = 0.25f; 
 
         if (m_progressBarParent != null)
         {
-            iTween.ScaleTo(m_progressBarParent, Vector3.one, progressTweenDuration);
-            yield return new WaitForSeconds(progressTweenDuration);
+            iTween.ScaleTo(m_progressBarParent, Vector3.one, m_progressTweenDuration);
+            yield return new WaitForSeconds(m_progressTweenDuration);
         }
 
         Debug.Log("WAIT");
@@ -194,16 +217,7 @@ public class VideoPlayer : MonoBehaviour
 
         StopCoroutine("UpdateProgressBar");
 
-        if (m_progressBarParent != null)
-        {
-            iTween.ScaleTo(m_progressBarParent, Vector3.zero, progressTweenDuration);
-            yield return new WaitForSeconds(progressTweenDuration);
-
-            if(m_progressBar != null)
-            {
-                m_progressBar.value = 0;
-            }
-        }
+        yield return(StartCoroutine(ResetProgressBar()));
 
         Debug.Log("ENABLE UI");
         foreach (UICamera cam in uiCams)
@@ -217,6 +231,22 @@ public class VideoPlayer : MonoBehaviour
         {
             Downloaded(this);
         }
+    }
+
+    IEnumerator ResetProgressBar()
+    {
+        if (m_progressBarParent != null)
+        {
+            iTween.ScaleTo(m_progressBarParent, Vector3.zero, m_progressTweenDuration);
+            yield return new WaitForSeconds(m_progressTweenDuration);
+            
+            if(m_progressBar != null)
+            {
+                m_progressBar.value = 0;
+            }
+        }
+
+        yield return null;
     }
 
     IEnumerator UpdateProgressBar()
