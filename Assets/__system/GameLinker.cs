@@ -7,15 +7,24 @@ public class GameLinker : Singleton<GameLinker>
 {
 	[SerializeField]
 	private TextAsset m_gameNameFile;
+    [SerializeField]
+    private string m_filename = "/GameNames.csv";
+    [SerializeField]
+    private string m_relativePath;
 
     void Awake()
     {
-        string path = Application.dataPath;
-        path = path.Replace("Assets", ""); // Application.dataPath has "Assets" appended and GetAssetPath has "Assets" prepended, we need to remove one of these 
-        path += UnityEditor.AssetDatabase.GetAssetPath(m_gameNameFile);
+        //string path = Application.dataPath;
+        //path = path.Replace("Assets", ""); // Application.dataPath has "Assets" appended and GetAssetPath has "Assets" prepended, we need to remove one of these 
+        //path += UnityEditor.AssetDatabase.GetAssetPath(m_gameNameFile);
+        //string path = Application.dataPath + m_relativePath;
+        //Debug.Log("CSV Path: " + path);
+
+        string path = Application.streamingAssetsPath + m_filename;
 
         using (CsvFileReader reader = new CsvFileReader(path))
         {
+            Debug.Log("Reading CSV");
             CsvRow row = new CsvRow();
             while (reader.ReadRow(row))
             {
@@ -36,6 +45,18 @@ public class GameLinker : Singleton<GameLinker>
                     m_gameNames[games[0]] = games[0];
                 }
             }
+        }
+
+        LogGameNames();
+    }
+
+    void LogGameNames()
+    {
+        Debug.Log("LOG GAME NAMES");
+
+        foreach (KeyValuePair<string, string> kvp in m_gameNames)
+        {
+            Debug.Log(kvp.Key + " - " + kvp.Value);
         }
     }
 	
