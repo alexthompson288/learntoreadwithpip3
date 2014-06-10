@@ -53,7 +53,7 @@ public class Target : MonoBehaviour
         {
             OnCompleteMove(this);
         }
-        Debug.Log("Finished Invoke: " + transform.localScale.x);
+        //Debug.Log("Finished Invoke: " + transform.localScale.x);
     }
     
     protected DataRow m_data;

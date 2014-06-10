@@ -112,6 +112,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		} 
 		else 
 		{
+            Debug.Log("LAUNCH");
             m_currentBall.SetHasLaunchedTrue();
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
@@ -130,7 +131,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		}
 	}
 
-    public void ResetLineRenderersPos()
+    public void ResetLineRendererPos()
     {
         m_currentBall = null;
 

@@ -346,7 +346,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             Debug.LogError("NO SHORT KEY: " + data[attributeName].ToString() + " - " + data["id"].ToString());
             Debug.Log("m_shortAudio.Count: " + m_shortAudio.Count);
 
-            LogAudio();
+            //LogAudio();
         }
 #endif
     }

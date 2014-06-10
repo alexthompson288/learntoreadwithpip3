@@ -49,7 +49,7 @@ public class ScaleTarget : Target
 
     public override IEnumerator On(float initialDelay)
 	{
-        Debug.Log("On");
+        //Debug.Log("On");
 		yield return new WaitForSeconds(initialDelay);
 		
 		iTween.ScaleTo(gameObject, Vector3.one, m_tweenDuration);
@@ -60,7 +60,7 @@ public class ScaleTarget : Target
 		
 		yield return new WaitForSeconds(m_tweenDuration + Random.Range(m_durationOff.x, m_durationOff.y));
 		
-        Debug.Log("Invoking OnCompleteMove");
+        //Debug.Log("Invoking OnCompleteMove");
 		InvokeOnCompleteMove();
 		
 		StartCoroutine(On(0.2f));
