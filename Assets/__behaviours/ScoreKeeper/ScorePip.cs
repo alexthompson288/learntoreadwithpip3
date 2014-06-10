@@ -36,13 +36,13 @@ public class ScorePip : ScoreKeeper
         
         float delta = Mathf.Abs((m_top.localPosition - m_bottom.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
-        UpdatePlatformLevel();
+        UpdatePlatformLevel(1);
     }
     
     public override void UpdateScore(int delta = 1)
     {
         base.UpdateScore(delta);
-        UpdatePlatformLevel(); 
+        UpdatePlatformLevel(1); 
     }
 
     public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
@@ -68,10 +68,10 @@ public class ScorePip : ScoreKeeper
         
         Destroy(targetGo);
         
-        UpdatePlatformLevel();
+        UpdatePlatformLevel(1);
     }
 
-    void UpdatePlatformLevel()
+    void UpdatePlatformLevel(int delta)
     {
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("time", m_platformTweenDuration);
@@ -83,8 +83,11 @@ public class ScorePip : ScoreKeeper
 
         m_pipAnimManager.StopRandom();
         m_pipAnim.OnAnimFinish += OnScoreAnimFinish;
-        string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
-        m_pipAnim.PlayAnimation(animName);
+        //string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
+        //m_pipAnim.PlayAnimation(animName);
+        m_pipAnim.PlayAnimation("THUMBS_UP");
+
+        PlayAudio(delta);
     }
 
     bool m_hasFinishedJumpAnim = false;

@@ -59,6 +59,8 @@ public class ScoreLights : ScoreKeeper
             //Color col = delta == 0 ? m_incorrectColor : m_correctColor;
             //TweenColor.Begin(m_spawnedMarkers[m_markerIndex].gameObject, 0.3f, col);
             m_spawnedMarkers[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
+
+            PlayAudio(delta);
         }
 
         ++m_markerIndex;

@@ -11,6 +11,8 @@ public class ChooseGameButton : MonoBehaviour
     private UITexture m_temporaryIconTexture;
     [SerializeField]
     private UISprite[] m_starSprites;
+    [SerializeField]
+    private bool m_starsAreTimeBased = true;
 
     DataRow m_game = null;
 
@@ -50,37 +52,13 @@ public class ChooseGameButton : MonoBehaviour
 
     public void Refresh(string colorName)
     {
-        ScoreInfo.RefreshStarSprites(m_starSprites, m_game ["name"].ToString(), colorName);
-        /*
-        string gameName = m_game ["name"].ToString();
-        string colorName = ColorInfo.GetColorString(pipColor);
-
-        int numStars = 0;
-        int targetScore = ScoreInfo.Instance.GetTargetScore(gameName, colorName);
-
-        if (targetScore > 0)
+        if (m_starsAreTimeBased)
         {
-            float time = ScoreInfo.Instance.GetTime(gameName, colorName);
-
-            if(time < ScoreInfo.Instance.GetThreeStar(gameName, colorName))
-            {
-                numStars = 3;
-            }
-            else if(time < ScoreInfo.Instance.GetTwoStar(gameName, colorName))
-            {
-                numStars = 2;
-            }
-            else
-            {
-                numStars = 1;
-            }
+            ScoreInfo.RefreshTimeStars(m_starSprites, m_game ["name"].ToString(), colorName);
         }
-
-        for (int i = 0; i < m_starSprites.Length; ++i)
+        else
         {
-            string spriteName = i < numStars ? m_starOnName : m_starOffName;
-            m_starSprites[i].spriteName = spriteName;
+            ScoreInfo.RefreshScoreStars(m_starSprites, m_game ["name"].ToString(), colorName);
         }
-        */
     }
 }

@@ -3,8 +3,26 @@ using System.Collections;
 
 public class ScoreKeeper : MonoBehaviour 
 {
+    [SerializeField]
+    protected bool m_playAudio = true;
+
     protected int m_score = 0;
     protected int m_targetScore;
+
+
+    public void SetPlayAudio(bool playAudio)
+    {
+        m_playAudio = playAudio;
+    }
+
+    protected void PlayAudio(int delta)
+    {
+        if (m_playAudio)
+        {
+            string audioEvent = delta > 0 ? "VOCAL_CORRECT" : "VOCAL_INCORRECT";
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+        }
+    }
 
     public virtual void SetTargetScore(int targetScore) 
     {

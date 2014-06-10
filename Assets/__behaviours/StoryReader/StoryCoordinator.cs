@@ -41,7 +41,15 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     int m_numPages;
     int m_currentPage;
 
-    string m_currentTextAttribute;
+    string m_currentColor;
+    string m_currentTextAttribute
+    {
+        get
+        {
+            return "text_" + m_currentColor;
+        }
+    }
+
 
     List<GameObject> m_textObjects = new List<GameObject>();
     
@@ -70,7 +78,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         ColorInfo.PipColor startPipColor = StoryMenuInfo.Instance.GetStartPipColor();
 
-        m_currentTextAttribute = "text_" + ColorInfo.GetColorString(startPipColor).ToLower();
+        m_currentColor = ColorInfo.GetColorString(startPipColor).ToLower();
 
         DataRow story = DataHelpers.GetStory();
 
@@ -190,10 +198,12 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             m_currentColorButton = button;
 
-            SetTextAttribute(ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower());
+            m_currentColor = ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower();
+            //SetTextAttribute(ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower());
         }
     }
 
+    /*
     public void SetTextAttribute(string textAttribute)
     {
         StartCoroutine(SetLanguageCo(textAttribute));
@@ -219,12 +229,14 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             TweenAlpha.Begin(m_textPanel, m_fadeDuration, 0);
         }
     }
+    */
 
     void UpdateAudio(DataRow storyPage)
     {
         if (storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
-            string audioFileName = storyPage ["audio"] != null ? System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), m_currentTextAttribute) : null;
+            string audioFileName = storyPage ["audio"] != null ? System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), m_currentColor) : null;
+            //Debug.Log("audioFileName: " + audioFileName);
 
             m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
             m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + audioFileName);

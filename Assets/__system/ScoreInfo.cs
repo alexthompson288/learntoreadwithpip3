@@ -81,6 +81,12 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return tracker != null ? tracker.GetTargetScore() : 0;
     }
 
+    public float GetProportionalScore(string game, string type)
+    {
+        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
+        return tracker != null ? tracker.GetProportionalScore() : 0;
+    }
+
     public float GetTime(string game, string type)
     {
         ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
@@ -132,22 +138,54 @@ public class ScoreInfo : Singleton<ScoreInfo>
         }
     }
 
-    public static void RefreshStarSprites(UISprite[] starSprites, string game, string type)
+    public static void RefreshScoreStars(UISprite[] starSprites, string game, string type)
     {
         System.Array.Sort(starSprites, CollectionHelpers.ComparePosX);
 
         int numStars = 0;
-        int targetScore = ScoreInfo.Instance.GetTargetScore(game, type);
+        int targetScore = Instance.GetTargetScore(game, type);
         
         if (targetScore > 0)
         {
-            float time = ScoreInfo.Instance.GetTime(game, type);
-            
-            if(time < ScoreInfo.Instance.GetThreeStar(game, type))
+            float proportionalScore = Instance.GetProportionalScore(game, type);
+
+            if(proportionalScore > 0.6f)
             {
                 numStars = 3;
             }
-            else if(time < ScoreInfo.Instance.GetTwoStar(game, type))
+            else if(proportionalScore > 0.3f)
+            {
+                numStars = 2;
+            }
+            else
+            {
+                numStars = 1;
+            }
+        }
+        
+        for (int i = 0; i < starSprites.Length; ++i)
+        {
+            string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
+            starSprites[i].spriteName = spriteName;
+        }
+    }
+
+    public static void RefreshTimeStars(UISprite[] starSprites, string game, string type)
+    {
+        System.Array.Sort(starSprites, CollectionHelpers.ComparePosX);
+
+        int numStars = 0;
+        int targetScore = Instance.GetTargetScore(game, type);
+        
+        if (targetScore > 0)
+        {
+            float time = Instance.GetTime(game, type);
+            
+            if(time < Instance.GetThreeStar(game, type))
+            {
+                numStars = 3;
+            }
+            else if(time < Instance.GetTwoStar(game, type))
             {
                 numStars = 2;
             }

@@ -218,7 +218,7 @@ public class StoryMenuCoordinator : MonoBehaviour
             iTween.ScaleTo(m_readButtonParent, activeButtonScale, m_tweenDuration);
             iTween.ScaleTo(m_picturesButtonParent, activeButtonScale, m_tweenDuration);
 
-            ScoreInfo.RefreshStarSprites(m_starSprites, m_quizGameName, CreateScoreType());
+            ScoreInfo.RefreshScoreStars(m_starSprites, m_quizGameName, CreateScoreType());
         }
     }
 

@@ -245,6 +245,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
 
+
+            
             target.ApplyHitForce(ball.transform);
 
             if(!m_targetsShowPicture && m_dataType == "phonemes")

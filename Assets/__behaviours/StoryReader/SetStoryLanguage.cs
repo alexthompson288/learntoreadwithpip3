@@ -8,7 +8,6 @@ public class SetStoryLanguage : MonoBehaviour {
 	// Update is called once per frame
 	void OnClick () 
 	{
-		//StoryReaderLogic.Instance.SetLanguage(m_language);
-        StoryCoordinator.Instance.SetTextAttribute(m_language);
+        //StoryCoordinator.Instance.SetTextAttribute(m_language);
 	}
 }

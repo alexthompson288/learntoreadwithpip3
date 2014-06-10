@@ -27,7 +27,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
     [SerializeField]
     private ClickEvent m_nextButton;
 
-    ThrobGUIElement m_currentThrobBehaviour = null;
+    RotateConstantly m_currentRotateBehaviour = null;
 
 	// Use this for initialization
 	IEnumerator Start () 
@@ -52,8 +52,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
                 
                 if(VoyageInfo.Instance.GetSessionBackground(sessionId) == m_spriteNames[i])
                 {
-                    m_currentThrobBehaviour = newButton.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
-                    m_currentThrobBehaviour.On();
+                    m_currentRotateBehaviour = newButton.GetComponent<RotateConstantly>() as RotateConstantly;
+                    m_currentRotateBehaviour.enabled = true;
                     
                     m_collectableBackground.spriteName = m_spriteNames[i];
                 }
@@ -128,19 +128,19 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
     void OnButtonClick(ClickEvent click)
     {
-        if (m_currentThrobBehaviour != null)
+        if (m_currentRotateBehaviour != null)
         {
-            m_currentThrobBehaviour.Off();
+            m_currentRotateBehaviour.enabled = false;
         }
 
-        m_currentThrobBehaviour = click.GetComponent<ThrobGUIElement>() as ThrobGUIElement;
-        m_currentThrobBehaviour.On();
+        m_currentRotateBehaviour = click.GetComponent<RotateConstantly>() as RotateConstantly;
+        m_currentRotateBehaviour.enabled = true;
 
         m_collectableBackground.spriteName = click.GetString();
 
         if (VoyageInfo.Instance.hasBookmark)
         {
-            Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
+            //Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
             VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
         }
     }

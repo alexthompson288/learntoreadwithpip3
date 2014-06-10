@@ -178,13 +178,6 @@ public class SplineFollower : MonoBehaviour
 
         yield break;
     }
-
-    void OnGUI()
-    {
-        GUILayout.Label("currentTime: " + m_currentTime);
-        GUILayout.Label("path.totalTime: " + m_paths [m_pathIndex].m_totalTime);
-        GUILayout.Label("proportionalDistance: " + m_currentTime / (m_paths [m_pathIndex].m_totalTime));
-    }
     
     public IEnumerator On () 
     {

@@ -29,18 +29,6 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
         m_tweenBehaviour.gameObject.SetActive(true);
     }
 
-	void Update()
-	{
-		if(Input.GetKeyDown(KeyCode.N))
-		{
-			On();
-		}
-		else if(Input.GetKeyDown(KeyCode.M))
-		{
-			Off (false);
-		}
-	}
-
 	public void On()
 	{
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
