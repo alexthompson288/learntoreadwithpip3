@@ -8,8 +8,6 @@ public class JoinPairsPlayer : GamePlayer
     [SerializeField]
     private Camera m_cam;
     [SerializeField]
-    private int m_playerIndex;
-    [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private Transform m_lowCorner;
