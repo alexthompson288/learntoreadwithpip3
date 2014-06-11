@@ -10,11 +10,9 @@ public class JoinPairsPlayer : GamePlayer
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
-    private Transform m_lowCorner;
+    private Transform m_topOff;
     [SerializeField]
-    private Transform m_highCorner;
-    [SerializeField]
-    private Transform m_spawnTransform;
+    private Transform m_botOff;
     [SerializeField]
     private Transform m_leftOff;
     [SerializeField]
@@ -27,6 +25,9 @@ public class JoinPairsPlayer : GamePlayer
     private Color m_lineRendererColor;
     [SerializeField]
     private Transform[] m_locators;
+
+    Transform m_off1;
+    Transform m_off2;
 
     GameObject m_firstPrefab;
     GameObject m_secondPrefab;
@@ -48,10 +49,9 @@ public class JoinPairsPlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        //Debug.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        //Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
@@ -64,18 +64,14 @@ public class JoinPairsPlayer : GamePlayer
     public IEnumerator DrawDemoLine()
     {
         m_isDrawingDemo = true;
-        //Debug.Log("DrawDemoLine()");
         yield return StartCoroutine(SetUpNext());
 
         JoinableLineDraw[] joinables = new JoinableLineDraw[2];
-        //Debug.Log("m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
         for (int i = 0; i < joinables.Length && i < m_spawnedJoinables.Count; ++i)
         {
             joinables[i] = m_spawnedJoinables[i].GetComponent<JoinableLineDraw>() as JoinableLineDraw;
-            //joinables[i].EnableCollider(false);
         }
 
-        //LineDrawManager.Instance.CreateLine(joinables[0], m_lineRendererMaterial, m_lineRendererColor, m_lineRendererColor);
         joinables [0].Tint(Color.grey);
 
         yield return StartCoroutine(LineDrawManager.Instance.DrawDemoLine(joinables[0].transform.position, joinables[1].transform.position, m_cam, 
@@ -90,19 +86,23 @@ public class JoinPairsPlayer : GamePlayer
 
     public void SetUp(int targetScore, string dataType)
     {
-        //Debug.Log("JoinPairsPlayer.SetUp(): " + dataType);
-
         m_scoreKeeper.SetTargetScore(targetScore);
 
         if (dataType == "numbers")
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.numberPrefab;
             m_secondPrefab = JoinPairsCoordinator.Instance.numberPrefab;
+
+            m_off1 = m_leftOff;
+            m_off2 = m_rightOff;
         } 
         else if (dataType == "shapes")
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;
             m_secondPrefab = JoinPairsCoordinator.Instance.picturePrefab;
+
+            m_off1 = m_leftOff;
+            m_off2 = m_rightOff;
         } 
         else
         {
@@ -111,6 +111,8 @@ public class JoinPairsPlayer : GamePlayer
             Debug.Log("m_firstPrefab: " + m_firstPrefab.name);
             Debug.Log("m_secondPrefab: " + m_secondPrefab.name);
 
+            m_off1 = m_topOff;
+            m_off2 = m_botOff;
         }
     }
 
@@ -230,9 +232,11 @@ public class JoinPairsPlayer : GamePlayer
                         DataRow audioData = a.joinableType == JoinableLineDraw.JoinableType.Picture ? b.data : a.data;
                         JoinPairsCoordinator.Instance.PlayShortAudio(audioData);
                     }
-                    
-                    a.TransitionOff(a.transform.position.x < b.transform.position.x ? m_leftOff : m_rightOff);
-                    b.TransitionOff(a.transform.position.x < b.transform.position.x ? m_rightOff : m_leftOff);
+
+                    bool aIsTop = a.joinableType == JoinableLineDraw.JoinableType.Picture;
+
+                    a.TransitionOff(aIsTop ? m_off1 : m_off2);
+                    b.TransitionOff(aIsTop ? m_off2 : m_off1);
                     m_spawnedJoinables.Remove(a.gameObject);
                     m_spawnedJoinables.Remove(b.gameObject);
 

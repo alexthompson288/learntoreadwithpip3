@@ -26,6 +26,8 @@ public class JoinableLineDraw : LineDraw
     private UISprite[] m_numberSprites;
     [SerializeField]
     private string[] m_spriteNames;
+    [SerializeField]
+    private WobbleGUIElement m_wobbleBehaviour;
 
     public JoinableType joinableType
     {
@@ -67,6 +69,7 @@ public class JoinableLineDraw : LineDraw
         else if (m_joinableType == JoinableType.Text)
         {
             m_label.text = DataHelpers.GetLabelText(dataType, m_data);
+            NGUIHelpers.MaxLabelWidth(m_label, 450);
         } 
         else
         {
@@ -127,8 +130,19 @@ public class JoinableLineDraw : LineDraw
         m_background.color = newCol;
     }
 
+    public void EnableWobble(bool enable)
+    {
+        m_wobbleBehaviour.enabled = enable;
+
+        if (!enable)
+        {
+            m_wobbleBehaviour.transform.localPosition = Vector3.zero;
+        }
+    }
+
     public void TransitionOff(Transform targetPosition)
     {
+        EnableWobble(false);
         StartCoroutine(TweenToPos(targetPosition));
     }
 
@@ -137,7 +151,7 @@ public class JoinableLineDraw : LineDraw
         iTween.Stop(gameObject);
         collider.enabled = false;
         iTween.MoveTo(gameObject, targetPosition.position, 1.0f);
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.5f);
         iTween.ScaleTo(gameObject, Vector3.zero, 1.0f);
         yield return new WaitForSeconds(1.0f);
         Destroy(gameObject);
