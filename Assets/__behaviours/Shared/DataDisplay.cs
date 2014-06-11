@@ -28,12 +28,12 @@ public class DataDisplay : MonoBehaviour
 
     public void On(string dataType, DataRow data)
     {
-        Debug.Log("DataDisplay.On(): " + m_showPicture);
         m_dataType = dataType;
         m_data = data;
 
         SetDisplaysActive();
 
+        collider.enabled = true;
         if (m_showPicture)
         {
             if(m_dataType == "numbers")
@@ -60,6 +60,7 @@ public class DataDisplay : MonoBehaviour
         else
         {
             m_label.text = DataHelpers.GetLabelText(m_dataType, m_data);
+
             m_tweenBehaviour.On();
         }
     }
@@ -73,6 +74,7 @@ public class DataDisplay : MonoBehaviour
 
     public void Off()
     {
+        collider.enabled = false;
         m_tweenBehaviour.Off();
     }
 
