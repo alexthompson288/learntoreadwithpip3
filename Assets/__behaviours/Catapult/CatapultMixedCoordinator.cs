@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Wingrove;
 using System;
 
+// IMPORTANT: If dataType == "words" and targetShowPictures == true, then m_currentData is a phoneme (not a word)
 public class CatapultMixedCoordinator : MonoBehaviour 
 {
     [SerializeField]
@@ -21,34 +22,27 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
-    private bool m_isAnswerAlwaysCorrect;
-    [SerializeField]
     private DataDisplay m_dataDisplay;
     [SerializeField]
     private bool m_targetsShowPicture;
-    [SerializeField]
-    private ImageBlackboard m_blackboard;
    
     float m_startTime;
     
     int m_score = 0;
     
     List<DataRow> m_dataPool = new List<DataRow>();
-    DataRow m_currentData;
-    
-    Dictionary<int, AudioClip> m_shortAudio = new Dictionary<int, AudioClip>();
-    Dictionary<int, AudioClip> m_longAudio = new Dictionary<int, AudioClip>();
+    DataRow m_currentData; 
 
 
-    // If the dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
+    // If dataType == "words" and targetShowPictures == true, then m_currentData is a phoneme (not a word)
+    public bool IsDataMixed()
+    {
+        return m_dataType == "words" && m_targetsShowPicture;
+    }
 
-    
     IEnumerator Start()
     {
         m_scoreKeeper.SetTargetScore(m_targetScore);
-
-        CatapultBehaviour cannonBehaviour = UnityEngine.Object.FindObjectOfType(typeof(CatapultBehaviour)) as CatapultBehaviour;
-        //cannonBehaviour.MoveToMultiplayerLocation(0);
 
         m_probabilityTargetIsCorrect = Mathf.Clamp01(m_probabilityTargetIsCorrect);
         
@@ -81,70 +75,32 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
         
         m_dataPool = DataHelpers.GetData(m_dataType);
-
-#if UNITY_EDITOR
-        if(m_dataPool.Count == 0)
-        {
-            int pinkModuleId = DataHelpers.GetModuleId(ColorInfo.PipColor.Pink);
-
-            if(m_dataType == "words")
-            {
-                m_dataPool = DataHelpers.GetModuleWords(pinkModuleId);
-            }
-            else if(m_dataType == "phonemes")
-            {
-                m_dataPool = DataHelpers.GetModulePhonemes(pinkModuleId);
-            }
-        }
-#endif
-
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
         
         if (m_dataPool.Count > 0)
         {
-            foreach (DataRow data in m_dataPool)
+            if(IsDataMixed())
             {
-                int dataId = Convert.ToInt32(data["id"]);
+                m_currentData = DataHelpers.GetSingleTargetData("phonemes");
 
-                if (m_dataType == "phonemes")
+                if(m_currentData == null)
                 {
-                    m_shortAudio [dataId] = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
-                    m_longAudio [dataId] = LoaderHelpers.LoadMnemonic(data);
+                    DataRow randomWord = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
+                    m_currentData = DataHelpers.GetFirstPhonemeInWord(randomWord);
                 }
-                // If dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
-                else if(m_dataType == "words" && m_targetsShowPicture)
-                {
-                    DataRow phonemeData = DataHelpers.GetFirstPhonemeInWord(data);
-
-                    m_shortAudio [Convert.ToInt32(phonemeData["id"])] = AudioBankManager.Instance.GetAudioClip(phonemeData["grapheme"].ToString());
-                    m_longAudio [dataId] = LoaderHelpers.LoadAudioForWord(data);
-                    //m_longAudio [data] = LoaderHelpers.LoadMnemonic(phonemeData);
-                }
-                else
-                {
-                    m_shortAudio [dataId] = LoaderHelpers.LoadAudioForWord(data);
-                }
-            }
-
-            m_currentData = DataHelpers.GetSingleTargetData(m_dataType, m_dataPool);
-
-
-            Debug.Log("m_currentData: " + m_currentData);
-
-            // If dataType is "words" and targets show pictures then the "correct" answer is any picture that starts with the same phoneme as the target word
-            if(m_dataType == "words" && m_targetsShowPicture)
-            {
-                // Picture display should only show the first phoneme of the target word
-                m_dataDisplay.On("phonemes", DataHelpers.GetFirstPhonemeInWord(m_currentData));
             }
             else
             {
-                m_dataDisplay.On(m_dataType, m_currentData);
+                m_currentData = DataHelpers.GetSingleTargetData(m_dataType, m_dataPool);
             }
+
+            string currentDataType = m_dataType == "phonemes" || IsDataMixed() ? "phonemes" : "words";
+            m_dataDisplay.On(currentDataType, m_currentData);
+
             
             InitializeTargets(UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[]);
             
-            PlayShortAudio();
+            PlayShortAudio(m_currentData);
 
             m_startTime = Time.time;
         } 
@@ -152,27 +108,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
         {
             StartCoroutine(OnGameComplete());
         }
-    }
-
-    void LogAudio()
-    {
-#if UNITY_EDITOR
-        Debug.Log("LOGGING AUDIO");
-        Debug.Log("DATATYPE: " + m_dataType);
-        Debug.Log("TARGETPICTURES: " + m_targetsShowPicture);
-        
-        Debug.Log("LOGGING SHORT - " + m_shortAudio.Count);
-        foreach(KeyValuePair<int, AudioClip> kvp in m_shortAudio)
-        {
-            Debug.Log(kvp.Key + " - " + kvp.Value.name);
-        }
-        
-        Debug.Log("LOGGING LONG - " + m_longAudio.Count);
-        foreach(KeyValuePair<int, AudioClip> kvp in m_longAudio)
-        {
-            Debug.Log(kvp.Key + " - " + kvp.Value.name);
-        }
-#endif
     }
     
     void InitializeTargets(Target[] targets)
@@ -194,23 +129,21 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
     bool IsDataCorrect(DataRow data)
     {
-        if (m_isAnswerAlwaysCorrect)
-        {
-            return true;
-        }
-        else if (m_targetsShowPicture && m_dataType == "words")
-        {
-            return DataHelpers.WordsShareOnsetPhonemes(data, m_currentData);
-        } 
-        else
-        {
-            return data.Equals(m_currentData);
-        }
+        return IsDataMixed() ? m_currentData.Equals(DataHelpers.GetFirstPhonemeInWord(data)) : data.Equals(m_currentData);
+    }
+
+    DataRow FindRandomCorrect()
+    {
+        int currentId = m_currentData.GetId();
+
+        List<DataRow> correctPool = m_dataPool.FindAll(x => DataHelpers.GetFirstPhonemeInWord(x).GetId() == currentId);
+
+        return correctPool.Count > 0 ? correctPool[UnityEngine.Random.Range(0, correctPool.Count)] : m_dataPool[UnityEngine.Random.Range(0, correctPool.Count)];
     }
     
     void SetTargetData(Target target)
     {
-        DataRow targetData = m_currentData;
+        DataRow targetData = IsDataMixed() ? FindRandomCorrect() : m_currentData;
         if (UnityEngine.Random.Range(0f, 1f) > m_probabilityTargetIsCorrect)
         {
             while (IsDataCorrect(targetData))
@@ -241,8 +174,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
 
-
-            
             target.ApplyHitForce(ball.transform);
 
             if(!m_targetsShowPicture && m_dataType == "phonemes")
@@ -253,17 +184,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
             {
                 PlayLongAudio(target.data);
             }
-
-            /*
-            if(m_targetsShowPicture)
-            {
-                if(m_dataType == "words")
-                {
-                    Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
-                    m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
-                }
-            }
-            */
 
             m_score++;
             
@@ -287,65 +207,27 @@ public class CatapultMixedCoordinator : MonoBehaviour
         GameManager.Instance.CompleteGame();
     }
     
-    void PlayLongAudio(DataRow data = null)
+    void PlayLongAudio(DataRow data)
     {
-        if (data == null)
+        string dataType = data ["word"] != null ? "words" : "phonemes";
+        AudioClip clip = DataHelpers.GetLongAudio(dataType, data);
+        
+        if (clip != null)
         {
-            data = m_currentData;
-        }
-
-        bool hasPlayedAudio = false;
-
-        int dataId = Convert.ToInt32(data ["id"]);
-
-        if (m_longAudio.ContainsKey(dataId))
-        {
-            m_audioSource.clip = m_longAudio [dataId];
-            if (m_audioSource.clip != null)
-            {
-                hasPlayedAudio = true;
-                m_audioSource.Play();
-            } 
-        }
-
-        if(!hasPlayedAudio)
-        {
-            PlayShortAudio(data);
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
         }
     }
     
-    void PlayShortAudio(DataRow data = null)
+    void PlayShortAudio(DataRow data)
     {
-        if (data == null)
+        string dataType = data ["word"] != null ? "words" : "phonemes";
+        AudioClip clip = DataHelpers.GetShortAudio(dataType, data);
+
+        if (clip != null)
         {
-            data = m_currentData;
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
         }
-
-        // TODO: Temporary fix. Come up with a decent solution for this
-        if (m_dataType == "words" && m_targetsShowPicture && data["word"] != null)
-        {
-            data = DataHelpers.GetFirstPhonemeInWord(data);
-        }
-
-        int dataId = Convert.ToInt32(data ["id"]);
-
-        if (m_shortAudio.ContainsKey(dataId))
-        {
-            m_audioSource.clip = m_shortAudio [dataId];
-            if (m_audioSource.clip != null)
-            {
-                m_audioSource.Play();
-            }
-        } 
-#if UNITY_EDITOR
-        else
-        {
-            string attributeName = data["word"] != null ? "word" : "phoneme";
-            Debug.LogError("NO SHORT KEY: " + data[attributeName].ToString() + " - " + data["id"].ToString());
-            Debug.Log("m_shortAudio.Count: " + m_shortAudio.Count);
-
-            //LogAudio();
-        }
-#endif
     }
 }

@@ -55,14 +55,20 @@ public class ScorePip : ScoreKeeper
         iTween.Stop(targetGo);
         
         yield return null;
-        
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("position", m_collectionPoint.position);
-        tweenArgs.Add("speed", m_collectableTweenSpeed);
-        tweenArgs.Add("easetype", m_collectableEaseType);
-        iTween.MoveTo(targetGo, tweenArgs);
-        
+
         float cauldronTweenDuration = Mathf.Abs(((m_collectionPoint.transform.position - targetGo.transform.position).magnitude) / m_collectableTweenSpeed);
+
+        Hashtable scaleTweenArgs = new Hashtable();
+        scaleTweenArgs.Add("scale", Vector3.one * 0.2f);
+        scaleTweenArgs.Add("time", cauldronTweenDuration);
+        scaleTweenArgs.Add("easetype", iTween.EaseType.linear);
+        iTween.ScaleTo(targetGo, scaleTweenArgs);
+
+        Hashtable positionTweenArgs = new Hashtable();
+        positionTweenArgs.Add("position", m_collectionPoint.position);
+        positionTweenArgs.Add("speed", m_collectableTweenSpeed);
+        positionTweenArgs.Add("easetype", m_collectableEaseType);
+        iTween.MoveTo(targetGo, positionTweenArgs);
 
         yield return new WaitForSeconds(cauldronTweenDuration);
         
