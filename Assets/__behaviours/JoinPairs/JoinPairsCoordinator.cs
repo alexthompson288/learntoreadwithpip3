@@ -84,8 +84,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         }
     }
 
-    Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
-    Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, Texture2D> m_pictures = new Dictionary<DataRow, Texture2D>();
 
     public int GetNumPlayers()
@@ -149,13 +147,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         foreach (DataRow data in m_dataPool)
         {
             m_pictures[data] = DataHelpers.GetPicture(m_dataType, data);
-
-            m_shortAudio[data] = DataHelpers.GetShortAudio(m_dataType, data);
-
-            if(m_dataType == "phonemes")
-            {
-                m_longAudio[data] = DataHelpers.GetLongAudio(m_dataType, data);
-            }
         }
 
         if(m_dataPool.Count > 0)
@@ -267,35 +258,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         return m_pictures.ContainsKey(data) ? m_pictures [data] : null;
     }
 
-    public void PlayShortAudio(DataRow data)
-    {
-        PlayAudio(data, m_shortAudio);
-    }
-
-    public void PlayLongAudio(DataRow data)
-    {
-        PlayAudio(data, m_longAudio);
-    }
-
-    void PlayAudio(DataRow data, Dictionary<DataRow, AudioClip> audioDictionary)
-    {
-        if (audioDictionary.ContainsKey(data))
-        {
-            AudioClip clip = audioDictionary [data];
-            if (clip != null)
-            {
-                m_audioSource.clip = clip;
-                m_audioSource.Play();
-            }
-        } 
-        else
-        {
-            string attributeName = dataType == "words" ? "word" : "phoneme";
-            Debug.LogError("NO KEY for " + data[attributeName].ToString());
-            Debug.Log("audioDictionary.Count: " + audioDictionary.Count);
-        }
-    }
-
     public int GetPairsToShowAtOnce()
     {
         return m_pairsToShowAtOnce;
@@ -304,5 +266,24 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     public void IncrementNumFinishedPlayers()
     {
         ++m_numFinishedPlayers;
+    }
+
+    public void PlayShortAudio(DataRow data)
+    {
+        PlayAudio(DataHelpers.GetShortAudio(m_dataType, data));
+    }
+
+    public void PlayLongAudio(DataRow data)
+    {
+        PlayAudio(DataHelpers.GetLongAudio(m_dataType, data));
+    }
+
+    void PlayAudio(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
+        }
     }
 }

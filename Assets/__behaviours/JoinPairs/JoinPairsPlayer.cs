@@ -213,7 +213,7 @@ public class JoinPairsPlayer : GamePlayer
                     if(SessionInformation.Instance.GetNumPlayers() == 1)
                     {
                         DataRow audioData = a.joinableType == JoinableLineDraw.JoinableType.Picture ? b.data : a.data;
-                        JoinPairsCoordinator.Instance.PlayShortAudio(audioData);
+                        JoinPairsCoordinator.Instance.PlayLongAudio(audioData);
                     }
 
                     bool aIsTop = a.joinableType == JoinableLineDraw.JoinableType.Picture;
@@ -276,15 +276,5 @@ public class JoinPairsPlayer : GamePlayer
     public IEnumerator OnWin()
     {
         yield return StartCoroutine(m_scoreKeeper.On());
-    }
-
-    void PlayJoinableShortAudio(JoinableLineDraw joinable)
-    {
-        JoinPairsCoordinator.Instance.PlayShortAudio(joinable.data);
-    }
-
-    void PlayJoinableLongAudio(JoinableLineDraw joinable)
-    {
-        JoinPairsCoordinator.Instance.PlayLongAudio(joinable.data);
     }
 }
