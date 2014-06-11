@@ -101,7 +101,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     public string GetSessionBackground(int sessionId)
     {
-        string spriteName = m_sessionBackgrounds.ContainsKey(sessionId) ? m_sessionBackgrounds [sessionId] : "Incomplete";
+        string spriteName = m_sessionBackgrounds.ContainsKey(sessionId) ? m_sessionBackgrounds [sessionId] : "incomplete";
         return spriteName;
     }
 
