@@ -22,7 +22,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     private List<string> m_remainingWords = new List<string>();
     private List<string> m_allWords = new List<string>();
-    int m_correctIndex = 0;
+
     int m_score = 0;
     bool m_gotIncorrect = false;
 
@@ -78,20 +78,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			m_maxSpawn = 2;
 		}
 
-		Debug.Log("m_maxSpawn: " + m_maxSpawn);
-
-		Debug.Log("m_wordSelect.Count: " + m_wordSelection.Count);
-		Debug.Log("m_allWords.Count: " + m_allWords.Count);
-		Debug.Log("m_remainingWords.Count: " + m_remainingWords.Count);
-
-
-        //yield return new WaitForSeconds(1.0f);
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_PICTURE_INSTRUCTION");
-        //yield return new WaitForSeconds(3.0f);
-
 		Resources.UnloadUnusedAssets();
 
-		Debug.Log("m_maxSpawn: " + m_maxSpawn);
 
 		if(m_wordSelection.Count >= m_maxSpawn)
 		{
@@ -107,89 +95,74 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     {
         yield return new WaitForSeconds(1.5f);
 
-        //if (m_remainingWords.Count >= m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
-        //{
-            m_gotIncorrect = false;
-			string selectedWord = null;
-			Texture2D targetTex = null;
-
-			Debug.Log("ShowNextQuestion()");
-
-			while(targetTex == null)
-			{
-				selectedWord = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
-				Debug.Log("selectedWord: " + selectedWord);
-				targetTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedWord);
-			}
+        m_gotIncorrect = false;
+        string selectedWord = null;
+        Texture2D targetTex = null;
+		
+        while(targetTex == null)
+        {
+            selectedWord = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
+            targetTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedWord);
+        }
 
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + selectedWord + "'");
+
         if (dt.Rows.Count > 0)
         {
             m_currentWordData = dt.Rows[0];
             //UserStats.Activity.AddWord(m_currentWordData);
         }
 
-			Debug.Log("Found target text");
+        List<string> otherWordList = new List<string>();
 
-            //m_remainingWords.Remove(selectedWord);
+        while (otherWordList.Count < m_maxSpawn - 1)
+        {			
+            string otherWord = m_allWords[Random.Range(0, m_allWords.Count)];
+			
+            Texture2D tex = null;
 
-            List<string> otherWordList = new List<string>();
-
-            //while (otherWordList.Count < m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
-			while (otherWordList.Count < m_maxSpawn - 1)
-			{
-			Debug.Log("Adding to otherWordList: " + otherWordList.Count);
-				string otherWord = m_allWords[Random.Range(0, m_allWords.Count)];
-				Texture2D tex = null;
-                while (otherWord == selectedWord || tex == null)
-                {
-                    otherWord = m_allWords[Random.Range(0, m_allWords.Count)];
-					Debug.Log("otherWord: " + otherWord);
-					tex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + otherWord);
-                }
-                if ( !otherWordList.Contains(otherWord) )
-                {
-                    otherWordList.Add(otherWord);
-                }
+            while (otherWord == selectedWord || tex == null)
+            {
+                otherWord = m_allWords[Random.Range(0, m_allWords.Count)];
+                tex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + otherWord);
             }
 
-			Debug.Log("otherWordList.Count: " + otherWordList.Count);
-
-            PipPadBehaviour.Instance.Show(selectedWord);
-            //if (m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()] == 2)
-
-		Debug.Log("m_maxSpawn: " + m_maxSpawn);
-			if (m_maxSpawn == 2)
+            if ( !otherWordList.Contains(otherWord) )
             {
-                if (Random.Range(0, 10) > 5)
-                {
-                    PipPadBehaviour.Instance.ShowMultipleBlackboards(selectedWord, otherWordList[0], null);
-                    m_correctIndex = 0;
-                }
-                else
-                {
-                    PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], selectedWord, null);
-                    m_correctIndex = 1;
-                }
+                otherWordList.Add(otherWord);
+            }
+        }
+
+        PipPadBehaviour.Instance.Show(selectedWord);
+
+        if (m_maxSpawn == 2)
+        {
+            if (Random.Range(0, 10) > 5)
+            {
+                PipPadBehaviour.Instance.ShowMultipleBlackboards(selectedWord, otherWordList[0], null);
             }
             else
             {
-                m_correctIndex = Random.Range(0, 2);
-                if (m_correctIndex == 0)
-                {
-                    PipPadBehaviour.Instance.ShowMultipleBlackboards(selectedWord, otherWordList[0], otherWordList[1]);
-                }
-                else if (m_correctIndex == 1)
-                {
-                    PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], selectedWord, otherWordList[1]);
-                }
-                else
-                {
-                    PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], otherWordList[1], selectedWord);
-
-                }
+                PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], selectedWord, null);
             }
-        //}
+        }
+        else
+        {
+            int correctIndex = Random.Range(0, 2);
+
+            if (correctIndex == 0)
+            {
+                PipPadBehaviour.Instance.ShowMultipleBlackboards(selectedWord, otherWordList[0], otherWordList[1]);
+            }
+            else if (correctIndex == 1)
+            {
+                PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], selectedWord, otherWordList[1]);
+            }
+            else
+            {
+                PipPadBehaviour.Instance.ShowMultipleBlackboards(otherWordList[0], otherWordList[1], selectedWord);
+            }
+        }
 
         yield break;
     }
@@ -233,7 +206,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     {
         //UserStats.Activity.IncrementNumAnswers();
 
-        if (index == m_correctIndex)
+        if(m_currentWordData["word"].ToString() == clickedBlackboard.GetImageName().Replace("_", ""))
         {
             StopAllCoroutines();
             StartCoroutine(OnCorrectClick());

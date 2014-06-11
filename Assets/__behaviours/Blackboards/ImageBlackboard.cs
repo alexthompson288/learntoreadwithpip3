@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ImageBlackboard : MonoBehaviour {
-
+public class ImageBlackboard : MonoBehaviour 
+{
     [SerializeField]
     UITexture m_texture;
     [SerializeField]
@@ -27,6 +27,7 @@ public class ImageBlackboard : MonoBehaviour {
     string m_audioWord;
 	
 	bool m_movedWidgets = false;
+
 
 	// Use this for initialization
 	void Awake() 
