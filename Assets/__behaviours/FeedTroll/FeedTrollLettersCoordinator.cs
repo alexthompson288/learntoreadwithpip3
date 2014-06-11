@@ -36,7 +36,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
-    private AudioClip m_trollOnWinAudio;
+    private AudioClip m_onCompleteAudio;
 	[SerializeField]
     private Blackboard m_blackBoard;
 	[SerializeField]
@@ -296,7 +296,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		iTween.MoveTo(m_moveHierarchy, m_offPosition.transform.position, 1.0f);
 		yield return new WaitForSeconds(1.0f);
 		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP");
-        m_audioSource.clip = m_trollOnWinAudio;
+        m_audioSource.clip = m_onCompleteAudio;
         m_audioSource.Play();
         yield return new WaitForSeconds(0.1f);
 		m_videoHierarchy.SetActive(true);

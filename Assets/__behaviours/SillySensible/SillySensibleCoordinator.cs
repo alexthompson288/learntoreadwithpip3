@@ -41,6 +41,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 	private Transform m_trollCorrectPosition;
 	[SerializeField]
 	private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip m_onCompleteAudio;
 
     List<DataRow> m_wordList = new List<DataRow>();
     List<DataRow> m_sillyWords = new List<DataRow>();
@@ -85,7 +87,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 		}
 		else
 		{
-			FinishGame();
+			StartCoroutine(CompleteGame());
 		}
 	}
 
@@ -239,6 +241,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
             {
                 if (m_score == m_targetScore)
                 {
+                    /*
                     yield return new WaitForSeconds(1.0f);
                     iTween.MoveTo(m_moveHierarchy, m_offPosition.transform.position, 1.0f);
                     yield return new WaitForSeconds(1.0f);
@@ -247,8 +250,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
                     yield return new WaitForSeconds(3.0f);
                     WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_TROLL");
                     yield return new WaitForSeconds(3.0f);
+                    */
 
-					FinishGame();
+					StartCoroutine(CompleteGame());
 				}
                 else
                 {
@@ -274,11 +278,22 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
         {
             PipPadBehaviour.Instance.Show(m_currentWord);
         }
-
     }
 
-	void FinishGame()
-	{
-		GameManager.Instance.CompleteGame();
-	}
+    IEnumerator CompleteGame()
+    {
+        yield return new WaitForSeconds(1.0f);
+        iTween.MoveTo(m_moveHierarchy, m_offPosition.transform.position, 1.0f);
+        yield return new WaitForSeconds(1.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP");
+        m_audioSource.clip = m_onCompleteAudio;
+        m_audioSource.Play();
+        yield return new WaitForSeconds(0.1f);
+        m_videoHierarchy.SetActive(true);
+        yield return new WaitForSeconds(3.0f);
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_TROLL");
+        yield return new WaitForSeconds(3.0f);
+        
+        GameManager.Instance.CompleteGame();
+    }
 }
