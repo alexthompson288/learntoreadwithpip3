@@ -3,14 +3,14 @@ using System.Collections;
 
 public class JoinableLineDraw : LineDraw 
 {
-    public delegate void JoinableJoinedEvent(JoinableLineDraw self, JoinableLineDraw other);
-    public event JoinableJoinedEvent JoinableJoinEventHandler;
+    public delegate void JoinableJoinedEventHandler(JoinableLineDraw self, JoinableLineDraw other);
+    public event JoinableJoinedEventHandler JoinableJoined;
 
-    public delegate void JoinablePressedEvent(JoinableLineDraw self, bool pressed);
-    public event JoinablePressedEvent JoinablePressEventHandler;
+    public delegate void JoinablePressedEventHandler(JoinableLineDraw self, bool pressed);
+    public event JoinablePressedEventHandler JoinablePressed;
 
-    public delegate void JoinableClickedEvent(JoinableLineDraw self);
-    public event JoinableClickedEvent JoinableClickEventHandler;
+    public delegate void JoinableClickedEventHandler(JoinableLineDraw self);
+    public event JoinableClickedEventHandler JoinableClicked;
 
     [SerializeField]
     private bool m_isPicture;
@@ -90,9 +90,9 @@ public class JoinableLineDraw : LineDraw
     {
         base.OnPress(pressed);
 
-        if (JoinablePressEventHandler != null)
+        if (JoinablePressed != null)
         {
-            JoinablePressEventHandler(this, pressed);
+            JoinablePressed(this, pressed);
         }
 
         if (pressed)
@@ -107,9 +107,9 @@ public class JoinableLineDraw : LineDraw
             if (Physics.Raycast(camPos, out hit, 1 << gameObject.layer))
             {
                 GameObject other = hit.collider.gameObject;
-                if (JoinableJoinEventHandler != null && other.GetComponent<JoinableLineDraw>() != null)
+                if (JoinableJoined != null && other.GetComponent<JoinableLineDraw>() != null)
                 {
-                    JoinableJoinEventHandler(this, other.GetComponent<JoinableLineDraw>());
+                    JoinableJoined(this, other.GetComponent<JoinableLineDraw>());
                 }
             }
 
@@ -119,9 +119,9 @@ public class JoinableLineDraw : LineDraw
 
     void OnClick()
     {
-        if (JoinableClickEventHandler != null)
+        if (JoinableClicked != null)
         {
-            JoinableClickEventHandler(this);
+            JoinableClicked(this);
         }
     }
 

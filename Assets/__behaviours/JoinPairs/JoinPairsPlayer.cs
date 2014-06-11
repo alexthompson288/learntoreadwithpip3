@@ -108,8 +108,6 @@ public class JoinPairsPlayer : GamePlayer
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;
             m_secondPrefab = JoinPairsCoordinator.Instance.textPrefab;
-            Debug.Log("m_firstPrefab: " + m_firstPrefab.name);
-            Debug.Log("m_secondPrefab: " + m_secondPrefab.name);
 
             m_off1 = m_topOff;
             m_off2 = m_botOff;
@@ -118,21 +116,12 @@ public class JoinPairsPlayer : GamePlayer
 
     public IEnumerator SetUpNext()
     {
-        //Debug.Log("JoinPairsPlayer.SetUpNext()");
-
         m_panelDepthIncrement = 1;
         
         HashSet<DataRow> dataPool = new HashSet<DataRow>();
         
         int pairsToShowAtOnce = m_isDrawingDemo ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
-
-        //Debug.Log("pairsToShowAtOnce:" + pairsToShowAtOnce);
-
-
-        if (pairsToShowAtOnce > (m_locators.Length / 2))
-        {
-            pairsToShowAtOnce = m_locators.Length / 2;
-        }
+        pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, m_locators.Length / 2);
         
         while (dataPool.Count < pairsToShowAtOnce)
         {
@@ -144,8 +133,6 @@ public class JoinPairsPlayer : GamePlayer
             yield return null;
         }
 
-        //Debug.Log("dataPool.Count: " + dataPool.Count);
-
         CollectionHelpers.Shuffle(m_locators);
 
         int locatorIndex = 0;
@@ -156,7 +143,7 @@ public class JoinPairsPlayer : GamePlayer
 
             if(JoinPairsCoordinator.Instance.dataType == "words" && JoinPairsCoordinator.Instance.GetNumPlayers() == 1)
             {
-                firstLineDraw.JoinableClickEventHandler += OnPictureClicked;
+                firstLineDraw.JoinableClicked += OnPictureClicked;
             }
 
 
@@ -165,7 +152,7 @@ public class JoinPairsPlayer : GamePlayer
 
             if(JoinPairsCoordinator.Instance.dataType == "words" && JoinPairsCoordinator.Instance.GetNumPlayers() == 1)
             {
-                secondLineDraw.JoinableClickEventHandler += OnWordClicked;
+                secondLineDraw.JoinableClicked += OnWordClicked;
             }
         }
         
@@ -185,8 +172,8 @@ public class JoinPairsPlayer : GamePlayer
         lineDraw.SetUp(JoinPairsCoordinator.Instance.dataType, data);
         lineDraw.SetMaterial(m_lineRendererMaterial);
         lineDraw.SetColors(m_lineRendererColor, m_lineRendererColor);
-        lineDraw.JoinableJoinEventHandler += OnJoin;
-        lineDraw.JoinablePressEventHandler += OnJoinablePressed;
+        lineDraw.JoinableJoined += OnJoin;
+        lineDraw.JoinablePressed += OnJoinablePressed;
 
         return lineDraw;
     }
@@ -217,16 +204,12 @@ public class JoinPairsPlayer : GamePlayer
 
     void OnJoin(JoinableLineDraw a, JoinableLineDraw b)
     {
-        //Debug.Log("JoinPairsPlayer.OnJoin(): " + m_isDrawingDemo);
-
         if (a != b)
         {
             if (a.joinableType != b.joinableType || JoinPairsCoordinator.Instance.AreJoinablesSameType()) // shapes are both pictures
             {
                 if (a.data == b.data)
                 {
-                    //Debug.Log("CORRECT");
-                    //StartCoroutine(SpeakWellDone(a.word));
                     if(SessionInformation.Instance.GetNumPlayers() == 1)
                     {
                         DataRow audioData = a.joinableType == JoinableLineDraw.JoinableType.Picture ? b.data : a.data;
@@ -244,14 +227,7 @@ public class JoinPairsPlayer : GamePlayer
 
                     if (m_spawnedJoinables.Count == 0 && !m_isDrawingDemo)
                     {     
-                        //Debug.Log("STARTING COROUTINE: AddPoint");
                         StartCoroutine(AddPoint());
-                    }
-                    else
-                    {
-                        //Debug.Log("DO NOTHING");
-                        //Debug.Log("NOTHING - m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
-                        //Debug.Log("NOTHING - isDemonstration: " + m_isDrawingDemo);
                     }
                 }
                 else if(SessionInformation.Instance.GetNumPlayers() == 1 && JoinPairsCoordinator.Instance.dataType == "words")
@@ -266,16 +242,12 @@ public class JoinPairsPlayer : GamePlayer
 
     IEnumerator AddPoint()
     {
-        //Debug.Log("JoinPairsPlayer.AddPoint()");
-
         yield return new WaitForSeconds(2.0f);
 
-        //Debug.Log("PopCharacter");
         m_characterPopper.PopCharacter();
         
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
-        //Debug.Log("IncrementScore");
         m_score++;
         m_scoreKeeper.UpdateScore();
         
@@ -285,7 +257,6 @@ public class JoinPairsPlayer : GamePlayer
         }
         else
         {
-            //Debug.Log("Wait");
             yield return new WaitForSeconds(1.5f);
             StartCoroutine(SetUpNext());
         }

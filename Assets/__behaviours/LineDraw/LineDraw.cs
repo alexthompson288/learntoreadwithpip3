@@ -1,12 +1,44 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class LineDraw : MonoBehaviour 
 {
-    public delegate void LineEvent(LineDraw line);
-    public event LineEvent LineCreateEventHandler;
-    public event LineEvent LineDragEventHandler;
-    public event LineEvent LineReleaseEventHandler;
+    public delegate void LineEventHandler(LineDraw line);
+
+    //public event LineEventHandler LineCreated;
+
+    private event LineEventHandler LineReleasedPrivate;
+    public event LineEventHandler LineReleased
+    {
+        add
+        {
+            if(LineReleasedPrivate == null || !LineReleasedPrivate.GetInvocationList().Contains(value))
+            {
+                LineReleasedPrivate += value;
+            }
+        }
+        remove
+        {
+            LineReleasedPrivate -= value;
+        }
+    }
+
+    private event LineEventHandler LineDraggedPrivate;
+    public event LineEventHandler LineDragged
+    {
+        add
+        {
+            if(LineDraggedPrivate == null || !LineDraggedPrivate.GetInvocationList().Contains(value))
+            {
+                LineDraggedPrivate += value;
+            }
+        }
+        remove
+        {
+            LineDraggedPrivate -= value;
+        }
+    }
 
     [SerializeField]
     protected Material m_material;
@@ -69,17 +101,17 @@ public class LineDraw : MonoBehaviour
             }
         }
 
-        if (!pressed && LineReleaseEventHandler != null)
+        if (!pressed && LineReleasedPrivate != null)
         {
-            LineReleaseEventHandler(this);
+            LineReleasedPrivate(this);
         }
     }
 
     void OnDrag(Vector2 delta)
     {
-        if (LineDragEventHandler != null)
+        if (LineDraggedPrivate != null)
         {
-            LineDragEventHandler(this);
+            LineDraggedPrivate(this);
         }
     }
 
@@ -87,9 +119,11 @@ public class LineDraw : MonoBehaviour
     {
         LineDrawManager.Instance.CreateLine(this, m_material, m_startColor, m_endColor);
 
-        if(LineCreateEventHandler != null)
+        /*
+        if(LineCreated != null)
         {
-            LineCreateEventHandler(this);
+            LineCreated(this);
         }
+        */
     }
 }

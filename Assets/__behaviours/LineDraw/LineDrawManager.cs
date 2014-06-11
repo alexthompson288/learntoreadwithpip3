@@ -116,53 +116,11 @@ public class LineDrawManager : Singleton<LineDrawManager>
         Destroy(lineRenderer.gameObject);
     }
     
-    public IEnumerator DrawDemoLine(Vector3 originalPosA, Vector3 originalPosB, Camera cam, Material mat, Color col)
-    {
-        GameObject newRendererGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_linePrefab, m_lineParent);
-        LineRenderer lineRenderer = newRendererGo.GetComponent<LineRenderer>() as LineRenderer;
 
-        lineRenderer.material = mat;
-        lineRenderer.SetColors(col, col);
-
-        float updateTime = 0.01f;
-        float totalTime = 0.5f;
-        float timeElapsed = 0f;
-
-        //Vector3 posA = FindWorldPos(joinableA);
-
-        originalPosA.z = -0.5f;
-        originalPosB.z = -0.5f;
-
-        Vector3 screenPosA = cam.WorldToScreenPoint(originalPosA);
-        Vector3 worldPosA = m_lineCamera.ScreenToWorldPoint(screenPosA);
-
-        Vector3 screenPosB = cam.WorldToScreenPoint(originalPosB);
-        Vector3 worldPosB = m_lineCamera.ScreenToWorldPoint(screenPosB);
-
-        Vector3 nextLinePos = worldPosA;
-        Vector3 updateDelta = (worldPosB - worldPosA) * updateTime / totalTime;
-        int vertexCount = 1;
-
-        while (timeElapsed < totalTime)
-        {
-            lineRenderer.SetVertexCount(vertexCount);
-            lineRenderer.SetPosition(vertexCount - 1, nextLinePos);
-
-            nextLinePos += updateDelta;
-            ++vertexCount;
-
-            timeElapsed += updateTime;
-            yield return new WaitForSeconds(updateTime);
-        }
-
-        yield return new WaitForSeconds(1f);
-
-        StartCoroutine(DestroyLineRenderer(lineRenderer, col));
-    }
 
     public void CreateLine(LineDraw line, Material mat, Color startColor, Color endColor)
     {
-        line.LineDragEventHandler += OnLineDrag;
+        line.LineDragged += OnLineDrag;
         
         GameObject newRendererGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_linePrefab, m_lineParent);
         LineRenderer lineRenderer = newRendererGo.GetComponent<LineRenderer>() as LineRenderer;
@@ -205,7 +163,6 @@ public class LineDrawManager : Singleton<LineDrawManager>
 
         if (m_lines.ContainsKey(line))
         {
-            //m_lines[line].AddPosition(FindWorldPos(line));
             GetLastDrawRenderer(line).AddPosition(FindWorldPos(line));
         } 
         else
@@ -227,7 +184,50 @@ public class LineDrawManager : Singleton<LineDrawManager>
         {
             StartCoroutine(drawRenderer.Off());
         }
-        //StartCoroutine(m_lines [line].Off());
+
+        line.LineDragged -= OnLineDrag;
         m_lines.Remove(line);
+    }
+
+    public IEnumerator DrawDemoLine(Vector3 originalPosA, Vector3 originalPosB, Camera cam, Material mat, Color col)
+    {
+        GameObject newRendererGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_linePrefab, m_lineParent);
+        LineRenderer lineRenderer = newRendererGo.GetComponent<LineRenderer>() as LineRenderer;
+        
+        lineRenderer.material = mat;
+        lineRenderer.SetColors(col, col);
+        
+        float updateTime = 0.01f;
+        float totalTime = 0.5f;
+        float timeElapsed = 0f;
+
+        originalPosA.z = -0.5f;
+        originalPosB.z = -0.5f;
+        
+        Vector3 screenPosA = cam.WorldToScreenPoint(originalPosA);
+        Vector3 worldPosA = m_lineCamera.ScreenToWorldPoint(screenPosA);
+        
+        Vector3 screenPosB = cam.WorldToScreenPoint(originalPosB);
+        Vector3 worldPosB = m_lineCamera.ScreenToWorldPoint(screenPosB);
+        
+        Vector3 nextLinePos = worldPosA;
+        Vector3 updateDelta = (worldPosB - worldPosA) * updateTime / totalTime;
+        int vertexCount = 1;
+        
+        while (timeElapsed < totalTime)
+        {
+            lineRenderer.SetVertexCount(vertexCount);
+            lineRenderer.SetPosition(vertexCount - 1, nextLinePos);
+            
+            nextLinePos += updateDelta;
+            ++vertexCount;
+            
+            timeElapsed += updateTime;
+            yield return new WaitForSeconds(updateTime);
+        }
+        
+        yield return new WaitForSeconds(1f);
+        
+        StartCoroutine(DestroyLineRenderer(lineRenderer, col));
     }
 }
