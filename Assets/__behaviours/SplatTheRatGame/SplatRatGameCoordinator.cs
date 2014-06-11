@@ -119,14 +119,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		if(lettersPool.Count > 0)
 		{
-            m_currentLetterData = DataHelpers.GetSingleTargetData("phonemes");
-
-			if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme
-			{
-				Debug.Log("m_currentLetterData was null so getting random");
-				int selectedIndex = Random.Range(0, lettersPool.Count);
-				m_currentLetterData = lettersPool[selectedIndex];
-			}
+            m_currentLetterData = DataHelpers.GetSingleTargetData("phonemes", lettersPool);
 
             //UserStats.Activity.AddPhoneme(m_currentLetterData);
 

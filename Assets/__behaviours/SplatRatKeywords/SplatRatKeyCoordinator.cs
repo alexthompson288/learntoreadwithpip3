@@ -105,14 +105,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 			m_keywordAudio[myPh] = LoaderHelpers.LoadAudioForWord(audioFilename);
         }
 
-        m_currentLetterData = DataHelpers.GetSingleTargetData("keywords");
-		
-		if(m_currentLetterData == null) // Even if we are in the Voyage, we might need to execute this if a database error means that there is no target phoneme
-		{
-			int selectedIndex = Random.Range(0, lettersPool.Count);
-			m_currentLetterData = lettersPool[selectedIndex];
-			Debug.Log("Random target: " + m_currentLetterData["word"].ToString());
-		}
+        m_currentLetterData = DataHelpers.GetSingleTargetData("keywords", lettersPool);
 
         //UserStats.Activity.AddWord(m_currentLetterData);
 

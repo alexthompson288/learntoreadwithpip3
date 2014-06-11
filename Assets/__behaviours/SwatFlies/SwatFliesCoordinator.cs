@@ -53,7 +53,7 @@ public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator>
         m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
         m_dataPool = DataHelpers.GetData(m_dataType);
-        m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
+        m_currentData = DataHelpers.GetSingleTargetData(m_dataType, m_dataPool);
 
         //Debug.Log("dataPool.Count: " + m_dataPool.Count);
         //Debug.Log("currentData: " + m_currentData);

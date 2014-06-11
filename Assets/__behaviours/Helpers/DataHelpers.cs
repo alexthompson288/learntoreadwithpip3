@@ -137,18 +137,13 @@ public static class DataHelpers
 		}
 	}
 
-    public static DataRow GetSingleTargetData(string dataType, bool allowNonTarget = true)
+    public static DataRow GetSingleTargetData(string dataType, List<DataRow> backupDataPool = null)
     {
         DataRow data = GameManager.Instance.GetSingleTargetData(dataType);
 
-        if (data == null && allowNonTarget)
+        if (data == null && backupDataPool != null && backupDataPool.Count > 0)
         {
-            List<DataRow> dataPool =  GetData(dataType);
-
-            if(dataPool.Count > 0)
-            {
-                data = dataPool[UnityEngine.Random.Range(0, dataPool.Count)];
-            }
+            data = backupDataPool[UnityEngine.Random.Range(0, backupDataPool.Count)];
         }
 
         return data;

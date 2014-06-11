@@ -126,12 +126,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 }
             }
 
-            m_currentData = DataHelpers.GetSingleTargetData(m_dataType);
+            m_currentData = DataHelpers.GetSingleTargetData(m_dataType, m_dataPool);
 
-            if(m_currentData == null)
-            {
-                m_currentData = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
-            }
 
             Debug.Log("m_currentData: " + m_currentData);
 
