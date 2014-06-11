@@ -170,7 +170,15 @@ public class Target : MonoBehaviour
         m_isOn = false;
     }
 
-    public virtual void On(float initialDelay) {}
+    public void On(float initialDelay)
+    {
+        if (!m_isOn)
+        {
+            m_isOn = true;
+            StartCoroutine(OnCo(initialDelay));
+        }
+    }
+
     protected virtual IEnumerator OnCo(float initialDelay) { yield break; }
     public virtual void Off() {}
     public virtual void SetOffPosition(Vector3 direction, float distance) {}

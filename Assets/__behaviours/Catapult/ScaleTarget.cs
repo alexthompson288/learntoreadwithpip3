@@ -54,15 +54,6 @@ public class ScaleTarget : Target
         On(0.5f);
 	}
 
-    public override void On(float initialDelay)
-    {
-        if (!m_isOn)
-        {
-            m_isOn = true;
-            StartCoroutine(OnCo(initialDelay));
-        }
-    }
-
     protected override IEnumerator OnCo(float initialDelay)
 	{
         //Debug.Log("ScaleTarget.OnCo");
