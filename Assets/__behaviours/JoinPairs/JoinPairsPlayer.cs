@@ -48,10 +48,10 @@ public class JoinPairsPlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        Debug.Log("SelectCharacter");
+        //Debug.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        //Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
@@ -59,14 +59,16 @@ public class JoinPairsPlayer : GamePlayer
         JoinPairsCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
+    bool m_isDrawingDemo = false;
 
     public IEnumerator DrawDemoLine()
     {
-        Debug.Log("DrawDemoLine()");
-        yield return StartCoroutine(SetUpNext(true));
+        m_isDrawingDemo = true;
+        //Debug.Log("DrawDemoLine()");
+        yield return StartCoroutine(SetUpNext());
 
         JoinableLineDraw[] joinables = new JoinableLineDraw[2];
-        Debug.Log("m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
+        //Debug.Log("m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
         for (int i = 0; i < joinables.Length && i < m_spawnedJoinables.Count; ++i)
         {
             joinables[i] = m_spawnedJoinables[i].GetComponent<JoinableLineDraw>() as JoinableLineDraw;
@@ -79,14 +81,16 @@ public class JoinPairsPlayer : GamePlayer
         yield return StartCoroutine(LineDrawManager.Instance.DrawDemoLine(joinables[0].transform.position, joinables[1].transform.position, m_cam, 
                                                                           m_lineRendererMaterial, m_lineRendererColor));
 
-        OnJoin(joinables [0], joinables [1], true);
+        OnJoin(joinables [0], joinables [1]);
 
-        yield return new WaitForSeconds(1f);
+        m_isDrawingDemo = false;
+
+        yield return new WaitForSeconds(2f);
     }
 
     public void SetUp(int targetScore, string dataType)
     {
-        Debug.Log("JoinPairsPlayer.SetUp(): " + dataType);
+        //Debug.Log("JoinPairsPlayer.SetUp(): " + dataType);
 
         m_scoreKeeper.SetTargetScore(targetScore);
 
@@ -110,17 +114,17 @@ public class JoinPairsPlayer : GamePlayer
         }
     }
 
-    public IEnumerator SetUpNext(bool isDemonstration = false)
+    public IEnumerator SetUpNext()
     {
-        Debug.Log("SetUpNext()");
+        //Debug.Log("JoinPairsPlayer.SetUpNext()");
 
         m_panelDepthIncrement = 1;
         
         HashSet<DataRow> dataPool = new HashSet<DataRow>();
         
-        int pairsToShowAtOnce = isDemonstration ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
+        int pairsToShowAtOnce = m_isDrawingDemo ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
 
-        Debug.Log("pairsToShowAtOnce:" + pairsToShowAtOnce);
+        //Debug.Log("pairsToShowAtOnce:" + pairsToShowAtOnce);
 
 
         if (pairsToShowAtOnce > (m_locators.Length / 2))
@@ -138,7 +142,7 @@ public class JoinPairsPlayer : GamePlayer
             yield return null;
         }
 
-        Debug.Log("dataPool.Count: " + dataPool.Count);
+        //Debug.Log("dataPool.Count: " + dataPool.Count);
 
         CollectionHelpers.Shuffle(m_locators);
 
@@ -209,14 +213,17 @@ public class JoinPairsPlayer : GamePlayer
         }
     }
 
-    void OnJoin(JoinableLineDraw a, JoinableLineDraw b, bool isDemonstration = false)
+    void OnJoin(JoinableLineDraw a, JoinableLineDraw b)
     {
+        //Debug.Log("JoinPairsPlayer.OnJoin(): " + m_isDrawingDemo);
+
         if (a != b)
         {
             if (a.joinableType != b.joinableType || JoinPairsCoordinator.Instance.AreJoinablesSameType()) // shapes are both pictures
             {
                 if (a.data == b.data)
                 {
+                    //Debug.Log("CORRECT");
                     //StartCoroutine(SpeakWellDone(a.word));
                     if(SessionInformation.Instance.GetNumPlayers() == 1)
                     {
@@ -230,10 +237,17 @@ public class JoinPairsPlayer : GamePlayer
                     m_spawnedJoinables.Remove(b.gameObject);
 
                     WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
-                    
-                    if (m_spawnedJoinables.Count == 0 && !isDemonstration)
-                    {                        
+
+                    if (m_spawnedJoinables.Count == 0 && !m_isDrawingDemo)
+                    {     
+                        //Debug.Log("STARTING COROUTINE: AddPoint");
                         StartCoroutine(AddPoint());
+                    }
+                    else
+                    {
+                        //Debug.Log("DO NOTHING");
+                        //Debug.Log("NOTHING - m_spawnedJoinables.Count: " + m_spawnedJoinables.Count);
+                        //Debug.Log("NOTHING - isDemonstration: " + m_isDrawingDemo);
                     }
                 }
                 else if(SessionInformation.Instance.GetNumPlayers() == 1 && JoinPairsCoordinator.Instance.dataType == "words")
@@ -248,14 +262,16 @@ public class JoinPairsPlayer : GamePlayer
 
     IEnumerator AddPoint()
     {
-        m_spawnedJoinables.Clear();
-        
+        //Debug.Log("JoinPairsPlayer.AddPoint()");
+
         yield return new WaitForSeconds(2.0f);
-        
+
+        //Debug.Log("PopCharacter");
         m_characterPopper.PopCharacter();
         
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
-        
+
+        //Debug.Log("IncrementScore");
         m_score++;
         m_scoreKeeper.UpdateScore();
         
@@ -265,6 +281,7 @@ public class JoinPairsPlayer : GamePlayer
         }
         else
         {
+            //Debug.Log("Wait");
             yield return new WaitForSeconds(1.5f);
             StartCoroutine(SetUpNext());
         }
