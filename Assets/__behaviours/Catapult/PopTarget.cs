@@ -54,10 +54,10 @@ public class PopTarget : Target
 
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
 
-        StartCoroutine(On(0));
+        On(0);
     }
 
-    public override IEnumerator On(float initialDelay)
+    protected override IEnumerator OnCo(float initialDelay)
     {
         yield return new WaitForSeconds(initialDelay);
 
@@ -73,7 +73,7 @@ public class PopTarget : Target
 
         InvokeOnCompleteMove();
 
-        StartCoroutine(On(0));
+        On(0);
     }
 
     public override void Off()

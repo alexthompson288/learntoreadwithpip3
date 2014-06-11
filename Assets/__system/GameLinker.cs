@@ -46,8 +46,6 @@ public class GameLinker : Singleton<GameLinker>
                 }
             }
         }
-
-        LogGameNames();
     }
 
     void LogGameNames()

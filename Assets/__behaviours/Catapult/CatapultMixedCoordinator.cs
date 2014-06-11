@@ -114,16 +114,18 @@ public class CatapultMixedCoordinator : MonoBehaviour
     {
         Debug.Log("targets.Length: " + targets.Length);
 
-        foreach(Target target in targets)
+        for(int i = 0; i < targets.Length; ++i)
         {
-            target.SetShowPicture(m_targetsShowPicture);
 
-            target.OnTargetHit += OnTargetHit;
-            target.OnCompleteMove += SetTargetData;
+            targets[i].SetShowPicture(m_targetsShowPicture);
+
+            targets[i].OnTargetHit += OnTargetHit;
+            targets[i].OnCompleteMove += SetTargetData;
             
-            SetTargetData(target);
+            SetTargetData(targets[i]);
             
-            StartCoroutine(target.On(UnityEngine.Random.Range(1f, 4f)));
+            float delay = i == 0 ? 0 : UnityEngine.Random.Range(1f, 4f);
+            targets[i].On(delay);
         }
     }
 

@@ -23,6 +23,8 @@ public class Target : MonoBehaviour
     [SerializeField]
     private bool m_showPicture;
 
+    protected bool m_isOn = false;
+
     public void SetShowPicture(bool showPicture)
     {
         m_showPicture = showPicture;
@@ -162,7 +164,14 @@ public class Target : MonoBehaviour
         return newDetachable;
     }
 
-    public virtual IEnumerator On(float initialDelay) { yield break; }
+    public virtual void MyStopCoroutines()
+    {
+        StopAllCoroutines();
+        m_isOn = false;
+    }
+
+    public virtual void On(float initialDelay) {}
+    protected virtual IEnumerator OnCo(float initialDelay) { yield break; }
     public virtual void Off() {}
     public virtual void SetOffPosition(Vector3 direction, float distance) {}
 }

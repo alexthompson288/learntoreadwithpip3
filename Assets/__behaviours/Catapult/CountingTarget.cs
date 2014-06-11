@@ -52,7 +52,7 @@ public class CountingTarget : Target
         m_storedAmmo.Clear();
     }
 
-    public override IEnumerator On(float initialDelay)
+    protected override IEnumerator OnCo(float initialDelay)
     {
         iTween.ScaleTo(gameObject, Vector3.one, m_scaleTweenDuration);
         collider.enabled = true;

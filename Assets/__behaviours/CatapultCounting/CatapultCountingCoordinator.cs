@@ -39,7 +39,7 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         m_display.On("numbers", m_currentData);
 
-        StartCoroutine(m_target.On(0));
+        m_target.On(0);
     }
 
     void OnTargetHit(Target target, Collider other)

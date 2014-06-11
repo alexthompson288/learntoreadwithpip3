@@ -8,16 +8,24 @@ public class ScaleTarget : Target
 	[SerializeField]
 	private Vector2 m_durationOff = new Vector2(1.1f, 2.5f);
 	[SerializeField]
-	private float m_tweenDuration = 0.3f;
+	private float m_tweenDurationOn = 0.3f;
+    [SerializeField]
+    private float m_tweenDurationOff = 0.1f;
+
+    Hashtable m_tweenArgsOff = new Hashtable();
 
     void Awake()
     {
         transform.localScale = Vector3.zero;
+
+        m_tweenArgsOff.Add("scale", Vector3.zero);
+        m_tweenArgsOff.Add("time", m_tweenDurationOff);
+        m_tweenArgsOff.Add("easetype", iTween.EaseType.linear);
     }
 
 	public override void ApplyHitForce(Transform ball)
 	{		
-        StopAllCoroutines();
+        MyStopCoroutines();
 
 		base.ApplyHitForce(ball);
 		
@@ -28,9 +36,9 @@ public class ScaleTarget : Target
 	{
 		yield return new WaitForSeconds(2f);
 		
-		iTween.ScaleTo(gameObject, Vector3.zero, m_tweenDuration);
+        iTween.ScaleTo(gameObject, m_tweenArgsOff);
 		
-		yield return new WaitForSeconds(m_tweenDuration);
+        yield return new WaitForSeconds(m_tweenDurationOff);
 
         ResetSpriteName();
 		
@@ -43,32 +51,50 @@ public class ScaleTarget : Target
         //Debug.Log("Restart Invoking");
 		InvokeOnCompleteMove();
 		
-		//StartCoroutine(On(0));
-        StartCoroutine(On(0.5f));
+        On(0.5f);
 	}
 
-    public override IEnumerator On(float initialDelay)
+    public override void On(float initialDelay)
+    {
+        if (!m_isOn)
+        {
+            m_isOn = true;
+            StartCoroutine(OnCo(initialDelay));
+        }
+    }
+
+    protected override IEnumerator OnCo(float initialDelay)
 	{
-        //Debug.Log("On");
+        //Debug.Log("ScaleTarget.OnCo");
 		yield return new WaitForSeconds(initialDelay);
 		
-		iTween.ScaleTo(gameObject, Vector3.one, m_tweenDuration);
+        iTween.ScaleTo(gameObject, Vector3.one, m_tweenDurationOn);
+        collider.enabled = true;
 		
-		yield return new WaitForSeconds(m_tweenDuration + Random.Range(m_durationOn.x, m_durationOn.y));
+		yield return new WaitForSeconds(m_tweenDurationOn + Random.Range(m_durationOn.x, m_durationOn.y));
+
+        iTween.ScaleTo(gameObject, m_tweenArgsOff);
+        collider.enabled = false;
 		
-		iTween.ScaleTo(gameObject, Vector3.zero, m_tweenDuration);
-		
-		yield return new WaitForSeconds(m_tweenDuration + Random.Range(m_durationOff.x, m_durationOff.y));
+        yield return new WaitForSeconds(m_tweenDurationOff + Random.Range(m_durationOff.x, m_durationOff.y));
 		
         //Debug.Log("Invoking OnCompleteMove");
 		InvokeOnCompleteMove();
 		
-		StartCoroutine(On(0.2f));
+		StartCoroutine(OnCo(0.2f));
 	}
+
+    public override void MyStopCoroutines()
+    {
+        StopAllCoroutines();
+        base.MyStopCoroutines();
+
+        collider.enabled = false;
+    }
 	
 	public override void Off()
 	{
-		StopAllCoroutines();
-		iTween.ScaleTo(gameObject, Vector3.zero, m_tweenDuration);
+        MyStopCoroutines();
+		iTween.ScaleTo(gameObject, m_tweenArgsOff);
 	}
 }

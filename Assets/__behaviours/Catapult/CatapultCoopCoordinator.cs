@@ -107,7 +107,7 @@ public class CatapultCoopCoordinator : MonoBehaviour
             
             SetTargetData(target);
 
-            StartCoroutine(target.On(Random.Range(1f, 4f)));
+            target.On(Random.Range(1f, 4f));
         }
     }
 
@@ -151,7 +151,7 @@ public class CatapultCoopCoordinator : MonoBehaviour
             WingroveAudio.WingroveRoot.Instance.PostEvent("GAWP_HAPPY");
 
             target.Off();
-            StartCoroutine(target.On(Random.Range(0.5f, 1.5f)));
+            target.On(Random.Range(0.5f, 1.5f));
         }
         
         ball.GetComponent<CatapultAmmo>().Explode();
