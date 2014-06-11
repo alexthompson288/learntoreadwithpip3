@@ -38,6 +38,14 @@ public class ImageBlackboard : MonoBehaviour
 
     public void ShowImage(Texture2D texture, string word, string colorReplace, string audioWord)
     {
+        StartCoroutine(ShowImageCo(texture, word, colorReplace, audioWord));
+    }
+
+    // Coroutine because this method enables/disables components, this will cause an error if execute during the same frame when called from a physics method (eg. OnTriggerEnter) 
+    IEnumerator ShowImageCo(Texture2D texture, string word, string colorReplace, string audioWord)
+    {
+        yield return null; 
+
         m_audioWord = audioWord;
         m_texture.alpha = 1.0f;
         if (m_background != null)
@@ -78,7 +86,7 @@ public class ImageBlackboard : MonoBehaviour
                             startIndex += m_mainColorString.Length * 2 + m_highlightColorString.Length * 2;
                         }
                     }
-
+                    
                     startIndex++;
                 }
             }
@@ -103,7 +111,10 @@ public class ImageBlackboard : MonoBehaviour
 
     public void EnableClick()
     {
-        collider.enabled = true;
+        if (collider != null)
+        {
+            collider.enabled = true;
+        }
     }
 
     void OnClick()

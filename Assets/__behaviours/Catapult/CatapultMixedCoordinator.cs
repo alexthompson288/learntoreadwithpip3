@@ -25,6 +25,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private DataDisplay m_dataDisplay;
     [SerializeField]
     private bool m_targetsShowPicture;
+    [SerializeField]
+    private ImageBlackboard m_blackboard;
    
     float m_startTime;
     
@@ -178,6 +180,14 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             target.ApplyHitForce(ball.transform);
 
+            if(IsDataMixed())
+            {
+                Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
+                StopCoroutine("HideBlackboard");
+                m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetFirstPhonemeInWord(target.data)["phoneme"].ToString(), "");
+                StartCoroutine("HideBlackboard");
+            }
+
             if(!m_targetsShowPicture && m_dataType == "phonemes")
             {
                 PlayShortAudio(target.data);
@@ -196,6 +206,12 @@ public class CatapultMixedCoordinator : MonoBehaviour
         } 
 
         yield break;
+    }
+
+    IEnumerator HideBlackboard()
+    {
+        yield return new WaitForSeconds(2f);
+        m_blackboard.Hide();
     }
     
     IEnumerator OnGameComplete()
