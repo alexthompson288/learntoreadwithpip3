@@ -82,7 +82,7 @@ public class Target : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
+        //Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
             CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
@@ -144,19 +144,10 @@ public class Target : MonoBehaviour
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
     }
 
-    /*
-    public void DetachableOn(Transform detachableTarget)
-    {
-        GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
-
-        newDetachable.GetComponent<TargetDetachable>().SetUp(m_data);
-        newDetachable.GetComponent<TargetDetachable>().On(detachableTarget);
-    }
-    */
-
     public GameObject SpawnDetachable()
     {
         GameObject newDetachable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_detachablePrefab, m_detachableLocation);
+
         newDetachable.transform.parent = null;
         
         newDetachable.GetComponent<TargetDetachable>().SetUp(m_label.text);

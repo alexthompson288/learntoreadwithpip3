@@ -20,13 +20,6 @@ public class TargetDetachable : MonoBehaviour
 
     Transform m_target;
 
-
-    void Start()
-    {
-        iTween.ScaleFrom(gameObject, Vector3.zero, 0.15f);
-    }
-
-
     public void SetUp(string labelText)
     {
         m_label.text = labelText;
