@@ -133,7 +133,7 @@ public class ScorePip : ScoreKeeper
 
         m_pipAnim.PlayAnimation("WALK");
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
     }
 
     void OnScoreAnimFinish(string animName)

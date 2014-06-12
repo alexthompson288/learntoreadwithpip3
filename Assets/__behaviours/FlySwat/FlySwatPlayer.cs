@@ -149,8 +149,8 @@ public class FlySwatPlayer : GamePlayer
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
-        //widget.ChangeBackgroundState();
         widget.GetComponentInChildren<SimpleSpriteAnim>().PlayAnimation("SPLAT");
+        widget.GetComponentInParent<SplineFollower>().Stop();
 
         ++m_score;
 

@@ -258,4 +258,9 @@ public class SplineFollower : MonoBehaviour
         yield return null;
         StartCoroutine("On");
     }
+
+    public void Stop()
+    {
+        StopAllCoroutines();
+    }
 }

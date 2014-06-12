@@ -15,6 +15,12 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
+    private AudioClip m_wordsInstructions;
+    [SerializeField]
+    private AudioClip m_numbersInstructions;
+    [SerializeField]
+    private AudioClip m_shapesInstructions;
+    [SerializeField]
     bool m_waitForBoth;
     [SerializeField]
     private GameObject m_picturePrefab;
@@ -151,6 +157,34 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         if(m_dataPool.Count > 0)
         {
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
+            AudioClip clip = null;
+
+            switch(m_dataType)
+            {
+                case "words":
+                    clip = m_wordsInstructions;
+                    break;
+                case "shapes":
+                    clip = m_shapesInstructions;
+                    break;
+                case "numbers":
+                    clip = m_numbersInstructions;
+                    break;
+            }
+
+            if(clip != null)
+            {
+                m_audioSource.clip = clip;
+                m_audioSource.Play();
+
+                while(m_audioSource.isPlaying)
+                {
+                    yield return null;
+                }
+            }
+
             StartCoroutine(PlayGame());
         }
         else
