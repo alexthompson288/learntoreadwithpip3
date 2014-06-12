@@ -278,12 +278,9 @@ public static class DataHelpers
         if (dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
-            Debug.Log("GETCORRECT: " + dt.Rows.Count);
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
-            Debug.Log("POSTCHECK: " + dt.Rows.Count);
         }
 
-        Debug.Log("RETURNING: " + dataPool.Count);
         return dataPool;
     }
 

@@ -28,8 +28,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
     List<string> m_remainingWords = new List<string>();
 
-    Dictionary<DataRow, AudioClip> m_audio = new Dictionary<DataRow, AudioClip>();
-
     IEnumerator Start()
     {
         m_pictureParent.transform.localScale = Vector3.zero;
@@ -39,15 +37,9 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         m_dataPool = DataHelpers.GetCorrectCaptions();
 
-        Debug.Log("PRE-REMOVE: " + m_dataPool.Count);
-
         m_dataPool.RemoveAll(x => DataHelpers.GetCorrectCaptionWords(x).Length > 5);
 
-        Debug.Log("POST-LENGTH-CHECK: " + m_dataPool.Count);
-
         m_dataPool.RemoveAll(x => x["good_sentence"] == null || !x["good_sentence"].ToString().Contains(" "));
-
-        Debug.Log("POST-NULL-CHECK: " + m_dataPool.Count);
 
         foreach (DataRow data in m_dataPool)
         {
@@ -62,7 +54,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
         ClampTargetScore();
 
         m_scoreKeeper.SetTargetScore(m_targetScore);
-
 
 
         if (m_dataPool.Count > 0)
@@ -104,7 +95,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
             m_spawnedWordLocations.Add(newWordLocation.transform);
             newWordLocation.name = "wordLocation_" + i.ToString();
 
-            //float halfLocationWidth = (wordBehaviour.backgroundWidth / 2) + 10;
             float halfLocationWidth = (wordBehaviour.labelWidth / 2) + 30;
 
             length += halfLocationWidth;
@@ -115,6 +105,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         }
 
         m_textPosition.localPosition = new Vector3(-length / 2, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
+
         m_sentenceBackground.width = (int)(length + 50);
 
         float tweenDuration = m_spawnedWords[0].scaleTweenDuration;
