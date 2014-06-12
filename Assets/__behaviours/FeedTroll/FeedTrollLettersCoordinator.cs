@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class FeedTrollLettersCoordinator : MonoBehaviour {
-	
+public class FeedTrollLettersCoordinator : MonoBehaviour 
+{	
+    [SerializeField]
+    private AnimManager m_trollAnimManager;
 	[SerializeField]
     private SimpleSpriteAnim m_trollAnimation;
 	[SerializeField]
@@ -160,15 +162,17 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 			
 			DraggableLabel draggable = newLetter.GetComponent<DraggableLabel>() as DraggableLabel;
 			draggable.SetUp(kvp.Key, m_graphemeAudio[kvp.Value]);
-			draggable.OnRelease += OnDraggableRelease;
+			//draggable.OnRelease += OnDraggableRelease;
+            draggable.SetCanDrag(false);
+            draggable.OnNoDragClick += OnDraggableRelease;
 			m_spawnedDraggables.Add(draggable);
 		}
 	}
 	
 	void OnDraggableRelease(DraggableLabel draggable)
 	{
-		if(draggable.transform.position.x < m_trollBoundary.position.x)
-		{
+		//if(draggable.transform.position.x < m_trollBoundary.position.x)
+		//{
             //UserStats.Activity.IncrementNumAnswers();
 
 			if(draggable.GetText() == m_currentLetterData["phoneme"].ToString())
@@ -186,11 +190,11 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 			
 				draggable.TweenToStartPos();
 			}
-		}
-		else
-		{
-			draggable.TweenToStartPos(); 
-		}
+		//}
+		//else
+		//{
+			//draggable.TweenToStartPos(); 
+		//}
 	}
 	
 	IEnumerator OnCorrectAnswer(DraggableLabel draggable)
@@ -226,7 +230,9 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
 		//string eventString = (Random.Range(0, 2) == 0) ? "TROLL_BURP_RANDOM" : "TROLL_FART_RANDOM";
 		WingroveAudio.WingroveRoot.Instance.PostEvent(eventString);
 
+        m_trollAnimManager.PlayAnimation("EAT");
 
+        /*
 		// TODO: Put troll animation calls in methods. Remove code duplication below
         m_trollSubFatness++;
         if (m_trollSubFatness == 2)
@@ -259,6 +265,9 @@ public class FeedTrollLettersCoordinator : MonoBehaviour {
             //yield return new WaitForSeconds(0.5f);
 			yield return new WaitForSeconds(0.25f);
         }
+        */
+
+
 		
 		
 		

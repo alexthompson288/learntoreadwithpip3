@@ -54,6 +54,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
+
+
         //Debug.Log("CorrectCaptionCoordinator.dataType: " + m_dataType);
 
         if (m_dataType == "words")
@@ -65,7 +67,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
             m_captionTextAttributes.Add("dummyword1");
             m_captionTextAttributes.Add("dummyword2");
 
-            m_questionImage.height = 512;
+            //m_questionImage.height = 512;
+            m_textPosition.transform.localScale = Vector3.one * 2;
         } 
         else
         {
@@ -79,7 +82,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
             m_captionTextAttributes.Add("bad_sentence2");
             m_captionTextAttributes.Add("bad_sentence4");
 
-            m_questionImage.height = 384;
+            //m_questionImage.height = 384;
+            m_questionImage.width = 683;
         }
 
         m_captionTextAttributes.Add(m_goodAttribute);
@@ -211,7 +215,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
             }
         }
 
-        m_textPosition.localPosition = new Vector3(-length / 2, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
+        m_textPosition.localPosition = new Vector3(-length / 2 * m_textPosition.transform.localScale.x, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
         //m_questionBackground.width = (int)length + 50;
     }
     
