@@ -88,6 +88,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
             GameWidget wordBehaviour = newWord.GetComponent<GameWidget>() as GameWidget;
             wordBehaviour.SetUp(m_remainingWords[i], true);
             wordBehaviour.onAll += OnWordClick;
+            wordBehaviour.EnableDrag(false);
             m_spawnedWords.Add(wordBehaviour);
 
             // Instantiate and position locations that words will take in sentence
@@ -135,13 +136,20 @@ public class JumbleSentenceCoordinator : GameCoordinator
     {
         if (widget.labelText == m_remainingWords [0])
         {
-            widget.EnableCollider(false);
-            widget.transform.parent = m_textPosition;
             widget.TweenToPos(m_spawnedWordLocations[0].position);
-            widget.FadeBackground(true);
 
             m_remainingWords.RemoveAt(0);
             m_spawnedWordLocations.RemoveAt(0);
+
+            widget.EnableCollider(false);
+            widget.transform.parent = m_textPosition;
+
+            widget.FadeBackground(true);
+
+            foreach(GameWidget spawnedWidget in m_spawnedWords)
+            {
+                spawnedWidget.Tint(Color.white);
+            }
 
             if(m_remainingWords.Count == 0)
             {
@@ -184,6 +192,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         } 
         else
         {
+            widget.Tint(Color.gray);
             widget.TweenToStartPos();
         }
 

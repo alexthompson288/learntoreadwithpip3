@@ -301,11 +301,7 @@ public class GameWidget : MonoBehaviour
         iTween.MoveTo(gameObject, pos, m_positionTweenDuration);
     }
 
-    public void FadeBackground(bool fadeOut)
-    {
-        float alpha = fadeOut ? 0 : 1;
-        TweenAlpha.Begin(m_background.gameObject, 0.5f, alpha);
-    }
+
 
     public void Off()
     {
@@ -349,17 +345,28 @@ public class GameWidget : MonoBehaviour
 
     public void TintDefault()
     {
-        m_background.color = Color.white;
+        Color col = Color.white;
+        col.a = m_background.color.a;
+        m_background.color = col;
     }
 
     public void TintIncorrect()
     {
-        m_background.color = Color.gray;
+        Color col = Color.gray;
+        col.a = m_background.color.a;
+        m_background.color = col;
     }
 
     public void Tint(Color newCol)
     {
+        newCol.a = m_background.color.a;
         m_background.color = newCol;
+    }
+
+    public void FadeBackground(bool fadeOut)
+    {
+        float alpha = fadeOut ? 0 : 1;
+        TweenAlpha.Begin(m_background.gameObject, 0.5f, alpha);
     }
 
     public void Shake()
