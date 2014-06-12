@@ -199,10 +199,9 @@ public class SimpleSpriteAnim : MonoBehaviour
                 if(ad.m_spriteAtlas != null)
                 {
                     m_sprite.atlas = ad.m_spriteAtlas;
-
-                    // TODO: Set the spriteName
-                    SetSpriteName();
                 }
+
+                SetSpriteName();
             }
             ++index;
         }

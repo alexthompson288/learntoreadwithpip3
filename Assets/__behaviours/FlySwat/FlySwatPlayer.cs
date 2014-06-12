@@ -145,9 +145,10 @@ public class FlySwatPlayer : GamePlayer
         WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
-        widget.ChangeBackgroundState();
+        //widget.ChangeBackgroundState();
+        widget.GetComponentInChildren<SimpleSpriteAnim>().PlayAnimation("SPLAT");
 
-        StartCoroutine(DestroyFly(widget));
+
 
         ++m_score;
 
@@ -161,7 +162,9 @@ public class FlySwatPlayer : GamePlayer
             FlySwatCoordinator.Instance.OnWinningPlayerCompleteSequence();
         }
 
-        yield return null;
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(DestroyFly(widget));
     }
 
     void OnWidgetDestroy(GameWidget widget)
