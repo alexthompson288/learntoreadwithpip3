@@ -62,9 +62,11 @@ public class AnimManager : MonoBehaviour
         yield return new WaitForSeconds(UnityEngine.Random.Range(m_randomDelayRange.x, m_randomDelayRange.y));
 
         // Subscribe/Unsubscribe from event every time so that this is not accidentally called if the SimpleSpriteAnim finishes a looping static 1-frame animation
-        m_spriteAnim.OnAnimFinish += OnRandomFinish;
-
-        m_spriteAnim.PlayAnimation(m_randomAnimNames [Random.Range(0, m_randomAnimNames.Length)]);
+        if (m_randomAnimNames.Length > 0)
+        {
+            m_spriteAnim.OnAnimFinish += OnRandomFinish;
+            m_spriteAnim.PlayAnimation(m_randomAnimNames [Random.Range(0, m_randomAnimNames.Length)]);
+        }
     }
 
     public void StopRandom()

@@ -26,7 +26,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
     [SerializeField]
     private int m_targetScore = 6;
 	[SerializeField]
-	private Transform m_eatPosition;
+	private Transform m_mouthLocation;
 	[SerializeField]
     private Transform m_offPosition;
 	[SerializeField]
@@ -205,34 +205,40 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 			m_currentLetterData["phoneme"].ToString(), m_currentLetterData["phoneme"].ToString());
 		
 		yield return new WaitForSeconds(0.25f);
-		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_GULP");
-		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP_RANDOM");
-		iTween.MoveTo(draggable.gameObject, m_eatPosition.position, 0.3f);
+
+        float positionTweenDuration = 0.3f;
+
+        iTween.MoveTo(draggable.gameObject, m_mouthLocation.position, positionTweenDuration);
 		
-		yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
+
+        iTween.ScaleTo(draggable.gameObject, Vector3.one * 0.1f, positionTweenDuration / 2f);
+
+
+        //string eventString = (Random.Range(0, 3) == 0) ? "TROLL_BURP_RANDOM" : "TROLL_GULP";
+        string eventString = "TROLL_GULP";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(eventString);
+        
+        m_trollAnimManager.PlayAnimation("EAT");
+
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
 		
 		m_spawnedDraggables.Remove(draggable);
 		draggable.Off();
 		
-		//WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_GULP");
-
-		int probability = Random.Range(0, 10);
-		string eventString = "TROLL_GULP";
-		if(probability > 7)
-		{
-			eventString = "TROLL_FART_RANDOM";
-		}
-		else if(probability > 5)
-		{
-			eventString = "TROLL_BURP_RANDOM";
-		}
-
-		//string eventString = (Random.Range(0, 2) == 0) ? "TROLL_BURP_RANDOM" : "TROLL_FART_RANDOM";
-		WingroveAudio.WingroveRoot.Instance.PostEvent(eventString);
-
-        m_trollAnimManager.PlayAnimation("EAT");
 
         /*
+        int probability = Random.Range(0, 10);
+        string eventString = "TROLL_GULP";
+        if(probability > 7)
+        {
+            eventString = "TROLL_FART_RANDOM";
+        }
+        else if(probability > 5)
+        {
+            eventString = "TROLL_BURP_RANDOM";
+        }
+        
 		// TODO: Put troll animation calls in methods. Remove code duplication below
         m_trollSubFatness++;
         if (m_trollSubFatness == 2)
