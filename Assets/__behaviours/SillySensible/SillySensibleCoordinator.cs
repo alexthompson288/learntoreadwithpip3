@@ -3,30 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
-
+public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> 
+{
     [SerializeField]
-    private SimpleSpriteAnim m_trollAnimation;
+    private AnimManager m_trollAnimManager;
     [SerializeField]
-    private SimpleSpriteAnim m_pipAnimation;
+    private Transform m_trollMouthLocation;
     [SerializeField]
-    private string[] m_standAnimations;
+    private AnimManager m_pipAnimManager;
     [SerializeField]
-    private string[] m_idleLevelAnims;
+    private Transform m_pipBackpackLocation;
     [SerializeField]
-    private string[] m_growAnims;
+    private ClickEvent m_trollCollider;
+    [SerializeField]
+    private ClickEvent m_pipCollider;
     [SerializeField]
     private Transform m_spawnLocation;
     [SerializeField]
-    private GameObject m_draggableWordPrefab;
-    [SerializeField]
-    private Transform m_topBoundary;
+    private GameObject m_wordPrefab;
     [SerializeField]
     private Transform m_trollBoundary;
     [SerializeField]
     private Transform m_pipBoundary;
     [SerializeField]
-    private ProgressScoreBar m_progressScoreBar;
+    private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private int m_targetScore = 6;
     [SerializeField]
@@ -47,14 +47,13 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
     List<DataRow> m_wordList = new List<DataRow>();
     List<DataRow> m_sillyWords = new List<DataRow>();
 
+    GameWidget m_spawnedWidget;
+
     bool m_isSillyWord;
-    GameObject m_currentWordPrefab;
+
     string m_currentWord;
 
     int m_score = 0;
-
-    int m_trollFatness;
-    int m_trollSubFatness = 0;
 
     int m_sillyWordsSoFar = 0;
     int m_sensibleWordsSoFar = 0;
@@ -64,6 +63,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        m_trollCollider.OnSingleClick += OnClickTroll;
+        m_pipCollider.OnSingleClick += OnClickPip;
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         SessionInformation.Instance.SetNumPlayers(1);
@@ -74,16 +76,12 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 
 		m_sillyWords.AddRange(DataHelpers.GetSillywords());
 
-        m_progressScoreBar.SetStarsTarget(m_targetScore);
+        m_scoreKeeper.SetTargetScore(m_targetScore);
 
-
-        //yield return new WaitForSeconds(1.0f);
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_SENSIBLE_INSTRUCTION");
-        //yield return new WaitForSeconds(5.0f);
 
 		if(m_wordList.Count > 0)
 		{
-        	StartCoroutine(ShowNextWord(0));
+            ShowNextWord();
 		}
 		else
 		{
@@ -91,28 +89,37 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
 		}
 	}
 
-    IEnumerator ShowNextWord(float delay = 2f)
+    void OnGUI()
     {
-        yield return new WaitForSeconds(delay);
+        GUILayout.Label("silly: " + m_sillyWordsSoFar);
+        GUILayout.Label("sensible: " + m_sensibleWordsSoFar);
 
+    }
+
+    void ShowNextWord()
+    {
         m_hasGotWrong = false;
 
-        if ((m_sillyWordsSoFar < m_targetScore / 2) &&
-            (m_sensibleWordsSoFar < m_targetScore / 2))
+        if ((m_sillyWordsSoFar < m_targetScore / 2) && (m_sensibleWordsSoFar < m_targetScore / 2))
         {
+            Debug.Log("RANDOM 1");
             m_isSillyWord = Random.Range(0, 10) > 5;
         }
         else
         {
-            if (m_score == m_sensibleWordsSoFar + m_sillyWordsSoFar)
+            if(m_sillyWordsSoFar < m_sensibleWordsSoFar)
             {
-                m_isSillyWord = m_sensibleWordsSoFar > m_sillyWordsSoFar;
+                m_isSillyWord = true;
+            }
+            else if(m_sillyWordsSoFar > m_sensibleWordsSoFar)
+            {
+                m_isSillyWord = false;
             }
             else
             {
+                Debug.Log("RANDOM 2");
                 m_isSillyWord = Random.Range(0, 10) > 5;
             }
-        }
 
         if (m_isSillyWord)
         {
@@ -126,140 +133,128 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator> {
         m_currentWord  = m_isSillyWord ? m_sillyWords[Random.Range(0, m_sillyWords.Count)]["word"].ToString() :
             m_wordList[Random.Range(0, m_wordList.Count)]["word"].ToString();
 
-        m_currentWordPrefab = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
-            m_draggableWordPrefab, m_spawnLocation);
-        m_currentWordPrefab.transform.localScale = Vector3.zero;
-
-        m_currentWordPrefab.GetComponentInChildren<UILabel>().text = m_currentWord;
+        GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, m_spawnLocation);
+        m_spawnedWidget = newGo.GetComponent<GameWidget>() as GameWidget;
+        m_spawnedWidget.SetUp(m_currentWord, true);
+        m_spawnedWidget.onAll += OnWidgetRelease;
     }
 
-    public void WordDropped()
+    void OnClickTroll(ClickEvent click)
     {
-        StartCoroutine(WordDroppedFinalise());
+        StartCoroutine(OnAnswer(m_spawnedWidget, m_isSillyWord));
     }
 
-    public IEnumerator WordDroppedFinalise()
+    void OnClickPip(ClickEvent click)
     {
-        if (m_currentWordPrefab.transform.position.y < m_topBoundary.position.y)
+        StartCoroutine(OnAnswer(m_spawnedWidget, !m_isSillyWord));
+    }
+
+    void OnWidgetRelease(GameWidget widget)
+    {   
+        if (widget.transform.position.x < m_trollBoundary.position.x)
         {
-            bool isDone = false;
-            bool isCorrect = false;
-            if (m_currentWordPrefab.transform.position.x < m_trollBoundary.position.x)
-            {
-                isDone = true;                
-                if ( m_isSillyWord )
-                {
-					iTween.MoveTo(m_currentWordPrefab, m_trollCorrectPosition.position, 0.2f);
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_GULP");
-                    m_trollSubFatness++;
-                    if (m_trollSubFatness == 2)
-                    {
-                        if (m_trollFatness < 2)
-                        {
-                            m_trollAnimation.PlayAnimation(m_growAnims[m_trollFatness]);
-                            yield return new WaitForSeconds(0.9f);
-                            m_trollFatness++;
-                            m_trollAnimation.PlayAnimation(m_standAnimations[m_trollFatness]);
-                        }
-                        m_trollSubFatness = 0;
-                    }
-                    else
-                    {
-                        m_trollAnimation.PlayAnimation(m_idleLevelAnims[m_trollFatness]);
-                        yield return new WaitForSeconds(0.4f);
-                        m_trollAnimation.PlayAnimation(m_standAnimations[m_trollFatness]);
-                        yield return new WaitForSeconds(0.5f);
-                    }
-                    isCorrect = true;
-                }
-            }
-            else if (m_currentWordPrefab.transform.position.x > m_pipBoundary.position.x)
-            {
-                isDone = true;
+            StartCoroutine(OnAnswer(widget, m_isSillyWord));
+        }
+        else if (widget.transform.position.x > m_pipBoundary.position.x)
+        {
+            StartCoroutine(OnAnswer(widget, !m_isSillyWord));
+        } 
+        else
+        {
+            widget.TweenToStartPos();
+        }
+    }
 
-                if ( !m_isSillyWord )
-                {
-					if(!m_hasGotWrong)
-					{
-						AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWord);
-				        if (loadedAudio != null)
-						{
-				            m_audioSource.clip = loadedAudio;
-				            m_audioSource.Play();
-				        }
-					}
-					
-					iTween.MoveTo(m_currentWordPrefab, m_pipCorrectPosition.position, 0.2f);
-					int animIndex = Random.Range(0,2);
-                    m_pipAnimation.PlayAnimation("ON_" + animIndex);
-                    yield return new WaitForSeconds(0.8f);
-                    m_pipAnimation.PlayAnimation("OFF_" + animIndex);
-                    isCorrect = true;
-                }
-            }
-
+    IEnumerator OnAnswer(GameWidget widget, bool isCorrect)
+    {
+        if (widget != null)
+        {
             if (isCorrect)
             {
-                m_currentWordPrefab.GetComponent<DraggableWord>().Off();
+                ++m_score;
 
-                if (!m_hasGotWrong)
+                m_spawnedWidget = null;
+                widget.EnableCollider(false);
+
+                if (m_isSillyWord)
                 {
-                    m_score++;
-                    m_progressScoreBar.SetStarsCompleted(m_score);
-                    m_progressScoreBar.SetScore(m_score);
-                }
+                    yield return StartCoroutine(FeedTroll(widget.gameObject));
+                } 
                 else
                 {
-                    if (!m_isSillyWord )
+                    AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWord);
+                    if (loadedAudio != null)
                     {
-                        PipPadBehaviour.Instance.Show(m_currentWord);
-                        PipPadBehaviour.Instance.SayAll(3f);
-                        while (PipPadBehaviour.Instance.IsShowing())
-                        {
-                            yield return null;
-                        }
+                        m_audioSource.clip = loadedAudio;
+                        m_audioSource.Play();
                     }
+
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+
+                    yield return StartCoroutine(FeedPip(widget.gameObject));
                 }
-				
-				if (m_isSillyWord)
+
+                widget.Off();
+
+                m_scoreKeeper.UpdateScore(1);
+
+                if (m_score < m_targetScore)
                 {
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("WORD_IS_SILLY");
-                }
+                    yield return new WaitForSeconds(2);
+                    ShowNextWord();
+                } 
                 else
                 {
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("WORD_IS_SENSIBLE");
-				}
-            }
+                    StartCoroutine(CompleteGame());
+                }
+            } 
             else
             {
-				iTween.MoveTo(m_currentWordPrefab, m_spawnLocation.position, 0.2f);
-                m_hasGotWrong = true;
                 WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            }
-
-            if (isDone && isCorrect)
-            {
-                if (m_score == m_targetScore)
-                {
-                    /*
-                    yield return new WaitForSeconds(1.0f);
-                    iTween.MoveTo(m_moveHierarchy, m_offPosition.transform.position, 1.0f);
-                    yield return new WaitForSeconds(1.0f);
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_BURP");
-                    m_videoHierarchy.SetActive(true);
-                    yield return new WaitForSeconds(3.0f);
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_TROLL");
-                    yield return new WaitForSeconds(3.0f);
-                    */
-
-					StartCoroutine(CompleteGame());
-				}
-                else
-                {
-                    StartCoroutine(ShowNextWord());
-                }
+                widget.TweenToStartPos();
+                yield return null;
             }
         }
+
+        yield break;
+    }
+
+    IEnumerator FeedTroll(GameObject go)
+    {
+        yield return new WaitForSeconds(0.25f);
+        
+        float positionTweenDuration = 0.3f;
+
+        iTween.MoveTo(go, m_trollMouthLocation.position, positionTweenDuration);
+        
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
+        
+        iTween.ScaleTo(go, Vector3.one * 0.1f, positionTweenDuration / 2f);
+
+        string eventString = "TROLL_GULP";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(eventString);
+        
+        m_trollAnimManager.PlayAnimation("EAT");
+        
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
+    }
+
+    IEnumerator FeedPip(GameObject go)
+    {
+        yield return new WaitForSeconds(0.25f);
+        
+        float positionTweenDuration = 0.3f;
+        
+        iTween.MoveTo(go, m_pipBackpackLocation.position, positionTweenDuration);
+        
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
+        
+        iTween.ScaleTo(go, Vector3.one * 0.1f, positionTweenDuration / 2f);
+
+        string animName = Random.Range(0, 2) == 0 ? "THUMBS_UP" : "JUMP";
+        m_pipAnimManager.PlayAnimation(animName);
+        
+        yield return new WaitForSeconds(positionTweenDuration / 2f);
     }
 	
 	public void PlayWordAudio()

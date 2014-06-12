@@ -22,7 +22,7 @@ public class DraggableWord : MonoBehaviour {
         }
         else
         {
-            SillySensibleCoordinator.Instance.WordDropped();
+            //SillySensibleCoordinator.Instance.WordDropped();
         }
     }
 

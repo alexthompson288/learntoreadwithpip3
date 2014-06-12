@@ -46,7 +46,6 @@ public class ScoreLights : ScoreKeeper
         {
             GameObject newMarker = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_scoreQuizMarkerPrefab, m_lowTransform);
             newMarker.transform.localPosition = delta * index;
-            //newMarker.GetComponentInChildren<UISprite>().color = m_unansweredColor;
             m_spawnedMarkers.Add(newMarker);
         }
     }
@@ -56,11 +55,7 @@ public class ScoreLights : ScoreKeeper
 
         if (m_markerIndex < m_targetScore)
         {
-            //Color col = delta == 0 ? m_incorrectColor : m_correctColor;
-            //TweenColor.Begin(m_spawnedMarkers[m_markerIndex].gameObject, 0.3f, col);
             m_spawnedMarkers[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
-
-            PlayAudio(delta);
         }
 
         ++m_markerIndex;

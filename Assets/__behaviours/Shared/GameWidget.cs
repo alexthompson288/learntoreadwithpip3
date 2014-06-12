@@ -224,8 +224,10 @@ public class GameWidget : MonoBehaviour
                     OnDragRelease(this);
                 }
             }
-
-            ReactToClick();
+            else
+            {
+                ReactToClick();
+            }
         }
     }
 
@@ -300,8 +302,6 @@ public class GameWidget : MonoBehaviour
     {
         iTween.MoveTo(gameObject, pos, m_positionTweenDuration);
     }
-
-
 
     public void Off()
     {
