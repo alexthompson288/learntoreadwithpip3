@@ -67,12 +67,6 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
-		yield return new WaitForSeconds(0.5f);
-		
-		WingroveAudio.WingroveRoot.Instance.PostEvent("FEED_TROLL_INSTRUCTION");
-		
-		yield return new WaitForSeconds(2.5f);
-		
 		// Always Pip, Always winner
 		SessionInformation.Instance.SetNumPlayers(1);
         SessionInformation.Instance.SetPlayerIndex(0, 3);
@@ -317,7 +311,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 		m_videoHierarchy.SetActive(true);
 		yield return new WaitForSeconds(3.0f);
 		//WingroveAudio.WingroveRoot.Instance.PostEvent("SILLY_TROLL");
-		yield return new WaitForSeconds(3.0f);
+		yield return new WaitForSeconds(6.0f);
 
 		GameManager.Instance.CompleteGame();
 	}
