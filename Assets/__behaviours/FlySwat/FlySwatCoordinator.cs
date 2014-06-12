@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class SwatFliesCoordinator : Singleton<SwatFliesCoordinator> 
+public class FlySwatCoordinator : Singleton<FlySwatCoordinator> 
 {
     [SerializeField]
     private string m_dataType;
     [SerializeField]
     private GameObject m_flyPrefab;
     [SerializeField]
-    private SwatFliesPlayer[] m_gamePlayers;
+    private FlySwatPlayer[] m_gamePlayers;
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]

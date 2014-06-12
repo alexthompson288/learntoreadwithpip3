@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Wingrove;
 
-public class SwatFliesPlayer : GamePlayer
+public class FlySwatPlayer : GamePlayer
 {
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
@@ -32,7 +32,7 @@ public class SwatFliesPlayer : GamePlayer
         {
             cs.DeactivatePress(false);
         }
-        SwatFliesCoordinator.Instance.CharacterSelected(characterIndex);
+        FlySwatCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
     public int GetScore()
@@ -61,7 +61,7 @@ public class SwatFliesPlayer : GamePlayer
     {
         m_swatter.position = m_swatterOff.position;
         m_dataDisplay.SetShowPicture(false);
-        m_scoreKeeper.SetTargetScore(SwatFliesCoordinator.Instance.GetTargetScore());
+        m_scoreKeeper.SetTargetScore(FlySwatCoordinator.Instance.GetTargetScore());
     }
 
     IEnumerator ResetSwatter()
@@ -80,7 +80,7 @@ public class SwatFliesPlayer : GamePlayer
 
     public IEnumerator SpawnFly()
     {
-        SwatFliesCoordinator coordinator = SwatFliesCoordinator.Instance; // Temporary variable saves lots of typing
+        FlySwatCoordinator coordinator = FlySwatCoordinator.Instance; // Temporary variable saves lots of typing
 
         DataRow currentData = coordinator.GetCurrentData();
         DataRow data = currentData;
@@ -112,7 +112,7 @@ public class SwatFliesPlayer : GamePlayer
 
     void OnSwatFly(GameWidget widget)
     {
-        if (widget.data.GetId() == SwatFliesCoordinator.Instance.GetCurrentId())
+        if (widget.data.GetId() == FlySwatCoordinator.Instance.GetCurrentId())
         {
             StartCoroutine(OnCorrect(widget));
         } 
@@ -121,10 +121,10 @@ public class SwatFliesPlayer : GamePlayer
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
 
-            SwatFliesCoordinator.Instance.PlayAudio();
+            FlySwatCoordinator.Instance.PlayAudio();
 
             StopCoroutine("HideDataDisplayDelay");
-            ShowDataDisplay(SwatFliesCoordinator.Instance.GetDataType(), SwatFliesCoordinator.Instance.GetCurrentData());
+            ShowDataDisplay(FlySwatCoordinator.Instance.GetDataType(), FlySwatCoordinator.Instance.GetCurrentData());
             StartCoroutine("HideDataDisplayDelay");
 
             widget.EnableCollider(false);
@@ -153,12 +153,12 @@ public class SwatFliesPlayer : GamePlayer
 
         m_scoreKeeper.UpdateScore();
 
-        if (m_score >= SwatFliesCoordinator.Instance.GetTargetScore())
+        if (m_score >= FlySwatCoordinator.Instance.GetTargetScore())
         {
             StopGame();
-            SwatFliesCoordinator.Instance.OnPlayerFinish(m_playerIndex);
+            FlySwatCoordinator.Instance.OnPlayerFinish(m_playerIndex);
             yield return StartCoroutine(m_scoreKeeper.On());
-            SwatFliesCoordinator.Instance.OnWinningPlayerCompleteSequence();
+            FlySwatCoordinator.Instance.OnWinningPlayerCompleteSequence();
         }
 
         yield return null;
