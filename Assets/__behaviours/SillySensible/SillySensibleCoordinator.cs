@@ -104,22 +104,23 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
         {
             Debug.Log("RANDOM 1");
             m_isSillyWord = Random.Range(0, 10) > 5;
-        }
+        } 
         else
         {
-            if(m_sillyWordsSoFar < m_sensibleWordsSoFar)
+            if (m_sillyWordsSoFar < m_sensibleWordsSoFar)
             {
                 m_isSillyWord = true;
-            }
-            else if(m_sillyWordsSoFar > m_sensibleWordsSoFar)
+            } 
+            else if (m_sillyWordsSoFar > m_sensibleWordsSoFar)
             {
                 m_isSillyWord = false;
-            }
+            } 
             else
             {
                 Debug.Log("RANDOM 2");
                 m_isSillyWord = Random.Range(0, 10) > 5;
             }
+        }
 
         if (m_isSillyWord)
         {
@@ -130,8 +131,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
             m_sensibleWordsSoFar++;
         }
 
-        m_currentWord  = m_isSillyWord ? m_sillyWords[Random.Range(0, m_sillyWords.Count)]["word"].ToString() :
-            m_wordList[Random.Range(0, m_wordList.Count)]["word"].ToString();
+        m_currentWord  = m_isSillyWord ? m_sillyWords[Random.Range(0, m_sillyWords.Count)]["word"].ToString() : m_wordList[Random.Range(0, m_wordList.Count)]["word"].ToString();
 
         GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, m_spawnLocation);
         m_spawnedWidget = newGo.GetComponent<GameWidget>() as GameWidget;
