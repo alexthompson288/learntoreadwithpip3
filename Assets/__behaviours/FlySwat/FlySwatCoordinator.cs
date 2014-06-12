@@ -13,6 +13,8 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
+    private AudioClip m_instructions;
+    [SerializeField]
     private int m_targetScore;
     [SerializeField]
     private Vector2 m_spawnDelay = new Vector2(1, 3);
@@ -63,7 +65,15 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
 
     IEnumerator StartGame()
     {
-        yield return null;
+        m_audioSource.clip = m_instructions;
+        m_audioSource.Play();
+        
+        while(m_audioSource.isPlaying)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.25f);
 
         int numPlayers = GetNumPlayers();
         

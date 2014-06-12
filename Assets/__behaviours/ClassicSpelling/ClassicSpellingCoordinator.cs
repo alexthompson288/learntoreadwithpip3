@@ -23,6 +23,10 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private DataDisplay m_dataDisplay;
+    [SerializeField]
+    private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip m_instructions;
 
     float m_startTime;
     
@@ -68,6 +72,14 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         if(m_wordsPool.Count > 0)
         {
+            m_audioSource.clip = m_instructions;
+            m_audioSource.Play();
+
+            while(m_audioSource.isPlaying)
+            {
+                yield return null;
+            }
+
             m_startTime = Time.time;
             StartCoroutine(SpawnQuestion());
         }
