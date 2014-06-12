@@ -57,9 +57,13 @@ public class FlySwatPlayer : GamePlayer
         m_dataDisplay.Off();
     }
 
-    public void SetUp()
+    void Awake()
     {
         m_swatter.position = m_swatterOff.position;
+    }
+
+    public void SetUp()
+    {
         m_dataDisplay.SetShowPicture(false);
         m_scoreKeeper.SetTargetScore(FlySwatCoordinator.Instance.GetTargetScore());
     }
@@ -148,8 +152,6 @@ public class FlySwatPlayer : GamePlayer
         //widget.ChangeBackgroundState();
         widget.GetComponentInChildren<SimpleSpriteAnim>().PlayAnimation("SPLAT");
 
-
-
         ++m_score;
 
         m_scoreKeeper.UpdateScore();
@@ -192,7 +194,6 @@ public class FlySwatPlayer : GamePlayer
     {
         StopCoroutine("SpawnFly");
 
-        Debug.Log("widgets.Count: " + m_spawnedWidgets.Count);
         for (int i = m_spawnedWidgets.Count - 1; i > -1; --i)
         {
             StartCoroutine(DestroyFly(m_spawnedWidgets[i]));

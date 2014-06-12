@@ -36,7 +36,7 @@ public class ScorePip : ScoreKeeper
         
         float delta = Mathf.Abs((m_top.localPosition - m_bottom.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
-        UpdatePlatformLevel(1);
+        //UpdatePlatformLevel(1);
     }
     
     public override void UpdateScore(int delta = 1)

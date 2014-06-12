@@ -38,6 +38,8 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
+    private AudioClip m_instructionAudio;
+    [SerializeField]
     private AudioClip m_onCompleteAudio;
 	[SerializeField]
     private Blackboard m_blackBoard;
@@ -109,6 +111,13 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
         m_progressScoreBar.SetStarsTarget(m_targetScore);
 		
 		//yield return new WaitForSeconds(3f);
+
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
+        m_audioSource.clip = m_instructionAudio;
+        m_audioSource.Play();
+
+        yield return new WaitForSeconds(2f);
 
 		if(m_lettersPool.Count > 0)
 		{

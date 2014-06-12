@@ -18,6 +18,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
+    private AudioClip m_instructionAudio;
+    [SerializeField]
     private Target[] m_targets;
     [SerializeField]
     private ScoreKeeper m_scoreKeeper;
@@ -78,6 +80,23 @@ public class CatapultMixedCoordinator : MonoBehaviour
         
         m_dataPool = DataHelpers.GetData(m_dataType);
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+
+        Target[] targets = UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[];
+
+        foreach (Target target in targets)
+        {
+            target.SetShowPicture(m_targetsShowPicture);
+        }
+
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
+        m_audioSource.clip = m_instructionAudio;
+        m_audioSource.Play();
+
+        while (m_audioSource.isPlaying)
+        {
+            yield return null;
+        }
         
         if (m_dataPool.Count > 0)
         {
@@ -100,7 +119,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             m_dataDisplay.On(currentDataType, m_currentData);
 
             
-            InitializeTargets(UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[]);
+            InitializeTargets(targets);
             
             PlayShortAudio(m_currentData);
 
@@ -118,9 +137,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         for(int i = 0; i < targets.Length; ++i)
         {
-
-            targets[i].SetShowPicture(m_targetsShowPicture);
-
             targets[i].OnTargetHit += OnTargetHit;
             targets[i].OnCompleteMove += SetTargetData;
             

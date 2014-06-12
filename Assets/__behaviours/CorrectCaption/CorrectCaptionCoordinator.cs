@@ -297,6 +297,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
         else
         {
             m_hasAnsweredIncorrectly = true;
+            //string eventName = answerIsYes ? "VOCAL_INCORRECT" : "TROLL_EXHALE";
+            //WingroveAudio.WingroveRoot.Instance.PostEvent(eventName);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
         }
 
