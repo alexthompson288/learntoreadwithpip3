@@ -33,6 +33,10 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private float m_probabilityYesIsCorrect = 0.5f;
     [SerializeField]
     private float m_questionTweenDuration = 0.25f;
+    [SerializeField]
+    private AudioClip m_wordsInstructions;
+    [SerializeField]
+    private AudioClip m_captionsInstructions;
 
     bool m_hasAnsweredIncorrectly = false;
 
@@ -103,6 +107,11 @@ public class CorrectCaptionCoordinator : GameCoordinator
         ClampTargetScore();
 
         m_scoreKeeper.SetTargetScore(m_targetScore);
+
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
+        m_audioSource.clip = m_dataType == "words" ? m_wordsInstructions : m_captionsInstructions;
+        m_audioSource.Play();
 
         if (m_dataPool.Count > 0)
         {

@@ -18,7 +18,9 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
-    private AudioClip m_instructionAudio;
+    private AudioClip m_defaultInstructions;
+    [SerializeField]
+    private AudioClip m_mixedDataInstructions;
     [SerializeField]
     private Target[] m_targets;
     [SerializeField]
@@ -90,7 +92,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
 
-        m_audioSource.clip = m_instructionAudio;
+        m_audioSource.clip = IsDataMixed() ? m_mixedDataInstructions : m_defaultInstructions;
         m_audioSource.Play();
 
         while (m_audioSource.isPlaying)
