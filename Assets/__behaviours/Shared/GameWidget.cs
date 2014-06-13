@@ -315,8 +315,11 @@ public class GameWidget : MonoBehaviour
         iTween.ScaleTo(gameObject, Vector3.zero, m_scaleTweenDuration);
         
         yield return new WaitForSeconds(m_scaleTweenDuration);
-        
-        Destroy(gameObject);
+
+        if (gameObject != null)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void ChangeBackgroundState(bool stateB = true)

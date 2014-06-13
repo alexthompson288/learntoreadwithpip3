@@ -83,6 +83,8 @@ public class GameManager : Singleton<GameManager>
         m_currentGameName = "";
         m_returnScene = "";
         m_scoreType = "";
+
+        SessionInformation.Instance.SetNumPlayers(1);
     }
 
     public void CompleteGame(bool won = true, string setsScene = "NewScoreDanceScene") // TODO: Deprecate the parameters passed to this method
