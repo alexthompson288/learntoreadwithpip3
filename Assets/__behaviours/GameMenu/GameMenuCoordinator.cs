@@ -109,7 +109,7 @@ public class GameMenuCoordinator : MonoBehaviour
 
             //m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
             m_gameIcon.atlas = button.GetComponent<ChooseGameButton>().GetSpriteAtlas();
-            m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetStartSpriteName();
+            m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetBlackboardSpriteName();
             Debug.Log("spriteName: " + m_gameIcon.spriteName);
             m_gameIcon.MakePixelPerfect();
            

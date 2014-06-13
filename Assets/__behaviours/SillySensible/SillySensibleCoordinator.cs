@@ -42,9 +42,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
-    private AudioClip m_instructionAudio;
-    [SerializeField]
     private AudioClip m_onCompleteAudio;
+    [SerializeField]
+    private BennyAudio m_benny;
 
     List<DataRow> m_wordList = new List<DataRow>();
     List<DataRow> m_sillyWords = new List<DataRow>();
@@ -65,8 +65,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        m_audioSource.clip = m_instructionAudio;
-        m_audioSource.Play();
+        m_benny.PlayAudio();
 
         m_trollCollider.OnSingleClick += OnClickTroll;
         m_pipCollider.OnSingleClick += OnClickPip;
@@ -86,7 +85,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
 		if(m_wordList.Count > 0)
 		{
-            while(m_audioSource.isPlaying)
+            while(m_benny.IsPlayingLocal())
             {
                 yield return null;
             }

@@ -13,24 +13,23 @@ public class ChooseGameButton : MonoBehaviour
     private UISprite[] m_starSprites;
     [SerializeField]
     private bool m_starsAreTimeBased = true;
+    [SerializeField]
+    private string m_blackboardSpriteName;
 
     DataRow m_game = null;
 
-    string m_startSpriteName;
+    public string GetBlackboardSpriteName()
+    {
+        return m_blackboardSpriteName;
+    }
 
     public UIAtlas GetSpriteAtlas()
     {
         return m_icon.atlas;
     }
 
-    public string GetStartSpriteName()
-    {
-        return m_startSpriteName;
-    }
-
     void Awake()
     {
-        m_startSpriteName = m_icon.spriteName;
         System.Array.Sort(m_starSprites, CollectionHelpers.CompareLocalPosX);
     }
 
