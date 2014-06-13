@@ -14,7 +14,8 @@ public class VideoPlayer : MonoBehaviour
     [SerializeField]
     private string m_streamingAssetsRelativePath = "/mp4/";
     [SerializeField]
-    private string m_url = "https://s3-eu-west-1.amazonaws.com/pipvideotest";
+    private string m_url = "https://s3-eu-west-1.amazonaws.com/pipisodes/";
+    //private string m_url = "https://s3-eu-west-1.amazonaws.com/pipvideotest";
     [SerializeField]
     private Color m_bgColor = Color.black;
     [SerializeField]
@@ -188,8 +189,8 @@ public class VideoPlayer : MonoBehaviour
         }
 
         Debug.Log("WAIT");
-        Debug.Log("Download url: " + m_url + "/" + m_filename);
-        m_www = new WWW(m_url + "/" + m_filename);
+        Debug.Log("Download url: " + m_url + m_filename);
+        m_www = new WWW(m_url + m_filename);
 
         StartCoroutine("UpdateProgressBar");
 

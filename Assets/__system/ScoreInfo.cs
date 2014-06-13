@@ -165,7 +165,6 @@ public class ScoreInfo : Singleton<ScoreInfo>
         
         for (int i = 0; i < starSprites.Length; ++i)
         {
-            Debug.Log(starSprites[i].transform.position.x);
             string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
             starSprites[i].spriteName = spriteName;
         }
