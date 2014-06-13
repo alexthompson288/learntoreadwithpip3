@@ -706,7 +706,8 @@ public static class DataHelpers
             case "stories":
                 if(data["storycoverartwork"] != null)
                 {
-                    LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + data["storycoverartwork"].ToString());
+                    Debug.Log("storycoverartwork: " + data["storycoverartwork"].ToString());
+                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + data["storycoverartwork"].ToString());
                 }
                 //tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
