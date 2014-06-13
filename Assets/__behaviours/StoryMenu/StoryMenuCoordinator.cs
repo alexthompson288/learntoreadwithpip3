@@ -207,13 +207,13 @@ public class StoryMenuCoordinator : MonoBehaviour
             tweenArgs.Add("islocal", true);
             tweenArgs.Add("time", m_tweenDuration);
 
-            float readButtonPosY = hasQuizQuestions ? 120 : 60;
+            float readButtonPosY = hasQuizQuestions ? 120 : 70;
             tweenArgs.Add("position", new Vector3(m_readButtonParent.transform.localPosition.x, readButtonPosY));
 
             iTween.MoveTo(m_readButtonParent, tweenArgs);
 
 
-            float picturesButtonPosY = hasQuizQuestions ? 0 : -60;
+            float picturesButtonPosY = hasQuizQuestions ? 0 : -70;
             tweenArgs["position"] = new Vector3(m_picturesButtonParent.transform.localPosition.x, picturesButtonPosY);
 
             iTween.MoveTo(m_picturesButtonParent, tweenArgs);
