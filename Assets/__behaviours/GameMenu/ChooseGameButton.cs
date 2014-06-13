@@ -16,9 +16,22 @@ public class ChooseGameButton : MonoBehaviour
 
     DataRow m_game = null;
 
+    string m_startSpriteName;
+
+    public UIAtlas GetSpriteAtlas()
+    {
+        return m_icon.atlas;
+    }
+
+    public string GetStartSpriteName()
+    {
+        return m_startSpriteName;
+    }
+
     void Awake()
     {
-        System.Array.Sort(m_starSprites, CollectionHelpers.ComparePosX);
+        m_startSpriteName = m_icon.spriteName;
+        System.Array.Sort(m_starSprites, CollectionHelpers.CompareLocalPosX);
     }
 
 	public void SetUp(DataRow game)
@@ -28,6 +41,8 @@ public class ChooseGameButton : MonoBehaviour
         if (m_game != null)
         {
             m_label.text = m_game ["labeltext"] != null ? m_game ["labeltext"].ToString() : m_game ["name"].ToString();
+
+            /*
             m_icon.spriteName = m_game ["name"].ToString() + "_complete";
 
             m_temporaryIconTexture.mainTexture = Resources.Load<Texture2D>(m_game ["name"].ToString() + "_complete");
@@ -37,6 +52,7 @@ public class ChooseGameButton : MonoBehaviour
             }
 
             m_temporaryIconTexture.gameObject.SetActive(m_temporaryIconTexture.mainTexture != null);
+            */
         }
     }
 

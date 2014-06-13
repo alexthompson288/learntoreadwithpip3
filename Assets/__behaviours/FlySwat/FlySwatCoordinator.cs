@@ -177,6 +177,10 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
             
             ScoreInfo.Instance.NewScore(m_gamePlayers [m_winningIndex].GetScore(), m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
         }
+        else
+        {
+            CelebrationCoordinator.Instance.PopCharacter(m_gamePlayers[m_winningIndex].GetSelectedCharacter(), true);
+        }
 
         while (!winningPlayerHasCompletedSequence)
         {

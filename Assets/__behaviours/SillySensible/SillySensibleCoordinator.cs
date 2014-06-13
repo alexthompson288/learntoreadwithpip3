@@ -42,6 +42,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
+    private AudioClip m_instructionAudio;
+    [SerializeField]
     private AudioClip m_onCompleteAudio;
 
     List<DataRow> m_wordList = new List<DataRow>();
@@ -63,6 +65,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        m_audioSource.clip = m_instructionAudio;
+        m_audioSource.Play();
+
         m_trollCollider.OnSingleClick += OnClickTroll;
         m_pipCollider.OnSingleClick += OnClickPip;
 
@@ -81,6 +86,11 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
 		if(m_wordList.Count > 0)
 		{
+            while(m_audioSource.isPlaying)
+            {
+                yield return null;
+            }
+
             ShowNextWord();
 		}
 		else
@@ -196,6 +206,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
                 widget.Off();
 
+                WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
                 m_scoreKeeper.UpdateScore(1);
 
                 if (m_score < m_targetScore)

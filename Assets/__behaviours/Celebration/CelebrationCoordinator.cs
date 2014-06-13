@@ -41,6 +41,10 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 	private GameObject m_levelUp;
     [SerializeField]
     private string[] m_characterNames;
+    [SerializeField]
+    private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip[] m_characterWinVocals;
 
 	Vector3 m_textDefaultPos;
 
@@ -254,8 +258,14 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 		yield return new WaitForSeconds(3f);
 	}
 
-    public void PopCharacter(int characterIndex)
+    public void PopCharacter(int characterIndex, bool playAudio)
     {
+        if (playAudio && characterIndex < m_characterWinVocals.Length)
+        {
+            m_audioSource.clip = m_characterWinVocals[characterIndex];
+            m_audioSource.Play();
+        }
+
         string characterName = characterIndex < m_characterNames.Length ? m_characterNames [characterIndex] : "pip";
         PopCharacter(characterName);
     }
@@ -266,8 +276,9 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 		string spriteName = characterName.ToLower() + "_state_b";
 		m_characterPopper.GetComponentInChildren<UISprite>().spriteName = spriteName;
+        m_characterPopper.GetComponentInChildren<UISprite>().MakePixelPerfect();
 
-		m_characterPopper.PopCharacter();
+		m_characterPopper.PopCharacter(3);
 	}
 
 	public IEnumerator NewHighScore(int score, float readDuration = 3f)

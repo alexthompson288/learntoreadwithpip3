@@ -10,6 +10,11 @@ public abstract class GamePlayer : MonoBehaviour
     protected List<CharacterSelection> m_characterSelections = new List<CharacterSelection>();
     protected int m_selectedCharacter = -1;
 
+    public int GetSelectedCharacter()
+    {
+        return m_selectedCharacter;
+    }
+
     public void RegisterCharacterSelection(CharacterSelection characterSelection)
     {
         m_characterSelections.Add(characterSelection);

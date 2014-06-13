@@ -17,6 +17,8 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private UILabel m_gameLabel;
     [SerializeField]
+    private UISprite m_gameIcon;
+    [SerializeField]
     private UITexture m_temporaryGameIcon;
     [SerializeField]
     private UISprite[] m_starSprites;
@@ -105,7 +107,11 @@ public class GameMenuCoordinator : MonoBehaviour
                 NGUIHelpers.MaxLabelWidth(m_gameLabel, 400);
             }
 
-            m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
+            //m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
+            m_gameIcon.atlas = button.GetComponent<ChooseGameButton>().GetSpriteAtlas();
+            m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetStartSpriteName();
+            Debug.Log("spriteName: " + m_gameIcon.spriteName);
+            m_gameIcon.MakePixelPerfect();
            
             bool isTwoPlayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
             float tweenDuration = 0.5f;

@@ -275,6 +275,11 @@ public class JoinPairsPlayer : GamePlayer
 
     public IEnumerator OnWin()
     {
+        if (JoinPairsCoordinator.Instance.GetNumPlayers() == 2)
+        {
+            CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
+        }
+
         yield return StartCoroutine(m_scoreKeeper.On());
     }
 }
