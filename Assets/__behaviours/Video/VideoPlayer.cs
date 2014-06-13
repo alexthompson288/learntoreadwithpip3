@@ -45,6 +45,7 @@ public class VideoPlayer : MonoBehaviour
     {
         if (m_progressBar != null && m_progressBarParent != null)
         {
+            m_progressBarParent.SetActive(true);
             m_progressBar.value = 0;
             m_progressBarParent.transform.localScale = Vector3.zero;
         }

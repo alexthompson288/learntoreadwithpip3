@@ -36,6 +36,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
     private AnimManager m_pipAnimManager;
     [SerializeField]
     private float m_tweenDuration = 0.5f;
+    [SerializeField]
+    private UISprite[] m_starSprites;
     
     DataRow m_currentPipisode;
 
@@ -94,6 +96,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         GameManager.Instance.AddData("quizquestions", quizQuestions);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
+        GameManager.Instance.SetScoreType(m_currentPipisode ["pipisode_title"].ToString());
+
         GameManager.Instance.StartGames();
     }
     
@@ -132,6 +136,10 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
         Vector3 imageScale = m_pipisodeImage.mainTexture != null ? Vector3.one : Vector3.zero;
         iTween.ScaleTo(m_pipisodeImage.gameObject, imageScale, m_tweenDuration);
+
+
+        // Quiz Stars
+        ScoreInfo.RefreshScoreStars(m_starSprites, "NewQuizGame", m_currentPipisode ["pipisode_title"].ToString());
 
 
         // Watch and Quiz Buttons

@@ -140,7 +140,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     public static void RefreshScoreStars(UISprite[] starSprites, string game, string type)
     {
-        System.Array.Sort(starSprites, CollectionHelpers.ComparePosX);
+        System.Array.Sort(starSprites, CollectionHelpers.CompareLocalPosX);
 
         int numStars = 0;
         int targetScore = Instance.GetTargetScore(game, type);
@@ -149,11 +149,11 @@ public class ScoreInfo : Singleton<ScoreInfo>
         {
             float proportionalScore = Instance.GetProportionalScore(game, type);
 
-            if(proportionalScore > 0.6f)
+            if(proportionalScore > 0.7f)
             {
                 numStars = 3;
             }
-            else if(proportionalScore > 0.3f)
+            else if(proportionalScore > 0.4f)
             {
                 numStars = 2;
             }
@@ -165,6 +165,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         
         for (int i = 0; i < starSprites.Length; ++i)
         {
+            Debug.Log(starSprites[i].transform.position.x);
             string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
             starSprites[i].spriteName = spriteName;
         }
@@ -172,7 +173,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     public static void RefreshTimeStars(UISprite[] starSprites, string game, string type)
     {
-        System.Array.Sort(starSprites, CollectionHelpers.ComparePosX);
+        System.Array.Sort(starSprites, CollectionHelpers.CompareLocalPosX);
 
         int numStars = 0;
         int targetScore = Instance.GetTargetScore(game, type);

@@ -20,6 +20,12 @@ public class NavMenu : Singleton<NavMenu>
 	private UILabel m_buyAllBooksLabel;
     [SerializeField]
     private GameObject m_parentGate;
+    [SerializeField]
+    private GameObject m_pipisodesButton;
+    [SerializeField]
+    private Transform m_gamesButton;
+    [SerializeField]
+    private Transform m_storiesButton;
 
 	void Awake()
 	{
@@ -28,6 +34,15 @@ public class NavMenu : Singleton<NavMenu>
         m_buyMoveable.gameObject.SetActive(true);
         m_roomMoveable.gameObject.SetActive(true);
         m_parentGate.SetActive(true);
+
+#if UNITY_STANDALONE
+        if(m_pipisodesButton != null)
+        {
+            m_pipisodesButton.SetActive(false);
+            m_gamesButton.localPosition = new Vector3(-120, m_gamesButton.localPosition.y, m_gamesButton.localPosition.z);
+            m_storiesButton.localPosition = new Vector3(120, m_storiesButton.localPosition.y, m_storiesButton.localPosition.z);
+        }
+#endif
 	}
 
 	void Start()
