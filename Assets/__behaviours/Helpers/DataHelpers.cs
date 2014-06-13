@@ -397,7 +397,7 @@ public static class DataHelpers
         return dataPool;
     }
 
-    public static DataRow GetFirstPhonemeInWord(DataRow word)
+    public static DataRow FindOnsetPhoneme(DataRow word)
     {
         string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
         foreach(string id in phonemeIds)
@@ -932,23 +932,46 @@ public static class DataHelpers
         return orderedPhonemesA [0] == orderedPhonemesB [0];
     }
 
-    public static List<DataRow> FindSharedOnsetWords(DataRow data, int numToFind)
+    public static bool HasOnsetWords(DataRow phoneme, List<DataRow> words)
     {
-        HashSet<DataRow> sharedOnsetWords = new HashSet<DataRow>();
+        bool hasOnsetWord = false;
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words");
-
-        if (dt.Rows.Count > 0)
+        foreach (DataRow word in words)
         {
-            numToFind = Mathf.Min(numToFind, dt.Rows.Count);
-
-            for(int i = 0; i < numToFind; ++i)
+            if(phoneme.Equals(FindOnsetPhoneme(word)))
             {
-                sharedOnsetWords.Add(dt.Rows[UnityEngine.Random.Range(0, dt.Rows.Count)]);
+                hasOnsetWord = true;
+                break;
             }
         }
 
-        return sharedOnsetWords.ToList();
+        return hasOnsetWord;
+    }
+
+    public static List<DataRow> FindOnsetWords(DataRow phoneme, int numToFind, bool onlyPictures)
+    {
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words");
+
+        List<DataRow> onsetWords = new List<DataRow>();
+
+        if (onlyPictures)
+        {
+            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(FindOnsetPhoneme(x)) && GetPicture("words", x) != null);
+        }
+        else
+        {
+            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(FindOnsetPhoneme(x)));
+        }
+
+        numToFind = Mathf.Min(numToFind, onsetWords.Count);
+
+        while (onsetWords.Count > numToFind)
+        {
+            int removeIndex = UnityEngine.Random.Range(0, onsetWords.Count);
+            onsetWords.RemoveAt(removeIndex);
+        }
+
+        return onsetWords;
     }
 
     public static DataRow GetCurrentGame()
