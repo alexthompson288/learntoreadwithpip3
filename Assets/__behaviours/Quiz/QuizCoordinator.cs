@@ -154,7 +154,7 @@ public class QuizCoordinator : MonoBehaviour
         Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
         Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
 
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore, false);
 
         yield return new WaitForSeconds(2f);
 

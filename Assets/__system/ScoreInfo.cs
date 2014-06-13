@@ -129,10 +129,17 @@ public class ScoreInfo : Singleton<ScoreInfo>
             {
                 m_scoreTrackers.Add(newTracker);
             } 
-            else if ((useTime && newTracker.GetTime() < oldTracker.GetTime()) || (!useTime && newTracker.GetProportionalScore() < oldTracker.GetProportionalScore()))
+            else if ((useTime && newTracker.GetTime() < oldTracker.GetTime()) || (!useTime && newTracker.GetProportionalScore() > oldTracker.GetProportionalScore()))
             {
+                Debug.Log("NEW HIGH SCORE");
                 m_scoreTrackers.Remove(oldTracker);
                 m_scoreTrackers.Add(newTracker);
+            }
+            else
+            {
+                Debug.Log("useTime: " + useTime);
+                Debug.Log("oldProportional: " + oldTracker.GetProportionalScore());
+                Debug.Log("newProportional: " + newTracker.GetProportionalScore());
             }
 
             Save();

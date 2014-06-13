@@ -141,6 +141,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator CompleteGame ()
     {
+        Debug.Log("CompleteGame()");
+
         float timeTaken = Time.time - m_startTime;
         
         float twoStarPerQuestion = 7;
@@ -150,12 +152,21 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         Debug.Log("targetScore: " + m_targetScore);
         Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
         Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
-        
+
+        Debug.Log("SETTING NEW SCORE");
+
         ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+
+        Debug.Log("WAIT FOR SCOREKEEPER");
 
         yield return StartCoroutine(m_scoreKeeper.On());
 
+        Debug.Log("SET DEFAULT");
+
         SessionInformation.SetDefaultPlayerVar();
+
+        Debug.Log("COMPLETE");
+
         GameManager.Instance.CompleteGame();
     }
     
@@ -188,6 +199,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
+            Debug.Log("CALL COMPLETEGAME");
             StartCoroutine(CompleteGame());
         }
     }

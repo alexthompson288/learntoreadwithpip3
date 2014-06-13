@@ -56,6 +56,12 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes WHERE publishable='t' ORDER BY order_number");
         m_pipisodes = dt.Rows;
 
+        Debug.Log("Found " + m_pipisodes.Count + " pipisodes");
+        foreach (DataRow pipisode in m_pipisodes)
+        {
+            Debug.Log(pipisode["pipisode_title"].ToString());
+        }
+
         if (m_pipisodes.Count > 0)
         {
             SelectPipisode(m_pipisodes[0]);
