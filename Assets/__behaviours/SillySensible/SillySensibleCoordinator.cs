@@ -111,7 +111,6 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
         if ((m_sillyWordsSoFar < m_targetScore / 2) && (m_sensibleWordsSoFar < m_targetScore / 2))
         {
-            Debug.Log("RANDOM 1");
             m_isSillyWord = Random.Range(0, 10) > 5;
         } 
         else
@@ -126,7 +125,6 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
             } 
             else
             {
-                Debug.Log("RANDOM 2");
                 m_isSillyWord = Random.Range(0, 10) > 5;
             }
         }
