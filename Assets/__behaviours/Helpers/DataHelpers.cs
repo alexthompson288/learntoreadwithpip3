@@ -698,10 +698,17 @@ public static class DataHelpers
                 }
                 break;
             case "shapes":
-                tex = Resources.Load<Texture2D>(data["name"].ToString());
+                if(data["name"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(data["name"].ToString());
+                }
                 break;
             case "stories":
-                tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
+                if(data["storycoverartwork"] != null)
+                {
+                    LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + data["storycoverartwork"].ToString());
+                }
+                //tex = Resources.Load<Texture2D>("Images/storycovers/" + data["title"].ToString().ToLower().Replace(" ", "").Replace("?", "").Replace("!", "").Replace("'", "").Replace(".", ""));
                 break;
             case "storypages":
                 string bgImageName = data["backgroundart"] == null ? "" : data["backgroundart"].ToString().Replace(".png", "");

@@ -22,12 +22,15 @@ public class StoryMenuBook : MonoBehaviour
     {
         m_data = dataRow;
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id=" + System.Convert.ToInt32(m_data ["id"]));
+        m_storyPicture.mainTexture = DataHelpers.GetPicture("stories", m_data);
 
+        /*
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id=" + System.Convert.ToInt32(m_data ["id"]));
         if (dt.Rows.Count > 0)
         {
             m_storyPicture.mainTexture = DataHelpers.GetPicture("storypages", dt.Rows[0]);
         }
+        */
 
         m_dragPanelContents.draggablePanel = draggablePanel;
     }
