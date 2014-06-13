@@ -5,8 +5,11 @@ using System.IO;
 public class PipVideo : Singleton<PipVideo> 
 {
     Color m_bgColor = Color.black;
+
+#if UNITY_IPHONE || UNITY_ANDROID
     FullScreenMovieControlMode m_controlMode = FullScreenMovieControlMode.Full;
     FullScreenMovieScalingMode m_scalingMode = FullScreenMovieScalingMode.AspectFit;
+#endif
 
     string m_url = "https://s3-eu-west-1.amazonaws.com/pipvideotest";
 
@@ -17,7 +20,9 @@ public class PipVideo : Singleton<PipVideo>
     {
         Debug.Log("TEST LOCAL");
         Debug.Log("Playing local");
+#if UNITY_IPHONE || UNITY_ANROID
         Handheld.PlayFullScreenMovie("Pipisodes/mp4/" + m_testFileName);
+#endif
         Debug.Log("Finished local");
     }
 
@@ -84,7 +89,9 @@ public class PipVideo : Singleton<PipVideo>
         }
 
         Debug.Log("PLAY");
+#if UNITY_IPHONE || UNITY_ANDROID
         Handheld.PlayFullScreenMovie(playVideoFile, m_bgColor, m_controlMode, m_scalingMode);
+#endif
 
         Debug.Log("PLAYED");
 

@@ -8,8 +8,11 @@ public class VideoStreamer : Singleton<VideoStreamer>
 	private bool m_playFromStreamingAssetsOnStart;
 
     Color m_bgColor = Color.black;
+
+#if UNITY_IPHONE || UNITY_ANROID
     FullScreenMovieControlMode m_controlMode = FullScreenMovieControlMode.Full;
     FullScreenMovieScalingMode m_scalingMode = FullScreenMovieScalingMode.AspectFit;
+#endif
 
 	string m_url = "https://s3-eu-west-1.amazonaws.com/pipvideotest";
 
@@ -46,7 +49,9 @@ public class VideoStreamer : Singleton<VideoStreamer>
 
 		Debug.Log ("PLAY STREAMINGASSETS MOVIE");
 		
+#if UNITY_IPHONE || UNITY_ANROID
 		Handheld.PlayFullScreenMovie (fileName, m_bgColor, m_controlMode, m_scalingMode);
+#endif
 		
 		Debug.Log ("FINISHED STREAMINGASSETS MOVIE");
 	}
@@ -113,7 +118,9 @@ public class VideoStreamer : Singleton<VideoStreamer>
 
 		Debug.Log ("PLAY DOWNLOAD MOVIE");
 		
+#if UNITY_IPHONE || UNITY_ANROID
 		Handheld.PlayFullScreenMovie (playVideoFile, m_bgColor, m_controlMode, m_scalingMode);
+#endif
 		
 		Debug.Log ("FINISHED DOWNLOAD MOVIE");
 		

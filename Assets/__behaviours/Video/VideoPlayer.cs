@@ -18,10 +18,12 @@ public class VideoPlayer : MonoBehaviour
     //private string m_url = "https://s3-eu-west-1.amazonaws.com/pipvideotest";
     [SerializeField]
     private Color m_bgColor = Color.black;
+#if UNITY_IPHONE || UNITY_ANROID
     [SerializeField]
     private FullScreenMovieControlMode m_controlMode = FullScreenMovieControlMode.Full;
     [SerializeField]
     private FullScreenMovieScalingMode m_scalingMode = FullScreenMovieScalingMode.AspectFit;
+#endif
     [SerializeField]
     private PipButton m_playButton;
     [SerializeField]
@@ -117,7 +119,9 @@ public class VideoPlayer : MonoBehaviour
         }
 #endif
 
+#if UNITY_IPHONE || UNITY_ANDROID
         Handheld.PlayFullScreenMovie(playPath, m_bgColor, m_controlMode, m_scalingMode);
+#endif
     }
 
     void OnPressDownload(PipButton button)
