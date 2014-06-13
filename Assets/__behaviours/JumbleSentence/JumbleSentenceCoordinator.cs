@@ -28,6 +28,8 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
     List<string> m_remainingWords = new List<string>();
 
+    float m_startTime;
+
     IEnumerator Start()
     {
         m_pictureParent.transform.localScale = Vector3.zero;
@@ -58,6 +60,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         if (m_dataPool.Count > 0)
         {
+            m_startTime = Time.time;
             AskQuestion();
         } 
         else
@@ -201,6 +204,17 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
     protected override IEnumerator CompleteGame()
     {
+        float timeTaken = Time.time - m_startTime;
+
+        float twoStarPerQuestion = 12.5f;
+        float threeStarPerQuestion = 8;
+
+        Debug.Log("timeTaken: " + timeTaken);
+        Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
+        Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
+        
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+
         yield return new WaitForSeconds(1f);
         GameManager.Instance.CompleteGame();
     }

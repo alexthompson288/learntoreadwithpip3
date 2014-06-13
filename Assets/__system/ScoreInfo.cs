@@ -105,7 +105,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return tracker != null ? tracker.GetThreeStar() : 0f;
     }
 
-    public void NewScore(int score, int targetScore, float time, float twoStar, float threeStar)
+    public void NewScore(int score, int targetScore, float time, float twoStar, float threeStar, bool useTime = true)
     {
         if (SessionInformation.Instance.GetNumPlayers() < 2)
         {
@@ -128,7 +128,8 @@ public class ScoreInfo : Singleton<ScoreInfo>
             if (oldTracker == null)
             {
                 m_scoreTrackers.Add(newTracker);
-            } else if (newTracker.GetTime() < oldTracker.GetTime())
+            } 
+            else if ((useTime && newTracker.GetTime() < oldTracker.GetTime()) || (!useTime && newTracker.GetProportionalScore() < oldTracker.GetProportionalScore()))
             {
                 m_scoreTrackers.Remove(oldTracker);
                 m_scoreTrackers.Add(newTracker);

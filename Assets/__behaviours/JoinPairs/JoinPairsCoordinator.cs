@@ -282,8 +282,20 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     void CompleteGame()
     {
-        float timeTaken = Time.time - m_startTime;
-        ScoreInfo.Instance.NewScore(m_targetScore, m_targetScore, timeTaken, 30 / m_targetScore, 60 / m_targetScore);
+        if (GetNumPlayers() == 1)
+        {
+            float timeTaken = Time.time - m_startTime;
+
+            float twoStarPerQuestion = 14;
+            float threeStarPerQuestion = 20;
+            
+            Debug.Log("timeTaken: " + timeTaken);
+            Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
+            Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
+
+            ScoreInfo.Instance.NewScore(m_targetScore, m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
+        }
+
         GameManager.Instance.CompleteGame();
     }
 

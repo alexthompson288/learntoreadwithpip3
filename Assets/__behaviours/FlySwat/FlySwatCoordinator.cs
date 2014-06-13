@@ -164,9 +164,19 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
 
     IEnumerator CompleteGame()
     {
-        float timeTaken = Time.time - m_startTime;
-
-        ScoreInfo.Instance.NewScore(m_gamePlayers [m_winningIndex].GetScore(), m_targetScore, timeTaken, 30, 60);
+        if (GetNumPlayers() == 1)
+        {
+            float timeTaken = Time.time - m_startTime;
+            
+            float twoStarPerQuestion = 5;
+            float threeStarPerQuestion = 4;
+            
+            Debug.Log("timeTaken: " + timeTaken);
+            Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
+            Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
+            
+            ScoreInfo.Instance.NewScore(m_gamePlayers [m_winningIndex].GetScore(), m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
+        }
 
         while (!winningPlayerHasCompletedSequence)
         {

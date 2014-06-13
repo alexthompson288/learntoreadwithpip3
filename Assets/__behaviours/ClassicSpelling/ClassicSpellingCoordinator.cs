@@ -142,7 +142,16 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     IEnumerator CompleteGame ()
     {
         float timeTaken = Time.time - m_startTime;
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 30, 60);
+        
+        float twoStarPerQuestion = 7;
+        float threeStarPerQuestion = 4.5f;
+        
+        Debug.Log("timeTaken: " + timeTaken);
+        Debug.Log("targetScore: " + m_targetScore);
+        Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
+        Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
+        
+        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 
         yield return StartCoroutine(m_scoreKeeper.On());
 
