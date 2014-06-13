@@ -157,34 +157,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         if(m_dataPool.Count > 0)
         {
-            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
-
-            AudioClip clip = null;
-
-            switch(m_dataType)
-            {
-                case "words":
-                    clip = m_wordsInstructions;
-                    break;
-                case "shapes":
-                    clip = m_shapesInstructions;
-                    break;
-                case "numbers":
-                    clip = m_numbersInstructions;
-                    break;
-            }
-
-            if(clip != null)
-            {
-                m_audioSource.clip = clip;
-                m_audioSource.Play();
-
-                while(m_audioSource.isPlaying)
-                {
-                    yield return null;
-                }
-            }
-
             StartCoroutine(PlayGame());
         }
         else
@@ -217,7 +189,16 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
                 yield return null;
             }
 
-            yield return new WaitForSeconds(0.8f);
+            yield return new WaitForSeconds(1f);
+
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+            
+            PlayAudioInstructions();
+
+            while(m_audioSource.isPlaying)
+            {
+                yield return null;
+            }
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
 
@@ -230,6 +211,12 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         } 
         else
         {
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+            
+            PlayAudioInstructions();
+
+            yield return new WaitForSeconds(0.75f);
+
             yield return StartCoroutine(m_gamePlayers[0].DrawDemoLine());
         }
 
@@ -268,6 +255,30 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         yield return StartCoroutine(m_gamePlayers [winningIndex].OnWin());
         
         CompleteGame();
+    }
+
+    void PlayAudioInstructions()
+    {
+        AudioClip clip = null;
+        
+        switch(m_dataType)
+        {
+            case "words":
+                clip = m_wordsInstructions;
+                break;
+            case "shapes":
+                clip = m_shapesInstructions;
+                break;
+            case "numbers":
+                clip = m_numbersInstructions;
+                break;
+        }
+        
+        if(clip != null)
+        {
+            m_audioSource.clip = clip;
+            m_audioSource.Play();
+        }
     }
 
 #if UNITY_EDITOR
