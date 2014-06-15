@@ -81,6 +81,12 @@ public class CatapultMixedCoordinator : MonoBehaviour
         }
         
         m_dataPool = DataHelpers.GetData(m_dataType);
+
+        if (IsDataMixed())
+        {
+            m_dataPool.AddRange(DataHelpers.GetNonReadableWords());
+        }
+
         m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
 
         Target[] targets = UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[];
@@ -115,6 +121,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 if(!DataHelpers.HasOnsetWords(m_currentData, m_dataPool))
                 {
                     m_dataPool.AddRange(DataHelpers.FindOnsetWords(m_currentData, 3, true));
+                    m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
                 }
             }
             else

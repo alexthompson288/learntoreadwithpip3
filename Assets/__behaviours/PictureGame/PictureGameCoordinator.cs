@@ -32,7 +32,11 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 		m_dataRows = DataHelpers.GetWords();
 
-		Debug.Log("There are " + m_dataRows.Count + " rows");
+		Debug.Log("There are " + m_dataRows.Count + " words");
+        foreach (DataRow word in m_dataRows)
+        {
+            Debug.Log(word["word"].ToString());
+        }
 
         if (GetNumPlayers() == 2)
         {

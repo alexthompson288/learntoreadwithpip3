@@ -250,6 +250,9 @@ public static class DataHelpers
                 case "sentences":
                     dataPool = GetSentences();
                     break;
+                case "nonreadablewords":
+                    dataPool = GetNonReadableWords();
+                    break;
                 case "stories":
                     dataPool = GetStories();
                     break;
@@ -350,10 +353,26 @@ public static class DataHelpers
 
         return dataPool;
     }
+
+    public static List<DataRow> GetNonReadableWords()
+    {
+        List<DataRow> dataPool = GameManager.Instance.GetData("words");
+        
+        dataPool.RemoveAll(x => x ["nonreadable"] == null || x ["nonreadable"].ToString() == "f");
+        
+        if(dataPool.Count == 0)
+        {
+            dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Pink));
+        }
+        
+        return dataPool;
+    }
     
     public static List<DataRow> GetWords()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
+
+        dataPool.RemoveAll(x => x ["nonreadable"] != null && x ["nonreadable"].ToString() == "t");
 
         if(dataPool.Count == 0)
         {

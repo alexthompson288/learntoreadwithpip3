@@ -121,7 +121,7 @@ public class SplineFollower : MonoBehaviour
     {
         int pathIndex = Array.FindIndex(m_paths, x => x.m_name == pathName);
 
-        if (pathIndex != -1)
+        if (pathIndex != -1 && gameObject != null)
         {
             StopAllCoroutines();
             m_currentTime = 0;
