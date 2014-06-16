@@ -47,7 +47,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         if (m_session ["pipisode_id"] != null)
         {
             int pipisodeId = Convert.ToInt32(m_session["pipisode_id"]);
-            PipisodeManager.Instance.PlayPipisode(pipisodeId);
+            //PipisodeManager.Instance.PlayPipisode(pipisodeId);
         }
     }
 
