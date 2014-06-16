@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class VoyageSkipButton : MonoBehaviour 
+public class CompleteGameButton : MonoBehaviour 
 {
 	void OnClick()
 	{
