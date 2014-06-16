@@ -114,6 +114,11 @@ public class GameMenuCoordinator : MonoBehaviour
             m_gameIcon.MakePixelPerfect();
            
             bool isTwoPlayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
+
+#if UNITY_STANDALONE
+            isTwoPlayer = false;
+#endif
+
             float tweenDuration = 0.5f;
 
             Vector3 twoPlayerScale = isTwoPlayer ? Vector3.one : Vector3.zero;
