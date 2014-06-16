@@ -591,11 +591,13 @@ public class BuyManager : Singleton<BuyManager>
     
     void RefreshBooks()
     {
+        /*
         NewStoryBrowserBookButton[] books = UnityEngine.Object.FindObjectsOfType(typeof(NewStoryBrowserBookButton)) as NewStoryBrowserBookButton[];
         foreach(NewStoryBrowserBookButton book in books)
         {
             book.Refresh();
         }
+        */
     }
 
     // TODO
