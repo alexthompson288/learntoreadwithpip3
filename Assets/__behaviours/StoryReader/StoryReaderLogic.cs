@@ -214,7 +214,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		DataTable dt = UpdateCurrentDisplayer();
 		if (dt.Rows.Count == 0)
 		{
-			GameManager.Instance.CompleteGame(true, "NewEndStory");
+			GameManager.Instance.CompleteGame();
 		}
 		
 		if (!isFirstPage)
