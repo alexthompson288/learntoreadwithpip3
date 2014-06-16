@@ -156,13 +156,14 @@ public class GameMenuCoordinator : MonoBehaviour
                 
                 // Get and set all the data associated with the color
                 int moduleId = DataHelpers.GetModuleId(pipColor);
+
+                Debug.Log("moduleId: " + moduleId);
                 
                 GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
                 GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
                 GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
                 GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
-                
-                
+
                 DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
                 GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
                 GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));

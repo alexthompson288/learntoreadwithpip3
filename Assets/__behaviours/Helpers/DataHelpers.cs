@@ -280,6 +280,7 @@ public static class DataHelpers
 
         if (dataPool.Count == 0)
         {
+            Debug.LogWarning("Defaulting to all correctsentences");
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
         }
@@ -348,6 +349,7 @@ public static class DataHelpers
 
         if(dataPool.Count == 0)
         {
+            Debug.LogWarning("Defaulting to Pink Phonemes");
             dataPool = GetModulePhonemes(GetModuleId(ColorInfo.PipColor.Pink));
         }
 
@@ -358,7 +360,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
         
-        dataPool.RemoveAll(x => x ["nonreadable"] == null || x ["nonreadable"].ToString() == "f");
+        dataPool.RemoveAll(x => x ["nonreadable"] == null || x ["nonreadable"].ToString() == "f" || String.IsNullOrEmpty(x["word"].ToString()));
         
         if(dataPool.Count == 0)
         {
@@ -372,7 +374,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
 
-        dataPool.RemoveAll(x => x ["nonreadable"] != null && x ["nonreadable"].ToString() == "t");
+        dataPool.RemoveAll(x => (x ["nonreadable"] != null && x ["nonreadable"].ToString() == "t") || String.IsNullOrEmpty(x["word"].ToString()));
 
         if(dataPool.Count == 0)
         {
