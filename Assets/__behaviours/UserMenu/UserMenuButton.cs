@@ -45,9 +45,12 @@ public class UserMenuButton : MonoBehaviour
         UserMenuCoordinator.Instance.SelectButton(this);
 	}
 
-    public void ChangeSprite(bool toStateB)
+    public void ChangeSprite(bool toStateB, float tweenDuration)
     {
         m_picture.spriteName = toStateB ? m_spriteNameB : m_spriteNameA;
+
+        Color backgroundColor = toStateB ? ColorInfo.GetColor(m_pipColorB) : ColorInfo.GetColor(m_pipColorA);
+        //TweenColor.Begin(m_background.gameObject, tweenDuration, backgroundColor);
         m_background.color = toStateB ? ColorInfo.GetColor(m_pipColorB) : ColorInfo.GetColor(m_pipColorA);
     }
 }

@@ -35,7 +35,7 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 		yield return new WaitForEndOfFrame();
 
-		m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
+		//m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
 	}
 
 	public void CreateUser(string user, string imageName)
@@ -57,21 +57,33 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 	public void SelectButton (UserMenuButton button)
 	{
+        float tweenDuration = 0.25f;
+
         if (button != m_currentButton)
         {
             if (m_currentButton != null)
             {
-                m_currentButton.ChangeSprite(false);
+                m_currentButton.ChangeSprite(false, tweenDuration);
+                iTween.ScaleTo(m_currentButton.gameObject, Vector3.one, tweenDuration);
             }
 
             m_currentButton = button;
 
-            m_currentButton.ChangeSprite(true);
+            iTween.ScaleTo(m_currentButton.gameObject, Vector3.one * 1.5f, tweenDuration);
+            m_currentButton.ChangeSprite(true, tweenDuration);
+
+            //StartCoroutine(ResetDraggablePanelPosition());
         }
 	}
 
     void OnClickDone(PipButton button)
     {
         TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+    }
+
+    IEnumerator ResetDraggablePanelPosition()
+    {
+        yield return new WaitForSeconds(0.1f);
+        m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
     }
 }

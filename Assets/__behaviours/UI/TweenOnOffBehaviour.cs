@@ -44,6 +44,11 @@ public class TweenOnOffBehaviour : MonoBehaviour
             m_initialised = true;
         }
     }
+
+    public void SetDelay(float delay)
+    {
+        m_delay = delay;
+    }
     
     public void SetOffDelay(float delay)
     {
@@ -51,7 +56,7 @@ public class TweenOnOffBehaviour : MonoBehaviour
     }
     
     // Use this for initialization
-    void Start () 
+    IEnumerator Start () 
     {
         m_duration = Mathf.Clamp(m_duration, 0.1f, m_duration);
         
@@ -70,6 +75,8 @@ public class TweenOnOffBehaviour : MonoBehaviour
                 cl.enabled = false;
             }
         }
+
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
         
         if (m_startOn)
         {

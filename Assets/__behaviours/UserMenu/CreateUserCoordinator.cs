@@ -17,6 +17,8 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	private UILabel m_inputLabel;
     [SerializeField]
     private string[] m_spriteNames;
+    [SerializeField]
+    private UIPanel m_createUserPanel;
 	
 	string m_imageName;
 
@@ -26,6 +28,7 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 
     void Awake()
     {
+        m_createUserPanel.alpha = 1;
         m_tweenBehaviour.gameObject.SetActive(true);
     }
 

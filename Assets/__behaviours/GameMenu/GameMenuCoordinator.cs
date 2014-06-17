@@ -25,7 +25,9 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private AnimManager m_pipAnimManager;
     [SerializeField]
-    private UIPanel m_gamePanel;
+    private TweenOnOffBehaviour m_gameButtonParent;
+    [SerializeField]
+    private TweenOnOffBehaviour m_infoParent;
 
     PipButton m_currentColorButton = null;
     PipButton m_currentGameButton = null;
@@ -35,6 +37,7 @@ public class GameMenuCoordinator : MonoBehaviour
     IEnumerator Start()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
 
         foreach (PipButton button in m_colorButtons)
         {
@@ -56,13 +59,13 @@ public class GameMenuCoordinator : MonoBehaviour
                 m_currentColorButton.ChangeSprite(true);
             }
 
-            ActivateGameButtons(true);
+            ActivateGameButtons();
         }
 
         GameMenuInfo.Instance.DestroyBookmark();
     }
 
-    void ActivateGameButtons(bool instant)
+    void ActivateGameButtons()
     {
         m_hasActivatedGameButtons = true;
 
@@ -86,14 +89,8 @@ public class GameMenuCoordinator : MonoBehaviour
         m_currentGameButton.ChangeSprite(true);
         ChooseGame(m_currentGameButton);
 
-        if (instant)
-        {
-            m_gamePanel.alpha = 1;
-        } 
-        else
-        {
-            TweenAlpha.Begin(m_gamePanel.gameObject, 0.25f, 1f);
-        }
+        m_gameButtonParent.On();
+        m_infoParent.On();
     }
     
     void OnPressColorButton(PipButton button)
@@ -107,7 +104,7 @@ public class GameMenuCoordinator : MonoBehaviour
 
         if (!m_hasActivatedGameButtons)
         {
-            ActivateGameButtons(false);
+            ActivateGameButtons();
         }
         else
         {
