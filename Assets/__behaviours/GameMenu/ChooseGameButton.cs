@@ -67,13 +67,6 @@ public class ChooseGameButton : MonoBehaviour
 
     public void Refresh(string colorName)
     {
-        if (m_starsAreTimeBased)
-        {
-            ScoreInfo.RefreshTimeStars(m_starSprites, m_game ["name"].ToString(), colorName);
-        }
-        else
-        {
-            ScoreInfo.RefreshScoreStars(m_starSprites, m_game ["name"].ToString(), colorName);
-        }
+        ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
     }
 }

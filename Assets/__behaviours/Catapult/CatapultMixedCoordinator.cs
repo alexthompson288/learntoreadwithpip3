@@ -250,12 +250,10 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         float twoStarPerQuestion = 4f;
         float threeStarPerQuestion = 3f;
-        
-        Debug.Log("timeTaken: " + timeTaken);
-        Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
-        Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
 
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+        int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+
+        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
 
         yield return StartCoroutine(m_scoreKeeper.On());
 

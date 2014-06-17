@@ -231,7 +231,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     protected override IEnumerator CompleteGame()
     {
         float timeTaken = Time.time - m_startTime;
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, 30, 60);
+
+        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, ScoreInfo.CalculateScoreStars(m_score, m_targetScore));
 
         //Debug.Log("GameCoordinator.CompleteGame()");
         yield return null;

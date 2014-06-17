@@ -146,7 +146,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
 
         // Quiz Stars
-        ScoreInfo.RefreshScoreStars(m_starSprites, "NewQuizGame", m_currentPipisode ["pipisode_title"].ToString());
+        ScoreInfo.RefreshStars(m_starSprites, "NewQuizGame", m_currentPipisode ["pipisode_title"].ToString());
 
 
         // Watch and Quiz Buttons

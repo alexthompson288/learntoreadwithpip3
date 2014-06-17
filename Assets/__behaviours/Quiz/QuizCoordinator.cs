@@ -147,14 +147,7 @@ public class QuizCoordinator : MonoBehaviour
     {
         float timeTaken = Time.time - m_startTime;
 
-        float twoStarPerQuestion = 8;
-        float threeStarPerQuestion = 5;
-
-        Debug.Log("timeTaken: " + timeTaken);
-        Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
-        Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
-
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore, false);
+        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, ScoreInfo.CalculateScoreStars(m_score, m_targetScore));
 
         yield return new WaitForSeconds(2f);
 

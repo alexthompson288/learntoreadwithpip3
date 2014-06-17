@@ -230,7 +230,7 @@ public class GameMenuCoordinator : MonoBehaviour
         if (m_currentGameButton != null)
         {
             ColorInfo.PipColor pipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
-            ScoreInfo.RefreshTimeStars(m_starSprites, DataHelpers.FindGame(m_currentGameButton.GetString())["name"].ToString(), ColorInfo.GetColorString(pipColor));
+            ScoreInfo.RefreshStars(m_starSprites, DataHelpers.FindGame(m_currentGameButton.GetString())["name"].ToString(), ColorInfo.GetColorString(pipColor));
         }
     }
 

@@ -148,14 +148,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         float twoStarPerQuestion = 7;
         float threeStarPerQuestion = 4.5f;
         
-        Debug.Log("timeTaken: " + timeTaken);
-        Debug.Log("targetScore: " + m_targetScore);
-        Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
-        Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
-
-        Debug.Log("SETTING NEW SCORE");
-
-        ScoreInfo.Instance.NewScore(m_score, m_targetScore, timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+        int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+        
+        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
 
         Debug.Log("WAIT FOR SCOREKEEPER");
 

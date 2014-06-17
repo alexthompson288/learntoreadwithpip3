@@ -171,11 +171,10 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
             float twoStarPerQuestion = 5;
             float threeStarPerQuestion = 4;
             
-            Debug.Log("timeTaken: " + timeTaken);
-            Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
-            Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
-            
-            ScoreInfo.Instance.NewScore(m_gamePlayers [m_winningIndex].GetScore(), m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
+            int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+
+            // Game ends when player reaches targetScore
+            ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
         }
         else
         {

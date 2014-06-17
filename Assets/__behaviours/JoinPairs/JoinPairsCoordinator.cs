@@ -300,11 +300,10 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
             float twoStarPerQuestion = 14;
             float threeStarPerQuestion = 20;
             
-            Debug.Log("timeTaken: " + timeTaken);
-            Debug.Log("twoStar: " + twoStarPerQuestion * m_targetScore);
-            Debug.Log("threeStar: " + threeStarPerQuestion * m_targetScore);
+            int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 
-            ScoreInfo.Instance.NewScore(m_targetScore, m_targetScore, timeTaken, twoStarPerQuestion * m_targetScore, threeStarPerQuestion * m_targetScore);
+            // Game ends when player reaches targetScore
+            ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
         }
 
         GameManager.Instance.CompleteGame();

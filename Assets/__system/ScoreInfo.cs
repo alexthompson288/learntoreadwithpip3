@@ -9,21 +9,19 @@ public class ScoreInfo : Singleton<ScoreInfo>
     {
         string m_game;
         string m_type;
+        float m_time;
         int m_score;
         int m_targetScore;
-        float m_time;
-        float m_twoStar;
-        float m_threeStar;
+        int m_stars;
 
-        public ScoreTracker(string game, string type, int score, int targetScore, float time, float twoStar, float threeStar)
+        public ScoreTracker(string myGame, string myType, float myTime, int myScore, int myTargetScore, int myStars)
         {
-            m_game = game;
-            m_type = type;
-            m_score = score;
-            m_targetScore = targetScore;
-            m_time = time;
-            m_twoStar = twoStar;
-            m_threeStar = threeStar;
+            m_game = myGame;
+            m_type = myType;
+            m_time = myTime;
+            m_score = myScore;
+            m_targetScore = myTargetScore;
+            m_stars = myStars;
         }
 
         public string GetGame()
@@ -56,14 +54,9 @@ public class ScoreInfo : Singleton<ScoreInfo>
             return m_time;
         }
 
-        public float GetTwoStar()
+        public int GetStars()
         {
-            return m_twoStar;
-        }
-
-        public float GetThreeStar()
-        {
-            return m_threeStar;
+            return m_stars;
         }
     }
 
@@ -93,19 +86,13 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return tracker != null ? tracker.GetTime() : 0f;
     }
 
-    public float GetTwoStar(string game, string type)
+    public int GetStars(string game, string type)
     {
         ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
-        return tracker != null ? tracker.GetTwoStar() : 0f;
+        return tracker != null ? tracker.GetStars() : 0;
     }
 
-    public float GetThreeStar(string game, string type)
-    {
-        ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
-        return tracker != null ? tracker.GetThreeStar() : 0f;
-    }
-
-    public void NewScore(int score, int targetScore, float time, float twoStar, float threeStar, bool useTime = true)
+    public void NewScore(float myTime, int myScore, int myTargetScore, int myStars)
     {
         if (SessionInformation.Instance.GetNumPlayers() < 2)
         {
@@ -121,55 +108,39 @@ public class ScoreInfo : Singleton<ScoreInfo>
                 type = "default";
             }
 
-            ScoreTracker newTracker = new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar);
+            ScoreTracker newTracker = new ScoreTracker(game, type, myTime, myScore, myTargetScore, myStars);
 
             ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
+
 
             if (oldTracker == null)
             {
                 m_scoreTrackers.Add(newTracker);
-            } 
-            else if ((useTime && newTracker.GetTime() < oldTracker.GetTime()) || (!useTime && newTracker.GetProportionalScore() > oldTracker.GetProportionalScore()))
-            {
-                Debug.Log("NEW HIGH SCORE");
-                m_scoreTrackers.Remove(oldTracker);
-                m_scoreTrackers.Add(newTracker);
             }
-            else
+            // Even if newStars == oldStars, the new score might be considered better if it has a better time or proportional score. This would allow us to add features in the future (eg leaderboards etc)
+            else 
             {
-                Debug.Log("useTime: " + useTime);
-                Debug.Log("oldProportional: " + oldTracker.GetProportionalScore());
-                Debug.Log("newProportional: " + newTracker.GetProportionalScore());
+                int newStars = newTracker.GetStars();
+                int oldStars = oldTracker.GetStars();
+
+                if (newStars > oldStars 
+                    || (newStars == oldStars && (newTracker.GetTime() < oldTracker.GetTime() || (newTracker.GetProportionalScore() > oldTracker.GetProportionalScore()))))
+                {
+                    Debug.Log("NEW HIGH SCORE");
+                    m_scoreTrackers.Remove(oldTracker);
+                    m_scoreTrackers.Add(newTracker);
+                }
             }
 
             Save();
         }
     }
 
-    public static void RefreshScoreStars(UISprite[] starSprites, string game, string type)
+    public static void RefreshStars(UISprite[] starSprites, string game, string type)
     {
         System.Array.Sort(starSprites, CollectionHelpers.CompareLocalPosX);
 
-        int numStars = 0;
-        int targetScore = Instance.GetTargetScore(game, type);
-        
-        if (targetScore > 0)
-        {
-            float proportionalScore = Instance.GetProportionalScore(game, type);
-
-            if(proportionalScore > 0.7f)
-            {
-                numStars = 3;
-            }
-            else if(proportionalScore > 0.4f)
-            {
-                numStars = 2;
-            }
-            else
-            {
-                numStars = 1;
-            }
-        }
+        int numStars = Instance.GetStars(game, type);
         
         for (int i = 0; i < starSprites.Length; ++i)
         {
@@ -178,35 +149,46 @@ public class ScoreInfo : Singleton<ScoreInfo>
         }
     }
 
-    public static void RefreshTimeStars(UISprite[] starSprites, string game, string type)
+    public static int CalculateScoreStars(int score, int targetScore)
     {
-        System.Array.Sort(starSprites, CollectionHelpers.CompareLocalPosX);
-
-        int numStars = 0;
-        int targetScore = Instance.GetTargetScore(game, type);
+        int stars = 0;
         
-        if (targetScore > 0)
+        float proportionalScore = (float)score / (float)targetScore;
+        
+        if (proportionalScore >= 0.7f)
         {
-            float time = Instance.GetTime(game, type);
-            
-            if(time < Instance.GetThreeStar(game, type))
-            {
-                numStars = 3;
-            }
-            else if(time < Instance.GetTwoStar(game, type))
-            {
-                numStars = 2;
-            }
-            else
-            {
-                numStars = 1;
-            }
+            stars = 3;
+        }
+        else if (proportionalScore >= 0.4f)
+        {
+            stars = 2;
+        }
+        else
+        {
+            stars = 1;
         }
         
-        for (int i = 0; i < starSprites.Length; ++i)
+        if (score == 0)
         {
-            string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
-            starSprites[i].spriteName = spriteName;
+            stars = 0;
+        }
+        
+        return stars;
+    }
+    
+    public static int CalculateTimeStars(float time, float twoStars, float threeStars)
+    {
+        if (time <= threeStars)
+        {
+            return 3;
+        }
+        else if (time <= twoStars)
+        {
+            return 2;
+        }
+        else
+        {
+            return 1;
         }
     }
 
@@ -247,16 +229,23 @@ public class ScoreInfo : Singleton<ScoreInfo>
             int numTrackers = br.ReadInt32();
             for(int i = 0; i < numTrackers; ++i)
             {
+                /*
+                string m_game;
+                string m_type;
+                float m_time;
+                int m_score;
+                int m_targetScore;
+                int m_stars;
+                 */ 
+
                 string game = br.ReadString();
                 string type = br.ReadString();
+                float time = br.ReadSingle();
                 int score = br.ReadInt32();
                 int targetScore = br.ReadInt32();
-                float time = br.ReadSingle();
-                float twoStar = br.ReadSingle();
-                float threeStar = br.ReadSingle();
+                int stars = br.ReadInt32();
 
-                m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, twoStar, threeStar));
-                //m_scoreTrackers.Add(new ScoreTracker(game, type, score, targetScore, time, 30, 60));
+                m_scoreTrackers.Add(new ScoreTracker(game, type, time, score, targetScore, stars));
             }
         }
         
@@ -279,11 +268,10 @@ public class ScoreInfo : Singleton<ScoreInfo>
         {
             bw.Write(tracker.GetGame());
             bw.Write(tracker.GetType());
+            bw.Write(tracker.GetTime());
             bw.Write(tracker.GetScore());
             bw.Write(tracker.GetTargetScore());
-            bw.Write(tracker.GetTime());
-            bw.Write(tracker.GetTwoStar());
-            bw.Write(tracker.GetThreeStar());
+            bw.Write(tracker.GetStars());
         }
 
         ds.Save(newData);
