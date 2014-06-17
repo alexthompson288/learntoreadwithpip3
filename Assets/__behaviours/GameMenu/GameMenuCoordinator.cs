@@ -22,6 +22,8 @@ public class GameMenuCoordinator : MonoBehaviour
     private UITexture m_temporaryGameIcon;
     [SerializeField]
     private UISprite[] m_starSprites;
+    [SerializeField]
+    private AnimManager m_pipAnimManager;
 
     PipButton m_currentColorButton = null;
     PipButton m_currentGameButton = null;
@@ -101,6 +103,8 @@ public class GameMenuCoordinator : MonoBehaviour
 
         if (game != null)
         {
+            m_pipAnimManager.PlayAnimation("THUMBS_UP");
+
             if(game["labeltext"] != null)
             {
                 m_gameLabel.text = game["labeltext"].ToString();
@@ -180,9 +184,19 @@ public class GameMenuCoordinator : MonoBehaviour
                 
                 GameMenuInfo.Instance.CreateBookmark(m_currentGameButton.GetString(), pipColor);
                 
-                GameManager.Instance.StartGames();
+                StartCoroutine(StartGames());
             }
         }
+    }
+
+    IEnumerator StartGames()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+        m_pipAnimManager.PlayAnimation("JUMP");
+        
+        yield return new WaitForSeconds(1.2f);
+
+        GameManager.Instance.StartGames();
     }
 
     void RefreshBoardStars()

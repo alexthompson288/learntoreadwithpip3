@@ -266,7 +266,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "");
 
             string[] words = textToDisplay.Split(' ');
-            
+
+            float maxWidth = 850;
             float length = 0;
             float height = 0;
             float widestLineWidth = 0;
@@ -316,7 +317,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                 }
             }
             
-            float maxWidth = 850;
+
             if (widestLineWidth > maxWidth)
             {
                 float scale = maxWidth / widestLineWidth;

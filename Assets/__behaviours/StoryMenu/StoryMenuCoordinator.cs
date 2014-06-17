@@ -47,6 +47,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     private string m_quizGameName = "NewQuizGame";
     [SerializeField]
     private UISprite[] m_starSprites;
+    [SerializeField]
+    private AnimManager m_pipAnimManager;
 
     PipButton m_currentColorButton = null;
     StoryMenuBook m_currentBookButton = null;
@@ -90,7 +92,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_STORY_TIME");
             
-            StartActivity();
+            StartCoroutine(StartActivity());
         }
     }
 
@@ -108,7 +110,7 @@ public class StoryMenuCoordinator : MonoBehaviour
                 
                 WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
 
-                StartActivity();
+                StartCoroutine(StartActivity());
             }
         }
     }
@@ -118,8 +120,13 @@ public class StoryMenuCoordinator : MonoBehaviour
         return m_currentBookButton.GetData() ["title"].ToString() + "_" + ColorInfo.GetColorString(m_currentColorButton.pipColor);
     }
 
-    void StartActivity()
+    IEnumerator StartActivity()
     {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+        m_pipAnimManager.PlayAnimation("JUMP");
+
+        yield return new WaitForSeconds(1.2f);
+
         StoryMenuInfo.Instance.SubscribeGameComplete();
 
         GameManager.Instance.SetScoreType(CreateScoreType());
@@ -156,6 +163,8 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         if (m_currentBookButton != null)
         {
+            m_pipAnimManager.PlayAnimation("THUMBS_UP");
+
             DataRow story = m_currentBookButton.GetData();
 
             float maxLabelWidth = 600;

@@ -85,6 +85,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
     void OnClickQuizButton(PipButton button)
     {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
         m_pipAnimManager.PlayAnimation("JUMP");
 
         List<DataRow> quizQuestions = FindQuizQuestions(m_currentPipisode);
