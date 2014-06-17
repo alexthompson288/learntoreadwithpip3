@@ -24,9 +24,13 @@ public class GameMenuCoordinator : MonoBehaviour
     private UISprite[] m_starSprites;
     [SerializeField]
     private AnimManager m_pipAnimManager;
+    [SerializeField]
+    private UIPanel m_gamePanel;
 
     PipButton m_currentColorButton = null;
     PipButton m_currentGameButton = null;
+
+    bool m_hasActivatedGameButtons = false;
 
     IEnumerator Start()
     {
@@ -36,29 +40,39 @@ public class GameMenuCoordinator : MonoBehaviour
         {
             button.Pressing += OnPressColorButton;
         }
-        
-        foreach (PipButton button in m_gameButtons)
-        {
-            button.GetComponent<ChooseGameButton>().SetUp(DataHelpers.FindGame(button.GetString()));
-            button.Pressing += OnPressGameButton;
-        }
-        
+
         foreach (PipButton button in m_playButtons)
         {
             button.Unpressed += OnPressPlayButton;
         }
 
-
-        ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
-        m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);
-
-        if (m_currentColorButton != null)
+        if (GameMenuInfo.Instance.HasBookmark())
         {
-            m_currentColorButton.ChangeSprite(true);
+            ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
+            m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);
+            
+            if (m_currentColorButton != null)
+            {
+                m_currentColorButton.ChangeSprite(true);
+            }
+
+            ActivateGameButtons(true);
+        }
+
+        GameMenuInfo.Instance.DestroyBookmark();
+    }
+
+    void ActivateGameButtons(bool instant)
+    {
+        m_hasActivatedGameButtons = true;
+
+        foreach (PipButton button in m_gameButtons)
+        {
+            button.GetComponent<ChooseGameButton>().SetUp(DataHelpers.FindGame(button.GetString()));
+            button.Pressing += OnPressGameButton;
         }
 
         RefreshGameButtons();
-
 
         string currentGameName = GameMenuInfo.Instance.GetGameName();
         m_currentGameButton = Array.Find(m_gameButtons, x => x.GetString() == currentGameName);
@@ -71,6 +85,15 @@ public class GameMenuCoordinator : MonoBehaviour
 
         m_currentGameButton.ChangeSprite(true);
         ChooseGame(m_currentGameButton);
+
+        if (instant)
+        {
+            m_gamePanel.alpha = 1;
+        } 
+        else
+        {
+            TweenAlpha.Begin(m_gamePanel.gameObject, 0.25f, 1f);
+        }
     }
     
     void OnPressColorButton(PipButton button)
@@ -82,7 +105,14 @@ public class GameMenuCoordinator : MonoBehaviour
 
         m_currentColorButton = button;
 
-        RefreshGameButtons();
+        if (!m_hasActivatedGameButtons)
+        {
+            ActivateGameButtons(false);
+        }
+        else
+        {
+            RefreshGameButtons();
+        }
     }
 
     void OnPressGameButton(PipButton button)
@@ -114,7 +144,6 @@ public class GameMenuCoordinator : MonoBehaviour
             //m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
             m_gameIcon.atlas = button.GetComponent<ChooseGameButton>().GetSpriteAtlas();
             m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetBlackboardSpriteName();
-            Debug.Log("spriteName: " + m_gameIcon.spriteName);
             m_gameIcon.MakePixelPerfect();
            
             bool isTwoPlayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";

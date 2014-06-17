@@ -85,7 +85,11 @@ public class StoryMenuInfo : Singleton<StoryMenuInfo>
     {
         GameManager.Instance.OnComplete -= OnGameComplete;
         m_startPipColor = ColorInfo.PipColor.Pink;
-        m_bookmark = null;
+
+        if(Application.loadedLevelName != "NewStoryMenu")
+        {
+            m_bookmark = null;
+        }
     }
 
     void OnGameComplete()

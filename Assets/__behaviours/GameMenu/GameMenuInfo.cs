@@ -49,6 +49,11 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
         m_bookmark = new Bookmark(gameName, pipColor);
     }
 
+    public void DestroyBookmark()
+    {
+        m_bookmark = null;
+    }
+
     public bool HasBookmark()
     {
         return m_bookmark != null;
@@ -77,6 +82,9 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
     
     void OnGameCancel()
     {
-        m_bookmark = null;
+        if(Application.loadedLevelName != "NewGameMenu")
+        {
+            m_bookmark = null;
+        }
     }
 }

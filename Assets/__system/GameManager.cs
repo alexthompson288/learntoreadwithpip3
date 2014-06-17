@@ -125,11 +125,14 @@ public class GameManager : Singleton<GameManager>
                 }
                 break;
             case State.Wait:
-                Reset();
+                m_state = State.Cancelling;
+                break;
+            case State.Cancelling: // The purpose of State.Cancelling is so that onCancel is only called in the scene after DeliberatelyEmptyScene, therefore, we know what scene we cancelled into
                 if(onCancel != null)
                 {
                     onCancel();
                 }
+                Reset();
                 break;
         }
     }
@@ -290,7 +293,6 @@ public class GameManager : Singleton<GameManager>
         m_returnScene = returnScene;
     }
 
-
     string m_dataType = "";
 
     public string dataType
@@ -335,7 +337,8 @@ public class GameManager : Singleton<GameManager>
     {
         Sleep,
         Wait,
-        StartGame
+        StartGame,
+        Cancelling
     }
 
     State m_state = State.Sleep;

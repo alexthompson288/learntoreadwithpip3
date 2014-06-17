@@ -49,6 +49,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     private UISprite[] m_starSprites;
     [SerializeField]
     private AnimManager m_pipAnimManager;
+    [SerializeField]
+    private UIPanel m_storyPanel;
 
     PipButton m_currentColorButton = null;
     StoryMenuBook m_currentBookButton = null;
@@ -72,13 +74,17 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         m_currentColorButton.ChangeSprite(true);
 
-        StartCoroutine(SpawnBooks(pipColor));
+        yield return StartCoroutine(SpawnBooks(pipColor));
 
         foreach (PipButton button in m_colorButtons)
         {
             button.Pressing += OnPressColorButton;
         }
+
+        StoryMenuInfo.Instance.DestroyBookmark();
     }
+
+
 
     void OnPressReadOrPictures(PipButton button)
     {
