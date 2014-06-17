@@ -38,11 +38,17 @@ public class VideoPlayer : MonoBehaviour
     private UICamera m_loadingBarCamera;
     [SerializeField]
     private PipButton m_cancelButton;
+    [SerializeField]
+    private GameObject m_noInternetLabel;
 
     WWW m_www;
 
     float m_progressTweenDuration = 0.25f;
 
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_sliderStayActiveOnAwake;
+#endif
 
     void Awake()
     {
@@ -50,7 +56,17 @@ public class VideoPlayer : MonoBehaviour
         {
             m_progressBarParent.SetActive(true);
             m_progressBar.value = 0;
-            m_progressBarParent.transform.localScale = Vector3.zero;
+
+            Vector3 progressBarScale = Vector3.zero;
+
+#if UNITY_EDITOR
+            if(m_sliderStayActiveOnAwake)
+            {
+                progressBarScale = Vector3.one;
+            }
+#endif
+
+            m_progressBarParent.transform.localScale = progressBarScale;
         }
 
         Debug.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy(m_filename));
@@ -219,6 +235,13 @@ public class VideoPlayer : MonoBehaviour
             {
                 Debug.Log("error: " + m_www.error);
             }
+
+            StopCoroutine("UpdateProgressBar");
+
+            m_progressBar.value = 0;
+            iTween.ScaleTo(m_noInternetLabel, Vector3.one, 0.3f);
+
+            yield return new WaitForSeconds(5f);
         }
 
         StopCoroutine("UpdateProgressBar");
@@ -245,6 +268,8 @@ public class VideoPlayer : MonoBehaviour
         {
             iTween.ScaleTo(m_progressBarParent, Vector3.zero, m_progressTweenDuration);
             yield return new WaitForSeconds(m_progressTweenDuration);
+
+            m_noInternetLabel.transform.localScale = Vector3.zero;
             
             if(m_progressBar != null)
             {

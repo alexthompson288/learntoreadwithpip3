@@ -258,6 +258,123 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_storyPicture.mainTexture = tex;
     }
 
+    /*
+    void UpdateText(DataRow storyPage)
+    {
+        if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
+        {
+            string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "");
+
+            string[] words = textToDisplay.Split(' ');
+            
+            float length = 0;
+            float height = 0;
+            float widestLineWidth = 0;
+            
+            foreach (string word in words)
+            {
+                string[] lineWords = line.Split(' ');
+                bool hadValidWord = false;
+                foreach (string newWord in lineWords)
+                {
+                    if (!string.IsNullOrEmpty(newWord) && newWord != " ")
+                    {
+                        hadValidWord = true;
+                        GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
+                            m_textPrefab, m_textAnchors [0]);
+                        
+                        m_textObjects.Add(newWordInstance);
+                        
+                        newWordInstance.GetComponent<UILabel>().text = newWord + " ";
+                        newWordInstance.transform.localPosition = new Vector3(length, height, 0);
+                        Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
+                        length += wordSize.x;
+                        widestLineWidth = Mathf.Max(widestLineWidth, length);
+                        
+                        string storyType = SessionInformation.Instance.GetStoryType();
+                        if (storyType == "" || storyType == null)
+                        {
+                            storyType = "Reception";
+                        }
+                        
+                        ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
+                        bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
+                        
+                        showPipPadForWord.SetUp(newWord, wordSize, true);
+                        
+                        // Highlight if word is on the decode list
+                        if (isOnDecodeList)
+                        {
+                            showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
+                        }
+                    }
+                }
+                if (hadValidWord)
+                {
+                    length = 0;
+                    height -= 96;
+                }
+            }
+            
+            float maxWidth = 850;
+            if (widestLineWidth > maxWidth)
+            {
+                float scale = maxWidth / widestLineWidth;
+                m_textAnchors [0].transform.localScale = scale * Vector3.one;
+            } else
+            {
+                m_textAnchors [0].transform.localScale = Vector3.one;
+            }
+        } 
+    }
+    */
+
+    void UpdatePage()
+    {
+        if (m_currentPage < m_numPages)
+        {
+            DataRow storyPage = FindStoryPage();
+            
+            if (storyPage != null)
+            {
+                UpdateText(storyPage);
+                UpdatePicture(storyPage);
+                UpdateAudio(storyPage);
+            }
+        }
+        else
+        {
+            UpdatePicture();
+        }
+    }
+
+    DataRow FindStoryPage()
+    {
+        int oneBasedCurrentPage = m_currentPage + 1;
+        
+        if(oneBasedCurrentPage <=  m_numPages)
+        {
+            m_pageCountLabel.text = oneBasedCurrentPage.ToString() + " \\ " + m_numPages.ToString();
+        }
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + oneBasedCurrentPage + "'");
+
+        return dt.Rows.Count > 0 ? dt.Rows [0] : null;
+    }
+
+    void EnableButtons(bool enable)
+    {
+        foreach (PipButton button in m_pageTurnButtons)
+        {
+            button.EnableCollider(enable);
+        }
+
+        foreach (PipButton button in m_languageButtons)
+        {
+            button.EnableCollider(enable);
+        }
+    }
+
     void UpdateText(DataRow storyPage)
     {
         if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
@@ -325,51 +442,5 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                 m_textAnchors [0].transform.localScale = Vector3.one;
             }
         } 
-    }
-
-    void UpdatePage()
-    {
-        if (m_currentPage < m_numPages)
-        {
-            DataRow storyPage = FindStoryPage();
-            
-            if (storyPage != null)
-            {
-                UpdateText(storyPage);
-                UpdatePicture(storyPage);
-                UpdateAudio(storyPage);
-            }
-        }
-        else
-        {
-            UpdatePicture();
-        }
-    }
-
-    DataRow FindStoryPage()
-    {
-        int oneBasedCurrentPage = m_currentPage + 1;
-        
-        if(oneBasedCurrentPage <=  m_numPages)
-        {
-            m_pageCountLabel.text = oneBasedCurrentPage.ToString() + " \\ " + m_numPages.ToString();
-        }
-
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + oneBasedCurrentPage + "'");
-
-        return dt.Rows.Count > 0 ? dt.Rows [0] : null;
-    }
-
-    void EnableButtons(bool enable)
-    {
-        foreach (PipButton button in m_pageTurnButtons)
-        {
-            button.EnableCollider(enable);
-        }
-
-        foreach (PipButton button in m_languageButtons)
-        {
-            button.EnableCollider(enable);
-        }
     }
 }
