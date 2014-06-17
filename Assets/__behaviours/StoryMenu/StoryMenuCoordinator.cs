@@ -59,6 +59,8 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     string m_readingString = "read";
 
+    bool m_hasActivatedStoryPanel = false;
+
     IEnumerator Start ()
     {
         m_readButton.SetString(m_readingString);
@@ -68,13 +70,16 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        ColorInfo.PipColor pipColor = StoryMenuInfo.Instance.HasBookmark() ? StoryMenuInfo.Instance.GetBookmarkPipColor() : ColorInfo.PipColor.Pink;
+        if (StoryMenuInfo.Instance.HasBookmark())
+        {
+            ColorInfo.PipColor pipColor = StoryMenuInfo.Instance.GetBookmarkPipColor();
+            
+            m_currentColorButton = System.Array.Find(m_colorButtons, x => x.pipColor == pipColor);
+            
+            m_currentColorButton.ChangeSprite(true);
 
-        m_currentColorButton = System.Array.Find(m_colorButtons, x => x.pipColor == pipColor);
-
-        m_currentColorButton.ChangeSprite(true);
-
-        yield return StartCoroutine(SpawnBooks(pipColor));
+            StartCoroutine(ActivateStoryPanel(pipColor, true));
+        }
 
         foreach (PipButton button in m_colorButtons)
         {
@@ -84,7 +89,25 @@ public class StoryMenuCoordinator : MonoBehaviour
         StoryMenuInfo.Instance.DestroyBookmark();
     }
 
+    IEnumerator ActivateStoryPanel(ColorInfo.PipColor pipColor, bool instant)
+    {
+        m_hasActivatedStoryPanel = true;
 
+        yield return StartCoroutine(SpawnBooks(pipColor));
+
+        if (instant)
+        {
+            m_storyPanel.alpha = 1;
+            m_draggablePanel.GetComponent<UIPanel>().alpha = 1;
+        }
+        else
+        {
+            Debug.Log("ALPHA TWEEN");
+            float tweenDuration = 0.3f;
+            TweenAlpha.Begin(m_storyPanel.gameObject, tweenDuration, 1);
+            TweenAlpha.Begin(m_draggablePanel.gameObject, tweenDuration, 1);
+        }
+    }
 
     void OnPressReadOrPictures(PipButton button)
     {
@@ -157,7 +180,14 @@ public class StoryMenuCoordinator : MonoBehaviour
         
         m_currentColorButton = button;
 
-        StartCoroutine(SpawnBooks(m_currentColorButton.pipColor));
+        if (m_hasActivatedStoryPanel)
+        {
+            StartCoroutine(SpawnBooks(m_currentColorButton.pipColor));
+        }
+        else
+        {
+            StartCoroutine(ActivateStoryPanel(m_currentColorButton.pipColor, false));
+        }
     }
 
     void OnPressStoryButton(StoryMenuBook button)
@@ -244,9 +274,12 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     IEnumerator SpawnBooks(ColorInfo.PipColor pipColor)
     {
-        CollectionHelpers.DestroyObjects(m_spawnedBooks, true);
+        if (m_spawnedBooks.Count > 0)
+        {
+            CollectionHelpers.DestroyObjects(m_spawnedBooks, true);
 
-        yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.3f);
+        }
 
         string colorName = ColorInfo.GetColorString(pipColor).ToLower();
         
