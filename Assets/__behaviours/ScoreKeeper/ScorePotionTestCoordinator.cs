@@ -23,7 +23,7 @@ public class ScorePotionTestCoordinator : MonoBehaviour
 
             if(widget != null)
             {
-                widget.onAll += OnWidgetClick;
+                widget.AllReleaseInteractions += OnWidgetClick;
             }
         }
 	}

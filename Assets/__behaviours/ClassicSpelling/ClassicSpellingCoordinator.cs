@@ -131,7 +131,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             m_draggables.Add(newDraggable);
             
-            newDraggable.onAll += OnDraggableRelease;
+            newDraggable.AllReleaseInteractions += OnDraggableRelease;
         }
         
         SpellingPadBehaviour.Instance.SayWholeWord();
@@ -223,7 +223,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             foreach(GameWidget draggable in m_draggables)
             {
-                draggable.TintDefault();
+                draggable.TintGray();
                 draggable.ChangeBackgroundState(false);
             }
 
@@ -247,7 +247,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
             currentDraggable.TweenToPos(padLetter.transform.position);
-            currentDraggable.ChangeBackgroundState();
+            currentDraggable.ChangeBackgroundState(true);
 
             currentDraggable.EnableDrag(false);
             currentDraggable.Off();
@@ -277,7 +277,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             SpeakCurrentWord();
             
             currentDraggable.TweenToStartPos();
-            currentDraggable.TintIncorrect();
+            currentDraggable.TintGray();
             
             ++m_wrongAnswers;
             

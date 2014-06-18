@@ -36,6 +36,7 @@ public class GameWidget : MonoBehaviour
     {
         None,
         Offset,
+        Scale,
         ChangeSprite
     }
 
@@ -68,7 +69,7 @@ public class GameWidget : MonoBehaviour
     {
         get
         {
-            return m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x * m_label.transform.localScale.x;
+            return NGUIHelpers.GetLabelWidth(m_label);
         }
     }
 
@@ -96,6 +97,15 @@ public class GameWidget : MonoBehaviour
 
     int m_backgroundIndex;
 
+    void OnDestroy()
+    {
+        if (PrivateDestroying != null)
+        {
+            PrivateDestroying(this);
+        }
+    }
+
+    // SetUp methods
     void Awake()
     {
         transform.localScale = Vector3.zero;
@@ -104,17 +114,17 @@ public class GameWidget : MonoBehaviour
 
     public virtual void SetUp(DataRow data) {}
 
-    public void SetUp(string dataType, DataRow newData, Texture2D iconTexture, bool changeBackgroundWidth = false)
+    public void SetUp(string myDataType, DataRow myData, Texture2D iconTexture, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
         {
             m_icon.mainTexture = iconTexture;
         }
 
-        SetUp(dataType, newData, changeBackgroundWidth);
+        SetUp(myDataType, myData, changeBackgroundWidth);
     }
 
-    public void SetUp(string dataType, DataRow newData, UIAtlas iconAtlas, string iconSpritename, bool changeBackgroundWidth = false)
+    public void SetUp(string myDataType, DataRow myData, UIAtlas iconAtlas, string iconSpritename, bool changeBackgroundWidth = false)
     {
         if (m_icon != null)
         {
@@ -126,25 +136,22 @@ public class GameWidget : MonoBehaviour
             }
         }
 
-        SetUp(dataType, newData, changeBackgroundWidth);
+        SetUp(myDataType, myData, changeBackgroundWidth);
     }
 
-    public void SetUp(string dataType, DataRow newData, bool changeBackgroundWidth)
+    public void SetUp(string myDataType, DataRow myData, bool changeBackgroundWidth)
     {
-        m_data = newData;
+        m_data = myData;
 
         if (m_label != null)
         {
-            m_label.text = DataHelpers.GetLabelText(dataType, m_data);
+            m_label.text = DataHelpers.GetLabelText(myDataType, m_data);
         }
 
         if (changeBackgroundWidth)
         {
             ChangeBackgroundWidth();
         }
-
-        transform.localScale = Vector3.one;
-        iTween.ScaleFrom(gameObject, Vector3.zero, 0.5f);
 
         SetUpBackground();
     }
@@ -201,6 +208,21 @@ public class GameWidget : MonoBehaviour
         } 
     }
 
+    // Player Interactions
+    void OnDrag(Vector2 delta)
+    {
+        if(m_canDrag)
+        {
+            Ray camPos = UICamera.currentCamera.ScreenPointToRay(
+                new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
+            transform.position = new Vector3(camPos.origin.x, camPos.origin.y, 0) - m_dragOffset;
+            
+            m_dragOffset = m_dragOffset - (Time.deltaTime * m_dragOffset);
+            
+            m_hasDragged = true;
+        }
+    }
+
     void OnPress(bool pressed)
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent (pressed ? m_pressedAudio : m_unpressedAudio);
@@ -214,48 +236,138 @@ public class GameWidget : MonoBehaviour
             m_dragOffset = new Vector3(camPos.origin.x, camPos.origin.y, 0) - transform.position;
             
             m_hasDragged = false;
+
+            if(!m_canDrag && !m_isRunningClickDown)
+            {
+                ClickDownReaction();
+            }
         } 
         else
         {
             if(m_hasDragged)
             {
-                if(OnDragRelease != null)
+                if(PrivateDragReleased != null)
                 {
-                    OnDragRelease(this);
+                    PrivateDragReleased(this);
                 }
             }
             else
             {
-                ReactToClick();
+                StartCoroutine(ClickUpReaction());
             }
         }
     }
 
-    void ReactToClick()
+    void ClickDownReaction()
     {
         switch(m_clickReaction)
         {
             case ClickReaction.Offset:
-                StartCoroutine(OnClickCo());
+                StartCoroutine(ClickOffsetDown());
+                break;
+            case ClickReaction.Scale:
+                StartCoroutine(ClickScaleDown());
                 break;
             case ClickReaction.ChangeSprite:
-                ChangeBackgroundState();
-                if(OnWidgetClick != null)
-                {
-                    OnWidgetClick(this);
-                }
+                ChangeBackgroundState(true);
                 break;
             default:
-                if(OnWidgetClick != null)
-                {
-                    OnWidgetClick(this);
-                }
                 break;
         }
     }
 
-    IEnumerator OnClickCo()
+    bool m_isRunningClickDown = false;
+
+    IEnumerator ClickUpReaction()
     {
+        EnableCollider(false);
+
+        while (m_isRunningClickDown)
+        {
+            yield return null;
+        }
+
+        switch(m_clickReaction)
+        {
+            case ClickReaction.Offset:
+                yield return StartCoroutine(ClickOffsetUp());
+                break;
+            case ClickReaction.Scale:
+                yield return StartCoroutine(ClickScaleUp());
+                break;
+            default:
+                break;
+        }
+
+        EnableCollider(true);
+
+        if(PrivateClicked != null)
+        {
+            PrivateClicked(this);
+        }
+    }
+
+    IEnumerator ClickOffsetDown()
+    {
+        m_isRunningClickDown = true;
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("islocal", true);
+        
+        tweenArgs.Add("position", new Vector3(transform.localPosition.x, transform.localPosition.y - 15));
+        
+        float tweenDuration = 0.2f;
+        tweenArgs.Add("time", tweenDuration);
+        
+        iTween.MoveTo(gameObject, tweenArgs);
+        
+        yield return new WaitForSeconds(tweenDuration);
+        
+        m_isRunningClickDown = false;
+    }
+
+    IEnumerator ClickOffsetUp()
+    {
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("islocal", true);
+        
+        tweenArgs.Add("position", m_startPosition);
+        
+        float tweenDuration = 0.2f;
+        tweenArgs.Add("time", tweenDuration);
+        
+        iTween.MoveTo(gameObject, tweenArgs);
+        
+        yield return new WaitForSeconds(tweenDuration);
+    }
+
+    IEnumerator ClickScaleDown()
+    {
+        m_isRunningClickDown = true;
+
+        float tweenDuration = 0.2f;
+        
+        iTween.ScaleTo(gameObject, Vector3.one * 0.8f, tweenDuration);
+
+        yield return new WaitForSeconds(tweenDuration);
+
+        m_isRunningClickDown = false;
+    }
+
+    IEnumerator ClickScaleUp()
+    {
+        float tweenDuration = 0.2f;
+        
+        iTween.ScaleTo(gameObject, Vector3.one, tweenDuration);
+        
+        yield return new WaitForSeconds(tweenDuration);
+    }
+
+    /*
+    IEnumerator ClickOffsetCo()
+    {
+        EnableCollider(false);
+
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("islocal", true);
 
@@ -272,25 +384,61 @@ public class GameWidget : MonoBehaviour
 
         iTween.MoveTo(gameObject, tweenArgs);
         yield return new WaitForSeconds(tweenDuration);
+
+        EnableCollider(true);
+    }
+
+    IEnumerator ClickScaleCo()
+    {
+        EnableCollider(false);
         
-        if(OnWidgetClick != null)
+        Hashtable tweenArgs = new Hashtable();
+        
+        tweenArgs.Add("scale", Vector3.one * 0.75f);
+        
+        float tweenDuration = 0.2f;
+        tweenArgs.Add("time", tweenDuration);
+        
+        iTween.ScaleTo(gameObject, tweenArgs);
+        yield return new WaitForSeconds(tweenDuration);
+        
+        tweenArgs ["scale"] = Vector3.one;
+        
+        iTween.ScaleTo(gameObject, tweenArgs);
+        yield return new WaitForSeconds(tweenDuration);
+        
+        EnableCollider(true);
+    }
+    */
+
+    // Miscellaneous Methods
+    public void Off()
+    {
+        StartCoroutine(OffCo());
+    }
+    
+    public IEnumerator OffCo()
+    {
+        collider.enabled = false;
+        iTween.Stop(gameObject);
+        iTween.ScaleTo(gameObject, Vector3.zero, m_scaleTweenDuration);
+        
+        yield return new WaitForSeconds(m_scaleTweenDuration);
+        
+        if (gameObject != null)
         {
-            OnWidgetClick(this);
+            Destroy(gameObject);
         }
     }
 
-    void OnDrag(Vector2 delta)
+    public void EnableDrag(bool enable)
     {
-        if(m_canDrag)
-        {
-            Ray camPos = UICamera.currentCamera.ScreenPointToRay(
-                new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
-            transform.position = new Vector3(camPos.origin.x, camPos.origin.y, 0) - m_dragOffset;
-            
-            m_dragOffset = m_dragOffset - (Time.deltaTime * m_dragOffset);
-            
-            m_hasDragged = true;
-        }
+        m_canDrag = enable;
+    }
+    
+    public void EnableCollider(bool enable)
+    {
+        m_collider.enabled = enable;
     }
 
     public void TweenToStartPos()
@@ -303,26 +451,7 @@ public class GameWidget : MonoBehaviour
         iTween.MoveTo(gameObject, pos, m_positionTweenDuration);
     }
 
-    public void Off()
-    {
-        StartCoroutine(OffCo());
-    }
-
-    public IEnumerator OffCo()
-    {
-        collider.enabled = false;
-        iTween.Stop(gameObject);
-        iTween.ScaleTo(gameObject, Vector3.zero, m_scaleTweenDuration);
-        
-        yield return new WaitForSeconds(m_scaleTweenDuration);
-
-        if (gameObject != null)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    public void ChangeBackgroundState(bool stateB = true)
+    public void ChangeBackgroundState(bool stateB)
     {
         string[] spriteNames = stateB ? m_backgroundsStateB : m_backgroundsStateA;
 
@@ -336,34 +465,20 @@ public class GameWidget : MonoBehaviour
         } 
     }
 
-    public void EnableDrag(bool enable)
+    public void TintWhite()
     {
-        m_canDrag = enable;
+        Tint(Color.white);
     }
 
-    public void EnableCollider(bool enable)
+    public void TintGray()
     {
-        m_collider.enabled = enable;
+        Tint(Color.gray);
     }
 
-    public void TintDefault()
+    void Tint(Color col)
     {
-        Color col = Color.white;
         col.a = m_background.color.a;
-        m_background.color = col;
-    }
-
-    public void TintIncorrect()
-    {
-        Color col = Color.gray;
-        col.a = m_background.color.a;
-        m_background.color = col;
-    }
-
-    public void Tint(Color newCol)
-    {
-        newCol.a = m_background.color.a;
-        m_background.color = newCol;
+        TweenColor.Begin(gameObject, 0.2f, col);
     }
 
     public void FadeBackground(bool fadeOut)
@@ -382,85 +497,68 @@ public class GameWidget : MonoBehaviour
         iTween.ShakePosition(gameObject, tweenArgs);
     }
 
-    public delegate void GameWidgetEvent(GameWidget widget);
+    // Events
+    public delegate void GameWidgetEventHandler(GameWidget widget);
 
-    private event GameWidgetEvent OnWidgetDestroy;
-    public event GameWidgetEvent onDestroy
+    private event GameWidgetEventHandler PrivateDestroying;
+    public event GameWidgetEventHandler Destroying
     {
         add
         {
-            if(OnWidgetDestroy == null || !OnWidgetDestroy.GetInvocationList().Contains(value))
+            if(PrivateDestroying == null || !PrivateDestroying.GetInvocationList().Contains(value))
             {
-                OnWidgetDestroy += value;
+                PrivateDestroying += value;
             }
         }
         remove
         {
-            OnWidgetDestroy -= value;
+            PrivateDestroying -= value;
         }
     }
 
-    private event GameWidgetEvent OnWidgetClick;
-    public event GameWidgetEvent onClick
+    private event GameWidgetEventHandler PrivateClicked;
+    public event GameWidgetEventHandler Clicked
     {
         add
         {
-            if(OnWidgetClick == null || !OnWidgetClick.GetInvocationList().Contains(value))
+            if(PrivateClicked == null || !PrivateClicked.GetInvocationList().Contains(value))
             {
-                OnWidgetClick += value;
+                PrivateClicked += value;
             }
         }
         remove
         {
-            OnWidgetClick -= value;
+            PrivateClicked -= value;
         }
     }
 
-    private event GameWidgetEvent OnFlick;
-    public event GameWidgetEvent onFlick
+    private event GameWidgetEventHandler PrivateDragReleased;
+    public event GameWidgetEventHandler DragReleased
     {
         add
         {
-            if(OnFlick == null || !OnFlick.GetInvocationList().Contains(value))
+            if(PrivateDragReleased == null || !PrivateDragReleased.GetInvocationList().Contains(value))
             {
-                OnFlick += value;
+                PrivateDragReleased += value;
             }
         }
         remove
         {
-            OnFlick -= value;
+            PrivateDragReleased -= value;
         }
     }
 
-    private event GameWidgetEvent OnDragRelease;
-    public event GameWidgetEvent onDragRelease
+    public event GameWidgetEventHandler AllReleaseInteractions
     {
         add
         {
-            if(OnDragRelease == null || !OnDragRelease.GetInvocationList().Contains(value))
-            {
-                OnDragRelease += value;
-            }
+            Clicked += value;
+            DragReleased += value;
         }
         remove
         {
-            OnDragRelease -= value;
-        }
-    }
-
-    public event GameWidgetEvent onAll
-    {
-        add
-        {
-            onClick += value;
-            onFlick += value;
-            onDragRelease += value;
-        }
-        remove
-        {
-            onClick -= value;
-            onFlick -= value;
-            onDragRelease -= value;
+            Clicked -= value;
+            DragReleased -= value;
         }
     }
 }

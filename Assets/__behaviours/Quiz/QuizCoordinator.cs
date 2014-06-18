@@ -104,7 +104,7 @@ public class QuizCoordinator : MonoBehaviour
                 GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerLabelPrefab, m_locators[i]);
                 GameWidget answerBehaviour = newAnswer.GetComponent<GameWidget>() as GameWidget;
                 answerBehaviour.SetUp(answerStrings[i], true);
-                answerBehaviour.onClick += OnAnswer;
+                answerBehaviour.Clicked += OnAnswer;
                 answerBehaviour.EnableDrag(false);
                 m_spawnedAnswers.Add(answerBehaviour);
             }

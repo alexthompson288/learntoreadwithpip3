@@ -68,7 +68,7 @@ public class NumberSplatCoordinator : GameCoordinator
             GameWidget widget = newNumber.GetComponent<GameWidget>() as GameWidget;
             //widget.SetUp("numbers", number, false);
             widget.SetUp(number);
-            widget.onAll += OnAnswer;
+            widget.AllReleaseInteractions += OnAnswer;
             m_spawnedWidgets.Add(widget);
             ++locatorIndex;
         }
@@ -92,7 +92,7 @@ public class NumberSplatCoordinator : GameCoordinator
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            widget.Tint(Color.grey);
+            widget.TintGray();
             widget.TweenToStartPos();
         }
     }

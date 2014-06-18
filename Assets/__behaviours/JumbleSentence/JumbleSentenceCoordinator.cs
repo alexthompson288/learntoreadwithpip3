@@ -28,8 +28,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
     List<string> m_remainingWords = new List<string>();
 
-    float m_startTime;
-
     IEnumerator Start()
     {
         m_pictureParent.transform.localScale = Vector3.zero;
@@ -90,7 +88,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
             // Set up GameWidget
             GameWidget wordBehaviour = newWord.GetComponent<GameWidget>() as GameWidget;
             wordBehaviour.SetUp(m_remainingWords[i], true);
-            wordBehaviour.onAll += OnWordClick;
+            wordBehaviour.AllReleaseInteractions += OnWordClick;
             wordBehaviour.EnableDrag(false);
             m_spawnedWords.Add(wordBehaviour);
 
@@ -139,19 +137,20 @@ public class JumbleSentenceCoordinator : GameCoordinator
     {
         if (widget.labelText == m_remainingWords [0])
         {
+            widget.EnableCollider(false);
+
             widget.TweenToPos(m_spawnedWordLocations[0].position);
 
             m_remainingWords.RemoveAt(0);
             m_spawnedWordLocations.RemoveAt(0);
 
-            widget.EnableCollider(false);
             widget.transform.parent = m_textPosition;
 
             widget.FadeBackground(true);
 
             foreach(GameWidget spawnedWidget in m_spawnedWords)
             {
-                spawnedWidget.Tint(Color.white);
+                spawnedWidget.TintWhite();
             }
 
             if(m_remainingWords.Count == 0)
@@ -195,8 +194,9 @@ public class JumbleSentenceCoordinator : GameCoordinator
         } 
         else
         {
-            widget.Tint(Color.gray);
-            widget.TweenToStartPos();
+            WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+            widget.TintGray();
+            widget.Shake();
         }
 
         yield break;

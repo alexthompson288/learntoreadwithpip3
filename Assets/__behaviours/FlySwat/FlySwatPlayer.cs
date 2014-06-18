@@ -101,8 +101,8 @@ public class FlySwatPlayer : GamePlayer
 
         GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
         widget.SetUp(coordinator.GetDataType(), data, false);
-        widget.onClick += OnSwatFly;
-        widget.onDestroy += OnWidgetDestroy;
+        widget.Clicked += OnSwatFly;
+        widget.Destroying += OnWidgetDestroy;
         m_spawnedWidgets.Add(widget);
 
         SplineFollower follower = newFly.GetComponent<SplineFollower>() as SplineFollower;
@@ -133,7 +133,7 @@ public class FlySwatPlayer : GamePlayer
 
             widget.EnableCollider(false);
             widget.Shake();
-            widget.Tint(Color.grey);
+            widget.TintGray();
         }
     }
 
