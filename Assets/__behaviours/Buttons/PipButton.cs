@@ -9,7 +9,6 @@ public class PipButton : MonoBehaviour
     public event PressEventHandler Unpressing;
     public event PressEventHandler Unpressed;
     
-    
     // Shared Variables
     [SerializeField]
     private bool m_autoReset = true;
@@ -72,11 +71,11 @@ public class PipButton : MonoBehaviour
     
     string m_unpressedSpriteName;
 
-    bool m_hasSetSpriteNames = false; // Defensive: It is possible for a menu Coordinator to call ChangeSprite before Start method has set m_pressedSpriteName
+    bool m_hasSetSpriteNames = false; // Defensive: It is possible for other classes to call ChangeSprite before Start method has set m_pressedSpriteName
 
     public void ChangeSprite(bool toStateB)
     {
-        if (!m_hasSetSpriteNames) // Defensive: It is possible for a menu Coordinator to call ChangeSprite before Start method has set m_pressedSpriteName
+        if (!m_hasSetSpriteNames) // Defensive: It is possible for other classes to call ChangeSprite before Start method has set m_pressedSpriteName
         {
             m_hasSetSpriteNames = true;
 
@@ -91,7 +90,7 @@ public class PipButton : MonoBehaviour
         m_pressableButton.spriteName = toStateB ? m_pressedSpriteName : m_unpressedSpriteName;
     }
 
-    
+
     // ColorChange Variables
     [SerializeField]
     private bool m_changeColor;
@@ -106,8 +105,8 @@ public class PipButton : MonoBehaviour
     private bool m_changeScale;
     [SerializeField]
     private Vector3 m_pressedScale = Vector3.one * 0.8f;
-    
 
+    
     // Shared Methods
     public void AddPressedAudio(string audioEvent)
     {
@@ -165,7 +164,7 @@ public class PipButton : MonoBehaviour
         m_autoReset = newAutoReset;
     }
 
-    void Start()
+    IEnumerator Start()
     {
         if (m_pressableButton != null)
         {
@@ -209,6 +208,8 @@ public class PipButton : MonoBehaviour
                     m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
                 }
             }
+
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
             
             if (m_sheenAnimation != null)
             {
@@ -282,6 +283,12 @@ public class PipButton : MonoBehaviour
             m_positionTweenArgs ["position"] = m_pressedLocation;
             iTween.MoveTo(m_pressableButton.gameObject, m_positionTweenArgs);
         }
+
+        if (m_changeScale)
+        {
+            iTween.ScaleTo(m_pressableButton.gameObject, m_pressedScale, m_pressDuration);
+            iTween.ScaleTo(m_positionFollower.gameObject, m_pressedScale, m_pressDuration);
+        }
         
         if (m_changeSprite)
         {
@@ -328,6 +335,12 @@ public class PipButton : MonoBehaviour
         {
             m_positionTweenArgs ["position"] = m_unpressedLocation;
             iTween.MoveTo(m_pressableButton.gameObject, m_positionTweenArgs);
+        }
+
+        if (m_changeScale)
+        {
+            iTween.ScaleTo(m_pressableButton.gameObject, Vector3.one, m_pressDuration);
+            iTween.ScaleTo(m_positionFollower.gameObject, Vector3.one, m_pressDuration);
         }
 
         if (m_changeColor)
