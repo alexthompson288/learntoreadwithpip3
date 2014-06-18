@@ -156,6 +156,7 @@ public static class DataHelpers
     public static string GameOrDefault(string defaultDataType)
     {
         string gameDataType = GetDataType(GetCurrentGame());
+        Debug.Log("gameDataType: " + gameDataType);
         string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
         
         return dataType;

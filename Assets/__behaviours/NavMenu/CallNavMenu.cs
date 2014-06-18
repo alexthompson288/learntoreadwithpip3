@@ -25,7 +25,6 @@ public class CallNavMenu : MonoBehaviour
 
 	void OnClick () 
 	{
-		Debug.Log(name + " - CallNavMenu.OnClick()");
 		PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
 		
 		if(gameSettings.m_disableNavMenu)

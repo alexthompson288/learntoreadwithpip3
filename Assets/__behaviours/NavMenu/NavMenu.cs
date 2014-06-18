@@ -74,7 +74,6 @@ public class NavMenu : Singleton<NavMenu>
 
 	public void Call()
 	{
-		Debug.Log("NavMenu.Call() - isOn: " + m_mainMoveable.IsOn());
 		if(m_mainMoveable.IsOn())
 		{
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
@@ -91,14 +90,11 @@ public class NavMenu : Singleton<NavMenu>
 
 	public void CallRoomMoveable()
 	{
-		Debug.Log("CallRoomMoveable(): - isOn: " + m_roomMoveable.IsOn());
 		CallMoveable(m_roomMoveable);
 	}
 
 	public void CallBuyMoveable()
 	{
-		Debug.Log("CallUserMoveable(): - isOn: " + m_buyMoveable.IsOn());
-
 		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
 
 		CallMoveable(m_buyMoveable);

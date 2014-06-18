@@ -41,6 +41,8 @@ public class GameManager : Singleton<GameManager>
 
     void PlayNextGame()
     {
+        Debug.Log("GameManager.PlayNextGame()");
+
         m_state = State.StartGame;
 
         Debug.Log("Num Scenes: " + m_gameNames.Count);

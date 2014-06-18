@@ -73,8 +73,15 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         NavMenu.Instance.HideCallButton();
 
+        Debug.Log("gameName: " + DataHelpers.GetGameName());
+
         string defaultDataType = Application.loadedLevelName == "NewBankWords" ? "words" : "phonemes";
         m_dataType = DataHelpers.GameOrDefault(defaultDataType);
+
+        if (m_dataType == "shapes")
+        {
+            m_dataType = "alphabet";
+        }
 
         m_hasSetDataType = true;
 
