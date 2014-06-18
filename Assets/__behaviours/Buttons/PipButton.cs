@@ -250,10 +250,20 @@ public class PipButton : MonoBehaviour
         if (pressed)
         {
             StartCoroutine(Press());
-        } 
-        else if(m_autoReset)
+        }
+        else 
         {
-            StartCoroutine(Unpress());
+            if (m_autoReset)
+            {
+                StartCoroutine(Unpress());
+            }
+            else
+            {
+                if(Unpressing != null)
+                {
+                    Unpressing(this);
+                }
+            }
         }
     }
     
@@ -316,7 +326,7 @@ public class PipButton : MonoBehaviour
             yield return null;
         }
         
-        if (Unpressing != null)
+        if (m_autoReset && Unpressing != null)
         {
             Unpressing(this);
         }
