@@ -99,6 +99,13 @@ public class PipButton : MonoBehaviour
     private Color m_pressedColor = Color.white;
 
     Color m_unpressedColor;
+
+
+    // ScaleChange Variables
+    [SerializeField]
+    private bool m_changeScale;
+    [SerializeField]
+    private Vector3 m_pressedScale = Vector3.one * 0.8f;
     
 
     // Shared Methods
@@ -110,23 +117,6 @@ public class PipButton : MonoBehaviour
     public void AddUnpressedAudio(string audioEvent)
     {
         m_unpressedAudio.Add(audioEvent);
-    }
-
-    public void SetPipColor(ColorInfo.PipColor newPipColor, bool changeSpriteColor)
-    {
-        m_pipColor = newPipColor;
-
-        if (changeSpriteColor)
-        {
-            Color col = ColorInfo.GetColor(m_pipColor);
-
-            m_pressableButton.color = col;
-
-            foreach(UIWidget widget in m_additionalColoredWidgets)
-            {
-                widget.color = col;
-            }
-        }
     }
 
     public void SetData(DataRow newData)
@@ -168,11 +158,6 @@ public class PipButton : MonoBehaviour
     public void SetString(string newString)
     {
         m_string = newString;
-    }
-
-    public void SetPipColor(ColorInfo.PipColor newPipColor)
-    {
-        m_pipColor = newPipColor;
     }
 
     public void SetAutoReset(bool newAutoReset)
