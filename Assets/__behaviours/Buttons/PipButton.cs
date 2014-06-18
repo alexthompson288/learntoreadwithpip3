@@ -19,6 +19,8 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private UISprite m_pressableButton;
     [SerializeField]
+    private Transform m_follower;
+    [SerializeField]
     private float m_pressDuration = 0.3f;
     [SerializeField]
     private List<string> m_pressedAudio = new List<string>();
@@ -44,8 +46,6 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private Transform m_pressedLocation;
     [SerializeField]
-    private Transform m_positionFollower;
-    [SerializeField]
     private Transform m_followerLocation;
     [SerializeField]
     private GameObject m_emptyPrefab;
@@ -57,7 +57,7 @@ public class PipButton : MonoBehaviour
 
     IEnumerator UpdateFollowerPosition()
     {
-        m_positionFollower.position = m_followerLocation.position;
+        m_follower.position = m_followerLocation.position;
         yield return null;
         StartCoroutine("UpdateFollowerPosition");
     }
@@ -275,7 +275,7 @@ public class PipButton : MonoBehaviour
         
         if (m_changePosition)
         {
-            if (m_positionFollower != null)
+            if (m_follower != null)
             {
                 StartCoroutine("UpdateFollowerPosition");
             }
@@ -287,7 +287,7 @@ public class PipButton : MonoBehaviour
         if (m_changeScale)
         {
             iTween.ScaleTo(m_pressableButton.gameObject, m_pressedScale, m_pressDuration);
-            iTween.ScaleTo(m_positionFollower.gameObject, m_pressedScale, m_pressDuration);
+            iTween.ScaleTo(m_follower.gameObject, m_pressedScale, m_pressDuration);
         }
         
         if (m_changeSprite)
@@ -340,7 +340,7 @@ public class PipButton : MonoBehaviour
         if (m_changeScale)
         {
             iTween.ScaleTo(m_pressableButton.gameObject, Vector3.one, m_pressDuration);
-            iTween.ScaleTo(m_positionFollower.gameObject, Vector3.one, m_pressDuration);
+            iTween.ScaleTo(m_follower.gameObject, Vector3.one, m_pressDuration);
         }
 
         if (m_changeColor)
@@ -360,7 +360,7 @@ public class PipButton : MonoBehaviour
             m_pressableButton.spriteName = m_unpressedSpriteName;
         }
 
-        if (m_changePosition && m_positionFollower != null)
+        if (m_changePosition && m_follower != null)
         {
             StopCoroutine("UpdateFollowerPosition");
         }
