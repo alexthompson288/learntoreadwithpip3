@@ -363,54 +363,6 @@ public class GameWidget : MonoBehaviour
         yield return new WaitForSeconds(tweenDuration);
     }
 
-    /*
-    IEnumerator ClickOffsetCo()
-    {
-        EnableCollider(false);
-
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("islocal", true);
-
-        tweenArgs.Add("position", new Vector3(transform.localPosition.x, transform.localPosition.y - 15));
-        
-        float tweenDuration = 0.2f;
-        tweenArgs.Add("time", tweenDuration);
-
-        iTween.MoveTo(gameObject, tweenArgs);
-        yield return new WaitForSeconds(tweenDuration);
-
-        tweenArgs ["position"] = m_startPosition;
-        tweenArgs ["islocal"] = false;
-
-        iTween.MoveTo(gameObject, tweenArgs);
-        yield return new WaitForSeconds(tweenDuration);
-
-        EnableCollider(true);
-    }
-
-    IEnumerator ClickScaleCo()
-    {
-        EnableCollider(false);
-        
-        Hashtable tweenArgs = new Hashtable();
-        
-        tweenArgs.Add("scale", Vector3.one * 0.75f);
-        
-        float tweenDuration = 0.2f;
-        tweenArgs.Add("time", tweenDuration);
-        
-        iTween.ScaleTo(gameObject, tweenArgs);
-        yield return new WaitForSeconds(tweenDuration);
-        
-        tweenArgs ["scale"] = Vector3.one;
-        
-        iTween.ScaleTo(gameObject, tweenArgs);
-        yield return new WaitForSeconds(tweenDuration);
-        
-        EnableCollider(true);
-    }
-    */
-
     // Miscellaneous Methods
     public void Off()
     {
