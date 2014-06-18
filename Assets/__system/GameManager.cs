@@ -82,7 +82,6 @@ public class GameManager : Singleton<GameManager>
 
         m_currentGameName = "";
         m_returnScene = "";
-        m_scoreType = "";
 
         SessionInformation.Instance.SetNumPlayers(1);
     }
@@ -135,18 +134,6 @@ public class GameManager : Singleton<GameManager>
                 Reset();
                 break;
         }
-    }
-
-    string m_scoreType = "";
-
-    public string GetScoreType()
-    {
-        return m_scoreType;
-    }
-
-    public void SetScoreType(string scoreType)
-    {
-        m_scoreType = scoreType;
     }
 
     Queue<string> m_gameNames = new Queue<string>();

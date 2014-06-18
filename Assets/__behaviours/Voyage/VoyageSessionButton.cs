@@ -59,10 +59,7 @@ public class VoyageSessionButton : MonoBehaviour
                 {
                     if (row [targetAttribute] != null && row [targetAttribute].ToString() == "t")
                     {
-                        string textAttribute = DataHelpers.GetTextAttribute(dataType);
-                        
-                        m_label.text = row [textAttribute].ToString();
-                        
+                        m_label.text = DataHelpers.GetLabelText(dataType, row);
                         hasSetLabel = true;
                     }
                 }

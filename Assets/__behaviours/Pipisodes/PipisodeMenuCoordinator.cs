@@ -103,7 +103,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         GameManager.Instance.AddData("quizquestions", quizQuestions);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
-        GameManager.Instance.SetScoreType(m_currentPipisode ["pipisode_title"].ToString());
+        ScoreInfo.Instance.SetScoreType(m_currentPipisode ["pipisode_title"].ToString());
 
         GameManager.Instance.StartGames();
     }

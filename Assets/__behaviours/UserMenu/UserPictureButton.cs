@@ -19,7 +19,7 @@ public class UserPictureButton : MonoBehaviour
     public void SetUp (string spriteName, UIDraggablePanel draggablePanel) 
     {
         m_spriteNameA = spriteName;
-        m_spriteNameB = DataHelpers.GetLinkedSpriteName(m_spriteNameA);
+        m_spriteNameB = NGUIHelpers.GetLinkedSpriteName(m_spriteNameA);
 
         m_picture.spriteName = m_spriteNameA;
         m_background.color = ColorInfo.GetColor(m_pipColorA);

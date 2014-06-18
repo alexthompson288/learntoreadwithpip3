@@ -84,7 +84,7 @@ public class PipButton : MonoBehaviour
             
             if (System.String.IsNullOrEmpty(m_pressedSpriteName))
             {
-                m_pressedSpriteName = DataHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
+                m_pressedSpriteName = NGUIHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
             }
         } 
 
@@ -210,7 +210,7 @@ public class PipButton : MonoBehaviour
                 
                 if (System.String.IsNullOrEmpty(m_pressedSpriteName))
                 {
-                    m_pressedSpriteName = DataHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
+                    m_pressedSpriteName = NGUIHelpers.GetLinkedSpriteName(m_unpressedSpriteName);
                 }
             }
             

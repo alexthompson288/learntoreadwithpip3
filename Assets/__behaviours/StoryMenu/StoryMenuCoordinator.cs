@@ -149,7 +149,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
         StoryMenuInfo.Instance.SubscribeGameComplete();
 
-        GameManager.Instance.SetScoreType(CreateScoreType());
+        ScoreInfo.Instance.SetScoreType(CreateScoreType());
 
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 

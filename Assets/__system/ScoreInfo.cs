@@ -60,6 +60,41 @@ public class ScoreInfo : Singleton<ScoreInfo>
         }
     }
 
+    string m_scoreType = "";
+    
+    public void SetScoreType(string scoreType)
+    {
+        m_scoreType = scoreType;
+    }
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_overwrite;
+#endif
+
+    void Start()
+    {
+        GameManager.Instance.OnComplete += OnGameCompleteOrCancel;
+        GameManager.Instance.OnCancel += OnGameCompleteOrCancel;
+
+#if UNITY_EDITOR
+        if(m_overwrite)
+        {
+            Debug.Log("OVERWRITING SCOREINFO");
+            Save();
+        }
+#endif
+        
+        Load();
+        
+        UserInfo.Instance.ChangingUser += OnChangeUser;
+    }
+
+    void OnGameCompleteOrCancel()
+    {
+        m_scoreType = "";
+    }
+
     List<ScoreTracker> m_scoreTrackers = new List<ScoreTracker>();
 
     public int GetScore(string game, string type)
@@ -102,7 +137,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
                 game = "default";
             }
 
-            string type = DataHelpers.GetScoreType();
+            string type = m_scoreType;
             if(System.String.IsNullOrEmpty(type))
             {
                 type = "default";
@@ -190,26 +225,6 @@ public class ScoreInfo : Singleton<ScoreInfo>
         {
             return 1;
         }
-    }
-
-#if UNITY_EDITOR
-    [SerializeField]
-    private bool m_overwrite;
-#endif
-
-    void Start()
-    {
-#if UNITY_EDITOR
-        if(m_overwrite)
-        {
-            Debug.Log("OVERWRITING SCOREINFO");
-            Save();
-        }
-#endif
-
-        Load();
-
-        UserInfo.Instance.ChangingUser += OnChangeUser;
     }
 
     void OnChangeUser()

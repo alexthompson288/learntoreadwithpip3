@@ -25,7 +25,7 @@ public class UserMenuButton : MonoBehaviour
 		m_label.text = userName;
 
         m_spriteNameA = imageName;
-        m_spriteNameB = DataHelpers.GetLinkedSpriteName(m_spriteNameA);
+        m_spriteNameB = NGUIHelpers.GetLinkedSpriteName(m_spriteNameA);
 
         bool isCurrentUser = userName == UserInfo.Instance.GetCurrentUser();
         m_picture.spriteName = isCurrentUser ? m_spriteNameB : m_spriteNameA;

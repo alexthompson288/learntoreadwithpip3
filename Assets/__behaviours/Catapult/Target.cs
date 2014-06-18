@@ -98,7 +98,7 @@ public class Target : MonoBehaviour
     {
         if (m_background != null)
         {
-            m_background.spriteName = DataHelpers.GetLinkedSpriteName(m_background.spriteName);
+            m_background.spriteName = NGUIHelpers.GetLinkedSpriteName(m_background.spriteName);
         }
     }
 
@@ -106,7 +106,7 @@ public class Target : MonoBehaviour
     {
         if (m_background != null && m_background.spriteName.LastIndexOf('b') == m_background.spriteName.Length - 1)
         {
-            m_background.spriteName = DataHelpers.GetLinkedSpriteName(m_background.spriteName);
+            m_background.spriteName = NGUIHelpers.GetLinkedSpriteName(m_background.spriteName);
         }
     }
     

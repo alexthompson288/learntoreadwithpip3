@@ -67,4 +67,18 @@ public static class NGUIHelpers
             label.text = "";
         }
     }
+
+    public static string GetLinkedSpriteName(string spriteName)
+    {
+        if (spriteName.Length > 0)
+        {
+            string newNameEnd = spriteName [spriteName.Length - 1] == 'a' ? "b" : "a";
+            
+            return spriteName.Substring(0, spriteName.Length - 1) + newNameEnd;
+        } 
+        else
+        {
+            return "";
+        }
+    }
 }

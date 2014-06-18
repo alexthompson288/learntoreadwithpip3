@@ -206,7 +206,7 @@ public class GameMenuCoordinator : MonoBehaviour
                     GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
                 }
                 
-                GameManager.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
+                ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
                 
                 GameMenuInfo.Instance.CreateBookmark(m_currentGameButton.GetString(), pipColor);
                 
