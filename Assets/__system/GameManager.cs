@@ -149,8 +149,6 @@ public class GameManager : Singleton<GameManager>
         m_scoreType = scoreType;
     }
 
-    //Queue<DataRow> m_gameNames = new Queue<DataRow>();
-    //DataRow m_currentGame;
     Queue<string> m_gameNames = new Queue<string>();
     string m_currentGameName;
 
@@ -293,46 +291,6 @@ public class GameManager : Singleton<GameManager>
         m_returnScene = returnScene;
     }
 
-    string m_dataType = "";
-
-    public string dataType
-    {
-        get
-        {
-            return m_dataType;
-        }
-    }
-
-    public void SetDataType(string type)
-    {
-        m_dataType = type;
-    }
-
-    public string textAttribute
-    {
-        get
-        {
-            switch(m_dataType)
-            {
-                case "phonemes":
-                    return "phoneme";
-                    break;
-                case "words":
-                    return "word";
-                    break;
-                case "keywords":
-                    return "word";
-                    break;
-                case "stories":
-                    return "title";
-                    break;
-                default:
-                    return "default";
-                    break;
-            }
-        }
-    }
-
     enum State
     {
         Sleep,
@@ -343,7 +301,6 @@ public class GameManager : Singleton<GameManager>
 
     State m_state = State.Sleep;
 
-    // TODO: Move these events back to the top of the class. I have moved them to the bottom so that it is easier to write the rest of the class
     public delegate void Complete ();
     private event Complete onComplete;
     public event Complete OnComplete

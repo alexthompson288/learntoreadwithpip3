@@ -35,17 +35,13 @@ public class BankInfo : Singleton<BankInfo>
     // Answer string stores both id and datatype, they need to be stored in a single string because ids are shared between tables and so keys would not be unique if they were kept separate
     Dictionary<string, bool> m_answers = new Dictionary<string, bool>();
 
+
     public void NewAnswer(string s, bool isCorrect)
     {
         m_answers [s] = isCorrect;
         Save();
     }
 
-    public void NewAnswer(int id, bool isCorrect)
-    {
-        NewAnswer(id, GameManager.Instance.dataType, isCorrect);
-        Save();
-    }
 
     public void NewAnswer(int id, string dataType, bool isCorrect)
     {
@@ -80,11 +76,6 @@ public class BankInfo : Singleton<BankInfo>
         return false;
     }
 
-    public bool IsAnswer(int id)
-    {
-        return IsAnswer(id, GameManager.Instance.dataType);
-    }
-
     public bool IsAnswer(int id, string dataType)
     {
         foreach(KeyValuePair<string, bool> kvp in m_answers)
@@ -103,11 +94,6 @@ public class BankInfo : Singleton<BankInfo>
         }
         
         return false;
-    }
-
-    public bool IsCorrect(int id)
-    {
-        return IsCorrect(id, GameManager.Instance.dataType);
     }
 
     public bool IsCorrect(int id, string dataType)

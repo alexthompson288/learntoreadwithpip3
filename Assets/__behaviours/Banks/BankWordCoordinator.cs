@@ -28,11 +28,13 @@ public class BankWordCoordinator : MonoBehaviour
     bool m_pictureActive = false;
     bool m_buttonsActive = false;
     
-    void Start()
+    IEnumerator Start()
     {
+        yield return StartCoroutine(BankIndexCoordinator.WaitForSetDataType());
+
         BankIndexCoordinator.Instance.OnMoveToShow += RefreshWordPool;
 
-        m_showButtonsButton.gameObject.SetActive(GameManager.Instance.dataType != "keywords");
+        m_showButtonsButton.gameObject.SetActive(BankIndexCoordinator.Instance.GetDataType() != "keywords");
 
         m_backToIndexButton.OnSingleClick += OnClickBackToIndex;
         m_correctButton.OnSingleClick += OnClickCorrect;
@@ -45,7 +47,7 @@ public class BankWordCoordinator : MonoBehaviour
 
     void RefreshWordPool(DataRow word, string s)
     {
-        m_wordPool = GameManager.Instance.dataType == "words" ? DataHelpers.GetWords() : DataHelpers.GetKeywords();
+        m_wordPool = BankIndexCoordinator.Instance.GetDataType() == "words" ? DataHelpers.GetWords() : DataHelpers.GetKeywords();
 
         m_currentIndex = word == null ? 0 : m_wordPool.IndexOf(word);
 
@@ -140,13 +142,13 @@ public class BankWordCoordinator : MonoBehaviour
 
     void OnClickCorrect(ClickEvent click)
     {
-        BankInfo.Instance.NewAnswer(System.Convert.ToInt32(m_wordPool[m_currentIndex]["id"]), true);
+        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType(), true);
         OnArrowClick(1);
     }
     
     void OnClickIncorrect(ClickEvent click)
     {
-        BankInfo.Instance.NewAnswer(System.Convert.ToInt32(m_wordPool[m_currentIndex]["id"]), false);
+        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType(), false);
         OnArrowClick(1);
     }
     
@@ -178,7 +180,7 @@ public class BankWordCoordinator : MonoBehaviour
             m_currentIndex += direction;
             ClampCurrentIndex();
 
-            while(BankInfo.Instance.IsCorrect(System.Convert.ToInt32(m_wordPool[m_currentIndex]["id"])))
+            while(BankInfo.Instance.IsCorrect(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType()))
             {
                 m_currentIndex += direction;
                 ClampCurrentIndex();
@@ -216,7 +218,7 @@ public class BankWordCoordinator : MonoBehaviour
         
         foreach (DataRow word in m_wordPool)
         {
-            if(!BankInfo.Instance.IsCorrect(System.Convert.ToInt32(word["id"])))
+            if(!BankInfo.Instance.IsCorrect(word.GetId(), BankIndexCoordinator.Instance.GetDataType()))
             {
                 allCorrect = false;
             }

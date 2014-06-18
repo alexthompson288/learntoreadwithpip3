@@ -77,7 +77,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         if (System.String.IsNullOrEmpty(m_dataType))
         {
-            m_dataType = GameManager.Instance.dataType;
+            m_dataType = "words";
         }
         
         m_dataPool = DataHelpers.GetData(m_dataType);

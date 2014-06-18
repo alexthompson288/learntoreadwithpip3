@@ -3,9 +3,10 @@ using System.Collections;
 
 public class BankToggleCase : MonoBehaviour 
 {
-    void Start()
+    IEnumerator Start()
     {
-        gameObject.SetActive(GameManager.Instance.dataType == "alphabet");
+        yield return StartCoroutine(BankIndexCoordinator.WaitForSetDataType());
+        gameObject.SetActive(BankIndexCoordinator.Instance.GetDataType() == "alphabet");
     }
 
 	void OnClick()

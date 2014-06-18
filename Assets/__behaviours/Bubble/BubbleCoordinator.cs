@@ -80,7 +80,8 @@ public class BubbleCoordinator : MonoBehaviour
 
         if (System.String.IsNullOrEmpty(m_dataType))
         {
-            m_dataType = GameManager.Instance.dataType;
+            //m_dataType = DataHelpers.GetDataType();
+            m_dataType = "words";
         }
 
 		AddToDataPool(true);

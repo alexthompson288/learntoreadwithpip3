@@ -44,6 +44,22 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     Vector3 m_gridStartPosition;
 
+    string m_dataType;
+    public string GetDataType()
+    {
+        return m_dataType;
+    }
+
+    bool m_hasSetDataType = false;
+
+    public static IEnumerator WaitForSetDataType()
+    {
+        while (Instance == null || !Instance.m_hasSetDataType)
+        {
+            yield return null;
+        }
+    }
+
     IEnumerator Start()
     {
         m_defaultGridPanel.alpha = 0;
@@ -57,20 +73,16 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         NavMenu.Instance.HideCallButton();
 
+        string defaultDataType = Application.loadedLevelName == "NewBankWords" ? "words" : "phonemes";
+        m_dataType = DataHelpers.GameOrDefault(defaultDataType);
 
-#if UNITY_EDITOR
-        if (String.IsNullOrEmpty(GameManager.Instance.dataType))
-        {
-            string dataType = Application.loadedLevelName == "NewBankLetters" ? "alphabet" : "words";
-            GameManager.Instance.SetDataType(dataType);
-        }
-#endif
+        m_hasSetDataType = true;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_data = GameManager.Instance.GetData(GameManager.Instance.dataType);
+        m_data = GameManager.Instance.GetData(m_dataType);
 
-        if (GameManager.Instance.dataType != "alphabet")
+        if (m_dataType != "alphabet")
         {
             foreach(GameObject button in m_alphabetButtons)
             {
@@ -79,7 +91,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
             Array.Sort(m_colorButtons, SortByColor);
 
-            if(GameManager.Instance.dataType != "phonemes")
+            if(m_dataType != "phonemes")
             {
                 m_colorButtons[m_colorButtons.Length - 1].gameObject.SetActive(false);
             }
@@ -102,7 +114,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             for (char i = 'a'; i <= 'z'; ++i)
             {
                 GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_alphabetLetterPrefab, m_alphabetGrid.transform);
-                newButton.GetComponent<BankButton>().SetUp(i.ToString());
+                newButton.GetComponent<BankButton>().SetUp(m_dataType, i.ToString());
                 newButton.GetComponent<ClickEvent>().SetString(i.ToString());
                 newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
                 newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
@@ -183,11 +195,11 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         
         m_defaultGrid.transform.localPosition = m_gridStartPosition;
 
-        GameObject prefab = GameManager.Instance.dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
+        GameObject prefab = m_dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
 
         List<DataRow> data = new List<DataRow>();
 
-        string dataType = GameManager.Instance.dataType;
+        string dataType = m_dataType;
 
         int moduleId = DataHelpers.GetModuleId(color);
 
@@ -204,7 +216,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             data = DataHelpers.GetModuleKeywords(moduleId);
         }
 
-        GameManager.Instance.SetData(GameManager.Instance.dataType, data);
+        GameManager.Instance.SetData(m_dataType, data);
  
         if (data.Count == 0)
         {
@@ -220,7 +232,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         foreach (DataRow row in data)
         {
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_defaultGrid.transform);
-            newButton.GetComponent<BankButton>().SetUp(row);
+            newButton.GetComponent<BankButton>().SetUp(m_dataType, row);
             newButton.GetComponent<ClickEvent>().SetData(row);
             newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;

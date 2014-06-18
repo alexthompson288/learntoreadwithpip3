@@ -19,11 +19,15 @@ public class BankButton : MonoBehaviour
 
     bool m_isUpper;
 
-    public void SetUp(DataRow data)
+    string m_dataType;
+
+    public void SetUp(string myDataType, DataRow data)
     {
+        m_dataType = myDataType;
+
         //m_data = data;
 
-        bool isPhoneme = GameManager.Instance.dataType == "phonemes";
+        bool isPhoneme = m_dataType == "phonemes";
 
         string labelTextAttribute = isPhoneme ? "phoneme" : "word";
         m_labelText = data [labelTextAttribute].ToString();
@@ -57,8 +61,10 @@ public class BankButton : MonoBehaviour
         Refresh();
     }
 
-    public void SetUp(string labelText)
+    public void SetUp(string myDataType, string labelText)
     {
+        m_dataType = myDataType;
+
         if (m_texture != null)
         {
             m_texture.gameObject.SetActive(false);
@@ -69,7 +75,7 @@ public class BankButton : MonoBehaviour
 
         m_isUpper = true;
 
-        if (GameManager.Instance.dataType == "alphabet")
+        if (m_dataType == "alphabet")
         {
             //Vector3 labelPos = m_label.transform.localPosition;
             //labelPos.x = 20;
@@ -88,7 +94,7 @@ public class BankButton : MonoBehaviour
 
     public void Refresh()
     {
-        bool isAlphabet = GameManager.Instance.dataType == "alphabet";
+        bool isAlphabet = m_dataType == "alphabet";
 
         if (isAlphabet)
         {
@@ -96,7 +102,7 @@ public class BankButton : MonoBehaviour
         } 
         else
         {
-            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_id));
+            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_id, m_dataType));
         }
 
         if (m_scoreSprite.gameObject.activeInHierarchy)
@@ -107,7 +113,7 @@ public class BankButton : MonoBehaviour
             } 
             else
             {
-                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id) ? "correct" : "incorrect";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id, m_dataType) ? "correct" : "incorrect";
             }
         }
     }
