@@ -152,6 +152,27 @@ public static class DataHelpers
         return GetModuleId((ColorInfo.PipColor)previousColorIndex);
     }
 
+    // DataType
+    public static string GameOrDefault(string defaultDataType)
+    {
+        string gameDataType = GetDataType(GetCurrentGame());
+        string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
+        
+        return dataType;
+    }
+    
+    public static string GetDataType(DataRow game)
+    {
+        string dataType = "";
+        if (game != null)
+        {
+            string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";
+            dataType = gameType.ToLower();
+        }
+        
+        return dataType;
+    }
+
     // Generic
     public static Texture2D GetPicture(string dataType, DataRow data)
     {
@@ -425,30 +446,6 @@ public static class DataHelpers
         }
         
         return linkingAttribute;
-    }
-
-    public static string GameOrDefault(string defaultDataType)
-    {
-        string gameDataType = GetDataType(GetCurrentGame());
-        
-        string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
-        
-        //Debug.Log("GameOrDefault:" + dataType);
-        
-        return dataType;
-    }
-    
-    public static string GetDataType(DataRow game)
-    {
-        string dataType = "";
-        if (game != null)
-        {
-            string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";
-            
-            dataType = gameType.ToLower();
-        }
-        
-        return dataType;
     }
 
     public static DataRow GetSingleTargetData(string dataType, List<DataRow> backupDataPool = null)
