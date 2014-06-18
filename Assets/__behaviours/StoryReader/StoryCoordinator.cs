@@ -35,6 +35,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     private ClickEvent m_colorBackBlocker;
     [SerializeField]
     private PipButton[] m_colorButtons;
+    [SerializeField]
+    private UILabel m_scaleLabel;
 
     int m_storyId = 85;
 
@@ -258,6 +260,141 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_storyPicture.mainTexture = tex;
     }
 
+    void UpdateText(DataRow storyPage)
+    {
+        m_scaleLabel.transform.localScale = Vector3.one;
+
+        float maxWidth = 900;
+        float maxHeight = 220;
+
+        Debug.Log("storyPage: " + storyPage);
+        Debug.Log("currentAttribute: " + m_currentTextAttribute);
+
+        string originalText = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "").Replace("  ", " ");
+
+#if UNITY_EDITOR
+        //originalText = "salkdrje lqirjli awlekjtq lwierjtie rjgliqej alkrjgq elrjgeorfg jorjgeorjt liawejrp ierjgiej lkwJEFLKSJDF ASLDKEFLASDJF JKSDFLdlkfjgeli  kjr wlekrfjwl slkjgrells slijfwli slrkjgle sdlhgliew slijgwl lkrjg lrgijo wleirjow wliejr wliej welitje proyjs";
+#endif
+
+        string textToDisplay = originalText;
+
+        while (true)
+        {
+            int lineStartIndex = 0;
+            int checkLength = 1;
+            for (int i = 0; i < textToDisplay.Length && lineStartIndex + checkLength < textToDisplay.Length; ++i)
+            {
+                //if(m_scaleLabel.font.CalculatePrintedSize(modifiedText.Substring(lineStartIndex, i + 1), false, UIFont.SymbolStyle.None).x * m_scaleLabel.transform.localScale.y)
+                if (NGUIHelpers.GetLabelWidth(m_scaleLabel, textToDisplay.Substring(lineStartIndex, checkLength)) > maxWidth)
+                {
+                    Debug.Log("END");
+                    Debug.Log("lineStart: " + lineStartIndex);
+                    Debug.Log("checkLength: " + checkLength);
+
+                    // Find empty char before lineStartIndex + checkLength
+                    while (textToDisplay[lineStartIndex + checkLength] != ' ')
+                    {
+                        --checkLength;
+                    }
+
+                    while(checkLength > -1)
+                    {
+                        if(textToDisplay[lineStartIndex + checkLength] == ' ')
+                        {
+                            ++checkLength; // Increment checkLength so that the empty character is at the end of the current line instead of the start of the new one
+                            break;
+                        }
+                        else
+                        {
+                            --checkLength;
+                        }
+                    }
+
+                    Debug.Log("space: " + checkLength);
+
+                    textToDisplay = textToDisplay.Insert(lineStartIndex + checkLength, "\n");
+                    //lineStartIndex = lineStartIndex + checkLength + 1;
+                    lineStartIndex = lineStartIndex + checkLength;
+
+                    Debug.Log("newLineStart: " + lineStartIndex);
+
+                    checkLength = 1;
+                } 
+                else
+                {
+                    ++checkLength;
+                }
+            }
+
+            if(NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay) < maxHeight)
+            {
+                break;
+            }
+            else
+            {
+                m_scaleLabel.transform.localScale *= 0.99f;
+                textToDisplay = originalText;
+            }
+        }
+
+        m_textAnchors [0].transform.localScale = m_scaleLabel.transform.localScale;
+
+        Debug.Log(textToDisplay);
+        m_scaleLabel.text = textToDisplay;
+
+        string[] lines = textToDisplay.Split('\n');
+        
+        float length = 0;
+        float height = 0;
+        float widestLineWidth = 0;
+        
+        foreach (string line in lines)
+        {
+            string[] lineWords = line.Split(' ');
+            bool hadValidWord = false;
+            foreach (string newWord in lineWords)
+            {
+                if (!string.IsNullOrEmpty(newWord) && newWord != " ")
+                {
+                    hadValidWord = true;
+                    GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
+                        m_textPrefab, m_textAnchors [0]);
+                    
+                    m_textObjects.Add(newWordInstance);
+                    
+                    newWordInstance.GetComponent<UILabel>().text = newWord + " ";
+                    newWordInstance.transform.localPosition = new Vector3(length, height, 0);
+                    Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
+                    length += wordSize.x;
+                    widestLineWidth = Mathf.Max(widestLineWidth, length);
+                    
+                    string storyType = SessionInformation.Instance.GetStoryType();
+                    if (storyType == "" || storyType == null)
+                    {
+                        storyType = "Reception";
+                    }
+                    
+                    ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
+                    bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
+                    
+                    showPipPadForWord.SetUp(newWord, wordSize, true);
+                    
+                    // Highlight if word is on the decode list
+                    if (isOnDecodeList)
+                    {
+                        showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
+                    }
+                }
+            }
+            if (hadValidWord)
+            {
+                length = 0;
+                //height -= 96;
+                height -= 100;
+            }
+        }
+    }
+
     /*
     void UpdateText(DataRow storyPage)
     {
@@ -376,6 +513,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         }
     }
 
+    /*
     void UpdateText(DataRow storyPage)
     {
         if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
@@ -444,4 +582,5 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             }
         } 
     }
+    */
 }

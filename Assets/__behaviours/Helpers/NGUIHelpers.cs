@@ -22,6 +22,21 @@ public static class NGUIHelpers
         return label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None).x * label.transform.localScale.x;
     }
 
+    public static float GetLabelWidth(UILabel label, string text)
+    {
+        return label.font.CalculatePrintedSize(text, false, UIFont.SymbolStyle.None).x * label.transform.localScale.x;
+    }
+
+    public static float GetLabelHeight(UILabel label)
+    {
+        return label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None).y * label.transform.localScale.y;
+    }
+
+    public static float GetLabelHeight(UILabel label, string text)
+    {
+        return label.font.CalculatePrintedSize(text, false, UIFont.SymbolStyle.None).y * label.transform.localScale.y;
+    }
+
     public static void MaxLabelWidth(UILabel label, float maxWidth)
     {
         float width = GetLabelWidth(label);
