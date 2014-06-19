@@ -67,8 +67,8 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 		foreach(GameObject phoneme in m_orderedPhonemes)
 		{
 			PipPadPhonemeSubButton[] button = phoneme.GetComponentsInChildren<PipPadPhonemeSubButton>() as PipPadPhonemeSubButton[];
-			button[0].OnButtonClick += OnButtonClick;
-			button[1].OnButtonClick += OnButtonClick;
+			button[0].Clicked += OnButtonClick;
+			button[1].Clicked += OnButtonClick;
 		}
 
 		//m_splattable.transform.position = m_orderedPhonemes[0].transform.position;

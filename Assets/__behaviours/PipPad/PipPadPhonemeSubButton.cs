@@ -3,17 +3,17 @@ using System.Collections;
 
 public class PipPadPhonemeSubButton : MonoBehaviour 
 {
-	public delegate void ButtonClick(PipPadPhoneme pipPadPhoneme);
-	public event ButtonClick OnButtonClick;
+	public delegate void EventHandler(PipPadPhoneme pipPadPhoneme);
+    public event EventHandler Clicked;
 
     [SerializeField]
     private PipPadPhoneme m_pipPadPhoneme;
 
     void OnClick()
     {
-		if(OnButtonClick != null)
+        if(Clicked != null)
 		{
-			OnButtonClick(m_pipPadPhoneme);
+            Clicked(m_pipPadPhoneme);
 		}
 
 		if(m_pipPadPhoneme != null)
