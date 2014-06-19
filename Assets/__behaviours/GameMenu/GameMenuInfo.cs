@@ -7,25 +7,18 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
     
     class Bookmark
     {
-        bool m_isTwoPlayer;
         ColorInfo.PipColor m_pipColor;
         string m_gameName;
-        
-        public Bookmark (bool isTwoPlayer, ColorInfo.PipColor pipColor)
+
+        public Bookmark(string myGameName, ColorInfo.PipColor myPipColor)
         {
-            m_isTwoPlayer = isTwoPlayer;
-            m_pipColor = pipColor;
+            m_gameName = myGameName;
+            m_pipColor = myPipColor;
         }
 
-        public Bookmark(string gameName, ColorInfo.PipColor pipColor)
+        public Bookmark(ColorInfo.PipColor myPipColor)
         {
-            m_gameName = gameName;
-            m_pipColor = pipColor;
-        }
-        
-        public bool IsTwoPlayer()
-        {
-            return m_isTwoPlayer;
+            m_pipColor = myPipColor;
         }
         
         public ColorInfo.PipColor GetPipColor()
@@ -39,9 +32,9 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
         }
     }
 
-    public void CreateBookmark(bool isTwoPlayer, ColorInfo.PipColor pipColor)
+    public void CreateBookmark(ColorInfo.PipColor pipColor)
     {
-        m_bookmark = new Bookmark(isTwoPlayer, pipColor);
+        m_bookmark = new Bookmark(pipColor);
     }
 
     public void CreateBookmark(string gameName, ColorInfo.PipColor pipColor)
@@ -57,11 +50,6 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
     public bool HasBookmark()
     {
         return m_bookmark != null;
-    }
-
-    public bool IsTwoPlayer()
-    {
-        return m_bookmark != null ? m_bookmark.IsTwoPlayer() : false;
     }
 
     public ColorInfo.PipColor GetPipColor()

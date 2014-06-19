@@ -15,8 +15,15 @@ public class ChooseGameButton : MonoBehaviour
     private bool m_starsAreTimeBased = true;
     [SerializeField]
     private string m_blackboardSpriteName;
+    [SerializeField]
+    private int m_numPlayers = 1;
 
     DataRow m_game = null;
+
+    public int GetNumPlayers()
+    {
+        return m_numPlayers;
+    }
 
     public string GetBlackboardSpriteName()
     {

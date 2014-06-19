@@ -36,6 +36,7 @@ public class ScreenshotManager : MonoBehaviour {
 					bool photoSaved = saveToGallery( iosPath );
 					
 					if(photoSaved) return false;
+
 					
 					yield return new WaitForSeconds(.5f);
 				}
