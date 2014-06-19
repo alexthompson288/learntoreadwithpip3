@@ -67,7 +67,7 @@ public class SpriteAnim : MonoBehaviour
 
         if (m_playAnim && m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)]);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], false);
         }
     }
 
@@ -77,7 +77,7 @@ public class SpriteAnim : MonoBehaviour
 
         if (m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)]);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], false);
         }
     }
 
@@ -142,7 +142,11 @@ public class SpriteAnim : MonoBehaviour
                 }
                 else
                 {
-                    if(m_availableAnimations[m_currentAnimation].m_loop)
+                    if(m_isWaiting)
+                    {
+                        PlayAnimation(m_waitingAnimationName, false);
+                    }
+                    else if(m_availableAnimations[m_currentAnimation].m_loop)
                     {
                         m_currentFrame = 0;
                     }
@@ -155,11 +159,7 @@ public class SpriteAnim : MonoBehaviour
 
                         m_playAnim = false;
 
-                        if(m_isWaiting)
-                        {
-                            PlayAnimation(m_waitingAnimationName, false);
-                        }
-                        else if(m_randomAnimationNames.Count > 0)
+                        if(m_randomAnimationNames.Count > 0)
                         {
                             StartCoroutine(PlayRandom());
                         }
