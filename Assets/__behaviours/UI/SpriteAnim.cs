@@ -105,6 +105,8 @@ public class SpriteAnim : MonoBehaviour
         } 
         else
         {
+            m_waitingAnimationName = "";
+
             m_currentAnimation = GetAnimIndex(animName);
 
             if(m_currentAnimation != -1)
@@ -144,6 +146,7 @@ public class SpriteAnim : MonoBehaviour
                 {
                     if(m_isWaiting)
                     {
+                        m_isWaiting = false;
                         PlayAnimation(m_waitingAnimationName, false);
                     }
                     else if(m_availableAnimations[m_currentAnimation].m_loop)
