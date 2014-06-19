@@ -6,11 +6,11 @@ using Wingrove;
 
 public class PipPadBehaviour : Singleton<PipPadBehaviour>
 {
-	public delegate void PadHide();
-	public event PadHide OnPadHide;
+	public delegate void HideEventHandler();
+    public event HideEventHandler Hiding;
 
-	public delegate void BlackboardClick(ImageBlackboard clickedBoard);
-	public event BlackboardClick OnBlackboardClick;
+	public delegate void BlackboardClickEventHandler(ImageBlackboard clickedBoard);
+    public event BlackboardClickEventHandler BlackboardClicked;
 
 	[SerializeField]
 	private Transform m_mainHierarchyTransform;
@@ -420,9 +420,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			}
 		}
 
-		if(OnBlackboardClick != null)
+		if(BlackboardClicked != null)
 		{
-			OnBlackboardClick(clickedBlackboard);
+            BlackboardClicked(clickedBlackboard);
 		}
 	}
 	
@@ -443,9 +443,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	{
 		if (m_showing)
 		{
-			if(OnPadHide != null)
+			if(Hiding != null)
 			{
-				OnPadHide();
+				Hiding();
 			}
 
 			StopAllCoroutines();

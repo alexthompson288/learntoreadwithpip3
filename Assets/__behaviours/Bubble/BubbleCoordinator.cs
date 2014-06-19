@@ -88,7 +88,7 @@ public class BubbleCoordinator : MonoBehaviour
 
 		if(m_dataType == "words" || m_dataType == "keywords")
 		{
-			PipPadBehaviour.Instance.OnPadHide += OnPipPadHide;
+			PipPadBehaviour.Instance.Hiding += OnPipPadHide;
 		}
 
 		m_benny.OnSingleClick += OnBennyClick;
