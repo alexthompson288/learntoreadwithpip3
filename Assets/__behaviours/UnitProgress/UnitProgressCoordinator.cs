@@ -45,7 +45,7 @@ public class UnitProgressCoordinator : MonoBehaviour
         {
             int sectionId = VoyageInfo.Instance.currentSectionId;
 
-    		List<DataRow> sentences = DataHelpers.GetSectionSentences(sectionId);
+    		List<DataRow> sentences = DataGetters.GetSectionSentences(sectionId);
 
     		if(sentences.Count > 0)
     		{
@@ -113,7 +113,7 @@ public class UnitProgressCoordinator : MonoBehaviour
     			}
             }
 
-            List<DataRow> phonemes = DataHelpers.GetSectionLetters(sectionId);
+            List<DataRow> phonemes = DataGetters.GetSectionLetters(sectionId);
             
             foreach(DataRow phoneme in phonemes)
             {

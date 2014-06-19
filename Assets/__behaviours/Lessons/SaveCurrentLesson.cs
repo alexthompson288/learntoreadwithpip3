@@ -53,7 +53,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			
 			while(data.Count == 0 && setNum < 50)
 			{
-				data = DataHelpers.GetSetData(setNum, columnName, tableName);
+				data = DataGetters.GetSetData(setNum, columnName, tableName);
 				++setNum;
 			}
 
@@ -149,7 +149,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			
 			while(data.Count == 0 && setNum < 50)
 			{
-				data = DataHelpers.GetSetData(setNum, columnName, tableName);
+				data = DataGetters.GetSetData(setNum, columnName, tableName);
 				++setNum;
 			}
 			
