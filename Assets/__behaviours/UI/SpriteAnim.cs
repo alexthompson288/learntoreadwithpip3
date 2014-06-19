@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SpriteAnim : MonoBehaviour 
 {
@@ -28,17 +29,23 @@ public class SpriteAnim : MonoBehaviour
     }
 
     [SerializeField]
-    bool m_playAnim = true;
+    bool m_startOn = true;
+    [SerializeField]
+    private List<string> m_randomAnimationNames;
+    [SerializeField]
+    private Vector2 m_randomDelayRange = new Vector2(2, 5);
     [SerializeField]
     AnimDetails[] m_availableAnimations;
     [SerializeField]
     UISprite m_sprite;
     [SerializeField]
     string m_format = "{0}";
-    
+
     int m_currentAnimation;
     float m_currentT;
     int m_currentFrame;
+
+    bool m_playAnim;
     
     void Awake()
     {
@@ -50,6 +57,23 @@ public class SpriteAnim : MonoBehaviour
         if (string.IsNullOrEmpty(m_format))
         {
             m_format = "{0}";
+        }
+
+        m_playAnim = m_startOn;
+
+        if (m_playAnim && m_randomAnimationNames.Count > 0)
+        {
+            PlayAnimation(m_randomAnimationNames[Random.Range(0, m_randomAnimationNames.Count)]);
+        }
+    }
+
+    IEnumerator PlayRandom()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(m_randomDelayRange.x, m_randomDelayRange.y));
+
+        if (m_randomAnimationNames.Count > 0)
+        {
+            PlayAnimation(m_randomAnimationNames[Random.Range(0, m_randomAnimationNames.Count)]);
         }
     }
     
@@ -79,7 +103,7 @@ public class SpriteAnim : MonoBehaviour
     // Update is called once per frame
     void Update () 
     {
-        if (m_playAnim && m_currentAnimation < m_availableAnimations.Length)
+        if (m_playAnim &&  m_currentAnimation > -1 && m_currentAnimation < m_availableAnimations.Length)
         {
             m_currentT += Time.deltaTime * m_availableAnimations[m_currentAnimation].m_fps;
             if (m_currentT > 1)
@@ -105,6 +129,11 @@ public class SpriteAnim : MonoBehaviour
                         }
 
                         m_playAnim = false;
+
+                        if(m_randomAnimationNames.Count > 0)
+                        {
+                            StartCoroutine(PlayRandom());
+                        }
                     }
                 }                
             }
@@ -135,32 +164,8 @@ public class SpriteAnim : MonoBehaviour
         return animNames;
     }
     
-    public void SetSprite(UISprite sprite)
-    {
-        m_sprite = sprite;
-    }
-    
-    public void SetAnimFPS(int newFPS)
-    {
-        foreach(AnimDetails animDetail in m_availableAnimations)
-        {
-            animDetail.m_fps = newFPS;
-        }
-    }
-    
     public bool HasAnim(string animName)
     {
-        bool foundAnim = false;
-        
-        foreach (AnimDetails anim in m_availableAnimations)
-        {
-            if(anim.m_name == animName)
-            {
-                foundAnim = true;
-                break;
-            }
-        }
-        
-        return foundAnim;
+        return System.Array.FindIndex(m_availableAnimations, x => x.m_name == animName) != -1;
     }
 }
