@@ -107,10 +107,12 @@ public class SpriteAnim : MonoBehaviour
         {
             m_waitingAnimationName = "";
 
-            m_currentAnimation = GetAnimIndex(animName);
+            int animIndex = GetAnimIndex(animName);
 
-            if(m_currentAnimation != -1)
+            if(animIndex != -1)
             {
+                Debug.Log("Changing: " + m_sprite.spriteName);
+                m_currentAnimation = animIndex;
                 m_currentFrame = 0;
 
                 AnimDetails ad = m_availableAnimations[m_currentAnimation];
@@ -144,6 +146,7 @@ public class SpriteAnim : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("Finished: " + m_sprite.spriteName);
                     if(m_isWaiting)
                     {
                         m_isWaiting = false;
