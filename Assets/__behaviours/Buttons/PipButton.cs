@@ -213,7 +213,7 @@ public class PipButton : MonoBehaviour
             
             if (m_sheenAnimation != null)
             {
-                m_sheenAnimation.OnAnimFinish += OnSheenFinish;
+                m_sheenAnimation.AnimFinished += OnSheenFinish;
                 m_sheenAnimation.PlayAnimation("ON");
                 StartCoroutine(PlaySheen());
             }

@@ -88,7 +88,7 @@ public class ScorePip : ScoreKeeper
         iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
 
         m_pipAnimManager.StopRandom();
-        m_pipAnim.OnAnimFinish += OnScoreAnimFinish;
+        m_pipAnim.AnimFinished += OnScoreAnimFinish;
         //string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
         //m_pipAnim.PlayAnimation(animName);
         m_pipAnim.PlayAnimation("THUMBS_UP");
@@ -108,8 +108,8 @@ public class ScorePip : ScoreKeeper
 
         m_pipAnimManager.StopRandom();
 
-        m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
-        m_pipAnim.OnAnimFinish += OnJumpAnimFinish;
+        m_pipAnim.AnimFinished -= OnScoreAnimFinish;
+        m_pipAnim.AnimFinished += OnJumpAnimFinish;
         
         m_pipAnim.PlayAnimation("JUMP");
         
@@ -138,13 +138,13 @@ public class ScorePip : ScoreKeeper
 
     void OnScoreAnimFinish(string animName)
     {
-        m_pipAnim.OnAnimFinish -= OnScoreAnimFinish;
+        m_pipAnim.AnimFinished -= OnScoreAnimFinish;
         m_pipAnimManager.StartRandom();
     }
 
     void OnJumpAnimFinish(string animName)
     {
-        m_pipAnim.OnAnimFinish -= OnJumpAnimFinish;
+        m_pipAnim.AnimFinished -= OnJumpAnimFinish;
         m_hasFinishedJumpAnim = true;
     }
 

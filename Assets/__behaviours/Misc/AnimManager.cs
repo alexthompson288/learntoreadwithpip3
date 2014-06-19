@@ -31,7 +31,7 @@ public class AnimManager : MonoBehaviour
         {
             StopRandom();
 
-            m_spriteAnim.OnAnimFinish += OnNamedFinish;
+            m_spriteAnim.AnimFinished += OnNamedFinish;
 
             m_spriteAnim.PlayAnimation(animName);
         }
@@ -39,7 +39,7 @@ public class AnimManager : MonoBehaviour
 
     void OnNamedFinish(string animName)
     {
-        m_spriteAnim.OnAnimFinish -= OnNamedFinish;
+        m_spriteAnim.AnimFinished -= OnNamedFinish;
 
         StartCoroutine(PlayRandom());
     }
@@ -47,7 +47,7 @@ public class AnimManager : MonoBehaviour
 	void OnRandomFinish(string animName)
     {
         // Subscribe/Unsubscribe from event every time so that this is not accidentally called if the SimpleSpriteAnim finishes a looping static 1-frame animation
-        m_spriteAnim.OnAnimFinish -= OnRandomFinish;
+        m_spriteAnim.AnimFinished -= OnRandomFinish;
 
         StartCoroutine(PlayRandom());
     }
@@ -64,7 +64,7 @@ public class AnimManager : MonoBehaviour
         // Subscribe/Unsubscribe from event every time so that this is not accidentally called if the SimpleSpriteAnim finishes a looping static 1-frame animation
         if (m_randomAnimNames.Length > 0)
         {
-            m_spriteAnim.OnAnimFinish += OnRandomFinish;
+            m_spriteAnim.AnimFinished += OnRandomFinish;
             m_spriteAnim.PlayAnimation(m_randomAnimNames [Random.Range(0, m_randomAnimNames.Length)]);
         }
     }
@@ -73,7 +73,7 @@ public class AnimManager : MonoBehaviour
     {
         if (m_spriteAnim != null)
         {
-            m_spriteAnim.OnAnimFinish -= OnRandomFinish;
+            m_spriteAnim.AnimFinished -= OnRandomFinish;
             StopAllCoroutines();
         }
     }

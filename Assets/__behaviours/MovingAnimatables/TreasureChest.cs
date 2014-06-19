@@ -25,14 +25,14 @@ public class TreasureChest : MonoBehaviour
         m_numBubbleRange.x = Mathf.Clamp(m_numBubbleRange.x, 0, m_numBubbleRange.x);
         m_numBubbleRange.y = Mathf.Clamp(m_numBubbleRange.y, m_numBubbleRange.y, m_bubbleLocators.Length);
 
-        m_spriteAnim.OnAnimFinish += OnAnimFinish;
+        m_spriteAnim.AnimFinished += AnimFinished;
 
         yield return new WaitForSeconds(m_startDelay);
 
         m_spriteAnim.PlayAnimation("OPEN");
     }
 
-    void OnAnimFinish(string animName)
+    void AnimFinished(string animName)
     {
         if (animName == "OPEN")
         {

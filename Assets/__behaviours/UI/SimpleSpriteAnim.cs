@@ -4,8 +4,8 @@ using System.Collections;
 
 public class SimpleSpriteAnim : MonoBehaviour 
 {
-	public delegate void AnimFinish(string animName);
-	public event AnimFinish OnAnimFinish;
+	public delegate void EventHandler(string animName);
+	public event EventHandler AnimFinished;
 	
 	[System.Serializable]
 	public class AnimDetails
@@ -82,9 +82,9 @@ public class SimpleSpriteAnim : MonoBehaviour
 					}
 					else if(!m_sentEvent)
 					{
-						if(OnAnimFinish != null)
+						if(AnimFinished != null)
 						{
-							OnAnimFinish(m_availableAnimations[m_currentAnimation].m_name);
+							AnimFinished(m_availableAnimations[m_currentAnimation].m_name);
 						}
 						
 						m_sentEvent = true;
@@ -138,8 +138,8 @@ using System.Collections;
 
 public class SimpleSpriteAnim : MonoBehaviour 
 {
-	public delegate void AnimFinish(string animName);
-	public event AnimFinish OnAnimFinish;
+    public delegate void AnimFinishedEventHandler(string animName);
+    public event AnimFinishedEventHandler AnimFinished;
 
     [System.Serializable]
     public class AnimDetails
@@ -235,9 +235,9 @@ public class SimpleSpriteAnim : MonoBehaviour
 					}
 					else if(!m_sentEvent)
 					{
-						if(OnAnimFinish != null)
+						if(AnimFinished != null)
 						{
-							OnAnimFinish(m_availableAnimations[m_currentAnimation].m_name);
+							AnimFinished(m_availableAnimations[m_currentAnimation].m_name);
 						}
 						
 						m_sentEvent = true;
