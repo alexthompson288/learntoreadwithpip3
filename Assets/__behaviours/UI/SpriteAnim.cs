@@ -98,6 +98,8 @@ public class SpriteAnim : MonoBehaviour
     
     public void PlayAnimation(string animName, bool waitForEnd = true)
     {
+        StopAllCoroutines();
+
         if (waitForEnd && IsPlaying())
         {
             m_waitingAnimationName = animName;
