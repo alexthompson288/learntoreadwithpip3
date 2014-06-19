@@ -15,8 +15,8 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	
 	void Awake()
 	{
-		m_backCollider.OnSingleClick += OnClickBackCollider;
-		m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyMap;
+		m_backCollider.SingleClicked += OnClickBackCollider;
+		m_buyButton.GetComponent<ClickEvent>().SingleClicked += BuyMap;
 	}
 	
 	public void Show(int mapId)

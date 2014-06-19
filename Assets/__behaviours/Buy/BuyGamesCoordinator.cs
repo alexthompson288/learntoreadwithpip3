@@ -10,7 +10,7 @@ public class BuyGamesCoordinator : BuyCoordinator<BuyGamesCoordinator>
 
 	void Awake()
 	{
-		m_backCollider.OnSingleClick += OnClickBackCollider;
+		m_backCollider.SingleClicked += OnClickBackCollider;
 	}
 
 	public void Show()

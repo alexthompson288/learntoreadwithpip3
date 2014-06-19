@@ -67,8 +67,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
     {
         m_benny.PlayAudio();
 
-        m_trollCollider.OnSingleClick += OnClickTroll;
-        m_pipCollider.OnSingleClick += OnClickPip;
+        m_trollCollider.SingleClicked += OnClickTroll;
+        m_pipCollider.SingleClicked += OnClickPip;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 

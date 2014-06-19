@@ -65,7 +65,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         System.Array.Sort(m_colorButtons, CollectionHelpers.TopToBottom);
         System.Array.Sort(m_pageTurnButtons, CollectionHelpers.LeftToRight);
 
-        m_colorBackBlocker.OnSingleClick += DismissColorGrid;
+        m_colorBackBlocker.SingleClicked += DismissColorGrid;
         m_callColorButton.Unpressing += CallColorGrid;
 
         for (int i = 0; i < m_pageTurnButtons.Length; ++i)

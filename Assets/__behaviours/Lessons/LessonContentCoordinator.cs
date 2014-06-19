@@ -56,7 +56,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		m_setGridDefaultPos = m_setGrid.transform.position;
 		m_storyGridDefaultPos = m_storyGrid.transform.position;
 
-		m_selectAllButton.OnSingleClick += OnClickAll;
+		m_selectAllButton.SingleClicked += OnClickAll;
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -97,7 +97,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 					newSetButton.GetComponentInChildren<UILabel>().text = String.Format("Set {0}", sets[i]["number"].ToString());
 					newSetButton.GetComponent<UIDragPanelContents>().draggablePanel = m_setPanel;
 					newSetButton.GetComponent<ClickEvent>().SetData(sets[i]);
-					newSetButton.GetComponent<ClickEvent>().OnSingleClick += OnClickSet;
+					newSetButton.GetComponent<ClickEvent>().SingleClicked += OnClickSet;
 
 					if(lowestSetNum == -1)
 					{
@@ -143,7 +143,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 				GameObject newStory = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyGrid);
 				newStory.GetComponent<UIDragPanelContents>().draggablePanel = m_storyPanel;
 				newStory.GetComponent<ClickEvent>().SetData(data[i]);
-				newStory.GetComponent<ClickEvent>().OnSingleClick += OnClickStory;
+				newStory.GetComponent<ClickEvent>().SingleClicked += OnClickStory;
 				
 				string coverName = data[i]["storycoverartwork"] == null ? "" : data[i]["storycoverartwork"].ToString().Replace(".png", "");
 				Texture2D coverTex = LoaderHelpers.LoadObject<Texture2D>("Images/story_covers/" + coverName);
@@ -184,7 +184,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 				newContentButton.GetComponentInChildren<UILabel>().text = datum[m_contentLabelAttribute].ToString();
 				newContentButton.GetComponent<UIDragPanelContents>().draggablePanel = m_contentPanel;
 				newContentButton.GetComponent<ClickEvent>().SetData(datum);
-				newContentButton.GetComponent<ClickEvent>().OnSingleClick += OnClickContent;
+				newContentButton.GetComponent<ClickEvent>().SingleClicked += OnClickContent;
 
 				UISprite backgroundSprite = newContentButton.GetComponentInChildren<UISprite>() as UISprite;
 				int id = Convert.ToInt32(datum["id"]);

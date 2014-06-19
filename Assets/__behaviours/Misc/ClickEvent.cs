@@ -3,8 +3,8 @@ using System.Collections;
 
 public class ClickEvent : MonoBehaviour 
 {
-	public delegate void SingleClick(ClickEvent behaviour); // Pass this script just in case we want to add member variables in the future
-	public event SingleClick OnSingleClick;
+	public delegate void ClickEventHandler(ClickEvent behaviour); // Pass this script just in case we want to add member variables in the future
+    public event ClickEventHandler SingleClicked;
 	
 	DataRow m_data;
 
@@ -46,9 +46,9 @@ public class ClickEvent : MonoBehaviour
 
 	void OnClick()
 	{
-		if(OnSingleClick != null)
+        if(SingleClicked != null)
 		{
-			OnSingleClick(this);
+            SingleClicked(this);
 		}
 	}
 

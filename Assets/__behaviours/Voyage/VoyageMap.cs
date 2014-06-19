@@ -49,7 +49,7 @@ public class VoyageMap : MonoBehaviour
 
         StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_worldMapButton.OnSingleClick += OnClickWorldMapButton;
+        m_worldMapButton.SingleClicked += OnClickWorldMapButton;
 
         int buttonToDisable = 0;
         if (m_color == ColorInfo.PipColor.Pink)
@@ -63,7 +63,7 @@ public class VoyageMap : MonoBehaviour
         
         foreach (ClickEvent click in m_moduleMapButtons)
         {
-            click.OnSingleClick += OnClickModuleMapButton;
+            click.SingleClicked += OnClickModuleMapButton;
 
             if(click.GetInt() == buttonToDisable)
             {

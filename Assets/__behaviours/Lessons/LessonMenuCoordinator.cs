@@ -21,7 +21,7 @@ public class LessonMenuCoordinator : MonoBehaviour
 		foreach(string lesson in lessonNames)
 		{
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_chooseLessonButtonPrefab, m_grid.transform);
-			newButton.GetComponent<ClickEvent>().OnSingleClick += ChooseLesson;
+			newButton.GetComponent<ClickEvent>().SingleClicked += ChooseLesson;
 			m_spawnedButtons.Add(newButton.GetComponent<ClickEvent>() as ClickEvent);
 			newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
 			newButton.GetComponentInChildren<UILabel>().text = lesson;

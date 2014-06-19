@@ -91,7 +91,7 @@ public class BubbleCoordinator : MonoBehaviour
 			PipPadBehaviour.Instance.Hiding += OnPipPadHide;
 		}
 
-		m_benny.OnSingleClick += OnBennyClick;
+		m_benny.SingleClicked += OnBennyClick;
 
 		m_spawnThreshold = m_bubbleDistanceLocator.position.y;
 		

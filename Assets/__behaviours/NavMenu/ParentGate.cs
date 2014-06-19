@@ -35,7 +35,7 @@ public class ParentGate : Singleton<ParentGate>
 
 		foreach(ClickEvent answerLabel in m_answerButtons)
 		{
-			answerLabel.OnSingleClick += OnAnswerClick;
+			answerLabel.SingleClicked += OnAnswerClick;
 		}
 	}
 

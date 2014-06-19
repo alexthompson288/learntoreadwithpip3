@@ -32,9 +32,9 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
     void Awake()
     {
         m_gameButton.Unpressing += OnClickGameButton;
-        m_pipisodeButton.OnSingleClick += OnClickPipisodeButton;
-        m_storyButton.OnSingleClick += OnClickStoryButton;
-        m_backBlocker.OnSingleClick += OnClickBackBlocker;
+        m_pipisodeButton.SingleClicked += OnClickPipisodeButton;
+        m_storyButton.SingleClicked += OnClickStoryButton;
+        m_backBlocker.SingleClicked += OnClickBackBlocker;
     }
 
     void OnClickGameButton(PipButton button)

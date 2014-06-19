@@ -51,8 +51,8 @@ public class CorrectCaptionCoordinator : GameCoordinator
     {
         m_noButton.SetInt(0);
         m_yesButton.SetInt(1);
-        m_noButton.OnSingleClick += OnAnswer;
-        m_yesButton.OnSingleClick += OnAnswer;
+        m_noButton.SingleClicked += OnAnswer;
+        m_yesButton.SingleClicked += OnAnswer;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 

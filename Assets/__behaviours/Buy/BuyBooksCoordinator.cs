@@ -48,8 +48,8 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		m_defaultBackgroundTex = m_background.mainTexture as Texture2D;
 		m_defaultBackgroundColor = m_background.color;
 
-		m_backCollider.OnSingleClick += OnClickBackCollider;
-		//m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
+		m_backCollider.SingleClicked += OnClickBackCollider;
+		//m_buyButton.GetComponent<ClickEvent>().SingleClicked += BuyBook;
 
         Array.Sort(m_colorSprites, CollectionHelpers.LeftToRight);
 	}

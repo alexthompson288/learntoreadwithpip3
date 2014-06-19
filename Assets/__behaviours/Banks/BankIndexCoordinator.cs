@@ -123,7 +123,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
                 GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_alphabetLetterPrefab, m_alphabetGrid.transform);
                 newButton.GetComponent<BankButton>().SetUp(m_dataType, i.ToString());
                 newButton.GetComponent<ClickEvent>().SetString(i.ToString());
-                newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
+                newButton.GetComponent<ClickEvent>().SingleClicked += OnClickTestButton;
                 newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
             }
             
@@ -241,7 +241,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_defaultGrid.transform);
             newButton.GetComponent<BankButton>().SetUp(m_dataType, row);
             newButton.GetComponent<ClickEvent>().SetData(row);
-            newButton.GetComponent<ClickEvent>().OnSingleClick += OnClickTestButton;
+            newButton.GetComponent<ClickEvent>().SingleClicked += OnClickTestButton;
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
         }
         

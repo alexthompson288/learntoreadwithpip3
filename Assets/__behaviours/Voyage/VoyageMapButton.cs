@@ -19,7 +19,7 @@ public class VoyageMapButton : MonoBehaviour
     {
         yield return StartCoroutine(GameManager.WaitForInstance());
 
-        m_click.OnSingleClick += OnSingleClick;
+        m_click.SingleClicked += SingleClicked;
 
         if (m_spline != null)
         {
@@ -71,13 +71,13 @@ public class VoyageMapButton : MonoBehaviour
         }
     }
 
-    void OnSingleClick(ClickEvent click)
+    void SingleClicked(ClickEvent click)
     {
         Debug.Log("Clicked map: " + m_color + " " + (int)m_color);
-        StartCoroutine(OnSingleClickCo());
+        StartCoroutine(SingleClickedCo());
     }
     
-    IEnumerator OnSingleClickCo()
+    IEnumerator SingleClickedCo()
     {
         yield return new WaitForSeconds(GetComponentInChildren<PerspectiveButton>().tweenDuration + 0.3f);
         VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
