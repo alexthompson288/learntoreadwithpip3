@@ -135,7 +135,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		
 		if(dt.Rows.Count > 0)
 		{
-			List<DataRow> data = DataGetters.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
+			List<DataRow> data = DataHelpers.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
 			Debug.Log(String.Format("Found {0} stories", data.Count));
 			
 			for(int i = 0; i < data.Count; ++i)
@@ -176,7 +176,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		if(dt.Rows.Count > 0)
 		{
-			List<DataRow> data = DataGetters.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
+			List<DataRow> data = DataHelpers.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
 
 			foreach(DataRow datum in data)
 			{

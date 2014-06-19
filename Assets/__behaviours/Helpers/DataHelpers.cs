@@ -6,16 +6,6 @@ using System.Linq;
 
 public static class DataHelpers 
 {
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO: Delete when no longer used by LessonContentCoordinator
-    public static bool DoesSetContainData(DataRow set, string setAttribute, string dataType)
-    {
-        string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
-        
-        return (ids.Length > 0);
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     // Games
     public static DataRow GetCurrentGame()
     {
@@ -102,6 +92,39 @@ public static class DataHelpers
     }
 
     // Generic
+    public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
+    {
+        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
+        
+        List<DataRow> data = new List<DataRow>();
+        
+        foreach(string id in ids)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
+            
+            if(dt.Rows.Count > 0)
+            {
+                data.Add(dt.Rows[0]);
+            }
+        }
+        
+        return data;
+    }
+    
+    static List<DataRow> GetModuleData(int moduleId, string joinAttributeName, string tableName)
+    {
+        List<DataRow> dataPool = new List<DataRow>();
+        
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
+        
+        foreach (DataRow set in dt.Rows)
+        {
+            dataPool.AddRange(GetSetData(set, joinAttributeName, tableName));
+        }
+        
+        return dataPool;
+    }
+
     public static Texture2D GetPicture(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -435,39 +458,6 @@ public static class DataHelpers
         return dataPool;
     }
 
-    public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
-    {
-        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
-        
-        List<DataRow> data = new List<DataRow>();
-        
-        foreach(string id in ids)
-        {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
-            
-            if(dt.Rows.Count > 0)
-            {
-                data.Add(dt.Rows[0]);
-            }
-        }
-        
-        return data;
-    }
-
-    static List<DataRow> GetModuleData(int moduleId, string joinAttributeName, string tableName)
-    {
-        List<DataRow> dataPool = new List<DataRow>();
-        
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
-        
-        foreach (DataRow set in dt.Rows)
-        {
-            dataPool.AddRange(GetSetData(set, joinAttributeName, tableName));
-        }
-        
-        return dataPool;
-    }
-
     // Reading
     public static List<DataRow> GetModulePhonemes(int moduleId)
     {
@@ -512,89 +502,89 @@ public static class DataHelpers
     {
         return GetModuleData(moduleId, "setsillywords", "words");
     }
-
+    
     public static List<DataRow> GetCorrectCaptions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
-
+        
         if (dataPool.Count == 0)
         {
             Debug.LogWarning("Defaulting to all correctsentences");
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
         }
-
+        
         return dataPool;
     }
-
+    
     public static DataRow GetStory()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("stories");
-
+        
         if (dataPool.Count == 0)
         {
             dataPool = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE id=" + 1).Rows;
         }
-
+        
         return dataPool.Count > 0 ? dataPool [0] : null;
     }
-
+    
     public static List<DataRow> GetStories()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("stories");
-         
+        
         int storyId = 1;
         while (dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE publishable='t' AND id=" + storyId);
-
+            
             dataPool.AddRange(dt.Rows);
-
+            
             ++storyId;
         }
-
+        
         return dataPool;
     }
-
+    
     public static List<DataRow> GetQuizQuestions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("quizquestions");
-
+        
         if (dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences");
             dataPool = dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t");
         }
-
+        
         return dataPool;
     }
-
+    
     public static List<DataRow> GetSentences()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("sentences");
-
+        
         if (dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE is_target_sentence='t'");
             dataPool = dt.Rows;
         }
-
+        
         return dataPool;
     }
     
     public static List<DataRow> GetPhonemes()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("phonemes");
-
+        
         if(dataPool.Count == 0)
         {
             Debug.LogWarning("Defaulting to Pink Phonemes");
             dataPool = GetModulePhonemes(GetModuleId(ColorInfo.PipColor.Pink));
         }
-
+        
         return dataPool;
     }
-
+    
     public static List<DataRow> GetNonReadableWords()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
@@ -612,21 +602,21 @@ public static class DataHelpers
     public static List<DataRow> GetWords()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
-
+        
         dataPool.RemoveAll(x => (x ["nonreadable"] != null && x ["nonreadable"].ToString() == "t") || String.IsNullOrEmpty(x["word"].ToString()));
-
+        
         if(dataPool.Count == 0)
         {
             dataPool = GetModuleWords(GetModuleId(ColorInfo.PipColor.Pink));
         }
-
+        
         return dataPool;
     }
     
     public static List<DataRow> GetKeywords()
     {
         List<DataRow> dataPool =  GameManager.Instance.GetData("keywords");
-
+        
         if(dataPool.Count == 0)
         {
             dataPool = GetModuleKeywords(GetModuleId(ColorInfo.PipColor.Pink));
@@ -656,7 +646,7 @@ public static class DataHelpers
         
         return dataPool;
     }
-
+    
     public static DataRow GetOnsetPhoneme(DataRow word)
     {
         string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
@@ -668,7 +658,7 @@ public static class DataHelpers
                 return dt.Rows[0];
             }
         }
-
+        
         return null;
     }
     
@@ -1040,4 +1030,87 @@ public static class DataHelpers
 
         return null;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Legacy
+    /// 
+    // TODO: Delete when no longer used by LessonContentCoordinator
+    public static bool DoesSetContainData(DataRow set, string setAttribute, string dataType)
+    {
+        string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
+        
+        return (ids.Length > 0);
+    }
+
+    // TODO: Delete when no longer used by UnitProgressCoordinator
+    public static List<DataRow> GetSectionLetters(int sectionId)
+    {
+        List<DataRow> letters = new List<DataRow>();
+        
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE section_id=" + sectionId + " GROUP BY phonemes.id");
+        
+        if(dt.Rows.Count > 0)
+        {
+            letters = dt.Rows;
+        }
+        
+        return letters;
+    }
+    
+    // TODO: Delete when no longer used by UnitProgressCoordinator
+    public static List<DataRow> GetSectionSentences(int sectionId)
+    {
+        List<DataRow> sentenceData = new List<DataRow>();
+        
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sentences WHERE section_id =" + sectionId);
+        
+        if(dt.Rows.Count > 0)
+        {
+            sentenceData.AddRange(dt.Rows);
+        }
+        
+        return sentenceData;
+    }
+    
+    // TODO: Delete when not needed
+    public static List<DataRow> GetSetData(int setNum, string columnName, string tableName)
+    {
+        List<DataRow> dataList = new List<DataRow>();
+        
+        DataTable setTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
+        
+        if (setTable.Rows.Count > 0)
+        {
+            if (setTable.Rows [0] [columnName] != null)
+            {
+                string[] dataIds = setTable.Rows [0] [columnName].ToString().Replace(" ", "").Replace("-", "").Replace("'", "").Replace("[", "").Replace("]", "").Split(',');
+                
+                foreach (string id in dataIds)
+                {
+                    try
+                    {
+                        DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
+                        
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            dataList.Add(dataTable.Rows [0]);
+                        }
+                    } catch
+                    {
+                        Debug.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
+                    }
+                }
+            }
+        }
+        
+        if (dataList.Count > 0)
+        {           
+            return dataList;    
+        }       
+        else       
+        {         
+            return GetSetData(++setNum, columnName, tableName);       
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
