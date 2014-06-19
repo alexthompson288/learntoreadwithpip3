@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class SpriteAnim : MonoBehaviour 
 {
@@ -46,6 +47,9 @@ public class SpriteAnim : MonoBehaviour
     int m_currentFrame;
 
     bool m_playAnim;
+
+    bool m_isWaiting = false;
+    string m_waitingAnimationName;
     
     void Awake()
     {
@@ -63,7 +67,7 @@ public class SpriteAnim : MonoBehaviour
 
         if (m_playAnim && m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[Random.Range(0, m_randomAnimationNames.Count)]);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)]);
         }
     }
 
@@ -73,37 +77,58 @@ public class SpriteAnim : MonoBehaviour
 
         if (m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[Random.Range(0, m_randomAnimationNames.Count)]);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)]);
         }
     }
-    
-    public void PlayAnimation(string animName)
+
+    public bool IsPlaying()
     {
-        int index = 0;
-        foreach (AnimDetails ad in m_availableAnimations)
+        return m_playAnim && m_currentAnimation > -1 && m_currentAnimation < m_availableAnimations.Length;
+    }
+
+    int GetAnimIndex(string animName)
+    {
+        return Array.FindIndex(m_availableAnimations, x => x.m_name == animName);
+    }
+    
+    public bool HasAnim(string animName)
+    {
+        return GetAnimIndex(animName) != -1;
+    }
+    
+    public void PlayAnimation(string animName, bool waitForEnd = true)
+    {
+        if (waitForEnd && IsPlaying())
         {
-            if (ad.m_name == animName)
+            m_waitingAnimationName = animName;
+            m_isWaiting = true;
+        } 
+        else
+        {
+            m_currentAnimation = GetAnimIndex(animName);
+
+            if(m_currentAnimation != -1)
             {
-                m_currentAnimation = index;
                 m_currentFrame = 0;
-                
-                if(ad.m_spriteAtlas != null)
+
+                AnimDetails ad = m_availableAnimations[m_currentAnimation];
+
+                if (ad.m_spriteAtlas != null)
                 {
                     m_sprite.atlas = ad.m_spriteAtlas;
                 }
                 
                 SetSpriteName();
-
+                
                 m_playAnim = true;
             }
-            ++index;
         }
     }
 
     // Update is called once per frame
     void Update () 
     {
-        if (m_playAnim &&  m_currentAnimation > -1 && m_currentAnimation < m_availableAnimations.Length)
+        if (IsPlaying())
         {
             m_currentT += Time.deltaTime * m_availableAnimations[m_currentAnimation].m_fps;
             if (m_currentT > 1)
@@ -130,7 +155,11 @@ public class SpriteAnim : MonoBehaviour
 
                         m_playAnim = false;
 
-                        if(m_randomAnimationNames.Count > 0)
+                        if(m_isWaiting)
+                        {
+                            PlayAnimation(m_waitingAnimationName, false);
+                        }
+                        else if(m_randomAnimationNames.Count > 0)
                         {
                             StartCoroutine(PlayRandom());
                         }
@@ -151,21 +180,5 @@ public class SpriteAnim : MonoBehaviour
         }
         
         m_sprite.spriteName = m_availableAnimations [m_currentAnimation].m_prefix + frameString;
-    }
-    
-    public string[] GetAnimNames()
-    {
-        string[] animNames = new string[m_availableAnimations.Length];
-        for(int i = 0; i < m_availableAnimations.Length; ++i)
-        {
-            animNames[i] = m_availableAnimations[i].m_name;
-        }
-        
-        return animNames;
-    }
-    
-    public bool HasAnim(string animName)
-    {
-        return System.Array.FindIndex(m_availableAnimations, x => x.m_name == animName) != -1;
     }
 }
