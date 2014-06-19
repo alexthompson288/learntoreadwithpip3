@@ -78,12 +78,12 @@ public class StoryMenuInfo : Singleton<StoryMenuInfo>
 
     void Start()
     {
-        GameManager.Instance.OnCancel += OnGameCancel;
+        GameManager.Instance.Cancelling += OnGameCancel;
     }
 
     void OnGameCancel()
     {
-        GameManager.Instance.OnComplete -= OnGameComplete;
+        GameManager.Instance.Completed -= OnGameComplete;
         m_startPipColor = ColorInfo.PipColor.Pink;
 
         if(Application.loadedLevelName != "NewStoryMenu")
@@ -94,12 +94,12 @@ public class StoryMenuInfo : Singleton<StoryMenuInfo>
 
     void OnGameComplete()
     {
-        GameManager.Instance.OnComplete -= OnGameComplete;
+        GameManager.Instance.Completed -= OnGameComplete;
         m_startPipColor = ColorInfo.PipColor.Pink;
     }
 
     public void SubscribeGameComplete()
     {
-        GameManager.Instance.OnComplete += OnGameComplete;
+        GameManager.Instance.Completed += OnGameComplete;
     }
 }

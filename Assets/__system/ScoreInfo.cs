@@ -74,8 +74,8 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     void Start()
     {
-        GameManager.Instance.OnComplete += OnGameCompleteOrCancel;
-        GameManager.Instance.OnCancel += OnGameCompleteOrCancel;
+        GameManager.Instance.Completed += OnGameCompleteOrCancel;
+        GameManager.Instance.Cancelling += OnGameCompleteOrCancel;
 
 #if UNITY_EDITOR
         if(m_overwrite)

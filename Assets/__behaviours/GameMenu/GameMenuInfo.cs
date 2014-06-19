@@ -77,7 +77,7 @@ public class GameMenuInfo : Singleton<GameMenuInfo>
     // Use this for initialization
     void Start () 
     {
-        GameManager.Instance.OnCancel += OnGameCancel;
+        GameManager.Instance.Cancelling += OnGameCancel;
     }
     
     void OnGameCancel()

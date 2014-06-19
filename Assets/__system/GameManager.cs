@@ -100,9 +100,9 @@ public class GameManager : Singleton<GameManager>
 
             Reset();
 
-            if(onComplete != null)
+            if(PrivateCompleted != null)
             {
-                onComplete();
+                PrivateCompleted();
             }
 
             TransitionScreen.Instance.ChangeLevel(returnScene, false);
@@ -128,10 +128,10 @@ public class GameManager : Singleton<GameManager>
             case State.Wait:
                 m_state = State.Cancelling;
                 break;
-            case State.Cancelling: // The purpose of State.Cancelling is so that onCancel is only called in the scene after DeliberatelyEmptyScene, therefore, we know what scene we cancelled into
-                if(onCancel != null)
+            case State.Cancelling: // The purpose of State.Cancelling is so that PrivateCancelling is only called in the scene after DeliberatelyEmptyScene, therefore, we know what scene we cancelled into
+                if(PrivateCancelling != null)
                 {
-                    onCancel();
+                    PrivateCancelling();
                 }
                 Reset();
                 break;
@@ -290,39 +290,38 @@ public class GameManager : Singleton<GameManager>
 
     State m_state = State.Sleep;
 
-    public delegate void Complete ();
-    private event Complete onComplete;
-    public event Complete OnComplete
+    public delegate void GameManagerEventHandler ();
+    private event GameManagerEventHandler PrivateCompleted;
+    public event GameManagerEventHandler Completed
     {
         add
         {
-            if(onComplete == null || !onComplete.GetInvocationList().Contains(value))
+            if(PrivateCompleted == null || !PrivateCompleted.GetInvocationList().Contains(value))
             {
-                onComplete += value;
+                PrivateCompleted += value;
             }
         }
 
         remove
         {
-            onComplete -= value;
+            PrivateCompleted -= value;
         }
     }
 
-    public delegate void Cancel ();
-    private event Cancel onCancel;
-    public event Cancel OnCancel
+    private event GameManagerEventHandler PrivateCancelling;
+    public event GameManagerEventHandler Cancelling
     {
         add
         {
-            if(onCancel == null || !onCancel.GetInvocationList().Contains(value))
+            if(PrivateCancelling == null || !PrivateCancelling.GetInvocationList().Contains(value))
             {
-                onCancel += value;
+                PrivateCancelling += value;
             }
         }
 
         remove
         {
-            onCancel -= value;
+            PrivateCancelling -= value;
         }
     }
 
