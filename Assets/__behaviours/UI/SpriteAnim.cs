@@ -30,17 +30,17 @@ public class SpriteAnim : MonoBehaviour
     }
 
     [SerializeField]
+    AnimDetails[] m_availableAnimations;
+    [SerializeField]
+    UISprite m_sprite;
+    [SerializeField]
+    string m_format = "{0:00}";
+    [SerializeField]
     bool m_startOn = true;
     [SerializeField]
     private List<string> m_randomAnimationNames;
     [SerializeField]
     private Vector2 m_randomDelayRange = new Vector2(2, 5);
-    [SerializeField]
-    AnimDetails[] m_availableAnimations;
-    [SerializeField]
-    UISprite m_sprite;
-    [SerializeField]
-    string m_format = "{0}";
 
     int m_currentAnimation;
     float m_currentT;
