@@ -13,6 +13,8 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private AnimManager[] m_twoPlayerAnims;
     [SerializeField]
+    private UISprite m_rodSprite;
+    [SerializeField]
     private TweenOnOffBehaviour[] m_gameButtonParents;
     
     PipButton m_currentColorButton = null;
@@ -137,6 +139,7 @@ public class GameMenuCoordinator : MonoBehaviour
         } 
         else
         {
+            m_rodSprite.spriteName = NGUIHelpers.GetLinkedSpriteName(m_rodSprite.spriteName);
             foreach(AnimManager anim in m_twoPlayerAnims)
             {
                 anim.PlayAnimation("JUMP");
