@@ -49,7 +49,7 @@ public class ScaleTarget : Target
 		transform.position = m_startLocation.position;
 		
         //Debug.Log("Restart Invoking");
-		InvokeOnCompleteMove();
+		InvokeMoveCompleted();
 		
         On(0.5f);
 	}
@@ -70,7 +70,7 @@ public class ScaleTarget : Target
         yield return new WaitForSeconds(m_tweenDurationOff + Random.Range(m_durationOff.x, m_durationOff.y));
 		
         //Debug.Log("Invoking OnCompleteMove");
-		InvokeOnCompleteMove();
+		InvokeMoveCompleted();
 		
 		StartCoroutine(OnCo(0.2f));
 	}

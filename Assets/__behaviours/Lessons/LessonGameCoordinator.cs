@@ -12,7 +12,7 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 	// Use this for initialization
 	void Start () 
 	{
-		m_selectedGames.Sort(CollectionHelpers.ComparePosX);
+		m_selectedGames.Sort(CollectionHelpers.LeftToRight);
 
 		m_selectedGames[m_currentIndex].On(true);
 

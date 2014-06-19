@@ -173,7 +173,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     public static void RefreshStars(UISprite[] starSprites, string game, string type)
     {
-        System.Array.Sort(starSprites, CollectionHelpers.CompareLocalPosX);
+        System.Array.Sort(starSprites, CollectionHelpers.LocalLeftToRight);
 
         int numStars = Instance.GetStars(game, type);
         

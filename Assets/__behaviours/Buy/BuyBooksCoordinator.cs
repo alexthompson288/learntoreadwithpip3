@@ -51,7 +51,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
 		m_backCollider.OnSingleClick += OnClickBackCollider;
 		//m_buyButton.GetComponent<ClickEvent>().OnSingleClick += BuyBook;
 
-        Array.Sort(m_colorSprites, CollectionHelpers.ComparePosX);
+        Array.Sort(m_colorSprites, CollectionHelpers.LeftToRight);
 	}
 
 	void Start()

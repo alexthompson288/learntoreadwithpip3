@@ -40,20 +40,19 @@ public class Target : MonoBehaviour
         }
     }
 
-    public delegate void TargetHit(Target target, Collider ball);
-    public event TargetHit OnTargetHit;
+    public delegate void TargetHitEventHandler(Target target, Collider ball);
+    public event TargetHitEventHandler TargetHit;
     
-    public delegate void TargetDestroy(Target target);
-    public event TargetDestroy OnTargetDestroy;
+    public delegate void TargetEventHandler(Target target);
+    public event TargetEventHandler Destroying;
+    public event TargetEventHandler MoveCompleted;
 
-    public delegate void CompleteMove(Target target);
-    public event CompleteMove OnCompleteMove;
 
-    protected void InvokeOnCompleteMove()
+    protected void InvokeMoveCompleted()
     {
-        if (OnCompleteMove != null)
+        if (MoveCompleted != null)
         {
-            OnCompleteMove(this);
+            MoveCompleted(this);
         }
         //Debug.Log("Finished Invoke: " + transform.localScale.x);
     }
@@ -87,9 +86,9 @@ public class Target : MonoBehaviour
         {
             CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
 
-            if (ammoBehaviour != null && !ammoBehaviour.canDrag && OnTargetHit != null)
+            if (ammoBehaviour != null && !ammoBehaviour.canDrag && TargetHit != null)
             {
-                OnTargetHit(this, other);
+                TargetHit(this, other);
             }
         }
     }
@@ -112,9 +111,9 @@ public class Target : MonoBehaviour
     
     void OnDestroy()
     {
-        if (OnTargetDestroy != null)
+        if (Destroying != null)
         {
-            OnTargetDestroy(this);
+            Destroying(this);
         }
     }
 

@@ -103,8 +103,8 @@ public class CatapultCoopCoordinator : MonoBehaviour
     {
         foreach(Target target in targets)
         {
-            target.OnTargetHit += OnTargetHit;
-            target.OnCompleteMove += SetTargetData;
+            target.TargetHit += OnTargetHit;
+            target.MoveCompleted += SetTargetData;
             
             SetTargetData(target);
 

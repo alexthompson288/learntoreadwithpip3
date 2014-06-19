@@ -15,7 +15,7 @@ public class CatapultCountingCoordinator : GameCoordinator
     {
         m_catapult.MoveToMultiplayerLocation(0);
         m_scoreKeeper.SetTargetScore(m_targetScore);
-        m_target.OnTargetHit += OnTargetHit;
+        m_target.TargetHit += OnTargetHit;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 

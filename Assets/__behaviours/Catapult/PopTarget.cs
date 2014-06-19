@@ -50,7 +50,7 @@ public class PopTarget : Target
         rigidbody.isKinematic = true;
         transform.position = m_startLocation.position;
 
-        InvokeOnCompleteMove();
+        InvokeMoveCompleted();
 
         iTween.ScaleTo(gameObject, Vector3.one, 0.2f);
 
@@ -71,7 +71,7 @@ public class PopTarget : Target
 
         yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff() + Random.Range(m_durationOff.x, m_durationOff.y));
 
-        InvokeOnCompleteMove();
+        InvokeMoveCompleted();
 
         On(0);
     }

@@ -30,7 +30,7 @@ public class ChooseGameButton : MonoBehaviour
 
     void Awake()
     {
-        System.Array.Sort(m_starSprites, CollectionHelpers.CompareLocalPosX);
+        System.Array.Sort(m_starSprites, CollectionHelpers.LocalLeftToRight);
     }
 
 	public void SetUp(DataRow game)

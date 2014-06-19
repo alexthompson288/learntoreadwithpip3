@@ -82,7 +82,7 @@ public class GameMenuCoordinator : MonoBehaviour
         
         if (m_currentGameButton == null)
         {
-            Array.Sort(m_gameButtons, CollectionHelpers.ComparePosX);
+            Array.Sort(m_gameButtons, CollectionHelpers.LeftToRight);
             m_currentGameButton = m_gameButtons[0];
         }
 

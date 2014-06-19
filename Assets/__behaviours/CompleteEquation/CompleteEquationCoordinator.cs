@@ -33,7 +33,7 @@ public class CompleteEquationCoordinator : GameCoordinator
 
         m_numAnswersSpawn = Mathf.Min(m_numAnswersSpawn, m_answerLocators.Length);
 
-        System.Array.Sort(m_equationPartLocators, CollectionHelpers.ComparePosX);
+        System.Array.Sort(m_equationPartLocators, CollectionHelpers.LeftToRight);
 
         m_probabilityCurrentIsInteger = Mathf.Clamp01(m_probabilityCurrentIsInteger);
 

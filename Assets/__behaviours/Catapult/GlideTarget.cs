@@ -49,7 +49,7 @@ public class GlideTarget : Target
         rigidbody.isKinematic = true;
         transform.position = m_startLocation.position;
 
-        InvokeOnCompleteMove();
+        InvokeMoveCompleted();
 
         On(0);
     }

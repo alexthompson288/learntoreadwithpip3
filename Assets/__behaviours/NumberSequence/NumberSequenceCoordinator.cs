@@ -33,7 +33,7 @@ public class NumberSequenceCoordinator : GameCoordinator
         m_numInSequence = Mathf.Min(m_numInSequence, m_sequenceLocators.Length);
         m_numAnswers = Mathf.Min(m_numAnswers, m_answerLocators.Length);
 
-        System.Array.Sort(m_sequenceLocators, CollectionHelpers.ComparePosX);
+        System.Array.Sort(m_sequenceLocators, CollectionHelpers.LeftToRight);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 

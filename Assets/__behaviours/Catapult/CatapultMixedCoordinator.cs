@@ -151,8 +151,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         for(int i = 0; i < targets.Length; ++i)
         {
-            targets[i].OnTargetHit += OnTargetHit;
-            targets[i].OnCompleteMove += SetTargetData;
+            targets[i].TargetHit += OnTargetHit;
+            targets[i].MoveCompleted += SetTargetData;
             
             SetTargetData(targets[i]);
             

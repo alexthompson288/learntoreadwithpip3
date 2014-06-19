@@ -14,7 +14,7 @@ public class NumberWidget : GameWidget
 
 	void Awake()
 	{
-		System.Array.Sort (m_digitSprites, CollectionHelpers.ComparePosX);
+		System.Array.Sort (m_digitSprites, CollectionHelpers.LeftToRight);
 	}
 
 	enum DigitDisplay

@@ -62,8 +62,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        System.Array.Sort(m_colorButtons, CollectionHelpers.ComparePosY);
-        System.Array.Sort(m_pageTurnButtons, CollectionHelpers.ComparePosX);
+        System.Array.Sort(m_colorButtons, CollectionHelpers.TopToBottom);
+        System.Array.Sort(m_pageTurnButtons, CollectionHelpers.LeftToRight);
 
         m_colorBackBlocker.OnSingleClick += DismissColorGrid;
         m_callColorButton.Unpressing += CallColorGrid;

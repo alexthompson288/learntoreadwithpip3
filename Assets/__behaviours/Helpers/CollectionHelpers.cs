@@ -73,12 +73,12 @@ public class CollectionHelpers
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Comparisons for sorting Collections
 
-	public static int ComparePosX(MonoBehaviour a, MonoBehaviour b)
+	public static int LeftToRight(MonoBehaviour a, MonoBehaviour b)
 	{
-        return ComparePosX(a.transform, b.transform);
+        return LeftToRight(a.transform, b.transform);
 	}
 
-	public static int ComparePosX(Transform a, Transform b)
+	public static int LeftToRight(Transform a, Transform b)
 	{
 		float posA = a.position.x;
 		float posB = b.position.x;
@@ -97,12 +97,12 @@ public class CollectionHelpers
 		}
 	}
 
-    public static int CompareLocalPosX(MonoBehaviour a, MonoBehaviour b)
+    public static int LocalLeftToRight(MonoBehaviour a, MonoBehaviour b)
     {
-        return CompareLocalPosX(a.transform, b.transform);
+        return LocalLeftToRight(a.transform, b.transform);
     }
 
-    public static int CompareLocalPosX(Transform a, Transform b)
+    public static int LocalLeftToRight(Transform a, Transform b)
     {
         float posA = a.localPosition.x;
         float posB = b.localPosition.x;
@@ -121,12 +121,12 @@ public class CollectionHelpers
         }
     }
 
-    public static int ComparePosY(MonoBehaviour a, MonoBehaviour b)
+    public static int TopToBottom(MonoBehaviour a, MonoBehaviour b)
     {
-        return ComparePosX(a.transform, b.transform);
+        return LeftToRight(a.transform, b.transform);
     }
     
-    public static int ComparePosY(Transform a, Transform b)
+    public static int TopToBottom(Transform a, Transform b)
     {
         float posA = a.position.y;
         float posB = b.position.y;
@@ -145,12 +145,12 @@ public class CollectionHelpers
         }
     }
 
-    public static int ComparePosYThenX(MonoBehaviour a, MonoBehaviour b)
+    public static int TopToBottomThenLeftToRight(MonoBehaviour a, MonoBehaviour b)
     {
-        return ComparePosYThenX(a.transform, b.transform);
+        return TopToBottomThenLeftToRight(a.transform, b.transform);
     }
 
-    public static int ComparePosYThenX(Transform a, Transform b)
+    public static int TopToBottomThenLeftToRight(Transform a, Transform b)
     {
         if (a == null && b == null)
         {
