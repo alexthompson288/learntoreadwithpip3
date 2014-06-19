@@ -115,12 +115,12 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 if(m_currentData == null)
                 {
                     DataRow randomWord = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
-                    m_currentData = DataHelpers.FindOnsetPhoneme(randomWord);
+                    m_currentData = DataHelpers.GetOnsetPhoneme(randomWord);
                 }
 
                 if(!DataHelpers.HasOnsetWords(m_currentData, m_dataPool))
                 {
-                    m_dataPool.AddRange(DataHelpers.FindOnsetWords(m_currentData, 3, true));
+                    m_dataPool.AddRange(DataHelpers.GetOnsetWords(m_currentData, 3, true));
                     m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
                 }
             }
@@ -163,14 +163,14 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
     bool IsDataCorrect(DataRow data)
     {
-        return IsDataMixed() ? m_currentData.Equals(DataHelpers.FindOnsetPhoneme(data)) : data.Equals(m_currentData);
+        return IsDataMixed() ? m_currentData.Equals(DataHelpers.GetOnsetPhoneme(data)) : data.Equals(m_currentData);
     }
 
     DataRow FindRandomCorrect()
     {
         int currentId = m_currentData.GetId();
 
-        List<DataRow> correctPool = m_dataPool.FindAll(x => DataHelpers.FindOnsetPhoneme(x).GetId() == currentId);
+        List<DataRow> correctPool = m_dataPool.FindAll(x => DataHelpers.GetOnsetPhoneme(x).GetId() == currentId);
 
         return correctPool.Count > 0 ? correctPool[UnityEngine.Random.Range(0, correctPool.Count)] : m_dataPool[UnityEngine.Random.Range(0, correctPool.Count)];
     }
@@ -214,7 +214,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             {
                 Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
                 StopCoroutine("HideBlackboard");
-                m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.FindOnsetPhoneme(target.data)["phoneme"].ToString(), "");
+                m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data)["phoneme"].ToString(), "");
                 StartCoroutine("HideBlackboard");
             }
 

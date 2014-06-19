@@ -7,8 +7,6 @@ using System.Linq;
 public static class DataHelpers 
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO: Delete these methods when safe
-
     // TODO: Delete when no longer used by LessonContentCoordinator
     public static bool DoesSetContainData(DataRow set, string setAttribute, string dataType)
     {
@@ -16,17 +14,15 @@ public static class DataHelpers
         
         return (ids.Length > 0);
     }
-
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Games
     public static DataRow GetCurrentGame()
     {
-        return FindGame(GameManager.Instance.currentGameName);
+        return GetGame(GameManager.Instance.currentGameName);
     }
     
-    public static DataRow FindGame(string gameName)
+    public static DataRow GetGame(string gameName)
     {
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='" + gameName + "'");
         return dt.Rows.Count > 0 ? dt.Rows [0] : null;
@@ -37,7 +33,7 @@ public static class DataHelpers
         return GameManager.Instance.currentGameName;
     }
 
-    public static DataRow FindGameForSection (DataRow section) 
+    public static DataRow GetGameForSection (DataRow section) 
 	{
 		int gameId = Convert.ToInt32(section["game_id"]);
 			
@@ -661,7 +657,7 @@ public static class DataHelpers
         return dataPool;
     }
 
-    public static DataRow FindOnsetPhoneme(DataRow word)
+    public static DataRow GetOnsetPhoneme(DataRow word)
     {
         string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
         foreach(string id in phonemeIds)
@@ -769,7 +765,7 @@ public static class DataHelpers
 
         foreach (DataRow word in words)
         {
-            if(phoneme.Equals(FindOnsetPhoneme(word)))
+            if(phoneme.Equals(GetOnsetPhoneme(word)))
             {
                 hasOnsetWord = true;
                 break;
@@ -779,7 +775,7 @@ public static class DataHelpers
         return hasOnsetWord;
     }
 
-    public static List<DataRow> FindOnsetWords(DataRow phoneme, int numToFind, bool onlyPictures)
+    public static List<DataRow> GetOnsetWords(DataRow phoneme, int numToFind, bool onlyPictures)
     {
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words");
 
@@ -787,11 +783,11 @@ public static class DataHelpers
 
         if (onlyPictures)
         {
-            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(FindOnsetPhoneme(x)) && GetPicture("words", x) != null);
+            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)) && GetPicture("words", x) != null);
         }
         else
         {
-            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(FindOnsetPhoneme(x)));
+            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)));
         }
 
         numToFind = Mathf.Min(numToFind, onsetWords.Count);
@@ -967,7 +963,7 @@ public static class DataHelpers
         return operators;
     }
 
-    public static List<DataRow> FindLegalAdditionLHS(DataRow sumData, List<DataRow> dataPool)
+    public static List<DataRow> GetLegalAdditionLHS(DataRow sumData, List<DataRow> dataPool)
     {
         List<int> numbers = GetNumberValues(dataPool);
         
@@ -1001,13 +997,13 @@ public static class DataHelpers
 
         for (int i = 0; i < equationPartValues.Length; ++i)
         {
-            equationParts.Add(FindNumberWithValue(dataPool, equationPartValues[i]));
+            equationParts.Add(GetNumberWithValue(dataPool, equationPartValues[i]));
         }
 
         return equationParts;
     }
 
-    public static DataRow FindLegalSum(List<DataRow> dataPool)
+    public static DataRow GetLegalSum(List<DataRow> dataPool)
     {
         List<int> numbers = GetNumberValues(dataPool);
 
@@ -1015,7 +1011,7 @@ public static class DataHelpers
 
         int minLegal = numbers [0] + numbers [0];
 
-        return FindNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count - 1] + 1));
+        return GetNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count - 1] + 1));
     }
 
     public static List<int> GetNumberValues(List<DataRow> dataPool)
@@ -1032,7 +1028,7 @@ public static class DataHelpers
         return numbers;
     }
 
-    public static DataRow FindNumberWithValue(List<DataRow> dataPool, int value)
+    public static DataRow GetNumberWithValue(List<DataRow> dataPool, int value)
     {
         foreach (DataRow data in dataPool)
         {

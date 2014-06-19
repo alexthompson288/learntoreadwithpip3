@@ -35,7 +35,7 @@ public class VoyageGameButton : MonoBehaviour
 
         m_border.SetActive(hasCompleted);
 
-        DataRow game = DataHelpers.FindGameForSection(m_section);
+        DataRow game = DataHelpers.GetGameForSection(m_section);
 
         if (game != null)
         {

@@ -71,7 +71,7 @@ public class GameMenuCoordinator : MonoBehaviour
 
         foreach (PipButton button in m_gameButtons)
         {
-            button.GetComponent<ChooseGameButton>().SetUp(DataHelpers.FindGame(button.GetString()));
+            button.GetComponent<ChooseGameButton>().SetUp(DataHelpers.GetGame(button.GetString()));
             button.Pressing += OnPressGameButton;
         }
 
@@ -126,7 +126,7 @@ public class GameMenuCoordinator : MonoBehaviour
     {
         m_currentGameButton = button;
 
-        DataRow game = DataHelpers.FindGame(button.GetString());
+        DataRow game = DataHelpers.GetGame(button.GetString());
 
         if (game != null)
         {
@@ -172,7 +172,7 @@ public class GameMenuCoordinator : MonoBehaviour
     {
         if (m_currentGameButton != null)
         {
-            DataRow game = DataHelpers.FindGame(m_currentGameButton.GetString());
+            DataRow game = DataHelpers.GetGame(m_currentGameButton.GetString());
 
             if (game != null && m_currentColorButton != null)
             {
@@ -230,7 +230,7 @@ public class GameMenuCoordinator : MonoBehaviour
         if (m_currentGameButton != null)
         {
             ColorInfo.PipColor pipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
-            ScoreInfo.RefreshStars(m_starSprites, DataHelpers.FindGame(m_currentGameButton.GetString())["name"].ToString(), ColorInfo.GetColorString(pipColor));
+            ScoreInfo.RefreshStars(m_starSprites, DataHelpers.GetGame(m_currentGameButton.GetString())["name"].ToString(), ColorInfo.GetColorString(pipColor));
         }
     }
 

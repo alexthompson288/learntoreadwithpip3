@@ -294,7 +294,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             foreach(DataRow section in sectionsTable.Rows)
             {
-                DataRow game = DataHelpers.FindGameForSection(section);
+                DataRow game = DataHelpers.GetGameForSection(section);
 
                 if(game != null)
                 {

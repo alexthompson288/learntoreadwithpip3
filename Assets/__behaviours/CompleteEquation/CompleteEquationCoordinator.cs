@@ -55,9 +55,9 @@ public class CompleteEquationCoordinator : GameCoordinator
 
     void AskQuestion()
     {
-        DataRow sum = DataHelpers.FindLegalSum(m_dataPool);
+        DataRow sum = DataHelpers.GetLegalSum(m_dataPool);
 
-        List<DataRow> equationParts = DataHelpers.FindLegalAdditionLHS(sum, m_dataPool);
+        List<DataRow> equationParts = DataHelpers.GetLegalAdditionLHS(sum, m_dataPool);
         equationParts.Add(sum); // Add sum last because it needs to go on RHS and m_equationPartLocators are sorted from left to right
 
         m_missingIndex = Random.Range(0, equationParts.Count);

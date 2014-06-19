@@ -2,9 +2,30 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class DataGetters
 {
+    public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
+    {
+        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
+        
+        List<DataRow> data = new List<DataRow>();
+        
+        foreach(string id in ids)
+        {
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
+            
+            if(dt.Rows.Count > 0)
+            {
+                data.Add(dt.Rows[0]);
+            }
+        }
+        
+        return data;
+    }
+
+    ////////////////////////////////////////////////////////////
     // Legacy
     // TODO: Delete when no longer used by UnitProgressCoordinator
     public static List<DataRow> GetSectionLetters(int sectionId)
@@ -40,7 +61,7 @@ public static class DataGetters
     public static List<DataRow> GetSetData(int setNum, string columnName, string tableName)
     {
         List<DataRow> dataList = new List<DataRow>();
-        
+
         DataTable setTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE number=" + setNum);
         
         if (setTable.Rows.Count > 0)

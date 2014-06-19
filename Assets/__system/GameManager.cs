@@ -53,7 +53,7 @@ public class GameManager : Singleton<GameManager>
 
         Debug.Log("m_currentGameName: " + m_currentGameName);
 
-        DataRow currentGame = DataHelpers.FindGame(m_currentGameName);
+        DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
         if (currentGame != null && currentGame["labeltext"] != null)
         {
