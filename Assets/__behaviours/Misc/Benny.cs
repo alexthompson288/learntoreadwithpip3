@@ -63,7 +63,7 @@ public class Benny : Collector
     {
         if (animName == "OPEN")
         {
-            m_anim.StopAfterCurrent();
+            m_anim.StopRandom();
         }
     }
 

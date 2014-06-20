@@ -52,8 +52,6 @@ public class SpriteAnim : MonoBehaviour
 
     bool m_playAnim;
 
-    bool m_stopAfterCurrent = false;
-
     bool m_isWaiting = false;
     string m_waitingAnimationName;
     
@@ -77,10 +75,9 @@ public class SpriteAnim : MonoBehaviour
         }
     }
 
-    public void StopAfterCurrent()
+    public void StopRandom()
     {
         StopAllCoroutines();
-        m_stopAfterCurrent = true;
     }
 
     IEnumerator PlayRandom()
@@ -185,12 +182,10 @@ public class SpriteAnim : MonoBehaviour
                     {
                         m_playAnim = false;
 
-                        if(!m_stopAfterCurrent && m_randomAnimationNames.Count > 0)
+                        if(m_randomAnimationNames.Count > 0)
                         {
                             StartCoroutine(PlayRandom());
                         }
-
-                        m_stopAfterCurrent = false;
 
                         if(AnimFinished != null)
                         {
