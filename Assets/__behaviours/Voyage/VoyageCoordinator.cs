@@ -10,7 +10,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     [SerializeField]
     private GameObject m_movingCamera;
     [SerializeField]
-    private float m_cameraTweenDuration;
+    private float m_verticalCameraTweenDuration = 0.5f;
+    [SerializeField]
+    private float m_horizontalCameraTweenDuration = 1.5f;
     [SerializeField]
     private Transform m_mapLocationParent;
     [SerializeField]
@@ -159,7 +161,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     void TweenCamera(Vector3 newPosition)
     {
-        iTween.MoveTo(m_movingCamera, newPosition, m_cameraTweenDuration * 2);
+        float cameraTweenDuration = Mathf.Approximately(m_movingCamera.transform.position.x, newPosition.x) ? m_verticalCameraTweenDuration : m_horizontalCameraTweenDuration;
+        iTween.MoveTo(m_movingCamera, newPosition, cameraTweenDuration);
     }
 
     void InstantiateWorldMap()
@@ -185,7 +188,9 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
 
-        yield return new WaitForSeconds(m_cameraTweenDuration + 0.1f);
+        yield return new WaitForSeconds(m_horizontalCameraTweenDuration + 0.1f);
+
+        VoyageMap.DestroyPip();
 
         if (m_currentModuleMap != null) // Defensive check: Should ALWAYS execute
         {
@@ -234,7 +239,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         //WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
         TweenCamera(m_moduleMapLocation.position);
         
-        yield return new WaitForSeconds(m_cameraTweenDuration);
+        yield return new WaitForSeconds(m_horizontalCameraTweenDuration);
         
         if (m_worldMap != null)
         {
