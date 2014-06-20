@@ -22,11 +22,13 @@ public class SpriteAnim : MonoBehaviour
         [SerializeField]
         public int m_startFrame = 1;
         [SerializeField]
-        public bool m_toLetter = false;
+        public bool m_toLetter;
         [SerializeField]
         public float m_fps;
         [SerializeField]
-        public bool m_loop = true;
+        public bool m_loop;
+        [SerializeField]
+        public bool m_isReverse;
     }
 
     [SerializeField]
@@ -139,13 +141,24 @@ public class SpriteAnim : MonoBehaviour
     {
         if (IsPlaying())
         {
-            m_currentT += Time.deltaTime * m_availableAnimations[m_currentAnimation].m_fps;
+            AnimDetails ad = m_availableAnimations[m_currentAnimation];
+
+            m_currentT += Time.deltaTime * ad.m_fps;
             if (m_currentT > 1)
             {
                 m_currentT -= 1;
-                m_currentFrame++;
 
-                if(m_currentFrame < m_availableAnimations[m_currentAnimation].m_numFrames)
+                if(ad.m_isReverse)
+                {
+                    --m_currentFrame;
+                }
+                else
+                {
+                    ++m_currentFrame;
+                }
+
+                //if((m_currentFrame < ad.m_numFrames && !ad.m_isReverse) || (m_currentFrame > -ad.m_numFrames && ad.m_isReverse))
+                if(Mathf.Abs(m_currentFrame) < Mathf.Abs(ad.m_numFrames))
                 {
                     SetSpriteName();
                 }
@@ -156,7 +169,7 @@ public class SpriteAnim : MonoBehaviour
                         m_isWaiting = false;
                         PlayAnimation(m_waitingAnimationName, false);
                     }
-                    else if(m_availableAnimations[m_currentAnimation].m_loop)
+                    else if(ad.m_loop)
                     {
                         m_currentFrame = 0;
                     }
@@ -171,7 +184,7 @@ public class SpriteAnim : MonoBehaviour
 
                         if(AnimFinished != null)
                         {
-                            AnimFinished(this, m_availableAnimations[m_currentAnimation].m_name);
+                            AnimFinished(this, ad.m_name);
                         }
                     }
                 }                
