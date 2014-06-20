@@ -29,6 +29,8 @@ public class SpriteAnim : MonoBehaviour
         public bool m_loop;
         [SerializeField]
         public bool m_isReverse;
+        [SerializeField]
+        public string m_sequencedAnimation;
     }
 
     [SerializeField]
@@ -157,14 +159,17 @@ public class SpriteAnim : MonoBehaviour
                     ++m_currentFrame;
                 }
 
-                //if((m_currentFrame < ad.m_numFrames && !ad.m_isReverse) || (m_currentFrame > -ad.m_numFrames && ad.m_isReverse))
                 if(Mathf.Abs(m_currentFrame) < Mathf.Abs(ad.m_numFrames))
                 {
                     SetSpriteName();
                 }
                 else
                 {
-                    if(m_isWaiting)
+                    if(!String.IsNullOrEmpty(ad.m_sequencedAnimation) && HasAnim(ad.m_sequencedAnimation))
+                    {
+                        PlayAnimation(ad.m_sequencedAnimation, false);
+                    }
+                    else if(m_isWaiting)
                     {
                         m_isWaiting = false;
                         PlayAnimation(m_waitingAnimationName, false);
