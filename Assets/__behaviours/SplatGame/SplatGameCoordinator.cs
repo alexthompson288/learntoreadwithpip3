@@ -232,8 +232,9 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 
     void PlayHint()
     {
-		m_audioSource.clip = GetCurrentAudio();
-		m_audioSource.Play();
+        StartCoroutine(m_benny.PlayAudio());
+		//m_audioSource.clip = GetCurrentAudio();
+		//m_audioSource.Play();
     }
 
     public IEnumerator SpawnQuestion()
