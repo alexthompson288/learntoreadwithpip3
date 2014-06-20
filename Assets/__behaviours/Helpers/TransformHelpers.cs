@@ -3,6 +3,11 @@ using System.Collections;
 
 public static class TransformHelpers 
 {
+    public static float GetDuration(Transform tra, Vector3 targetPos, float speed)
+    {
+        return (targetPos - tra.position).magnitude / speed;
+    }
+
 	public static bool ApproxPos(GameObject a, GameObject b)
 	{
 		return ApproxPos(a.transform.position, b.transform.position);

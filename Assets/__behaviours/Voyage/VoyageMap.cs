@@ -24,6 +24,34 @@ public class VoyageMap : MonoBehaviour
     private SimpleSpriteAnim[] m_delayedSpriteAnims;
     [SerializeField]
     private AudioSource m_locationNameAudioSource;
+    [SerializeField]
+    private GameObject m_pipPrefab;
+    [SerializeField]
+    private Transform m_pipLocation;
+
+#if UNITY_EDITOR
+    [SerializeField]
+    private Transform m_testLocation;
+
+    void Update()
+    {
+        if (m_testLocation != null)
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                m_pipAnim.MoveToPos(m_pipLocation.position);
+                //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
+            } 
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                m_pipAnim.MoveToPos(m_testLocation.position);
+                //StartCoroutine(m_pipAnim.MoveToPosCo(m_testLocation.position));
+            }
+        }
+    }
+#endif
+
+    static PipAnim m_pipAnim;
 
     // We set the color in the editor instead of the moduleId. This is because of human error: When creating a new map, it is easier to select the correct color from a dropdown menu than to enter the correct moduleId from a wide array of options
 
@@ -43,8 +71,19 @@ public class VoyageMap : MonoBehaviour
         }
     }
 
-    public IEnumerator Start()
+    public static void DestroyPip()
     {
+        if (m_pipAnim != null)
+        {
+            Destroy(m_pipAnim.gameObject);
+        }
+    }
+
+
+    IEnumerator Start()
+    {
+        Debug.Log("VoyageMap.Start()");
+
         m_locationNameAudioSource.Play();
 
         StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -87,6 +126,27 @@ public class VoyageMap : MonoBehaviour
             GameObject newSessionButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionButtonPrefab, m_sessionButtonGrid.transform);
             newSessionButton.GetComponent<VoyageSessionButton>().SetUp(session, m_color, dataType);
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        yield return null;
+        
+        if (m_pipAnim == null)
+        {
+            Debug.Log("Spawning Pip");
+            Transform pipParent = VoyageCoordinator.Instance.GetPipParent();
+            m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, pipParent).GetComponent<PipAnim>() as PipAnim;
+            
+            yield return null;
+            
+            m_pipAnim.transform.position = m_pipLocation.position;
+        }
+        else
+        {
+            Debug.Log("Found Pip");
+            m_pipAnim.MoveToPos(m_pipLocation.position);
+            //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         yield return new WaitForSeconds(1.5f);
 
@@ -131,4 +191,42 @@ public class VoyageMap : MonoBehaviour
     {
         VoyageCoordinator.Instance.MoveToModuleMap((int)m_color + click.GetInt());
     }
+
+    /*
+    void Awake()
+    {
+        Debug.Log("VoyageMap.Awake()");
+
+        if (m_pipAnim == null)
+        {
+            Debug.Log("Spawning Pip");
+            Transform pipParent = VoyageCoordinator.Instance.GetPipParent();
+
+            Debug.Log("PRE - " + pipParent.transform.position);
+            Debug.Log("GLO - " + m_pipLocation.position);
+            Debug.Log("LOC - " + m_pipLocation.localPosition);
+
+            Vector3 globalPos = m_pipLocation.TransformPoint(m_pipLocation.position);
+            Debug.Log("globalPos: " + globalPos);
+
+            pipParent.transform.position = m_pipLocation.position;
+
+            Debug.Log("POST - " + pipParent.transform.position);
+
+            m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, pipParent).GetComponent<PipAnim>() as PipAnim;
+
+            //m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, VoyageCoordinator.Instance.GetPipPanelTransform()).GetComponent<PipAnim>() as PipAnim;
+            //m_pipAnim.transform.position = m_pipLocation.position;
+
+            //m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipLocation).GetComponent<PipAnim>() as PipAnim;
+            //m_pipAnim.transform.parent = VoyageCoordinator.Instance.GetPipPanelTransform();
+        }
+        else
+        {
+            Debug.Log("Found Pip");
+            //m_pipAnim.transform.parent = m_pipLocation;
+            StartCoroutine(m_pipAnim.MoveToPos(m_pipLocation.position));
+        }
+    }
+     */ 
 }

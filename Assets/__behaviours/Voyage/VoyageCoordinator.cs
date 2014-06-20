@@ -6,6 +6,8 @@ using Wingrove;
 public class VoyageCoordinator : Singleton<VoyageCoordinator> 
 {
     [SerializeField]
+    private Transform m_pipParent;
+    [SerializeField]
     private GameObject m_movingCamera;
     [SerializeField]
     private float m_cameraTweenDuration;
@@ -55,6 +57,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     public void SetSectionId(int sectionId)
     {
         m_sectionId = sectionId;
+    }
+
+    public Transform GetPipParent()
+    {
+        return m_pipParent;
     }
 
     int CompareModuleMapColor(GameObject a, GameObject b)

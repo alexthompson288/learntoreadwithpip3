@@ -26,6 +26,8 @@ public class NavMenu : Singleton<NavMenu>
     private Transform m_gamesButton;
     [SerializeField]
     private Transform m_storiesButton;
+    [SerializeField]
+    private Collector m_pipAnim;
 
 	void Awake()
 	{
@@ -80,11 +82,15 @@ public class NavMenu : Singleton<NavMenu>
 			m_mainMoveable.Off();
 			m_roomMoveable.Off();
 			m_buyMoveable.Off();
+
+            m_pipAnim.StopAnim();
 		}
 		else
 		{
 			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 			m_mainMoveable.On();
+
+            m_pipAnim.StartAnim();
 		}
 	}
 
