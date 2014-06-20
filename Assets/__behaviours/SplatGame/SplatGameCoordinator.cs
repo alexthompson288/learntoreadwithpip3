@@ -34,6 +34,8 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 	[SerializeField]
 	private ChangeableBennyAudio m_bennyTheBook;
     [SerializeField]
+    private Benny m_benny;
+    [SerializeField]
     private AudioClip m_chooseChicken;
     [SerializeField]
     private AudioClip m_chooseFirefly;
@@ -63,7 +65,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     {
 		m_blackBoard.MoveWidgets();
 		//m_bennyTheBook.SetUp("SPLAT_INSTRUCTION", 3.5f);
-		m_bennyTheBook.SetUp(null, 0f);
+		//m_bennyTheBook.SetUp(null, 0f);
 	
 		
         // always pip, always winner
@@ -263,7 +265,8 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
             m_spawnedObjects.Add(newSplat);
         }
 		
-		m_bennyTheBook.SetChangeableInstruction(GetCurrentAudio());
+		//m_bennyTheBook.SetChangeableInstruction(GetCurrentAudio());
+        m_benny.ChangeLastAudio(GetCurrentAudio());
 		
 		PlayHint();
 
