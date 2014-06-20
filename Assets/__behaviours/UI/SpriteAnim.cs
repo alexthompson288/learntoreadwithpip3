@@ -75,6 +75,12 @@ public class SpriteAnim : MonoBehaviour
         }
     }
 
+    public void Stop()
+    {
+        StopAllCoroutines();
+        m_playAnim = false;
+    }
+
     public void StopRandom()
     {
         StopAllCoroutines();
