@@ -67,7 +67,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        m_benny.InsertAudio(m_instructionAudio);
+        m_benny.SetFirst(m_instructionAudio);
         StartCoroutine(m_benny.PlayAudio());
 
         m_trollCollider.SingleClicked += OnClickTroll;

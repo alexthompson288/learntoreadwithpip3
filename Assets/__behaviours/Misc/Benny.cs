@@ -6,38 +6,25 @@ public class Benny : Collector
 {
     [SerializeField]
     private AudioSource m_audioSource;
+    [SerializeField]
+    private AudioClip[] m_clips = new AudioClip[2];
 
-    private List<AudioClip> m_clips = new List<AudioClip>();
+
+    public void SetFirst(AudioClip clip)
+    {
+        m_clips[0] = clip;
+    }
+
+    public void SetSecond(AudioClip clip)
+    {
+        m_clips[1] = clip;
+    }
 
     bool m_isPlaying = false;
 
     void Awake()
     {
         m_anim.AnimFinished += OnAnimFinish;
-    }
-
-    public void InsertAudio(AudioClip clip, int index = -1)
-    {
-        if (index < 0 || index >= m_clips.Count)
-        {
-            m_clips.Add(clip);
-        }
-        else
-        {
-            m_clips[index] = clip;
-        }
-    }
-
-    public void ChangeLastAudio(AudioClip clip)
-    {
-        if (m_clips.Count > 0)
-        {
-            m_clips [m_clips.Count - 1] = clip;
-        }
-        else
-        {
-            m_clips.Add(clip);
-        }
     }
 
     void OnClick()
@@ -55,15 +42,18 @@ public class Benny : Collector
 
         foreach (AudioClip clip in m_clips)
         {
-            m_audioSource.clip = clip;
-            m_audioSource.Play();
+            if (clip != null)
+            {
+                m_audioSource.clip = clip;
+                m_audioSource.Play();
+            }
 
-            while(m_audioSource.isPlaying)
+            while (m_audioSource.isPlaying)
             {
                 yield return null;
             }
         }
-
+        
         m_anim.PlayAnimation("CLOSE");
 
         m_isPlaying = false;

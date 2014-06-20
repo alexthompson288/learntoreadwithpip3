@@ -260,7 +260,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
             m_spawnedObjects.Add(newSplat);
         }
 		
-        m_benny.ChangeLastAudio(GetCurrentAudio());
+        m_benny.SetFirst(GetCurrentAudio());
 		
 		PlayHint();
 

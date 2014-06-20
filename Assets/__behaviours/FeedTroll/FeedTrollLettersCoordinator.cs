@@ -133,7 +133,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 
         //UserStats.Activity.AddPhoneme(m_currentLetterData);
 		
-		m_benny.ChangeLastAudio(m_graphemeAudio[m_currentLetterData]);
+		m_benny.SetFirst(m_graphemeAudio[m_currentLetterData]);
 		
 		PlayLetterSound(m_currentLetterData);
 		
