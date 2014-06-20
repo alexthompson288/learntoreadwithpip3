@@ -31,8 +31,6 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     private UITexture m_worldTexture;
     [SerializeField]
     private TweenOnOffBehaviour[] m_selectSkinButtons;
-	[SerializeField]
-	private ChangeableBennyAudio m_bennyTheBook;
     [SerializeField]
     private Benny m_benny;
     [SerializeField]
@@ -64,10 +62,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
     IEnumerator Start()
     {
 		m_blackBoard.MoveWidgets();
-		//m_bennyTheBook.SetUp("SPLAT_INSTRUCTION", 3.5f);
-		//m_bennyTheBook.SetUp(null, 0f);
 	
-		
         // always pip, always winner
         SessionInformation.Instance.SetPlayerIndex(0, 3);
         SessionInformation.Instance.SetWinner(0);
@@ -265,7 +260,6 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
             m_spawnedObjects.Add(newSplat);
         }
 		
-		//m_bennyTheBook.SetChangeableInstruction(GetCurrentAudio());
         m_benny.ChangeLastAudio(GetCurrentAudio());
 		
 		PlayHint();

@@ -34,8 +34,6 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
     [SerializeField]
     private GameObject m_videoHierarchy;
 	[SerializeField]
-	private ChangeableBennyAudio m_bennyTheBook;
-	[SerializeField]
 	private AudioSource m_audioSource;
     [SerializeField]
     private AudioClip m_instructionAudio;
@@ -45,6 +43,8 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
     private Blackboard m_blackBoard;
 	[SerializeField]
 	private int[] m_difficultyNumSpawn;
+    [SerializeField]
+    private Benny m_benny;
 	
 	int m_numSpawn;
 	
@@ -65,8 +65,6 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 
 	IEnumerator Start () 
 	{
-		m_bennyTheBook.SetUp(null, 0);
-		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
 		// Always Pip, Always winner
@@ -135,7 +133,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 
         //UserStats.Activity.AddPhoneme(m_currentLetterData);
 		
-		m_bennyTheBook.SetChangeableInstruction(m_graphemeAudio[m_currentLetterData]);
+		m_benny.ChangeLastAudio(m_graphemeAudio[m_currentLetterData]);
 		
 		PlayLetterSound(m_currentLetterData);
 		

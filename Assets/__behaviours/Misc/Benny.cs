@@ -6,10 +6,15 @@ public class Benny : Collector
 {
     [SerializeField]
     private AudioSource m_audioSource;
-    [SerializeField]
+
     private List<AudioClip> m_clips = new List<AudioClip>();
 
     bool m_isPlaying = false;
+
+    void Awake()
+    {
+        m_anim.AnimFinished += OnAnimFinish;
+    }
 
     public void InsertAudio(AudioClip clip, int index = -1)
     {
@@ -44,7 +49,7 @@ public class Benny : Collector
         }
     }
 
-    IEnumerator PlayAudio()
+    public IEnumerator PlayAudio()
     {
         m_anim.PlayAnimation("OPEN");
 
@@ -62,5 +67,18 @@ public class Benny : Collector
         m_anim.PlayAnimation("CLOSE");
 
         m_isPlaying = false;
+    }
+
+    void OnAnimFinish(SpriteAnim anim, string animName)
+    {
+        if (animName == "OPEN")
+        {
+            m_anim.StopRandom();
+        }
+    }
+
+    public bool IsPlaying()
+    {
+        return m_audioSource.isPlaying;
     }
 }

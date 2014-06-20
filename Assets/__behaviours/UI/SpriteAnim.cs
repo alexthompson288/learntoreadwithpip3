@@ -51,7 +51,7 @@ public class SpriteAnim : MonoBehaviour
     bool m_isWaiting = false;
     string m_waitingAnimationName;
     
-    void Awake()
+    void Start()
     {
         if(m_sprite == null)
         {
@@ -67,17 +67,21 @@ public class SpriteAnim : MonoBehaviour
 
         if (m_playAnim && m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], false);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], true);
         }
+    }
+
+    public void StopRandom()
+    {
+        StopAllCoroutines();
     }
 
     IEnumerator PlayRandom()
     {
         yield return new WaitForSeconds(UnityEngine.Random.Range(m_randomDelayRange.x, m_randomDelayRange.y));
-
         if (m_randomAnimationNames.Count > 0)
         {
-            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], false);
+            PlayAnimation(m_randomAnimationNames[UnityEngine.Random.Range(0, m_randomAnimationNames.Count)], true);
         }
     }
 
@@ -158,16 +162,16 @@ public class SpriteAnim : MonoBehaviour
                     }
                     else
                     {
-                        if(AnimFinished != null)
-                        {
-                            AnimFinished(this, m_availableAnimations[m_currentAnimation].m_name);
-                        }
-
                         m_playAnim = false;
 
                         if(m_randomAnimationNames.Count > 0)
                         {
                             StartCoroutine(PlayRandom());
+                        }
+
+                        if(AnimFinished != null)
+                        {
+                            AnimFinished(this, m_availableAnimations[m_currentAnimation].m_name);
                         }
                     }
                 }                
