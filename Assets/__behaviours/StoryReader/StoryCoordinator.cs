@@ -251,7 +251,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     void UpdatePicture(DataRow storyPage)
     {
-        m_storyPicture.mainTexture = DataHelpers.GetPicture("storypages", storyPage);
+        m_storyPicture.mainTexture = DataHelpers.GetPicture(storyPage);
     }
 
     void UpdatePicture()

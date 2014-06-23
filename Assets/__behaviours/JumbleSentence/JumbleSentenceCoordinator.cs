@@ -107,7 +107,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         bool hasSetPicture = false;
         if (m_currentData ["correct_image_name"] != null)
         {
-            m_picture.mainTexture = DataHelpers.GetPicture("correctcaptions", m_currentData);
+            m_picture.mainTexture = DataHelpers.GetPicture(m_currentData);
 
             if(m_picture.mainTexture != null)
             {

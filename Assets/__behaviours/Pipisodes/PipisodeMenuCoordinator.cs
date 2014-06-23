@@ -71,12 +71,9 @@ public class PipisodeMenuCoordinator : MonoBehaviour
                 GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, m_grid.transform);
 
                 button.GetComponent<PipisodeButton>().SetUp(m_pipisodes[i], m_draggablePanel, m_videoPlayer);
-                //button.GetComponentInChildren<UITexture>().mainTexture = DataHelpers.GetPicture("pipisodes", m_pipisodes[i]);
-                
+
                 button.GetComponent<ClickEvent>().SingleClicked += OnChoosePipisode;
                 button.GetComponent<ClickEvent>().SetData(m_pipisodes[i]);
-                
-                //button.GetComponent<UIDragPanelContents>().draggablePanel = m_draggablePanel;
             }
             
             m_grid.Reposition();
@@ -139,7 +136,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
 
         // Image
-        m_pipisodeImage.mainTexture = DataHelpers.GetPicture("pipisodes", m_currentPipisode);
+        m_pipisodeImage.mainTexture = DataHelpers.GetPicture(m_currentPipisode);
 
         Vector3 imageScale = m_pipisodeImage.mainTexture != null ? Vector3.one : Vector3.zero;
         iTween.ScaleTo(m_pipisodeImage.gameObject, imageScale, m_tweenDuration);

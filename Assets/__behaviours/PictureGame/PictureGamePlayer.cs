@@ -6,7 +6,7 @@ using Wingrove;
 public class PictureGamePlayer : GamePlayer 
 {
     [SerializeField]
-    private ProgressScoreBar m_scoreBar;
+    private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private GameObject m_wordButtonPrefab;
     [SerializeField]
@@ -26,11 +26,10 @@ public class PictureGamePlayer : GamePlayer
     [SerializeField]
     private int[] m_wordsToSpawnForDifficulty;
 
-    private int m_score = 0;
     //private int m_numLives = 3;
 
-    List<DataRow> m_remainingWords = null;
-    List<DataRow> m_allWords = null;
+    List<DataRow> m_remainingWords = new List<DataRow>();
+    List<DataRow> m_wordPool = new List<DataRow>();
 
     List<WordSelectionButton> m_selectionButtons = new List<WordSelectionButton>();
 
@@ -39,7 +38,7 @@ public class PictureGamePlayer : GamePlayer
     DataRow m_currentWordData = null;
     string m_currentWord;
 
-	int m_maxSpawn = 0;
+	int m_maxSpawn = 2;
 
     public override void SelectCharacter(int characterIndex)
     {
@@ -54,43 +53,95 @@ public class PictureGamePlayer : GamePlayer
         PictureGameCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
-    public void SetTimer(float timerT)
+    void ShowNextQuestion()
     {
-        m_scoreBar.SetTimer(timerT);
+        Debug.Log("Player ShowNextQuestion()");
+        
+        if (m_remainingWords.Count == 0)
+        {
+            m_remainingWords.AddRange(m_wordPool);
+        }
+        
+        
+        m_currentWordData = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
+
+        m_wordAudio = DataHelpers.GetShortAudio(m_currentWordData);
+        
+        HashSet<DataRow> allFour = new HashSet<DataRow>();
+        allFour.Add(m_currentWordData);
+        while (allFour.Count < m_maxSpawn)
+        {
+            allFour.Add(m_wordPool[Random.Range(0, m_wordPool.Count)]);
+        }
+        
+        List<GameObject> newLocatorList = new List<GameObject>();
+        newLocatorList.AddRange(m_locators);
+        foreach (DataRow wordRow in allFour)
+        {
+            GameObject locator = newLocatorList[Random.Range(0, newLocatorList.Count)];
+            
+            GameObject spawnedWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordButtonPrefab, locator.transform);
+            spawnedWord.GetComponent<WordSelectionButton>().SetUp(wordRow == m_currentWordData,
+                                                                  wordRow["word"].ToString(), this, m_wordsOffTransform);
+            
+            
+            m_selectionButtons.Add(spawnedWord.GetComponent<WordSelectionButton>());
+            newLocatorList.Remove(locator);
+        }
+
+        m_imageBlackboard.ShowImage(DataHelpers.GetPicture(m_currentWordData), null, null, m_currentWordData["word"].ToString());
+        
+        if (SessionInformation.Instance.GetNumPlayers() != 2)
+        {
+            GetComponent<AudioSource>().clip = m_wordAudio;
+            GetComponent<AudioSource>().Play();
+        }
+        
+        m_remainingWords.Remove(m_currentWordData);
+        m_currentWord = m_currentWordData["word"].ToString();
+        Resources.UnloadUnusedAssets();
     }
 
+    /*
     void ShowNextQuestion()
     {
 		Debug.Log("Player ShowNextQuestion()");
 
-		Texture2D selectedTex = null;
-		DataRow selectedQuestion = null;
+        if (m_remainingWords.Count == 0)
+        {
+            m_remainingWords.AddRange(m_wordPool);
+        }
 
-		while(selectedTex == null)
-		{
-			selectedQuestion = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
-			selectedTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
-		}
+		
+        m_currentWordData = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
+        Texture2D selectedTex = DataHelpers.GetPicture(m_currentWordData);
 
-        m_currentWordData = selectedQuestion;
+		//while(selectedTex == null)
+		//{
+			//selectedQuestion = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
+			//selectedTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
+		//}
+
+
+       // m_currentWordData = selectedQuestion;
+
 
         //UserStats.Activity.AddWord(m_currentWordData);
 
         Resources.UnloadUnusedAssets();
-        AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(selectedQuestion["word"].ToString());
+        AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWordData["word"].ToString());
         m_wordAudio = loadedAudio;
 
         HashSet<DataRow> allFour = new HashSet<DataRow>();
-        allFour.Add(selectedQuestion);
+        allFour.Add(m_currentWordData);
         //while (allFour.Count < m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		while (allFour.Count < m_maxSpawn)
 		{
-            DataRow newWord = m_allWords[Random.Range(0, m_allWords.Count)];
+            DataRow newWord = m_wordPool[Random.Range(0, m_wordPool.Count)];
             bool okToAdd = true;
             foreach (DataRow dr in allFour)
             {
-				Texture2D dummyTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + newWord["word"].ToString());;
-                if (dr["word"].ToString() == newWord["word"].ToString() || dummyTex == null)
+                if (dr["word"].ToString() == newWord["word"].ToString() || DataHelpers.GetPicture(newWord) != null)
                 {
                     okToAdd = false;
                 }
@@ -109,7 +160,7 @@ public class PictureGamePlayer : GamePlayer
             GameObject locator = newLocatorList[Random.Range(0, newLocatorList.Count)];
 
             GameObject spawnedWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordButtonPrefab, locator.transform);
-            spawnedWord.GetComponent<WordSelectionButton>().SetUp(wordRow == selectedQuestion,
+            spawnedWord.GetComponent<WordSelectionButton>().SetUp(wordRow == m_currentWordData,
                 wordRow["word"].ToString(), this, m_wordsOffTransform);
 
 
@@ -117,17 +168,20 @@ public class PictureGamePlayer : GamePlayer
             newLocatorList.Remove(locator);
         }
 
-        Texture2D wordImage = null;
-        if ((selectedQuestion["image"] != null) && (!string.IsNullOrEmpty(selectedQuestion["image"].ToString())))
-        {
-            wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["image"].ToString());
-        }
-        else
-        {
-            wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
-        }
+        Texture2D wordImage = DataHelpers.GetPicture(m_currentWordData);
 
-        m_imageBlackboard.ShowImage(wordImage, null, null, selectedQuestion["word"].ToString());
+        //if ((m_currentWordData["image"] != null) && (!string.IsNullOrEmpty(m_currentWordData["image"].ToString())))
+        //{
+            //wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["image"].ToString());
+            //DataHelpers.GetPicture(m_currentWordData);
+        //}
+        //else
+        //{
+            //wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
+        //}
+
+
+        m_imageBlackboard.ShowImage(wordImage, null, null, m_currentWordData["word"].ToString());
 
         if (SessionInformation.Instance.GetNumPlayers() != 2)
         {
@@ -135,59 +189,26 @@ public class PictureGamePlayer : GamePlayer
             GetComponent<AudioSource>().Play();
         }
 
-        m_remainingWords.Remove(selectedQuestion);
-        m_currentWord = selectedQuestion["word"].ToString();
+        m_remainingWords.Remove(m_currentWordData);
+        m_currentWord = m_currentWordData["word"].ToString();
 		Resources.UnloadUnusedAssets();
     }
+    */
 
     public void StartGame()
     {
-		Debug.Log("Player StartGame()");
-        m_allWords = PictureGameCoordinator.Instance.GetWordList();
-		Debug.Log("m_allWords.Count: " + m_allWords.Count);
-        m_remainingWords = new List<DataRow>();
-        m_remainingWords.AddRange(m_allWords);
-		Debug.Log("m_remainingWords.Count: " + m_remainingWords.Count);
+        m_wordPool = PictureGameCoordinator.Instance.GetWordList();
+        m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
+        m_remainingWords.AddRange(m_wordPool);
 
-		if(m_targetScore > m_allWords.Count)
-		{
-			m_targetScore = m_allWords.Count;
-		}
-
-		for(int i = m_allWords.Count - 1; i > -1; --i)
-		{
-			Debug.Log("word: " + m_allWords[i]["word"].ToString());
-			Texture2D tex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + m_allWords[i]["word"].ToString());
-			
-			Debug.Log("tex: " + tex);
-			if(tex != null)
-			{
-				++m_maxSpawn;
-			}
-			else
-			{
-				if(m_remainingWords.Contains(m_allWords[i]))
-				{
-					m_remainingWords.Remove(m_allWords[i]);
-				}
-
-				m_allWords.RemoveAt(i);
-			}
-		}
+        Debug.Log("wordPool.Count: " + m_wordPool.Count);
 
 		Resources.UnloadUnusedAssets();
 
-		if(m_maxSpawn > m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()])
-		{
-			m_maxSpawn = m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()];
-		}
+        m_maxSpawn = Mathf.Min(m_maxSpawn, m_wordPool.Count);
+        //m_maxSpawn = Mathf.Min(m_maxSpawn, m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 
-		if(m_maxSpawn > m_allWords.Count)
-		{
-			m_maxSpawn = m_allWords.Count;
-		}
-
-		if(m_allWords.Count == 0)
+		if(m_wordPool.Count == 0)
 		{
 			SessionInformation.SetDefaultPlayerVar();
 			GameManager.Instance.CompleteGame();
@@ -195,7 +216,7 @@ public class PictureGamePlayer : GamePlayer
 
 		Debug.Log("m_maxSpawn: " + m_maxSpawn);
 
-        m_scoreBar.SetStarsTarget(m_targetScore);
+        m_scoreKeeper.SetTargetScore(m_targetScore);
         
         ShowNextQuestion();
     }
@@ -216,12 +237,11 @@ public class PictureGamePlayer : GamePlayer
     {
         //UserStats.Activity.IncrementNumAnswers();
 
+        int scoreDelta = correct ? 1 : -1;
+        m_scoreKeeper.UpdateScore(scoreDelta);
+
         if (correct)
         {
-            m_score++;
-            m_scoreBar.SetScore(m_score);
-            m_scoreBar.SetStarsCompleted(m_score);
-
             foreach (WordSelectionButton wsb in m_selectionButtons)
             {
                 if (incoming == wsb)
@@ -248,7 +268,7 @@ public class PictureGamePlayer : GamePlayer
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SFX_SPARKLE");
 
-            if (m_score != m_targetScore && m_remainingWords.Count > 0)
+            if (!m_scoreKeeper.HasCompleted() && m_remainingWords.Count > 0)
             {
                 yield return new WaitForSeconds(1.0f);
 
@@ -281,19 +301,16 @@ public class PictureGamePlayer : GamePlayer
     public void WordClicked(bool correct, WordSelectionButton incoming)
     {
         StartCoroutine(WordClickedCoroutine(correct, incoming));
-
-
     }
 
     public bool HasFinished()
     {
-        //return ((m_numLives == 0) || (m_score == m_targetScore));
-        return m_score >= m_targetScore;
+        return m_scoreKeeper.HasCompleted();
     }
 
     public bool HasWon()
     {
-        return (m_score == m_targetScore);
+        return m_scoreKeeper.GetScore() == m_targetScore;
     }
 
     public void ShowRetryPrompt()

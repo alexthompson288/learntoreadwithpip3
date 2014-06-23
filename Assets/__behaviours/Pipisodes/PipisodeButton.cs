@@ -17,7 +17,7 @@ public class PipisodeButton : MonoBehaviour
     {
         m_pipisode = pipisode;
 
-        m_pipisodeImage.mainTexture = DataHelpers.GetPicture("pipisodes", m_pipisode);
+        m_pipisodeImage.mainTexture = DataHelpers.GetPicture(m_pipisode);
 
         m_dragPanelContents.draggablePanel = draggablePanel;
 

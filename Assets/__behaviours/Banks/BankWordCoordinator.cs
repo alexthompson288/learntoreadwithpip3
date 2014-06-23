@@ -75,7 +75,7 @@ public class BankWordCoordinator : MonoBehaviour
             Debug.Log("word: " + word);
             
             //Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
-            Texture2D tex = DataHelpers.GetPicture("words", m_wordPool[m_currentIndex]);
+            Texture2D tex = DataHelpers.GetPicture(m_wordPool[m_currentIndex]);
             Debug.Log("tex: " + tex);
             float tweenDuration = 0.3f;
             if (tex != null)

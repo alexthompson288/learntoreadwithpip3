@@ -76,7 +76,7 @@ public class QuizCoordinator : MonoBehaviour
             NGUIHelpers.MaxLabelWidth(m_questionLabel, 1600);
         }
 
-        Texture2D tex = DataHelpers.GetPicture("quizquestions", m_currentQuestion);
+        Texture2D tex = DataHelpers.GetPicture(m_currentQuestion);
         m_questionTexture.mainTexture = tex;
         //m_questionTexture.MakePixelPerfect();
         m_questionTexture.gameObject.SetActive(tex != null);

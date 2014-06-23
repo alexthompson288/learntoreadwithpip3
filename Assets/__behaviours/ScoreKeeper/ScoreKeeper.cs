@@ -64,4 +64,9 @@ public class ScoreKeeper : MonoBehaviour
         Debug.Log("base.HasFinished()");
         return true;
     }
+
+    public int GetScore()
+    {
+        return m_score;
+    }
 }

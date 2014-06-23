@@ -195,21 +195,11 @@ public class StoryMenuCoordinator : MonoBehaviour
             DataRow story = m_currentBookButton.GetData();
 
             float maxLabelWidth = 600;
-            //NGUIHelpers.SetLabel(m_titleLabel, story, "title", maxLabelWidth);
-            //NGUIHelpers.SetLabel(m_descriptionLabel, story, "description", maxLabelWidth);
 
             NGUIHelpers.SetLabel(m_titleLabel, story, "title");
             NGUIHelpers.SetLabel(m_descriptionLabel, story, "description");
 
-            /*
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id=" + System.Convert.ToInt32(story ["id"]));
-            if (dt.Rows.Count > 0)
-            {
-                m_storyPicture.mainTexture = DataHelpers.GetPicture("storypages", dt.Rows[0]);
-            }
-            */
-
-            m_storyPicture.mainTexture = DataHelpers.GetPicture("stories", story);
+            m_storyPicture.mainTexture = DataHelpers.GetPicture(story);
 
             Vector3 storyPictureScale = m_storyPicture.mainTexture != null ? Vector3.one : Vector3.zero;
             iTween.ScaleTo(m_storyPicture.gameObject, storyPictureScale, m_tweenDuration);

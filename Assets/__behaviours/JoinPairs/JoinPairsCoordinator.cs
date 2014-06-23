@@ -147,12 +147,12 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         if (m_dataType != "numbers")
         {
-            m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+            m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
         }
 
         foreach (DataRow data in m_dataPool)
         {
-            m_pictures[data] = DataHelpers.GetPicture(m_dataType, data);
+            m_pictures[data] = DataHelpers.GetPicture(data);
         }
 
         if(m_dataPool.Count > 0)

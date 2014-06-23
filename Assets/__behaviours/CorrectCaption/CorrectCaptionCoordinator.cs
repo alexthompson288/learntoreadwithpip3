@@ -100,7 +100,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
         }
 #endif
 
-        DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+        DataHelpers.OnlyPictureData(m_dataPool);
 
         //Debug.Log("m_dataPool.Count: " + m_dataPool.Count);
 
@@ -152,7 +152,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
             CollectionHelpers.Shuffle(m_remainingAttributes);
 
-            Texture2D tex = DataHelpers.GetPicture(m_dataType, m_currentData);
+            Texture2D tex = DataHelpers.GetPicture(m_currentData);
 
             if (m_currentData[m_goodAttribute] != null && tex != null) // if "good_sentence" is null then the player is unable to answer correctly, if tex is null the question is unfair
             {

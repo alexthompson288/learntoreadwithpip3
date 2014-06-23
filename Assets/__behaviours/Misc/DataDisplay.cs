@@ -47,7 +47,7 @@ public class DataDisplay : MonoBehaviour
             }
             else
             {
-                m_pictureTexture.mainTexture = DataHelpers.GetPicture(m_dataType, m_data);
+                m_pictureTexture.mainTexture = DataHelpers.GetPicture(m_data);
 
                 if (m_pictureTexture.mainTexture == null)
                 {

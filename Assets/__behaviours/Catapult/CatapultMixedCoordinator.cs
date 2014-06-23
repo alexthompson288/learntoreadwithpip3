@@ -87,7 +87,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
             m_dataPool.AddRange(DataHelpers.GetNonReadableWords());
         }
 
-        m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
 
         Target[] targets = UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[];
 
@@ -121,7 +121,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 if(!DataHelpers.HasOnsetWords(m_currentData, m_dataPool))
                 {
                     m_dataPool.AddRange(DataHelpers.GetOnsetWords(m_currentData, 3, true));
-                    m_dataPool = DataHelpers.OnlyPictureData(m_dataType, m_dataPool);
+                    m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
                 }
             }
             else
@@ -212,7 +212,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             if(IsDataMixed())
             {
-                Texture2D tex = DataHelpers.GetPicture(m_dataType, target.data);
+                Texture2D tex = DataHelpers.GetPicture(target.data);
                 StopCoroutine("HideBlackboard");
                 m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data)["phoneme"].ToString(), "");
                 StartCoroutine("HideBlackboard");

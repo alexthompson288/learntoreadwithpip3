@@ -64,7 +64,7 @@ public class JoinableLineDraw : LineDraw
 
         if (m_joinableType == JoinableType.Picture)
         {
-            m_pictureTexture.mainTexture = DataHelpers.GetPicture(dataType, m_data);
+            m_pictureTexture.mainTexture = DataHelpers.GetPicture(m_data);
         } 
         else if (m_joinableType == JoinableType.Text)
         {

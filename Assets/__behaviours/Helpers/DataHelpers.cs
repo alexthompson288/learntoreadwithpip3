@@ -125,6 +125,87 @@ public static class DataHelpers
         return dataPool;
     }
 
+    public static Texture2D GetPicture(DataRow data)
+    {
+        Texture2D tex = null;
+
+        switch (data.GetTableName())
+        {
+            case "phonemes":
+            case "data_phonemes":
+                if(data["phoneme"] != null && data["mneumonic"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
+                }
+                break;
+            case "words":
+            case "data_words":
+                if(data["word"] != null)
+                {
+                    tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
+                }
+                break;
+            case "datasentences":
+                if(data["correct_image_name"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(data["correct_image_name"].ToString());
+                    if(tex == null)
+                    {
+                        tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
+                    }
+                }
+                break;
+            case "shapes":
+                if(data["name"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(data["name"].ToString());
+                }
+                break;
+            case "stories":
+                if(data["storycoverartwork"] != null)
+                {
+                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + data["storycoverartwork"].ToString());
+                }
+                break;
+            case "storypages":
+                string bgImageName = data["backgroundart"] == null ? "" : data["backgroundart"].ToString().Replace(".png", "");
+                tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
+                
+                if(tex == null)
+                {
+                    string imageName = data["image"] == null ? "" : data["image"].ToString().Replace(".png", "");
+                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
+                }
+                break;
+            case "pipisodes":
+                if(data["image_filename"] != null)
+                {
+                    tex = Resources.Load<Texture2D>(String.Format("Pictures/{0}", data["image_filename"]));
+                }
+                break;
+            default:
+                break;
+        }
+        
+        return tex;
+    }
+
+    public static List<DataRow> OnlyPictureData(List<DataRow> dataPool)
+    {
+        List<DataRow> hasPictureDataPool = new List<DataRow>();
+        
+        for (int i = 0; i < dataPool.Count; ++i)
+        {
+            if(GetPicture(dataPool[i]) != null)
+            {
+                hasPictureDataPool.Add(dataPool[i]);
+            }
+        }
+        
+        return hasPictureDataPool;
+    }
+
+    /*
     public static Texture2D GetPicture(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -193,6 +274,7 @@ public static class DataHelpers
         return tex;
     }
 
+
     public static List<DataRow> OnlyPictureData(string dataType, List<DataRow> dataPool)
     {
         List<DataRow> hasPictureDataPool = new List<DataRow>();
@@ -207,6 +289,7 @@ public static class DataHelpers
         
         return hasPictureDataPool;
     }
+    */
     
     public static string GetSpriteName(string dataType, DataRow data)
     {
@@ -258,59 +341,6 @@ public static class DataHelpers
         
         return clip;
     }
-
-    /*
-    public static AudioClip GetShortAudio(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-        
-        AudioClip clip = null;
-        
-        switch (dataType)
-        {
-            case "phonemes":
-                if(data["grapheme"] != null)
-                {
-                    clip = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
-                }
-                break;
-            case "words":
-            case "keywords":
-                if(data["word"] != null)
-                {
-                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
-                }
-                break;
-            case "sentences":
-                break;
-            case "numbers":
-                if(data["value"] != null)
-                {
-                    clip = LoaderHelpers.LoadAudioForNumber(data);
-                }
-                break;
-            default:
-                break;
-        }
-        
-        return clip;
-    }
-
-    public static AudioClip GetLongAudio(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-        
-        switch (dataType)
-        {
-            case "phonemes":
-                return LoaderHelpers.LoadMnemonic(data);
-                break;
-            default:
-                return GetShortAudio(dataType, data);
-                break;
-        }
-    }
-    */
 
     public static AudioClip GetLongAudio(DataRow data)
     {
@@ -823,7 +853,7 @@ public static class DataHelpers
 
         if (onlyPictures)
         {
-            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)) && GetPicture("words", x) != null);
+            onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)) && GetPicture(x) != null);
         }
         else
         {
