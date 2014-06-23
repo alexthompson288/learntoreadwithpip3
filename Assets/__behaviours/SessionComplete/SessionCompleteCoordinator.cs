@@ -34,6 +34,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
     private Transform m_pipLocation;
     [SerializeField]
     private ClickEvent m_nextButton;
+    [SerializeField]
+    private TweenOnOffBehaviour m_nextButtonTween;
 
 
     RotateConstantly m_currentRotateBehaviour = null;
@@ -195,5 +197,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
             //Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
             VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
         }
+
+        m_nextButtonTween.On();
     }
 }
