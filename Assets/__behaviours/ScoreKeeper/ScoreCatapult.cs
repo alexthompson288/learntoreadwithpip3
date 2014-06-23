@@ -166,5 +166,10 @@ public class ScoreCatapult : ScoreKeeper
         }
         #endif
     }
+
+    public override bool HasCompleted()
+    {
+        return m_score >= m_targetScore;
+    }
 }
 

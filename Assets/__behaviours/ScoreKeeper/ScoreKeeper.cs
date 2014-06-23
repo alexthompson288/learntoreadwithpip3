@@ -9,6 +9,7 @@ public class ScoreKeeper : MonoBehaviour
     [SerializeField]
     private List<string> m_incorrectAudio = new List<string>();
 
+    protected int m_numAnswered = 0;
     protected int m_score = 0;
     protected int m_targetScore;
 
@@ -49,6 +50,7 @@ public class ScoreKeeper : MonoBehaviour
 
     public virtual void UpdateScore(int delta = 1)
     {
+        ++ m_numAnswered;
         m_score += delta;
         m_score = Mathf.Clamp(m_score, 0, m_targetScore);
     }
@@ -56,4 +58,10 @@ public class ScoreKeeper : MonoBehaviour
     public virtual IEnumerator UpdateScore(GameObject targetGo, int delta = 1) { yield return null; }
 
     public virtual IEnumerator On() { yield return null; }
+
+    public virtual bool HasCompleted() 
+    {
+        Debug.Log("base.HasFinished()");
+        return true;
+    }
 }

@@ -36,13 +36,12 @@ public class ScorePip : ScoreKeeper
         
         float delta = Mathf.Abs((m_top.localPosition - m_bottom.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
-        //UpdatePlatformLevel(1);
     }
     
     public override void UpdateScore(int delta = 1)
     {
         base.UpdateScore(delta);
-        UpdatePlatformLevel(1); 
+        UpdatePlatformLevel(delta); 
     }
 
     public override IEnumerator UpdateScore(GameObject targetGo, int delta = 1)
@@ -74,24 +73,29 @@ public class ScorePip : ScoreKeeper
         
         Destroy(targetGo);
         
-        UpdatePlatformLevel(1);
+        UpdatePlatformLevel(delta);
     }
 
     void UpdatePlatformLevel(int delta)
     {
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("time", m_platformTweenDuration);
-        tweenArgs.Add("easetype", m_platformEaseType);
-        tweenArgs.Add("position", new Vector3(m_pipParent.localPosition.x, m_bottom.localPosition.y + (m_pointDistance * m_score), m_pipParent.localPosition.z));
-        tweenArgs.Add("islocal", true);
-        
-        iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
+        if (delta != 0)
+        {
+            Hashtable tweenArgs = new Hashtable();
+            tweenArgs.Add("time", m_platformTweenDuration);
+            tweenArgs.Add("easetype", m_platformEaseType);
+            tweenArgs.Add("position", new Vector3(m_pipParent.localPosition.x, m_bottom.localPosition.y + (m_pointDistance * m_score), m_pipParent.localPosition.z));
+            tweenArgs.Add("islocal", true);
+            
+            iTween.MoveTo(m_pipParent.gameObject, tweenArgs);
 
-        m_pipAnimManager.StopRandom();
-        m_pipAnim.AnimFinished += OnScoreAnimFinish;
-        //string animName = Random.Range(0, 2) == 1 ? "THUMBS_UP" : "GIGGLE";
-        //m_pipAnim.PlayAnimation(animName);
-        m_pipAnim.PlayAnimation("THUMBS_UP");
+            m_pipAnimManager.StopRandom();
+            m_pipAnim.AnimFinished += OnScoreAnimFinish;
+        }
+
+        if (delta > 0)
+        {
+            m_pipAnim.PlayAnimation("THUMBS_UP");
+        }
 
         PlayAudio(delta);
     }
@@ -154,5 +158,10 @@ public class ScorePip : ScoreKeeper
         {
             StartCoroutine(On());
         }
+    }
+
+    public override bool HasCompleted()
+    {
+        return m_score >= m_targetScore;
     }
 }

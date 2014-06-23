@@ -18,9 +18,9 @@ public class FlySwatPlayer : GamePlayer
     [SerializeField]
     private Transform m_swatterOff;
 
-    int m_score;
-
     List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
+
+    List<Spline> m_legalSplines = new List<Spline>();
 
     public override void SelectCharacter(int characterIndex)
     {
@@ -35,10 +35,7 @@ public class FlySwatPlayer : GamePlayer
         FlySwatCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
-    public int GetScore()
-    {
-        return m_score;
-    }
+
 
     public void ShowDataDisplay(string dataType, DataRow data)
     {
@@ -60,6 +57,8 @@ public class FlySwatPlayer : GamePlayer
     void Awake()
     {
         m_swatter.position = m_swatterOff.position;
+
+        m_legalSplines.AddRange(m_splines);
     }
 
     public void SetUp()
@@ -84,34 +83,63 @@ public class FlySwatPlayer : GamePlayer
 
     public IEnumerator SpawnFly()
     {
-        FlySwatCoordinator coordinator = FlySwatCoordinator.Instance; // Temporary variable saves lots of typing
+        //if (m_legalSplines.Count == 0)
+        //{
+            //m_legalSplines.AddRange(m_splines);
+        //}
 
-        DataRow currentData = coordinator.GetCurrentData();
-        DataRow data = currentData;
-
-        if (Random.Range(0f, 1f) >= coordinator.GetProbabilityDataIsCurrent())
+        if (m_legalSplines.Count > 0)
         {
-            while(data == currentData)
+            FlySwatCoordinator coordinator = FlySwatCoordinator.Instance; // Temporary variable saves lots of typing
+            
+            DataRow currentData = coordinator.GetCurrentData();
+            DataRow data = currentData;
+            
+            if (Random.Range(0f, 1f) >= coordinator.GetProbabilityDataIsCurrent())
             {
-                data = coordinator.GetRandomData();
+                while (data == currentData)
+                {
+                    data = coordinator.GetRandomData();
+                }
             }
+            
+            GameObject newFly = SpawningHelpers.InstantiateUnderWithIdentityTransforms(coordinator.GetFlyPrefab(), m_spawnParent);
+            
+            GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
+            widget.SetUp(coordinator.GetDataType(), data, false);
+            widget.Clicked += OnSwatFly;
+            widget.Destroying += OnWidgetDestroy;
+            m_spawnedWidgets.Add(widget);
+            
+            SplineFollower follower = newFly.GetComponent<SplineFollower>() as SplineFollower;
+            
+            //int splineIndex = Random.Range(0, m_legalSplines.Count);
+            //follower.AddSpline(m_legalSplines [splineIndex]);
+            //m_legalSplines.RemoveAt(splineIndex);
+
+            Spline spline = m_legalSplines [Random.Range(0, m_legalSplines.Count)];
+            follower.AddSpline(spline);
+            m_legalSplines.Remove(spline);
+            StartCoroutine(AddSpline(spline));
+            
+            StartCoroutine(follower.On());
+            
+            
+            yield return new WaitForSeconds(Random.Range(coordinator.GetMinSpawnDelay(), coordinator.GetMaxSpawnDelay()));
+        }
+        else
+        {
+            yield return null;
         }
 
-        GameObject newFly = SpawningHelpers.InstantiateUnderWithIdentityTransforms(coordinator.GetFlyPrefab(), m_spawnParent);
-
-        GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
-        widget.SetUp(coordinator.GetDataType(), data, false);
-        widget.Clicked += OnSwatFly;
-        widget.Destroying += OnWidgetDestroy;
-        m_spawnedWidgets.Add(widget);
-
-        SplineFollower follower = newFly.GetComponent<SplineFollower>() as SplineFollower;
-        follower.AddSpline(m_splines[Random.Range(0, m_splines.Length)]);
-        StartCoroutine(follower.On());
-
-        yield return new WaitForSeconds(Random.Range(coordinator.GetMinSpawnDelay(), coordinator.GetMaxSpawnDelay()));
-
         StartCoroutine("SpawnFly");
+    }
+
+    IEnumerator AddSpline(Spline spline)
+    {
+        yield return new WaitForSeconds(2f);
+
+        m_legalSplines.Add(spline);
     }
 
     void OnSwatFly(GameWidget widget)
@@ -122,8 +150,9 @@ public class FlySwatPlayer : GamePlayer
         } 
         else
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+            m_scoreKeeper.UpdateScore(-1);
 
             FlySwatCoordinator.Instance.PlayAudio();
 
@@ -152,11 +181,9 @@ public class FlySwatPlayer : GamePlayer
         widget.GetComponentInChildren<SimpleSpriteAnim>().PlayAnimation("SPLAT");
         widget.GetComponentInParent<SplineFollower>().Stop();
 
-        ++m_score;
-
         m_scoreKeeper.UpdateScore();
 
-        if (m_score >= FlySwatCoordinator.Instance.GetTargetScore())
+        if (m_scoreKeeper.HasCompleted())
         {
             StopGame();
             FlySwatCoordinator.Instance.OnPlayerFinish(m_playerIndex);

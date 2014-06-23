@@ -90,4 +90,9 @@ public class ScoreLights : ScoreKeeper
 
         PlayAudio(delta);
     }
+
+    public override bool HasCompleted()
+    {
+        return m_numAnswered >= m_targetScore;
+    }
 }
