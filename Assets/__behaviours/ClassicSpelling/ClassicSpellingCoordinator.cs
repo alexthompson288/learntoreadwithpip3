@@ -132,10 +132,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             locators.RemoveAt(locatorIndex);
 
             newDraggable.SetUp(m_currentLetters[i], false);
-
-            m_draggables.Add(newDraggable);
-            
+            newDraggable.EnableDrag(false);
             newDraggable.AllReleaseInteractions += OnDraggableRelease;
+            m_draggables.Add(newDraggable);
         }
         
         SpellingPadBehaviour.Instance.SayWholeWord();

@@ -89,6 +89,16 @@ public class GameWidget : MonoBehaviour
         }
     }
 
+    public void SetPressedAudio(string myPressedAudio)
+    {
+        m_pressedAudio = myPressedAudio;
+    }
+
+    public void SetUnpressedAudio(string myUnpressedAudio)
+    {
+        m_unpressedAudio = myUnpressedAudio;
+    }
+
     Vector3 m_dragOffset;
 
     Vector3 m_startPosition;

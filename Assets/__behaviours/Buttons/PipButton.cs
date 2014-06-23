@@ -287,7 +287,11 @@ public class PipButton : MonoBehaviour
         if (m_changeScale)
         {
             iTween.ScaleTo(m_pressableButton.gameObject, m_pressedScale, m_pressDuration);
-            iTween.ScaleTo(m_follower.gameObject, m_pressedScale, m_pressDuration);
+
+            if(m_follower != null)
+            {
+                iTween.ScaleTo(m_follower.gameObject, m_pressedScale, m_pressDuration);
+            }
         }
         
         if (m_changeSprite)
@@ -340,7 +344,11 @@ public class PipButton : MonoBehaviour
         if (m_changeScale)
         {
             iTween.ScaleTo(m_pressableButton.gameObject, Vector3.one, m_pressDuration);
-            iTween.ScaleTo(m_follower.gameObject, Vector3.one, m_pressDuration);
+
+            if(m_follower != null)
+            {
+                iTween.ScaleTo(m_follower.gameObject, Vector3.one, m_pressDuration);
+            }
         }
 
         if (m_changeColor)
