@@ -140,7 +140,7 @@ public class FlySwatPlayer : GamePlayer
         else
         {
             //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
             m_scoreKeeper.UpdateScore(-1);
 
             FlySwatCoordinator.Instance.PlayAudio();
