@@ -18,8 +18,6 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     [SerializeField]
     private Transform[] m_locators;
     [SerializeField]
-    private ProgressScoreBar m_scoreBar;
-    [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private DataDisplay m_dataDisplay;
@@ -69,16 +67,22 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         
         yield return new WaitForSeconds(0.5f);
+
+        Debug.Log("wordPool.Count: " + m_wordsPool.Count);
         
         if(m_wordsPool.Count > 0)
         {
             m_audioSource.clip = m_instructions;
             m_audioSource.Play();
 
+            Debug.Log("Playing");
+
             while(m_audioSource.isPlaying)
             {
                 yield return null;
             }
+
+            Debug.Log("Played");
 
             m_startTime = Time.time;
             StartCoroutine(SpawnQuestion());
@@ -223,7 +227,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             foreach(GameWidget draggable in m_draggables)
             {
-                draggable.TintGray();
+                draggable.TintWhite();
                 draggable.ChangeBackgroundState(false);
             }
 
@@ -259,7 +263,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             {
                 ++m_score;
                 m_scoreKeeper.UpdateScore();
-                
+
                 StartCoroutine(OnQuestionEnd());
             }
             else
@@ -278,6 +282,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             
             currentDraggable.TweenToStartPos();
             currentDraggable.TintGray();
+            currentDraggable.ChangeBackgroundState(true);
             
             ++m_wrongAnswers;
             

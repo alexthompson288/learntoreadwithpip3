@@ -430,7 +430,7 @@ public class GameWidget : MonoBehaviour
     void Tint(Color col)
     {
         col.a = m_background.color.a;
-        TweenColor.Begin(gameObject, 0.2f, col);
+        TweenColor.Begin(gameObject, 0.1f, col);
     }
 
     public void FadeBackground(bool fadeOut)

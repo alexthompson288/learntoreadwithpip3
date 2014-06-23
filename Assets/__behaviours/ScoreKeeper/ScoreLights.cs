@@ -6,7 +6,7 @@ using Wingrove;
 public class ScoreLights : ScoreKeeper
 {
     [SerializeField]
-    private GameObject m_scoreQuizMarkerPrefab;
+    private GameObject m_scoreQuizLightPrefab;
     [SerializeField]
     private Transform m_lowTransform;
     [SerializeField]
@@ -20,7 +20,7 @@ public class ScoreLights : ScoreKeeper
     [SerializeField]
     private UILabel m_scoreLabel;
 
-    List<GameObject> m_spawnedMarkers = new List<GameObject>();
+    List<GameObject> m_spawnedLights = new List<GameObject>();
 
     int m_markerIndex = 0;
 
@@ -33,29 +33,28 @@ public class ScoreLights : ScoreKeeper
     {
         base.SetTargetScore(targetScore);
 
-        for (int i = m_spawnedMarkers.Count - 1; i > -1; --i)
+        for (int i = m_spawnedLights.Count - 1; i > -1; --i)
         {
-            Destroy(m_spawnedMarkers[i]);
+            Destroy(m_spawnedLights[i]);
         }
-        m_spawnedMarkers.Clear();
+        m_spawnedLights.Clear();
 
         int divisor = m_targetScore > 1 ? m_targetScore - 1 : m_targetScore;
         Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition) / divisor;
 
         for (int index = 0; index < targetScore; ++index)
         {
-            GameObject newMarker = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_scoreQuizMarkerPrefab, m_lowTransform);
-            newMarker.transform.localPosition = delta * index;
-            m_spawnedMarkers.Add(newMarker);
+            GameObject newLight = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_scoreQuizLightPrefab, m_lowTransform);
+            newLight.transform.localPosition = delta * index;
+            m_spawnedLights.Add(newLight);
         }
     }
 
     public override void UpdateScore(int delta)
     {
-
         if (m_markerIndex < m_targetScore)
         {
-            m_spawnedMarkers[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
+            m_spawnedLights[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
         }
 
         ++m_markerIndex;
