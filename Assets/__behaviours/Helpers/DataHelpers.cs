@@ -223,6 +223,41 @@ public static class DataHelpers
         
         return spriteName;
     }
+
+    public static AudioClip GetShortAudio(DataRow data)
+    {
+        AudioClip clip = null;
+
+        Debug.Log("tablename: " + data.GetTableName());
+        
+        switch (data.GetTableName())
+        {
+            case "phonemes":
+            case "data_phonemes":
+                if(data["grapheme"] != null)
+                {
+                    clip = AudioBankManager.Instance.GetAudioClip(data["grapheme"].ToString());
+                }
+                break;
+            case "words":
+            case "data_words":
+                if(data["word"] != null)
+                {
+                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                }
+                break;
+            case "numbers":
+                if(data["value"] != null)
+                {
+                    clip = LoaderHelpers.LoadAudioForNumber(data);
+                }
+                break;
+            default:
+                break;
+        }
+        
+        return clip;
+    }
     
     public static AudioClip GetShortAudio(string dataType, DataRow data)
     {
@@ -271,6 +306,19 @@ public static class DataHelpers
                 break;
             default:
                 return GetShortAudio(dataType, data);
+                break;
+        }
+    }
+
+    public static AudioClip GetLongAudio(DataRow data)
+    {
+        switch (data.GetTableName())
+        {
+            case "phonemes":
+            case "data_phonemes":
+                return LoaderHelpers.LoadMnemonic(data);
+            default:
+                return GetShortAudio(data);
                 break;
         }
     }

@@ -64,11 +64,4 @@ public class ScoreKeeper : MonoBehaviour
         Debug.Log("base.HasFinished()");
         return true;
     }
-
-    void OnGUI()
-    {
-        GUILayout.Label("score: " + m_score);
-        GUILayout.Label("numAnswered: " + m_numAnswered);
-
-    }
 }

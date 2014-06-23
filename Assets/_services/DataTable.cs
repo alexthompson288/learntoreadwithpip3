@@ -63,6 +63,11 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
 		//return Convert.ToInt32(this["id"]);
 	}
 
+    public string GetTableName()
+    {
+        return this ["tablename"].ToString();
+    }
+
     public int GetId()
     {
         return GetInt("id");

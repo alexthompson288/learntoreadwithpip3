@@ -137,6 +137,15 @@ public class JumbleSentenceCoordinator : GameCoordinator
     {
         if (widget.labelText == m_remainingWords [0])
         {
+            if(!m_audioSource.isPlaying)
+            {
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + StringHelpers.Edit(widget.labelText) + "'");
+                if(dt.Rows.Count > 0)
+                {
+                    PlayShortAudio(dt.Rows[0]);
+                }
+            }
+
             widget.EnableCollider(false);
 
             widget.TweenToPos(m_spawnedWordLocations[0].position);
@@ -213,7 +222,10 @@ public class JumbleSentenceCoordinator : GameCoordinator
         
         ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
 
-        yield return new WaitForSeconds(1f);
+        //yield return new WaitForSeconds(1f);
+
+        yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLetters());
+
         GameManager.Instance.CompleteGame();
     }
 }
