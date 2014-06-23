@@ -263,7 +263,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     void PlayLongAudio(DataRow data)
     {
         string dataType = data ["word"] != null ? "words" : "phonemes";
-        AudioClip clip = DataHelpers.GetLongAudio(dataType, data);
+        AudioClip clip = DataHelpers.GetLongAudio(data);
         
         if (clip != null)
         {
@@ -275,7 +275,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     void PlayShortAudio(DataRow data)
     {
         string dataType = data ["word"] != null ? "words" : "phonemes";
-        AudioClip clip = DataHelpers.GetShortAudio(dataType, data);
+        AudioClip clip = DataHelpers.GetShortAudio(data);
 
         if (clip != null)
         {

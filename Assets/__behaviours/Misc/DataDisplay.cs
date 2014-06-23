@@ -82,7 +82,7 @@ public class DataDisplay : MonoBehaviour
     {
         if (!m_audioSource.isPlaying)
         {
-            AudioClip clip = DataHelpers.GetLongAudio(m_dataType, m_data);
+            AudioClip clip = DataHelpers.GetLongAudio(m_data);
 
             if (clip != null)
             {

@@ -326,12 +326,12 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     public void PlayShortAudio(DataRow data)
     {
-        PlayAudio(DataHelpers.GetShortAudio(m_dataType, data));
+        PlayAudio(DataHelpers.GetShortAudio(data));
     }
 
     public void PlayLongAudio(DataRow data)
     {
-        PlayAudio(DataHelpers.GetLongAudio(m_dataType, data));
+        PlayAudio(DataHelpers.GetLongAudio(data));
     }
 
     void PlayAudio(AudioClip clip)

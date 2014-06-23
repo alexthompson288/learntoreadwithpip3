@@ -258,7 +258,8 @@ public static class DataHelpers
         
         return clip;
     }
-    
+
+    /*
     public static AudioClip GetShortAudio(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -294,7 +295,7 @@ public static class DataHelpers
         
         return clip;
     }
-    
+
     public static AudioClip GetLongAudio(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -309,6 +310,7 @@ public static class DataHelpers
                 break;
         }
     }
+    */
 
     public static AudioClip GetLongAudio(DataRow data)
     {

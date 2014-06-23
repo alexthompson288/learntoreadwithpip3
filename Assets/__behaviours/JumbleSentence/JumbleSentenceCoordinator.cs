@@ -41,16 +41,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         m_dataPool.RemoveAll(x => x["good_sentence"] == null || !x["good_sentence"].ToString().Contains(" "));
 
-        foreach (DataRow data in m_dataPool)
-        {
-            AudioClip clip = DataHelpers.GetLongAudio("correctcaptions", data);
-
-            if(clip != null)
-            {
-                m_longAudio[data] = clip;
-            }
-        }
-
         ClampTargetScore();
 
         m_scoreKeeper.SetTargetScore(m_targetScore);

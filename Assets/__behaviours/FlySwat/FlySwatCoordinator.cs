@@ -201,7 +201,7 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
     {
         if (!m_audioSource.isPlaying)
         {
-            AudioClip clip = DataHelpers.GetShortAudio(m_dataType, m_currentData);
+            AudioClip clip = DataHelpers.GetShortAudio(m_currentData);
 
             if (clip != null)
             {

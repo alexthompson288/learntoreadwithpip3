@@ -257,7 +257,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
         {
             if(answerIsYes)
             {
-                AudioClip clip = DataHelpers.GetShortAudio(m_dataType, m_currentData);
+                AudioClip clip = DataHelpers.GetShortAudio(m_currentData);
 
                 if(clip != null)
                 {

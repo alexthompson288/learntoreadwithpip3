@@ -25,11 +25,6 @@ public class NumberSplatCoordinator : GameCoordinator
 
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
-        foreach (DataRow number in m_dataPool)
-        {
-            m_shortAudio[number] = DataHelpers.GetShortAudio("numbers", number);
-        }
-
         if (m_dataPool.Count > 0)
         {
             AskQuestion();

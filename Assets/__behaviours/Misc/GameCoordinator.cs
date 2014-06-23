@@ -18,9 +18,6 @@ public class GameCoordinator : Singleton<GameCoordinator>
 
     protected DataRow m_currentData = null;
 
-    protected Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
-    protected Dictionary<DataRow, AudioClip> m_shortAudio = new Dictionary<DataRow, AudioClip>();
-
     protected float m_startTime;
 
     protected void SetStartTime()
