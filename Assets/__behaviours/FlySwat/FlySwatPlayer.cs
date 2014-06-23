@@ -10,7 +10,7 @@ public class FlySwatPlayer : GamePlayer
     [SerializeField]
     private DataDisplay m_dataDisplay;
     [SerializeField]
-    private Spline[] m_splines;
+    private List<Spline> m_splines = new List<Spline>();
     [SerializeField]
     private Transform m_spawnParent;
     [SerializeField]
@@ -19,8 +19,6 @@ public class FlySwatPlayer : GamePlayer
     private Transform m_swatterOff;
 
     List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
-
-    List<Spline> m_legalSplines = new List<Spline>();
 
     public override void SelectCharacter(int characterIndex)
     {
@@ -34,8 +32,6 @@ public class FlySwatPlayer : GamePlayer
         }
         FlySwatCoordinator.Instance.CharacterSelected(characterIndex);
     }
-
-
 
     public void ShowDataDisplay(string dataType, DataRow data)
     {
@@ -57,8 +53,6 @@ public class FlySwatPlayer : GamePlayer
     void Awake()
     {
         m_swatter.position = m_swatterOff.position;
-
-        m_legalSplines.AddRange(m_splines);
     }
 
     public void SetUp()
@@ -83,12 +77,7 @@ public class FlySwatPlayer : GamePlayer
 
     public IEnumerator SpawnFly()
     {
-        //if (m_legalSplines.Count == 0)
-        //{
-            //m_legalSplines.AddRange(m_splines);
-        //}
-
-        if (m_legalSplines.Count > 0)
+        if (m_splines.Count > 0)
         {
             FlySwatCoordinator coordinator = FlySwatCoordinator.Instance; // Temporary variable saves lots of typing
             
@@ -117,9 +106,9 @@ public class FlySwatPlayer : GamePlayer
             //follower.AddSpline(m_legalSplines [splineIndex]);
             //m_legalSplines.RemoveAt(splineIndex);
 
-            Spline spline = m_legalSplines [Random.Range(0, m_legalSplines.Count)];
+            Spline spline = m_splines [Random.Range(0, m_splines.Count)];
             follower.AddSpline(spline);
-            m_legalSplines.Remove(spline);
+            m_splines.Remove(spline);
             StartCoroutine(AddSpline(spline));
             
             StartCoroutine(follower.On());
@@ -139,7 +128,7 @@ public class FlySwatPlayer : GamePlayer
     {
         yield return new WaitForSeconds(2f);
 
-        m_legalSplines.Add(spline);
+        m_splines.Add(spline);
     }
 
     void OnSwatFly(GameWidget widget)
