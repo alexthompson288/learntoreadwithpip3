@@ -101,13 +101,6 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 		}
 	}
 
-    void OnGUI()
-    {
-        GUILayout.Label("silly: " + m_sillyWordsSoFar);
-        GUILayout.Label("sensible: " + m_sensibleWordsSoFar);
-
-    }
-
     void ShowNextWord()
     {
         m_hasGotWrong = false;
