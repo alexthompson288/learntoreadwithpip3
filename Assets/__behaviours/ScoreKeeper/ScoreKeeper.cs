@@ -1,27 +1,45 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ScoreKeeper : MonoBehaviour 
 {
     [SerializeField]
-    protected bool m_playAudio = true;
+    private List<string> m_correctAudio = new List<string>();
+    [SerializeField]
+    private List<string> m_incorrectAudio = new List<string>();
 
     protected int m_score = 0;
     protected int m_targetScore;
 
-
-    public void SetPlayAudio(bool playAudio)
-    {
-        m_playAudio = playAudio;
-    }
-
     protected void PlayAudio(int delta)
     {
-        if (m_playAudio)
+        List<string> eventList = delta > 0 ? m_correctAudio : m_incorrectAudio;
+
+        foreach(string audioEvent in eventList)
         {
-            string audioEvent = delta > 0 ? "VOCAL_CORRECT" : "VOCAL_INCORRECT";
             WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
         }
+    }
+
+    public void AddCorrectAudio(string audioEvent)
+    {
+        m_correctAudio.Add(audioEvent);
+    }
+
+    public void RemoveCorrectAudio(string audioEvent)
+    {
+        m_correctAudio.Remove(audioEvent);
+    }
+
+    public void AddIncorrectAudio(string audioEvent)
+    {
+        m_incorrectAudio.Remove(audioEvent);
+    }
+
+    public void RemoveIncorrectAudio(string audioEvent)
+    {
+        m_incorrectAudio.Remove(audioEvent);
     }
 
     public virtual void SetTargetScore(int targetScore) 

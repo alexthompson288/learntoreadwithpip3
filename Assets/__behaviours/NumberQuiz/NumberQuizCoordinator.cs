@@ -96,7 +96,7 @@ public class NumberQuizCoordinator : GameCoordinator
 
             int scoreDelta = m_hasAnsweredIncorrectly ? 0 : 1;
             m_scoreKeeper.UpdateScore(scoreDelta);
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
             StartCoroutine(ClearQuestion());
         } 

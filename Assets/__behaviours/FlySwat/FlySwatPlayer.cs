@@ -146,7 +146,7 @@ public class FlySwatPlayer : GamePlayer
         m_swatter.transform.position = widget.transform.position;
         StartCoroutine("ResetSwatter");
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
         widget.GetComponentInChildren<SimpleSpriteAnim>().PlayAnimation("SPLAT");

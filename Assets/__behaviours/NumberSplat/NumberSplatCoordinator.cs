@@ -80,7 +80,7 @@ public class NumberSplatCoordinator : GameCoordinator
 
         if (isCorrect)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
             PlayShortAudio();
 

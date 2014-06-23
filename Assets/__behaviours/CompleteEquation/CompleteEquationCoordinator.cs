@@ -105,7 +105,7 @@ public class CompleteEquationCoordinator : GameCoordinator
     {
         if (widget.data == m_currentData)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
             widget.TweenToPos(m_equationPartLocators[m_missingIndex].position);
 
             ++m_score;
@@ -115,7 +115,7 @@ public class CompleteEquationCoordinator : GameCoordinator
         }
         else
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             widget.TweenToStartPos();
         }
     }

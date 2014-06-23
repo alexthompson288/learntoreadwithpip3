@@ -102,7 +102,7 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         if (isCorrect)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
             ++m_numAnswered;
 

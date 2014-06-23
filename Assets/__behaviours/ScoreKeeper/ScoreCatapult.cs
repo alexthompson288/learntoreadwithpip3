@@ -63,7 +63,7 @@ public class ScoreCatapult : ScoreKeeper
     public override void UpdateScore(int delta = 1)
     {
         base.UpdateScore(delta);
-        
+        PlayAudio(delta);
         TweenRigidbody(); 
     }
 

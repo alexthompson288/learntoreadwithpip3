@@ -286,7 +286,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
             }
             else
             {
-                WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+                //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
                 m_remainingAttributes.RemoveAt(m_remainingAttributes.Count - 1);
 

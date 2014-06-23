@@ -192,7 +192,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
                         m_audioSource.Play();
                     }
 
-                    WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+                    //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
                     yield return StartCoroutine(FeedPip(widget.gameObject));
                 }

@@ -246,7 +246,7 @@ public class JoinPairsPlayer : GamePlayer
 
         m_characterPopper.PopCharacter();
         
-        WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
         m_score++;
         m_scoreKeeper.UpdateScore();

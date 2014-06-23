@@ -87,5 +87,7 @@ public class ScoreLights : ScoreKeeper
         base.UpdateScore(delta);
 
         m_scoreLabel.text = m_score.ToString();
+
+        PlayAudio(delta);
     }
 }
