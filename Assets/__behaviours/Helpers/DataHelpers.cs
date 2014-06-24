@@ -204,98 +204,12 @@ public static class DataHelpers
         
         return hasPictureDataPool;
     }
-
-    /*
-    public static Texture2D GetPicture(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-        
-        Texture2D tex = null;
-        
-        switch (dataType)
-        {
-            case "phonemes":
-                if(data["phoneme"] != null && data["mneumonic"] != null)
-                {
-                    tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}_{1}", data["phoneme"], data["mneumonic"]).ToString().Replace(" ", "_"));
-                }
-                break;
-            case "words":
-            case "keywords":
-                if(data["word"] != null)
-                {
-                    tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + data["word"].ToString());
-                }
-                break;
-            case "quizquestions":
-            case "correctcaptions":
-            case "sentences":
-                if(data["correct_image_name"] != null)
-                {
-                    tex = Resources.Load<Texture2D>(data["correct_image_name"].ToString());
-                    if(tex == null)
-                    {
-                        tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
-                    }
-                }
-                break;
-            case "shapes":
-                if(data["name"] != null)
-                {
-                    tex = Resources.Load<Texture2D>(data["name"].ToString());
-                }
-                break;
-            case "stories":
-                if(data["storycoverartwork"] != null)
-                {
-                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + data["storycoverartwork"].ToString());
-                }
-                break;
-            case "storypages":
-                string bgImageName = data["backgroundart"] == null ? "" : data["backgroundart"].ToString().Replace(".png", "");
-                tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + bgImageName);
-                
-                if(tex == null)
-                {
-                    string imageName = data["image"] == null ? "" : data["image"].ToString().Replace(".png", "");
-                    tex = LoaderHelpers.LoadObject<Texture2D>("Images/storypages/" + imageName);
-                }
-                break;
-            case "pipisodes":
-                if(data["image_filename"] != null)
-                {
-                    tex = Resources.Load<Texture2D>(String.Format("Pictures/{0}", data["image_filename"]));
-                }
-                break;
-            default:
-                break;
-        }
-        
-        return tex;
-    }
-
-
-    public static List<DataRow> OnlyPictureData(string dataType, List<DataRow> dataPool)
-    {
-        List<DataRow> hasPictureDataPool = new List<DataRow>();
-        
-        for (int i = 0; i < dataPool.Count; ++i)
-        {
-            if(GetPicture(dataType, dataPool[i]) != null)
-            {
-                hasPictureDataPool.Add(dataPool[i]);
-            }
-        }
-        
-        return hasPictureDataPool;
-    }
-    */
     
-    public static string GetSpriteName(string dataType, DataRow data)
+    public static string GetSpriteName(DataRow data)
     {
         string spriteName = "";
         
-        switch (dataType)
+        switch (data.GetTableName())
         {
             case "numbers":
                 spriteName = "digit_" + data["value"].ToString();
@@ -355,6 +269,31 @@ public static class DataHelpers
         }
     }
 
+    public static string GetLabelText(DataRow data)
+    {   
+        string textAttribute = "phoneme";
+        
+        switch (data.GetTableName())
+        {
+            case "words":
+            case "data_words":
+                textAttribute = "word";
+                break;
+            case "numbers":
+                textAttribute = "value";
+                break;
+            case "shapes":
+                textAttribute = "name";
+                break;
+            default:
+                break;
+        }
+        
+        string labelText = data [textAttribute] != null ? data [textAttribute].ToString() : "";
+        
+        return labelText;
+    }
+    /*
     public static string GetLabelText(string dataType, DataRow data)
     {
         dataType = dataType.ToLower();
@@ -381,7 +320,8 @@ public static class DataHelpers
         
         return labelText;
     }
-    
+    */
+
     public static string GetTargetAttribute(string dataType)
     {
         dataType = dataType.ToLower();

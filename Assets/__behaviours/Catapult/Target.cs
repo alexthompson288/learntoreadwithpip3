@@ -73,7 +73,7 @@ public class Target : MonoBehaviour
         m_data = newData;
         m_dataType = dataType;
        
-        m_label.text = DataHelpers.GetLabelText(m_dataType, m_data);
+        m_label.text = DataHelpers.GetLabelText(m_data);
 
         m_texture.mainTexture = DataHelpers.GetPicture(newData);
         m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);

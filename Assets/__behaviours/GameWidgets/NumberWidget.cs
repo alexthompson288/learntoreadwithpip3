@@ -78,7 +78,7 @@ public class NumberWidget : GameWidget
 		} 
 		else if (m_digitDisplay == DigitDisplay.Label) 
 		{
-			m_label.text = DataHelpers.GetLabelText ("numbers", m_data);
+			m_label.text = DataHelpers.GetLabelText (m_data);
 		} 
 		else if (m_digitDisplay == DigitDisplay.None) 
 		{

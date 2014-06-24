@@ -38,7 +38,7 @@ public class DataDisplay : MonoBehaviour
         {
             if(m_dataType == "numbers")
             {
-                m_pictureSprite.spriteName = DataHelpers.GetSpriteName(m_dataType, data);
+                m_pictureSprite.spriteName = DataHelpers.GetSpriteName(data);
 
                 if(!System.String.IsNullOrEmpty(m_pictureSprite.spriteName))
                 {
@@ -59,7 +59,7 @@ public class DataDisplay : MonoBehaviour
         } 
         else
         {
-            m_label.text = DataHelpers.GetLabelText(m_dataType, m_data);
+            m_label.text = DataHelpers.GetLabelText(m_data);
 
             m_tweenBehaviour.On();
         }

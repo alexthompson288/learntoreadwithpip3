@@ -155,7 +155,7 @@ public class GameWidget : MonoBehaviour
 
         if (m_label != null)
         {
-            m_label.text = DataHelpers.GetLabelText(myDataType, m_data);
+            m_label.text = DataHelpers.GetLabelText(m_data);
         }
 
         if (changeBackgroundWidth)

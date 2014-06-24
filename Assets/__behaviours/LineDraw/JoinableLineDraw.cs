@@ -68,7 +68,7 @@ public class JoinableLineDraw : LineDraw
         } 
         else if (m_joinableType == JoinableType.Text)
         {
-            m_label.text = DataHelpers.GetLabelText(dataType, m_data);
+            m_label.text = DataHelpers.GetLabelText(m_data);
             NGUIHelpers.MaxLabelWidth(m_label, 450);
         } 
         else
