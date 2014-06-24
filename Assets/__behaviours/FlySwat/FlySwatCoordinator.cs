@@ -100,16 +100,13 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
             
             yield return new WaitForSeconds(0.8f);
             
-            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-            
-            yield return new WaitForSeconds(1.5f);
-            
             for (int index = 0; index < numPlayers; ++index)
             {
                 m_gamePlayers [index].HideAll();
             }
             
-            yield return new WaitForSeconds(1.0f);
+            StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
+            yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
 
         for(int index = 0; index < numPlayers; ++index)

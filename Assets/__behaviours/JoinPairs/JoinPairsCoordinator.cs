@@ -200,14 +200,21 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
                 yield return null;
             }
 
-            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
 
-            yield return new WaitForSeconds(2.5f);
+            //yield return new WaitForSeconds(2.5f);
+
+            Debug.Log("HIDE CHARACTERS");
             
             for (int index = 0; index < numPlayers; ++index)
             {
                 m_gamePlayers [index].HideAll();
             }
+
+            Debug.Log("PLAY TRAFFIC LIGHTS");
+
+            StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
+            yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         } 
         else
         {

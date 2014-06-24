@@ -25,6 +25,8 @@ public class JoinPairsPlayer : GamePlayer
     private Color m_lineRendererColor;
     [SerializeField]
     private Transform[] m_locators;
+    [SerializeField]
+    private TrafficLights m_trafficLights;
 
     Transform m_off1;
     Transform m_off2;
@@ -60,6 +62,11 @@ public class JoinPairsPlayer : GamePlayer
     }
 
     bool m_isDrawingDemo = false;
+
+    public IEnumerator PlayTrafficLights()
+    {
+        yield return StartCoroutine(m_trafficLights.On());
+    }
 
     public IEnumerator DrawDemoLine()
     {

@@ -17,6 +17,8 @@ public class FlySwatPlayer : GamePlayer
     private Transform m_swatter;
     [SerializeField]
     private Transform m_swatterOff;
+    [SerializeField]
+    private TrafficLights m_trafficLights;
 
     List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
 
@@ -41,6 +43,11 @@ public class FlySwatPlayer : GamePlayer
     public void HideDataDisplay()
     {
         m_dataDisplay.Off();
+    }
+
+    public IEnumerator PlayTrafficLights()
+    {
+        yield return StartCoroutine(m_trafficLights.On());
     }
 
     // Separate Coroutine for delay so that we can stop the coroutine without stopping all coroutines
