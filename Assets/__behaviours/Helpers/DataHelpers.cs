@@ -290,34 +290,6 @@ public static class DataHelpers
         
         return labelText;
     }
-    /*
-    public static string GetLabelText(string dataType, DataRow data)
-    {
-        dataType = dataType.ToLower();
-        
-        string textAttribute = "phoneme";
-
-        switch (dataType)
-        {
-            case "words":
-            case "keywords":
-                textAttribute = "word";
-                break;
-            case "numbers":
-                textAttribute = "value";
-                break;
-            case "shapes":
-                textAttribute = "name";
-                break;
-            default:
-                break;
-        }
-        
-        string labelText = data [textAttribute] != null ? data [textAttribute].ToString() : "";
-        
-        return labelText;
-    }
-    */
 
     public static string GetTargetAttribute(string dataType)
     {
@@ -330,27 +302,6 @@ public static class DataHelpers
             case "words":
             case "keywords":
                 attributeName = "is_target_word";
-                break;
-            default:
-                break;
-        }
-        
-        return attributeName;
-    }
-    
-    public static string GetSetAttribute(string dataType)
-    {
-        dataType = dataType.ToLower();
-        
-        string attributeName = "setphonemes";
-        
-        switch (dataType)
-        {
-            case "words":
-                attributeName = "setwords";
-                break;
-            case "keywords":
-                attributeName = "setkeywords";
                 break;
             default:
                 break;

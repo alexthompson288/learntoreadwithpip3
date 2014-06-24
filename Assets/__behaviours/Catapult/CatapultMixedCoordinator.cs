@@ -34,8 +34,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
    
     float m_startTime;
     
-    int m_score = 0;
-    
     List<DataRow> m_dataPool = new List<DataRow>();
     DataRow m_currentData; 
 
@@ -228,8 +226,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 {
                     PlayLongAudio(target.data);
                 }
-
-                m_score++;
                 
                 if (m_scoreKeeper.HasCompleted())
                 {
@@ -260,7 +256,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 
-        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
+        ScoreInfo.Instance.NewScore(timeTaken, m_scoreKeeper.GetScore(), m_targetScore, stars);
 
         yield return StartCoroutine(m_scoreKeeper.On());
 
