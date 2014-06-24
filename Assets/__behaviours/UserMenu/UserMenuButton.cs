@@ -10,6 +10,8 @@ public class UserMenuButton : MonoBehaviour
 	[SerializeField]
     UISprite m_picture;
     [SerializeField]
+    private GameObject m_scaleTweener;
+    [SerializeField]
     private ColorInfo.PipColor m_pipColorA = ColorInfo.PipColor.Blue;
     [SerializeField]
     private ColorInfo.PipColor m_pipColorB = ColorInfo.PipColor.Green;
@@ -38,6 +40,19 @@ public class UserMenuButton : MonoBehaviour
 
 		GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;
 	}
+
+    void OnPress(bool pressed)
+    {
+        iTween.Stop(m_scaleTweener);
+
+        float tweenDuration = 0.3f;
+        Vector3 localScale = pressed ? Vector3.one * 0.8f : Vector3.one;
+
+        iTween.ScaleTo(m_scaleTweener, localScale, tweenDuration);
+
+        string audioEvent = pressed ? "SOMETHING_APPEAR" : "SOMETHING_DISAPPEAR";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+    }
 
 	void OnClick()
 	{

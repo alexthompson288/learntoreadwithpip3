@@ -39,6 +39,20 @@ public class UserInfo : Singleton<UserInfo>
 
 	Dictionary<string, string> m_users = new Dictionary<string, string>();
 
+    public string[] GetUserNames()
+    {
+        string[] users = new string[m_users.Count];
+
+        int i = 0;
+        foreach (KeyValuePair<string, string> kvp in m_users)
+        {
+            users[i] = kvp.Key;
+            ++i;
+        }
+
+        return users;
+    }
+
     string m_ipAddress = "";
 
 

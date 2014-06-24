@@ -17,7 +17,11 @@ public class BankInfo : Singleton<BankInfo>
 #if UNITY_EDITOR
         if(m_overwrite)
         {
-            Save();
+            string[] users = UserInfo.Instance.GetUserNames();
+            foreach(string user in users)
+            {
+                Save(user);
+            }
         }
 #endif
 
@@ -141,9 +145,14 @@ public class BankInfo : Singleton<BankInfo>
         data.Close();
     }
     
-    void Save()
+    void Save(string user = null)
     {
-        DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        if (String.IsNullOrEmpty(user))
+        {
+            user = UserInfo.Instance.GetCurrentUser();
+        }
+
+        DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", user));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
         

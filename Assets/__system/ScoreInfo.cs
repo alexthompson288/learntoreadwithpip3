@@ -81,7 +81,11 @@ public class ScoreInfo : Singleton<ScoreInfo>
         if(m_overwrite)
         {
             Debug.Log("OVERWRITING SCOREINFO");
-            Save();
+            string[] users = UserInfo.Instance.GetUserNames();
+            foreach(string user in users)
+            {
+                Save(user);
+            }
         }
 #endif
         
@@ -268,13 +272,18 @@ public class ScoreInfo : Singleton<ScoreInfo>
         data.Close();
     }
 
-    void Save()
+    void Save(string userName = null)
     {
-        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        if (System.String.IsNullOrEmpty(userName))
+        {
+            userName = UserInfo.Instance.GetCurrentUser();
+        }
+
+        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", userName));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
 
-        Debug.Log("ScoreInfo.Save: " + System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        Debug.Log("ScoreInfo.Save: " + System.String.Format("ScoreInfo_{0}", userName));
 
         Debug.Log("SAVING DATA: " + m_scoreTrackers.Count);
 

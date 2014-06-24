@@ -11,6 +11,8 @@ public class UserPictureButton : MonoBehaviour
     private ColorInfo.PipColor m_pipColorA = ColorInfo.PipColor.Blue;
     [SerializeField]
     private ColorInfo.PipColor m_pipColorB = ColorInfo.PipColor.Green;
+    [SerializeField]
+    private GameObject m_scaleTweener;
 
     string m_spriteNameA;
     string m_spriteNameB;
@@ -41,5 +43,18 @@ public class UserPictureButton : MonoBehaviour
     public string GetSpriteNameA()
     {
         return m_spriteNameA;
+    }
+
+    void OnPress(bool pressed)
+    {
+        iTween.Stop(m_scaleTweener);
+        
+        float tweenDuration = 0.3f;
+        Vector3 localScale = pressed ? Vector3.one * 0.8f : Vector3.one;
+        
+        iTween.ScaleTo(m_scaleTweener, localScale, tweenDuration);
+
+        string audioEvent = pressed ? "SOMETHING_APPEAR" : "SOMETHING_DISAPPEAR";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
     }
 }

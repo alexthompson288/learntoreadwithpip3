@@ -157,7 +157,11 @@ public class VoyageInfo : Singleton<VoyageInfo>
 #if UNITY_EDITOR
         if(m_overwrite)
         {
-            Save();
+            string[] users = UserInfo.Instance.GetUserNames();
+            foreach(string user in users)
+            {
+                Save(user);
+            }
         }
 #endif
 
@@ -202,9 +206,14 @@ public class VoyageInfo : Singleton<VoyageInfo>
         data.Close();
     }
     
-    void Save()
+    void Save(string user = null)
     {
-        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        if (System.String.IsNullOrEmpty(user))
+        {
+            user = UserInfo.Instance.GetCurrentUser();
+        }
+
+        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", user));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
 
