@@ -26,7 +26,9 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
     [SerializeField]
     private Transform[] m_debugMarkers;
     [SerializeField]
-    private Transform m_lineEnd;
+    private Transform m_lineEndParent;
+    [SerializeField]
+    private Transform[] m_lineEnds;
     [SerializeField]
     private bool m_lineRendererUseWorld;
 
@@ -80,17 +82,18 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 
         if(m_currentBall != null)
         {
-            m_lineEnd.position = m_currentBall.FindOppositePosition(m_lineEnd);
+            m_lineEndParent.position = m_currentBall.FindOppositePosition(m_lineEndParent);
         }
 
-        SetLineRenderersPos(m_lineEnd.position);
+        SetLineRenderersPos(m_lineEndParent.position);
     }
 
     void SetLineRenderersPos(Vector3 pos)
     {
-        for(int i = 0; i < m_lineOrigins.Length && i < m_lineRenderers.Length; ++i)
+        for(int i = 0; i < m_lineEnds.Length && i < m_lineRenderers.Length; ++i)
         {
-            m_lineRenderers[i].SetPosition(1, pos);   
+            m_lineRenderers[i].SetPosition(1, m_lineEnds[i].position);
+            //m_lineRenderers[i].SetPosition(1, pos);   
         }
     }
 
@@ -143,7 +146,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
         tweenArgs.Add("oncomplete", "SpawnBall");
         tweenArgs.Add("oncompletetarget", gameObject);
         
-        iTween.MoveTo(m_lineEnd.gameObject, tweenArgs);
+        iTween.MoveTo(m_lineEndParent.gameObject, tweenArgs);
     }
 
     void SpawnBall()

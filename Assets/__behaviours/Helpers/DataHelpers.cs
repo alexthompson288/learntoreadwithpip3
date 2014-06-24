@@ -73,7 +73,6 @@ public static class DataHelpers
     public static string GameOrDefault(string defaultDataType)
     {
         string gameDataType = GetDataType(GetCurrentGame());
-        Debug.Log("gameDataType: " + gameDataType);
         string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
         
         return dataType;
@@ -225,8 +224,6 @@ public static class DataHelpers
     {
         AudioClip clip = null;
 
-        Debug.Log("tablename: " + data.GetTableName());
-        
         switch (data.GetTableName())
         {
             case "phonemes":
@@ -647,8 +644,6 @@ public static class DataHelpers
     
     public static List<DataRow> GetSillywords()
     {
-        Debug.Log("GetNonsenseWords()");
-        
         List<DataRow> dataPool = GameManager.Instance.GetData("sillywords");
         
         for(int i = dataPool.Count - 1; i > -1; --i)
@@ -1115,7 +1110,8 @@ public static class DataHelpers
                         {
                             dataList.Add(dataTable.Rows [0]);
                         }
-                    } catch
+                    } 
+                    catch
                     {
                         Debug.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
                     }

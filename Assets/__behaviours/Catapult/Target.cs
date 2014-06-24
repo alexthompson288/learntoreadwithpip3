@@ -78,9 +78,26 @@ public class Target : MonoBehaviour
         m_texture.mainTexture = DataHelpers.GetPicture(newData);
         m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
     }
-    
+
+    void OnCollisionEnter(Collision other)
+    {
+        Debug.Log("Target.OnCollisionEnter()");
+        //Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
+        if (!Mathf.Approximately(transform.localScale.y, 0))
+        {
+            CatapultAmmo ammoBehaviour = other.gameObject.GetComponent<CatapultAmmo>() as CatapultAmmo;
+            
+            if (ammoBehaviour != null && !ammoBehaviour.canDrag && TargetHit != null)
+            {
+                TargetHit(this, other.collider);
+            }
+        }
+    }
+
+
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Target.OnTriggerEnter()");
         //Debug.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
@@ -92,6 +109,7 @@ public class Target : MonoBehaviour
             }
         }
     }
+
 
     public void OnHit()
     {
@@ -122,8 +140,11 @@ public class Target : MonoBehaviour
         StopAllCoroutines();
 
         rigidbody.isKinematic = false;
-        
-        rigidbody.AddForce(ball.rigidbody.velocity * 1.2f, ForceMode.VelocityChange);
+
+        Debug.Log("ball.speed: " + ball.rigidbody.velocity.magnitude);
+
+        rigidbody.AddForce(ball.rigidbody.velocity.normalized * 2, ForceMode.VelocityChange);
+        //rigidbody.AddForce(ball.rigidbody.velocity * 1.2f, ForceMode.VelocityChange);
     }
     
     public virtual void Explode()

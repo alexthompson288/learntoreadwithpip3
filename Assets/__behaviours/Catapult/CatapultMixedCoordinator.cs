@@ -197,45 +197,49 @@ public class CatapultMixedCoordinator : MonoBehaviour
     IEnumerator OnHitTargetCo(Target target, Collider ball)
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_HIT_RANDOM");
-        
-        if (IsDataCorrect(target.data))
+
+        ball.GetComponent<CatapultAmmo>().Explode();
+        ball.GetComponent<CatapultAmmo>().StopMomentum();
+
+        if (!m_scoreKeeper.HasCompleted())
         {
-            ball.GetComponent<CatapultAmmo>().Explode();
-
-            target.OnHit();
-            
-            GameObject targetDetachable = target.SpawnDetachable();
-
-            StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
-
-            target.ApplyHitForce(ball.transform);
-
-            if (IsDataMixed())
+            if (IsDataCorrect(target.data))
             {
-                Texture2D tex = DataHelpers.GetPicture(target.data);
-                StopCoroutine("HideBlackboard");
-                m_blackboard.ShowImage(tex, target.data ["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data) ["phoneme"].ToString(), "");
-                StartCoroutine("HideBlackboard");
+                target.OnHit();
+                
+                GameObject targetDetachable = target.SpawnDetachable();
+
+                StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
+
+                target.ApplyHitForce(ball.transform);
+
+                if (IsDataMixed())
+                {
+                    Texture2D tex = DataHelpers.GetPicture(target.data);
+                    StopCoroutine("HideBlackboard");
+                    m_blackboard.ShowImage(tex, target.data ["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data) ["phoneme"].ToString(), "");
+                    StartCoroutine("HideBlackboard");
+                }
+
+                if (!m_targetsShowPicture && m_dataType == "phonemes")
+                {
+                    PlayShortAudio(target.data);
+                } else
+                {
+                    PlayLongAudio(target.data);
+                }
+
+                m_score++;
+                
+                if (m_scoreKeeper.HasCompleted())
+                {
+                    StartCoroutine(OnGameComplete());
+                }
+            } 
+            else
+            {
+                m_scoreKeeper.UpdateScore(-1);
             }
-
-            if (!m_targetsShowPicture && m_dataType == "phonemes")
-            {
-                PlayShortAudio(target.data);
-            } else
-            {
-                PlayLongAudio(target.data);
-            }
-
-            m_score++;
-            
-            if (m_scoreKeeper.HasCompleted())
-            {
-                StartCoroutine(OnGameComplete());
-            }
-        }
-        else
-        {
-            m_scoreKeeper.UpdateScore(-1);
         }
 
         yield break;

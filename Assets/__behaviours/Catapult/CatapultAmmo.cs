@@ -124,9 +124,23 @@ public class CatapultAmmo : MonoBehaviour
     {
         m_canDrag = canDrag;
     }
+
+
+    bool m_stopMomentum = false;
+
+    public void StopMomentum()
+    {
+        m_stopMomentum = true;
+    }
     
     void FixedUpdate()
     {
+        if (m_stopMomentum)
+        {
+            rigidbody.velocity = Vector3.zero;
+            m_stopMomentum = false;
+        }
+
         rigidbody.AddForce(m_gravity, ForceMode.Acceleration);
         
         if(m_limitSpeed)
@@ -187,6 +201,8 @@ public class CatapultAmmo : MonoBehaviour
 
     public void Explode()
     {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
+
         string spriteName = m_sprite.spriteName.Substring(0, m_sprite.spriteName.Length - 1);
         spriteName += "b";
         m_sprite.spriteName = spriteName;
@@ -198,7 +214,7 @@ public class CatapultAmmo : MonoBehaviour
     {
         if (other.collider.tag == "StopBall")
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
             Explode();
         }

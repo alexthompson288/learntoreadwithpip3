@@ -11,11 +11,24 @@ public class ScaleTarget : Target
 	private float m_tweenDurationOn = 0.3f;
     [SerializeField]
     private float m_tweenDurationOff = 0.1f;
+    [SerializeField]
+    private UISprite m_holeBackground;
+    [SerializeField]
+    private Transform m_woodenBackground;
+
+    Color m_colorOff;
 
     Hashtable m_tweenArgsOff = new Hashtable();
 
     void Awake()
     {
+        while (m_woodenBackground.localEulerAngles.z > 60f &&  m_woodenBackground.localEulerAngles.z < 250f)
+        {
+            m_woodenBackground.localEulerAngles = new Vector3(0, 0, Random.Range(0f, 360f));
+        }
+
+        m_colorOff = m_holeBackground.color;
+
         transform.localScale = Vector3.zero;
 
         m_tweenArgsOff.Add("scale", Vector3.zero);
@@ -59,11 +72,13 @@ public class ScaleTarget : Target
         //Debug.Log("ScaleTarget.OnCo");
 		yield return new WaitForSeconds(initialDelay);
 		
+        TweenColor.Begin(gameObject, m_tweenDurationOn, Color.white);
         iTween.ScaleTo(gameObject, Vector3.one, m_tweenDurationOn);
         collider.enabled = true;
 		
 		yield return new WaitForSeconds(m_tweenDurationOn + Random.Range(m_durationOn.x, m_durationOn.y));
 
+        TweenColor.Begin(gameObject, m_tweenDurationOff, m_colorOff);
         iTween.ScaleTo(gameObject, m_tweenArgsOff);
         collider.enabled = false;
 		
