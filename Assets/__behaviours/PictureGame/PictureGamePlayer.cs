@@ -102,99 +102,6 @@ public class PictureGamePlayer : GamePlayer
         Resources.UnloadUnusedAssets();
     }
 
-    /*
-    void ShowNextQuestion()
-    {
-		Debug.Log("Player ShowNextQuestion()");
-
-        if (m_remainingWords.Count == 0)
-        {
-            m_remainingWords.AddRange(m_wordPool);
-        }
-
-		
-        m_currentWordData = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
-        Texture2D selectedTex = DataHelpers.GetPicture(m_currentWordData);
-
-		//while(selectedTex == null)
-		//{
-			//selectedQuestion = m_remainingWords[Random.Range(0, m_remainingWords.Count)];
-			//selectedTex = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
-		//}
-
-
-       // m_currentWordData = selectedQuestion;
-
-
-        //UserStats.Activity.AddWord(m_currentWordData);
-
-        Resources.UnloadUnusedAssets();
-        AudioClip loadedAudio = LoaderHelpers.LoadAudioForWord(m_currentWordData["word"].ToString());
-        m_wordAudio = loadedAudio;
-
-        HashSet<DataRow> allFour = new HashSet<DataRow>();
-        allFour.Add(m_currentWordData);
-        //while (allFour.Count < m_wordsToSpawnForDifficulty[SessionInformation.Instance.GetDifficulty()])
-		while (allFour.Count < m_maxSpawn)
-		{
-            DataRow newWord = m_wordPool[Random.Range(0, m_wordPool.Count)];
-            bool okToAdd = true;
-            foreach (DataRow dr in allFour)
-            {
-                if (dr["word"].ToString() == newWord["word"].ToString() || DataHelpers.GetPicture(newWord) != null)
-                {
-                    okToAdd = false;
-                }
-				Resources.UnloadUnusedAssets();
-            }
-            if (okToAdd)
-            {
-                allFour.Add(newWord);
-            }
-        }
-
-        List<GameObject> newLocatorList = new List<GameObject>();
-        newLocatorList.AddRange(m_locators);
-        foreach (DataRow wordRow in allFour)
-        {
-            GameObject locator = newLocatorList[Random.Range(0, newLocatorList.Count)];
-
-            GameObject spawnedWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordButtonPrefab, locator.transform);
-            spawnedWord.GetComponent<WordSelectionButton>().SetUp(wordRow == m_currentWordData,
-                wordRow["word"].ToString(), this, m_wordsOffTransform);
-
-
-            m_selectionButtons.Add(spawnedWord.GetComponent<WordSelectionButton>());
-            newLocatorList.Remove(locator);
-        }
-
-        Texture2D wordImage = DataHelpers.GetPicture(m_currentWordData);
-
-        //if ((m_currentWordData["image"] != null) && (!string.IsNullOrEmpty(m_currentWordData["image"].ToString())))
-        //{
-            //wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["image"].ToString());
-            //DataHelpers.GetPicture(m_currentWordData);
-        //}
-        //else
-        //{
-            //wordImage = (Texture2D)Resources.Load("Images/word_images_png_350/_" + selectedQuestion["word"].ToString());
-        //}
-
-
-        m_imageBlackboard.ShowImage(wordImage, null, null, m_currentWordData["word"].ToString());
-
-        if (SessionInformation.Instance.GetNumPlayers() != 2)
-        {
-            GetComponent<AudioSource>().clip = m_wordAudio;
-            GetComponent<AudioSource>().Play();
-        }
-
-        m_remainingWords.Remove(m_currentWordData);
-        m_currentWord = m_currentWordData["word"].ToString();
-		Resources.UnloadUnusedAssets();
-    }
-    */
-
     public void StartGame()
     {
         m_wordPool = PictureGameCoordinator.Instance.GetWordList();
@@ -232,75 +139,91 @@ public class PictureGamePlayer : GamePlayer
         m_selectionButtons.Clear();
     }
 
-
-    IEnumerator WordClickedCoroutine(bool correct, WordSelectionButton incoming)
+    IEnumerator ClearQuestion()
     {
-        //UserStats.Activity.IncrementNumAnswers();
+        PipPadBehaviour.Instance.Hiding -= OnPipPadHide;
 
-        int scoreDelta = correct ? 1 : -1;
-        m_scoreKeeper.UpdateScore(scoreDelta);
-
-        if (correct)
+        foreach (WordSelectionButton wsb in m_selectionButtons)
         {
-            foreach (WordSelectionButton wsb in m_selectionButtons)
+            if (wsb.IsCorrect())
             {
-                if (incoming == wsb)
-                {
-                    wsb.RemoveCorrect(m_locatorOffCorrect);
-                }
-                else
-                {
-                    wsb.Remove();
-                }
+                wsb.RemoveCorrect(m_locatorOffCorrect);
             }
-
-            m_imageBlackboard.Hide();
-            m_selectionButtons.Clear();
-
-            if (SessionInformation.Instance.GetNumPlayers() != 2)
+            else
             {
-                GetComponent<AudioSource>().clip = m_wordAudio;
-                GetComponent<AudioSource>().Play();
-            }
-
-            yield return new WaitForSeconds(1.5f);
-
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SFX_SPARKLE");
-
-            if (!m_scoreKeeper.HasCompleted() && m_remainingWords.Count > 0)
-            {
-                yield return new WaitForSeconds(1.0f);
-
-                ShowNextQuestion();
-            }
-			else if(m_remainingWords.Count == 0)
-			{
-				SessionInformation.SetDefaultPlayerVar();
-				GameManager.Instance.CompleteGame();
-			}
-        }
-        else
-        {
-            //UserStats.Activity.AddIncorrectWord(m_currentWordData);
-
-            // remove lives
-            //m_numLives--;
-            //m_livesDisplay.SetLives(m_numLives);
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
-            if (SessionInformation.Instance.GetNumPlayers() != 2)
-            {
-                //PipPadBehaviour.Instance.Show(m_currentWord);
-                PipPadBehaviour.Instance.SayAll(1.5f);
+                wsb.Remove();
             }
         }
+        
+        m_imageBlackboard.Hide();
+        m_selectionButtons.Clear();
+        
+        if (SessionInformation.Instance.GetNumPlayers() != 2)
+        {
+            GetComponent<AudioSource>().clip = m_wordAudio;
+            GetComponent<AudioSource>().Play();
+        }
+        
+        yield return new WaitForSeconds(1.5f);
+
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("SFX_SPARKLE");
+        
+        if (!m_scoreKeeper.HasCompleted() && m_remainingWords.Count > 0)
+        {
+            yield return new WaitForSeconds(1.0f);
+            
+            ShowNextQuestion();
+        }
+        else if(m_remainingWords.Count == 0)
+        {
+            SessionInformation.SetDefaultPlayerVar();
+            GameManager.Instance.CompleteGame();
+        }
+
+        yield break;
+    }
+
+    void OnPipPadHide()
+    {
+        StartCoroutine(ClearQuestion());
     }
 
 
     public void WordClicked(bool correct, WordSelectionButton incoming)
     {
-        StartCoroutine(WordClickedCoroutine(correct, incoming));
+        StartCoroutine(WordClickedCo(correct, incoming));
+    }
+
+    IEnumerator WordClickedCo(bool correct, WordSelectionButton incoming)
+    {
+        //UserStats.Activity.IncrementNumAnswers();
+        
+        int scoreDelta = correct ? 1 : -1;
+        m_scoreKeeper.UpdateScore(scoreDelta);
+        
+        if (correct)
+        {
+            StartCoroutine(ClearQuestion());
+        }
+        else
+        {
+            //UserStats.Activity.AddIncorrectWord(m_currentWordData);
+            
+            // remove lives
+            //m_numLives--;
+            //m_livesDisplay.SetLives(m_numLives);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("NEGATIVE_HIT");
+
+            yield return new WaitForSeconds(0.75f);
+
+            if (SessionInformation.Instance.GetNumPlayers() != 2)
+            {
+                PipPadBehaviour.Instance.Hiding += OnPipPadHide;
+                PipPadBehaviour.Instance.Show(m_currentWord);
+                PipPadBehaviour.Instance.SayAll(1.5f);
+            }
+        }
     }
 
     public bool HasFinished()

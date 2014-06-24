@@ -58,4 +58,8 @@ public class WordSelectionButton : MonoBehaviour {
         tob.Off();
     }
 
+    public bool IsCorrect()
+    {
+        return m_isCorrect;
+    }
 }
