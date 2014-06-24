@@ -31,6 +31,8 @@ public class SpriteAnim : MonoBehaviour
         public bool m_isReverse;
         [SerializeField]
         public string m_sequencedAnimation;
+        [SerializeField]
+        public float m_sequenceDelay;
     }
 
     [SerializeField]
@@ -144,6 +146,12 @@ public class SpriteAnim : MonoBehaviour
         }
     }
 
+    IEnumerator PlaySequencedAnimation(AnimDetails ad)
+    {
+        yield return new WaitForSeconds(ad.m_sequenceDelay);
+        PlayAnimation(ad.m_sequencedAnimation, false);
+    }
+
     // Update is called once per frame
     void Update () 
     {
@@ -173,7 +181,9 @@ public class SpriteAnim : MonoBehaviour
                 {
                     if(!String.IsNullOrEmpty(ad.m_sequencedAnimation) && HasAnim(ad.m_sequencedAnimation))
                     {
-                        PlayAnimation(ad.m_sequencedAnimation, false);
+                        m_playAnim = false;
+                        StartCoroutine(PlaySequencedAnimation(ad));
+                        //PlayAnimation(ad.m_sequencedAnimation, false);
                     }
                     else if(m_isWaiting)
                     {

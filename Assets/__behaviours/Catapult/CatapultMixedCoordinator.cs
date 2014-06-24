@@ -210,30 +210,33 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
             target.ApplyHitForce(ball.transform);
 
-            if(IsDataMixed())
+            if (IsDataMixed())
             {
                 Texture2D tex = DataHelpers.GetPicture(target.data);
                 StopCoroutine("HideBlackboard");
-                m_blackboard.ShowImage(tex, target.data["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data)["phoneme"].ToString(), "");
+                m_blackboard.ShowImage(tex, target.data ["word"].ToString(), DataHelpers.GetOnsetPhoneme(target.data) ["phoneme"].ToString(), "");
                 StartCoroutine("HideBlackboard");
             }
 
-            if(!m_targetsShowPicture && m_dataType == "phonemes")
+            if (!m_targetsShowPicture && m_dataType == "phonemes")
             {
                 PlayShortAudio(target.data);
-            }
-            else
+            } else
             {
                 PlayLongAudio(target.data);
             }
 
             m_score++;
             
-            if(m_score >= m_targetScore)
+            if (m_scoreKeeper.HasCompleted())
             {
                 StartCoroutine(OnGameComplete());
             }
-        } 
+        }
+        else
+        {
+            m_scoreKeeper.UpdateScore(-1);
+        }
 
         yield break;
     }
