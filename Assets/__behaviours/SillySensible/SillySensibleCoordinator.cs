@@ -226,6 +226,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
     IEnumerator FeedTroll(GameObject go)
     {
         yield return new WaitForSeconds(0.25f);
+
+        m_pipAnimManager.PlayAnimation("THUMBS_UP");
         
         float positionTweenDuration = 0.3f;
 
@@ -255,8 +257,9 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
         
         iTween.ScaleTo(go, Vector3.one * 0.1f, positionTweenDuration / 2f);
 
-        string animName = Random.Range(0, 2) == 0 ? "THUMBS_UP" : "JUMP";
-        m_pipAnimManager.PlayAnimation(animName);
+        //string animName = Random.Range(0, 2) == 0 ? "THUMBS_UP" : "JUMP";
+        //m_pipAnimManager.PlayAnimation(animName);
+        m_pipAnimManager.PlayAnimation("JUMP");
         
         yield return new WaitForSeconds(positionTweenDuration / 2f);
     }
