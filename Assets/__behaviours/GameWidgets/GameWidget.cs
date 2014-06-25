@@ -212,9 +212,9 @@ public class GameWidget : MonoBehaviour
         } 
         else
         {
-            if(PrivateReleasing != null)
+            if(PrivateUnpressing != null)
             {
-                PrivateReleasing(this);
+                PrivateUnpressing(this);
             }
 
             if(!m_canDrag)
@@ -223,9 +223,9 @@ public class GameWidget : MonoBehaviour
             }
             else
             {
-                if(PrivateReleased != null)
+                if(PrivateUnpressed != null)
                 {
-                    PrivateReleased(this);
+                    PrivateUnpressed(this);
                 }
             }
         }
@@ -274,9 +274,9 @@ public class GameWidget : MonoBehaviour
 
         EnableCollider(true);
 
-        if(PrivateReleased != null)
+        if(PrivateUnpressed != null)
         {
-            PrivateReleased(this);
+            PrivateUnpressed(this);
         }
     }
 
@@ -507,35 +507,35 @@ public class GameWidget : MonoBehaviour
         }
     }
 
-    private event GameWidgetEventHandler PrivateReleasing;
-    public event GameWidgetEventHandler Releasing
+    private event GameWidgetEventHandler PrivateUnpressing;
+    public event GameWidgetEventHandler Unpressing
     {
         add
         {
-            if(PrivateReleasing == null || !PrivateReleasing.GetInvocationList().Contains(value))
+            if(PrivateUnpressing == null || !PrivateUnpressing.GetInvocationList().Contains(value))
             {
-                PrivateReleasing += value;
+                PrivateUnpressing += value;
             }
         }
         remove
         {
-            PrivateReleasing -= value;
+            PrivateUnpressing -= value;
         }
     }
 
-    private event GameWidgetEventHandler PrivateReleased;
-    public event GameWidgetEventHandler Released
+    private event GameWidgetEventHandler PrivateUnpressed;
+    public event GameWidgetEventHandler Unpressed
     {
         add
         {
-            if(PrivateReleased == null || !PrivateReleased.GetInvocationList().Contains(value))
+            if(PrivateUnpressed == null || !PrivateUnpressed.GetInvocationList().Contains(value))
             {
-                PrivateReleased += value;
+                PrivateUnpressed += value;
             }
         }
         remove
         {
-            PrivateReleased -= value;
+            PrivateUnpressed -= value;
         }
     }
 }

@@ -165,8 +165,12 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         {
             float timeTaken = Time.time - m_startTime;
             
-            float twoStarPerQuestion = 5;
-            float threeStarPerQuestion = 4;
+            float twoStarPerQuestion = 4f;
+            float threeStarPerQuestion = 2.5f;
+
+            //Debug.Log("TimeTaken: " + timeTaken);
+            //Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
+            //Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
             
             int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 

@@ -63,7 +63,7 @@ public class NumberSplatCoordinator : GameCoordinator
             GameWidget widget = newNumber.GetComponent<GameWidget>() as GameWidget;
             //widget.SetUp("numbers", number, false);
             widget.SetUp(number);
-            widget.Releasing += OnAnswer;
+            widget.Unpressing += OnAnswer;
             m_spawnedWidgets.Add(widget);
             ++locatorIndex;
         }

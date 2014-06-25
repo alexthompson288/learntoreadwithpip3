@@ -139,7 +139,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
         GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, m_spawnLocation);
         m_spawnedWidget = newGo.GetComponent<GameWidget>() as GameWidget;
         m_spawnedWidget.SetUp(m_currentWord, true);
-        m_spawnedWidget.Releasing += OnWidgetRelease;
+        m_spawnedWidget.Unpressing += OnWidgetRelease;
     }
 
     void OnClickTroll(ClickEvent click)

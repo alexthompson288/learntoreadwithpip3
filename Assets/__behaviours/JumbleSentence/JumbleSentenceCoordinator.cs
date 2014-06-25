@@ -78,7 +78,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
             // Set up GameWidget
             GameWidget wordBehaviour = newWord.GetComponent<GameWidget>() as GameWidget;
             wordBehaviour.SetUp(m_remainingWords[i], true);
-            wordBehaviour.Releasing += OnWordClick;
+            wordBehaviour.Unpressing += OnWordClick;
             wordBehaviour.EnableDrag(false);
             m_spawnedWords.Add(wordBehaviour);
 

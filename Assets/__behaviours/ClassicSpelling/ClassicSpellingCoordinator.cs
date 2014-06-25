@@ -133,7 +133,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             newDraggable.SetUp(m_currentLetters[i], false);
             newDraggable.EnableDrag(false);
-            newDraggable.Releasing += OnDraggableRelease;
+            newDraggable.Unpressing += OnDraggableRelease;
             m_draggables.Add(newDraggable);
         }
         

@@ -73,7 +73,7 @@ public class CompleteEquationCoordinator : GameCoordinator
                 GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
                 widget.SetUp(equationParts[i]);
                 widget.EnableDrag(false);
-                widget.Releasing += OnClickEquationPart;
+                widget.Unpressing += OnClickEquationPart;
                 m_spawnedEquationParts.Add(widget);
             }
         }
@@ -94,7 +94,7 @@ public class CompleteEquationCoordinator : GameCoordinator
             
             GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
             widget.SetUp(answer);
-            widget.Releasing += OnAnswer;
+            widget.Unpressing += OnAnswer;
             m_spawnedAnswers.Add(widget);
 
             ++locatorIndex;

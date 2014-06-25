@@ -75,7 +75,7 @@ public class NumberFillCoordinator : GameCoordinator
         foreach (GameWidget widget in heldWidgets)
         {
             widget.SetUpBackground();
-            widget.Releasing += OnWidgetInteract;
+            widget.Unpressing += OnWidgetInteract;
         }
         
         CollectionHelpers.Shuffle(m_locators);
@@ -86,7 +86,7 @@ public class NumberFillCoordinator : GameCoordinator
             
             GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
             widget.SetUpBackground();
-            widget.Releasing += OnWidgetInteract;
+            widget.Unpressing += OnWidgetInteract;
             m_unheldWidgets.Add(widget);
         }
 
