@@ -27,7 +27,7 @@ public class NumberSplatCoordinator : GameCoordinator
 
         if (m_dataPool.Count > 0)
         {
-            AskQuestion();
+            StartCoroutine(AskQuestion());
         } 
         else
         {
@@ -35,8 +35,12 @@ public class NumberSplatCoordinator : GameCoordinator
         }
 	}
 
-    void AskQuestion()
+    IEnumerator AskQuestion()
     {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
+
+        yield return new WaitForSeconds(0.1f);
+
         HashSet<DataRow> numbers = new HashSet<DataRow>();
 
         m_currentData = null;
@@ -58,7 +62,7 @@ public class NumberSplatCoordinator : GameCoordinator
         int locatorIndex = 0;
         foreach(DataRow number in numbers)
         {
-            GameObject newNumber = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_locators[locatorIndex]);
+            GameObject newNumber = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_locators[locatorIndex], true);
 
             GameWidget widget = newNumber.GetComponent<GameWidget>() as GameWidget;
             //widget.SetUp("numbers", number, false);
@@ -105,11 +109,13 @@ public class NumberSplatCoordinator : GameCoordinator
 
         m_spawnedWidgets.Clear();
 
-        yield return new WaitForSeconds(tweenDuration);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
+
+        yield return new WaitForSeconds(tweenDuration + 0.5f);
 
         if (m_score < m_targetScore)
         {
-            AskQuestion();
+            StartCoroutine(AskQuestion());
         } 
         else
         {

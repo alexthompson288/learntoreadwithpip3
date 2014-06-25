@@ -67,14 +67,13 @@ public class GameWidget : MonoBehaviour
             PrivateDestroying(this);
         }
     }
-
-    // SetUp methods
-    void Awake()
+    
+    void Start()
     {
-        transform.localScale = Vector3.zero;
         iTween.ScaleTo(gameObject, Vector3.one, m_scaleTweenDuration);
     }
 
+    // SetUp methods
     public virtual void SetUp(DataRow data) {}
 
     public void SetUp(string myDataType, DataRow myData, Texture2D iconTexture, bool changeBackgroundWidth = false)
@@ -200,7 +199,7 @@ public class GameWidget : MonoBehaviour
             
             m_hasDragged = false;
 
-            if(!m_canDrag && !m_isRunningClickDown)
+            if(!m_isRunningClickDown)
             {
                 ClickDownReaction();
             }
@@ -242,6 +241,7 @@ public class GameWidget : MonoBehaviour
                 StartCoroutine(ClickScaleDown());
                 break;
             case PressReaction.ChangeSprite:
+                Debug.Log("Changing sprite");
                 ChangeBackgroundState(true);
                 break;
             default:

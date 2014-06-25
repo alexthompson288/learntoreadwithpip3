@@ -16,13 +16,15 @@ namespace Wingrove
             return newObject;
         }
 
-        public static GameObject InstantiateUnderWithIdentityTransforms(GameObject prefab, Transform transform)
+        public static GameObject InstantiateUnderWithIdentityTransforms(GameObject prefab, Transform transform, bool scaleZero = false)
         {
             GameObject newObject = (GameObject)GameObject.Instantiate(prefab, transform.position, transform.rotation);
             newObject.transform.parent = transform;
             newObject.transform.localRotation = Quaternion.identity;
             newObject.transform.localPosition = Vector3.zero;
-            newObject.transform.localScale = Vector3.one;
+
+            Vector3 localScale = scaleZero ? Vector3.zero : Vector3.one;
+            newObject.transform.localScale = localScale;
 			SetLayerRecursively(newObject, transform.gameObject.layer);
             return newObject;
         }
