@@ -85,6 +85,7 @@ public class JoinPairsPlayer : GamePlayer
                                                                           m_lineRendererMaterial, m_lineRendererColor));
 
         OnJoin(joinables [0], joinables [1]);
+        joinables [0].Tint(Color.white);
 
         m_isDrawingDemo = false;
 

@@ -95,6 +95,9 @@ public class JoinableLineDraw : LineDraw
             JoinablePressed(this, pressed);
         }
 
+        string eventName = pressed ? "BUTTON_PRESS_SCALE" : "BUTTON_UNPRESS_SCALE";
+        WingroveAudio.WingroveRoot.Instance.PostEvent(eventName);
+
         if (pressed)
         {
             CreateLine();
