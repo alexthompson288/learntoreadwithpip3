@@ -77,7 +77,7 @@ public class NumberQuizCoordinator : GameCoordinator
 
             GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
             widget.SetUp(answer);
-            widget.AllReleaseInteractions += OnAnswer;
+            widget.Releasing += OnAnswer;
             m_spawnedAnswers.Add(widget);
 
             ++locatorIndex;

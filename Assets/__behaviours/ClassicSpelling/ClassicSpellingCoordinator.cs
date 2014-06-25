@@ -133,7 +133,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             newDraggable.SetUp(m_currentLetters[i], false);
             newDraggable.EnableDrag(false);
-            newDraggable.AllReleaseInteractions += OnDraggableRelease;
+            newDraggable.Releasing += OnDraggableRelease;
             m_draggables.Add(newDraggable);
         }
         
@@ -204,6 +204,9 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     void OnDraggableRelease(GameWidget currentDraggable)
     {
+        currentDraggable.ChangeBackgroundState(true);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
+
         PadLetter padLetter = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
 
         //Debug.Log("first attempt: " + padLetter);
@@ -281,8 +284,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             
             currentDraggable.TweenToStartPos();
             currentDraggable.TintGray();
-            currentDraggable.ChangeBackgroundState(true);
-            
+
             ++m_wrongAnswers;
             
             switch(m_wrongAnswers)

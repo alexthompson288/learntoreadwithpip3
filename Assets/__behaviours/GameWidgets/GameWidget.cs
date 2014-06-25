@@ -30,63 +30,16 @@ public class GameWidget : MonoBehaviour
     [SerializeField]
     private bool m_canDrag = true;
     [SerializeField]
-    private ClickReaction m_clickReaction;
+    private PressReaction m_pressReaction;
+    [SerializeField]
+    private GameObject m_pressReactor;
 
-    enum ClickReaction
+    enum PressReaction
     {
         None,
         Offset,
         Scale,
         ChangeSprite
-    }
-
-    protected DataRow m_data;
-    public DataRow data
-    {
-        get
-        {
-            return m_data;
-        }
-    }
-
-    public string labelText
-    {
-        get
-        {
-            return m_label.text;
-        }
-    }
-
-    public float backgroundWidth
-    {
-        get
-        {
-            return m_background.width;
-        }
-    }
-
-    public float labelWidth
-    {
-        get
-        {
-            return NGUIHelpers.GetLabelWidth(m_label);
-        }
-    }
-
-    public float scaleTweenDuration
-    {
-        get
-        {
-            return m_scaleTweenDuration;
-        }
-    }
-
-    public float positionTweenDuration
-    {
-        get
-        {
-            return m_positionTweenDuration;
-        }
     }
 
     public void SetPressedAudio(string myPressedAudio)
@@ -254,31 +207,36 @@ public class GameWidget : MonoBehaviour
         } 
         else
         {
-            if(m_hasDragged)
+            if(PrivateReleasing != null)
             {
-                if(PrivateDragReleased != null)
-                {
-                    PrivateDragReleased(this);
-                }
+                PrivateReleasing(this);
+            }
+
+            if(!m_canDrag)
+            {
+                StartCoroutine(ClickUpReaction());
             }
             else
             {
-                StartCoroutine(ClickUpReaction());
+                if(PrivateReleased != null)
+                {
+                    PrivateReleased(this);
+                }
             }
         }
     }
 
     void ClickDownReaction()
     {
-        switch(m_clickReaction)
+        switch(m_pressReaction)
         {
-            case ClickReaction.Offset:
+            case PressReaction.Offset:
                 StartCoroutine(ClickOffsetDown());
                 break;
-            case ClickReaction.Scale:
+            case PressReaction.Scale:
                 StartCoroutine(ClickScaleDown());
                 break;
-            case ClickReaction.ChangeSprite:
+            case PressReaction.ChangeSprite:
                 ChangeBackgroundState(true);
                 break;
             default:
@@ -297,12 +255,12 @@ public class GameWidget : MonoBehaviour
             yield return null;
         }
 
-        switch(m_clickReaction)
+        switch(m_pressReaction)
         {
-            case ClickReaction.Offset:
+            case PressReaction.Offset:
                 yield return StartCoroutine(ClickOffsetUp());
                 break;
-            case ClickReaction.Scale:
+            case PressReaction.Scale:
                 yield return StartCoroutine(ClickScaleUp());
                 break;
             default:
@@ -311,9 +269,9 @@ public class GameWidget : MonoBehaviour
 
         EnableCollider(true);
 
-        if(PrivateClicked != null)
+        if(PrivateReleased != null)
         {
-            PrivateClicked(this);
+            PrivateReleased(this);
         }
     }
 
@@ -329,7 +287,7 @@ public class GameWidget : MonoBehaviour
         float tweenDuration = 0.2f;
         tweenArgs.Add("time", tweenDuration);
         
-        iTween.MoveTo(gameObject, tweenArgs);
+        iTween.MoveTo(m_pressReactor, tweenArgs);
         
         yield return new WaitForSeconds(tweenDuration);
         
@@ -346,7 +304,7 @@ public class GameWidget : MonoBehaviour
         float tweenDuration = 0.2f;
         tweenArgs.Add("time", tweenDuration);
         
-        iTween.MoveTo(gameObject, tweenArgs);
+        iTween.MoveTo(m_pressReactor, tweenArgs);
         
         yield return new WaitForSeconds(tweenDuration);
     }
@@ -357,7 +315,7 @@ public class GameWidget : MonoBehaviour
 
         float tweenDuration = 0.2f;
         
-        iTween.ScaleTo(gameObject, Vector3.one * 0.8f, tweenDuration);
+        iTween.ScaleTo(m_pressReactor, Vector3.one * 0.8f, tweenDuration);
 
         yield return new WaitForSeconds(tweenDuration);
 
@@ -368,7 +326,7 @@ public class GameWidget : MonoBehaviour
     {
         float tweenDuration = 0.2f;
         
-        iTween.ScaleTo(gameObject, Vector3.one, tweenDuration);
+        iTween.ScaleTo(m_pressReactor, Vector3.one, tweenDuration);
         
         yield return new WaitForSeconds(tweenDuration);
     }
@@ -459,6 +417,56 @@ public class GameWidget : MonoBehaviour
         iTween.ShakePosition(gameObject, tweenArgs);
     }
 
+    // Getters
+    protected DataRow m_data;
+    public DataRow data
+    {
+        get
+        {
+            return m_data;
+        }
+    }
+    
+    public string labelText
+    {
+        get
+        {
+            return m_label.text;
+        }
+    }
+    
+    public float backgroundWidth
+    {
+        get
+        {
+            return m_background.width;
+        }
+    }
+    
+    public float labelWidth
+    {
+        get
+        {
+            return NGUIHelpers.GetLabelWidth(m_label);
+        }
+    }
+    
+    public float scaleTweenDuration
+    {
+        get
+        {
+            return m_scaleTweenDuration;
+        }
+    }
+    
+    public float positionTweenDuration
+    {
+        get
+        {
+            return m_positionTweenDuration;
+        }
+    }
+
     // Events
     public delegate void GameWidgetEventHandler(GameWidget widget);
 
@@ -478,49 +486,35 @@ public class GameWidget : MonoBehaviour
         }
     }
 
-    private event GameWidgetEventHandler PrivateClicked;
-    public event GameWidgetEventHandler Clicked
+    private event GameWidgetEventHandler PrivateReleasing;
+    public event GameWidgetEventHandler Releasing
     {
         add
         {
-            if(PrivateClicked == null || !PrivateClicked.GetInvocationList().Contains(value))
+            if(PrivateReleasing == null || !PrivateReleasing.GetInvocationList().Contains(value))
             {
-                PrivateClicked += value;
+                PrivateReleasing += value;
             }
         }
         remove
         {
-            PrivateClicked -= value;
+            PrivateReleasing -= value;
         }
     }
 
-    private event GameWidgetEventHandler PrivateDragReleased;
-    public event GameWidgetEventHandler DragReleased
+    private event GameWidgetEventHandler PrivateReleased;
+    public event GameWidgetEventHandler Released
     {
         add
         {
-            if(PrivateDragReleased == null || !PrivateDragReleased.GetInvocationList().Contains(value))
+            if(PrivateReleased == null || !PrivateReleased.GetInvocationList().Contains(value))
             {
-                PrivateDragReleased += value;
+                PrivateReleased += value;
             }
         }
         remove
         {
-            PrivateDragReleased -= value;
-        }
-    }
-
-    public event GameWidgetEventHandler AllReleaseInteractions
-    {
-        add
-        {
-            Clicked += value;
-            DragReleased += value;
-        }
-        remove
-        {
-            Clicked -= value;
-            DragReleased -= value;
+            PrivateReleased -= value;
         }
     }
 }
