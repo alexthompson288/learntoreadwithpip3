@@ -48,7 +48,7 @@ public class SpriteAnim : MonoBehaviour
     [SerializeField]
     private Vector2 m_randomDelayRange = new Vector2(2, 5);
 
-    int m_currentAnimation;
+    int m_currentAnimation = 0;
     float m_currentT;
     int m_currentFrame;
 
@@ -155,23 +155,22 @@ public class SpriteAnim : MonoBehaviour
     // Update is called once per frame
     void Update () 
     {
+        if (!IsPlaying())
+        {
+            //Debug.Log("m_playAnim: " + m_playAnim);
+            //Debug.Log("m_currentAnimation: " + m_currentAnimation);
+            //Debug.Log("m_availableAnimations.Length: " + m_availableAnimations.Length);
+        }
+
         if (IsPlaying())
         {
+
             AnimDetails ad = m_availableAnimations[m_currentAnimation];
 
             m_currentT += Time.deltaTime * ad.m_fps;
             if (m_currentT > 1)
             {
                 m_currentT -= 1;
-
-                if(ad.m_isReverse)
-                {
-                    --m_currentFrame;
-                }
-                else
-                {
-                    ++m_currentFrame;
-                }
 
                 if(Mathf.Abs(m_currentFrame) < Mathf.Abs(ad.m_numFrames))
                 {
@@ -208,7 +207,16 @@ public class SpriteAnim : MonoBehaviour
                             AnimFinished(this, ad.m_name);
                         }
                     }
-                }                
+                }
+
+                if(ad.m_isReverse)
+                {
+                    --m_currentFrame;
+                }
+                else
+                {
+                    ++m_currentFrame;
+                }
             }
         }
     }
@@ -222,7 +230,7 @@ public class SpriteAnim : MonoBehaviour
         {
             frameString = ((char)('a' + frame)).ToString();
         }
-        
+
         m_sprite.spriteName = m_availableAnimations [m_currentAnimation].m_prefix + frameString;
     }
 }

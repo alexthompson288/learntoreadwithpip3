@@ -31,9 +31,9 @@ public class PipButton : MonoBehaviour
     [SerializeField]
     private UIWidget[] m_additionalColoredWidgets;
     [SerializeField]
-    private SimpleSpriteAnim m_sheenAnimation;
+    private SpriteAnim[] m_pressAnimations;
     [SerializeField]
-    private SimpleSpriteAnim m_pressAnimation;
+    private SpriteAnim[] m_unpressAnimations;
 
     bool m_isTransitioning;
 
@@ -164,7 +164,7 @@ public class PipButton : MonoBehaviour
         m_autoReset = newAutoReset;
     }
 
-    IEnumerator Start()
+    void Start()
     {
         if (m_pressableButton != null)
         {
@@ -208,27 +208,7 @@ public class PipButton : MonoBehaviour
                     m_pressedColor [i] = Mathf.Clamp01(m_pressedColor [i] - 0.2f);
                 }
             }
-
-            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
-            
-            if (m_sheenAnimation != null)
-            {
-                m_sheenAnimation.AnimFinished += OnSheenFinish;
-                m_sheenAnimation.PlayAnimation("ON");
-                StartCoroutine(PlaySheen());
-            }
         }
-    }
-    
-    void OnSheenFinish(string animName)
-    {
-        StartCoroutine(PlaySheen());
-    }
-    
-    IEnumerator PlaySheen()
-    {
-        yield return new WaitForSeconds(Random.Range(3f, 9f));
-        m_sheenAnimation.PlayAnimation("ON");
     }
     
     void OnPress(bool pressed)
@@ -303,10 +283,10 @@ public class PipButton : MonoBehaviour
         {
             m_pressableButton.color = m_pressedColor;
         }
-        
-        if (m_pressAnimation != null)
+
+        foreach (SpriteAnim anim in m_pressAnimations)
         {
-            m_pressAnimation.PlayAnimation("ON");
+            anim.PlayAnimation("ON");
         }
         
         yield return new WaitForSeconds(m_pressDuration);
@@ -354,6 +334,11 @@ public class PipButton : MonoBehaviour
         if (m_changeColor)
         {
             m_pressableButton.color = m_unpressedColor;
+        }
+
+        foreach (SpriteAnim anim in m_unpressAnimations)
+        {
+            anim.PlayAnimation("ON");
         }
         
         yield return new WaitForSeconds(m_pressDuration);
