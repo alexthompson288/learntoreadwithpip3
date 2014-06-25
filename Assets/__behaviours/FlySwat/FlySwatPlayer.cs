@@ -103,7 +103,7 @@ public class FlySwatPlayer : GamePlayer
             
             GameWidget widget = newFly.GetComponentInChildren<GameWidget>() as GameWidget;
             widget.SetUp(coordinator.GetDataType(), data, false);
-            widget.Releasing += OnSwatFly;
+            widget.Pressing += OnSwatFly;
             widget.Destroying += OnWidgetDestroy;
             m_spawnedWidgets.Add(widget);
             

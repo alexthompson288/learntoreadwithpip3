@@ -62,9 +62,15 @@ public class ScoreCatapult : ScoreKeeper
     
     public override void UpdateScore(int delta = 1)
     {
+        bool shouldTween = (delta > 0 && m_score < m_targetScore) || (delta < 0 && m_score > 0);
+
         base.UpdateScore(delta);
         PlayAudio(delta);
-        TweenRigidbody(); 
+
+        if (shouldTween)
+        {
+            TweenRigidbody(); 
+        }
     }
 
     public override IEnumerator On()
@@ -87,12 +93,14 @@ public class ScoreCatapult : ScoreKeeper
     void TweenRigidbody()
     {
         Debug.Log("ScoreCatapault Tween");
-        
+
+        Vector3 targetPos = m_origin.position + (m_target.position - m_origin.position).normalized * m_pointDistance * m_score;
+
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_STRETCH_SHORT");
         
         Hashtable tweenArgs = new Hashtable();
         
-        tweenArgs.Add("position", m_origin.position + (m_target.position - m_origin.position).normalized * m_pointDistance * m_score);
+        tweenArgs.Add("position", targetPos);
         tweenArgs.Add("speed", m_tweenSpeed);        
         tweenArgs.Add("easetype", iTween.EaseType.easeOutElastic);
         

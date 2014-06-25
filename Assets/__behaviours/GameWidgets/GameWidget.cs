@@ -204,6 +204,11 @@ public class GameWidget : MonoBehaviour
             {
                 ClickDownReaction();
             }
+
+            if(PrivatePressing != null)
+            {
+                PrivatePressing(this);
+            }
         } 
         else
         {
@@ -483,6 +488,22 @@ public class GameWidget : MonoBehaviour
         remove
         {
             PrivateDestroying -= value;
+        }
+    }
+
+    private event GameWidgetEventHandler PrivatePressing;
+    public event GameWidgetEventHandler Pressing
+    {
+        add
+        {
+            if(PrivatePressing == null || !PrivatePressing.GetInvocationList().Contains(value))
+            {
+                PrivatePressing += value;
+            }
+        }
+        remove
+        {
+            PrivatePressing -= value;
         }
     }
 
