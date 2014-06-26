@@ -66,13 +66,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     string RequestToken()
     {
         Debug.Log("RequestToken()");
-
-        Debug.Log("email: " + m_emailInput.text);
-        Debug.Log("password: " + m_passwordInput.text);
         
         #if UNITY_EDITOR
         // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
-        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         #endif
         
         Debug.Log("Creating request");
@@ -80,9 +77,17 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         request.KeepAlive = true;
         request.Method = "POST";
         request.ContentType="application/json";
-        byte[] byteArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"email@example.com\",\n    \"password\": \"password\"\n}");
-        //byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(System.String.Format("{\n    \"email\": \"{0}\",\n    \"password\": \"{1}\"\n}", m_emailInput.text, m_passwordInput.text));
-        //byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(System.String.Format("{\n    \"email\": \"{0}\",\n    \"password\": \"{1}\"\n}", "email@example.com", "password"));
+
+        string email = m_emailInput.text;
+        string password = m_passwordInput.text;
+
+
+#if UNITY_EDITOR
+        email = "not@theemail.com";
+        password = "notThePassword";
+#endif
+
+        byte[] byteArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
         request.ContentLength = byteArray.Length;
         using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
         
@@ -104,7 +109,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         #if UNITY_EDITOR
         // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
-        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         #endif
         
         var request = System.Net.WebRequest.Create("http://private-281e5-pip.apiary-mock.com/api/v1/users/me") as System.Net.HttpWebRequest;

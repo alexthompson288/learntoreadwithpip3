@@ -117,13 +117,23 @@ public static class StringHelpers
             }
             catch
             {
-                dates[i] = int.MaxValue;
-                Debug.LogError("Failed to find date " + i);
+                dates[i] = 0;
+                //Debug.LogError("Failed to find date " + i);
+                throw;
             }
 
             dateString = dateString.Substring(separatorIndex + 1);
         }
 
-        return new DateTime(dates[0], dates[1], dates[2]);
+        try
+        {
+            return new DateTime(dates[0], dates[1], dates[2]);
+        }
+        catch
+        {
+            //Debug.LogError("Failed to construct date");
+            //return DateTime.Now;
+            throw;
+        }
     }
 }

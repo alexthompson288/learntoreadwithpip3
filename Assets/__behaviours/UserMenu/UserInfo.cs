@@ -31,18 +31,20 @@ public class UserInfo : Singleton<UserInfo>
         Load();
 
 
-        DateTime expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
+        DateTime expirationDate;
+        try
+        {
+            expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
+        }
+        catch
+        {
+            expirationDate = DateTime.Now.AddDays(-2);
+        }
 
         if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
         {
             m_isLoggedIn = false;
             GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
-
-            Debug.Log("m_email: " + m_email);
-            Debug.Log("dateComparison: " + DateTime.Compare(expirationDate, DateTime.Now));
-
-            LogDateTime(expirationDate, "expiration");
-            LogDateTime(DateTime.Now, "now");
         }
         else
         {
