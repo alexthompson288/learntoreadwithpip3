@@ -128,9 +128,6 @@ public class NumberFillCoordinator : GameCoordinator
     {
         if (m_currentWidgetHolder.heldWidgetCount == System.Convert.ToInt32(m_currentData ["value"]))
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
-            
-            ++m_score;
             m_scoreKeeper.UpdateScore(1);
             
             StartCoroutine(ClearQuestion());
@@ -140,6 +137,8 @@ public class NumberFillCoordinator : GameCoordinator
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             
             m_currentWidgetHolder.Shake();
+
+            m_scoreKeeper.PlayIncorrectAnimation();
         }
     }
 
@@ -152,7 +151,7 @@ public class NumberFillCoordinator : GameCoordinator
 
         yield return new WaitForSeconds(0.5f);
 
-        if (m_score < m_targetScore)
+        if (!m_scoreKeeper.HasCompleted())
         {
             AskQuestion();
         } 
