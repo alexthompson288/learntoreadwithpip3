@@ -12,8 +12,6 @@ public class ChooseGameButton : MonoBehaviour
     [SerializeField]
     private UISprite[] m_starSprites;
     [SerializeField]
-    private bool m_starsAreTimeBased = true;
-    [SerializeField]
     private string m_blackboardSpriteName;
     [SerializeField]
     private int m_numPlayers = 1;
@@ -47,18 +45,6 @@ public class ChooseGameButton : MonoBehaviour
         if (m_game != null)
         {
             m_label.text = m_game ["labeltext"] != null ? m_game ["labeltext"].ToString() : m_game ["name"].ToString();
-
-            /*
-            m_icon.spriteName = m_game ["name"].ToString() + "_complete";
-
-            m_temporaryIconTexture.mainTexture = Resources.Load<Texture2D>(m_game ["name"].ToString() + "_complete");
-            if (m_temporaryIconTexture.mainTexture == null)
-            {
-                m_temporaryIconTexture.mainTexture = Resources.Load<Texture2D>(m_game ["name"].ToString());
-            }
-
-            m_temporaryIconTexture.gameObject.SetActive(m_temporaryIconTexture.mainTexture != null);
-            */
         }
     }
 

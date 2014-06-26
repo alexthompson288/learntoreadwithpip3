@@ -102,12 +102,11 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         if (isCorrect)
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
-
             ++m_numAnswered;
 
-            int scoreDelta = m_hasAnsweredIncorrectly ? 0 : 1; 
-            m_scoreKeeper.UpdateScore(scoreDelta);
+            //int scoreDelta = m_hasAnsweredIncorrectly ? 0 : 1; 
+            //m_scoreKeeper.UpdateScore(scoreDelta);
+            m_scoreKeeper.UpdateScore(1);
 
             widget.TweenToPos(m_sequenceLocators[m_currentNumberIndex].position);
 
@@ -120,6 +119,7 @@ public class NumberSequenceCoordinator : GameCoordinator
             m_hasAnsweredIncorrectly = true;
 
             widget.TweenToStartPos();
+            widget.TintGray();
         }
     }
 

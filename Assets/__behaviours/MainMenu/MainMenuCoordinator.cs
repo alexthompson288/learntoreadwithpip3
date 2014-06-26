@@ -25,6 +25,6 @@ public class MainMenuCoordinator : MonoBehaviour
     void OnPressMaths(PipButton button)
     {
         GameManager.Instance.SetCurrentProgramme("Maths1");
-        TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+        TransitionScreen.Instance.ChangeLevel("NewNumberGameMenu", false);
     }
 }

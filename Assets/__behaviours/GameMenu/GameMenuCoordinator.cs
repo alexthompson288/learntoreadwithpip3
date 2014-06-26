@@ -98,7 +98,7 @@ public class GameMenuCoordinator : MonoBehaviour
             
             GameManager.Instance.AddGame(game);
             
-            GameManager.Instance.SetReturnScene("NewGameMenu");
+            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
             
             // Get and set all the data associated with the color
             int moduleId = DataHelpers.GetModuleId(pipColor);
