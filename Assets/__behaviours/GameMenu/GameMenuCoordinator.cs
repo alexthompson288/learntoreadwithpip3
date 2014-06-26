@@ -45,6 +45,11 @@ public class GameMenuCoordinator : MonoBehaviour
         }
         
         GameMenuInfo.Instance.DestroyBookmark();
+
+#if UNITY_EDITOR
+        string programmeName = Application.loadedLevelName == "NewGameMenu" ? "Reading1" : "Maths1";
+        GameManager.Instance.SetCurrentProgramme(programmeName);
+#endif
     }
     
     void ActivateGameButtons()
@@ -115,11 +120,10 @@ public class GameMenuCoordinator : MonoBehaviour
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
             
             DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number DESC");
-            
             if (sessionsTable.Rows.Count > 0)
             {
-                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
-                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
+                int highestNumber = sessionsTable.Rows[0]["highest_number"] != null ? sessionsTable.Rows[0].GetInt("highest_number") : 10;
+                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(1, highestNumber));
             }
             
             ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));

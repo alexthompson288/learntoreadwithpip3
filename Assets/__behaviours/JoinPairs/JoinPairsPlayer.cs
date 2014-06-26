@@ -130,7 +130,9 @@ public class JoinPairsPlayer : GamePlayer
         
         int pairsToShowAtOnce = m_isDrawingDemo ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
         pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, m_locators.Length / 2);
-        
+
+        Debug.Log("Created dataPool");
+
         while (dataPool.Count < pairsToShowAtOnce)
         {
             DataRow data = JoinPairsCoordinator.Instance.dataPool[Random.Range(0, JoinPairsCoordinator.Instance.dataPool.Count)];
@@ -140,6 +142,8 @@ public class JoinPairsPlayer : GamePlayer
             }
             yield return null;
         }
+
+        Debug.Log("dataPool.Count: " + dataPool);
 
         CollectionHelpers.Shuffle(m_locators);
 

@@ -382,7 +382,9 @@ public static class DataHelpers
     public static List<DataRow> GetData(string dataType)
     {
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
-        
+
+        Debug.Log("DataHelpers.GetData(" + dataType + ")");
+
         if (dataPool.Count == 0)
         {
             switch(dataType)
@@ -415,6 +417,7 @@ public static class DataHelpers
                     dataPool = GetQuizQuestions();
                     break;
                 case "numbers":
+                    Debug.Log("Getting numbers");
                     dataPool = GetNumbers();
                     break;
                 case "shapes":
@@ -783,6 +786,34 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
+        Debug.Log("DataHelpers.GetNumbers()"); 
+        List<DataRow> numbers = GameManager.Instance.GetData("numbers");
+
+        if (numbers.Count == 0)
+        {
+            for (int i = 1; i < 11; ++i)
+            {
+                numbers.Add(CreateNumber(i));
+            }
+        }
+        
+        return numbers;
+    }
+
+    public static List<DataRow> CreateNumbers(int lowest, int highest)
+    {
+        List<DataRow> numbers = new List<DataRow>();
+        for(int i = lowest; i < highest + 1; ++i)
+        {
+            numbers.Add(CreateNumber(i));
+        }
+
+        return numbers;
+    }
+    /*
+    public static List<DataRow> GetNumbers()
+    {
+        Debug.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
 
         int[] boundaryValues = new int[2];
@@ -800,6 +831,8 @@ public static class DataHelpers
             boundaryValues[1] = 10;
         }
 
+        Debug.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
+
         Array.Sort(boundaryValues);
 
         List<DataRow> numbers = new List<DataRow>();
@@ -811,6 +844,7 @@ public static class DataHelpers
 
         return numbers;
     }
+    */
 
     public static DataRow CreateNumber(int value)
     {

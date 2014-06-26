@@ -202,8 +202,10 @@ public class OldGameMenuCoordinator : MonoBehaviour
                 
                 if (sessionsTable.Rows.Count > 0)
                 {
-                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
-                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
+                    int highestNumber = sessionsTable.Rows[0]["highest_number"] != null ? sessionsTable.Rows[0].GetInt("highest_number") : 10;
+                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(1, highestNumber));
+                    //GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
+                    //GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows [0] ["highest_number"])));
                 }
                 
                 ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));

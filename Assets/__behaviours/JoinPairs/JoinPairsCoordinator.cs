@@ -126,6 +126,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         m_dataType = DataHelpers.GameOrDefault(m_dataType);
 
+        Debug.Log("dataType: " + m_dataType);
 
         for(int index = 0; index < numPlayers; ++index)
         {
@@ -145,6 +146,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         m_dataPool = DataHelpers.GetData(m_dataType);
 
+        Debug.Log("PRE - dataPool.Count: " + m_dataPool.Count);
+
         if (m_dataType != "numbers")
         {
             m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
@@ -154,6 +157,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             m_pictures[data] = DataHelpers.GetPicture(data);
         }
+
+        Debug.Log("POST - dataPool.Count: " + m_dataPool.Count);
 
         if(m_dataPool.Count > 0)
         {
@@ -200,10 +205,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
                 yield return null;
             }
 
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_READY_STEADY_GO");
-
-            //yield return new WaitForSeconds(2.5f);
-
             Debug.Log("HIDE CHARACTERS");
             
             for (int index = 0; index < numPlayers; ++index)
@@ -226,6 +227,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
             yield return StartCoroutine(m_gamePlayers[0].DrawDemoLine());
         }
+
+        Debug.Log("START GAME");
 
         m_startTime = Time.time;
 
