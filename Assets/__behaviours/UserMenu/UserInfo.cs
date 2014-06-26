@@ -4,28 +4,82 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System;
 
 public class UserInfo : Singleton<UserInfo> 
 {
+    [SerializeField]
+    private GameObject m_loginPrefab;
+
     public delegate void UserChangeEventHandler();
     public event UserChangeEventHandler ChangingUser;
 
-	private string m_accountUsername = "";
-	public string accountUsername
-	{
-		get
-		{
-			return m_accountUsername;
-		}
-	}
+    bool m_isLoggedIn = false;
+    string m_email = "";
+    string m_accessToken = "";
+    string m_expirationDate = "";
 
-    private string m_userEmail = "";
-    public string userEmail
-    {
-        get
+    void Awake()
+    {   
+        #if UNITY_EDITOR
+        if(m_overwrite)
         {
-            return m_userEmail;
+            Save ();
         }
+        #endif
+        
+        Load();
+
+
+        DateTime expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
+
+        if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
+        {
+            m_isLoggedIn = false;
+            GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
+
+            Debug.Log("m_email: " + m_email);
+            Debug.Log("dateComparison: " + DateTime.Compare(expirationDate, DateTime.Now));
+
+            LogDateTime(expirationDate, "expiration");
+            LogDateTime(DateTime.Now, "now");
+        }
+        else
+        {
+            m_isLoggedIn = true;
+        }
+    }
+
+    void LogDateTime(DateTime dt, string dateName = "")
+    {
+        Debug.Log("LogDateTime() - " + dateName);
+        Debug.Log(dt.Year);
+        Debug.Log(dt.Month);
+        Debug.Log(dt.Day);
+    }
+
+    public void LogIn(string myEmail, string myAccessToken, string myExpirationDate)
+    {
+        m_isLoggedIn = true;
+        m_email = myEmail;
+        m_accessToken = myAccessToken;
+        m_expirationDate = myExpirationDate;
+        Save();
+    }
+
+    public void LogOut()
+    {
+        m_isLoggedIn = false;
+    }
+
+    public bool IsLoggedIn()
+    {
+        return m_isLoggedIn;
+    }
+
+    public string GetEmail()
+    {
+        return m_email;
     }
 
 	string m_currentUser = "";
@@ -70,8 +124,8 @@ public class UserInfo : Singleton<UserInfo>
 
         //Debug.Log("Posting user data: " + m_accountUsername);
 
-        form.AddField(modelName + "[account_username]", m_accountUsername);
-        form.AddField(modelName + "[email]", m_userEmail);
+        //form.AddField(modelName + "[account_username]", m_accountUsername);
+        //form.AddField(modelName + "[email]", m_userEmail);
         form.AddField(modelName + "[user_type]", ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_userType);
         form.AddField(modelName + "[child_usernames]", CollectionHelpers.ConcatList(m_users.Keys.ToList()));
         form.AddField(modelName + "[platform]", Application.platform.ToString());
@@ -146,51 +200,6 @@ public class UserInfo : Singleton<UserInfo>
     }
 
     bool m_waitForIpAddress = false;
-
-  
-	void Awake()
-	{	
-        //Debug.Log("UserInfo.Awake()");
-
-#if UNITY_STANDALONE || UNITY_ANDROID
-        try
-        {
-            StartCoroutine(FindIpAddress());
-            Debug.Log("Found ip address: " + m_ipAddress);
-        }
-        catch
-        {
-            m_waitForIpAddress = false;
-            Debug.LogError("UserInfo.FindIpAddress - caller catch");
-        }
-#endif
-
-#if UNITY_EDITOR
-		if(m_overwrite)
-		{
-			Save ();
-		}
-#endif
-
-		Load();
-
-		if (System.String.IsNullOrEmpty(m_accountUsername))
-        {
-            string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
-            dateTimeString = dateTimeString.Replace("/", "_");
-            dateTimeString = dateTimeString.Replace(":", "_");
-
-            string rand = Random.Range(100000, 1000000).ToString();
-
-            m_accountUsername = dateTimeString + rand;
-
-            string newUser = "Pip";
-            m_currentUser = newUser;
-            CreateUser(newUser, "pip_state_a");
-			
-            Save();
-        }
-	}
 
     IEnumerator Start()
     {
@@ -268,8 +277,9 @@ public class UserInfo : Singleton<UserInfo>
 		
 		if (data.Length != 0)
 		{
-            m_accountUsername = br.ReadString();
-            m_userEmail = br.ReadString();
+            m_email = br.ReadString();
+            m_accessToken = br.ReadString();
+            m_expirationDate = br.ReadString();
 
 			int numUsers = br.ReadInt32();
 			for(int i = 0; i < numUsers; ++i)
@@ -291,8 +301,9 @@ public class UserInfo : Singleton<UserInfo>
 		MemoryStream newData = new MemoryStream();
 		BinaryWriter bw = new BinaryWriter(newData);
 
-		bw.Write (m_accountUsername);
-        bw.Write(m_userEmail);
+		bw.Write (m_email);
+        bw.Write(m_accessToken);
+        bw.Write(m_expirationDate);
 		
 		bw.Write(m_users.Count);
 		foreach (KeyValuePair<string, string> kvp in m_users)
@@ -308,4 +319,50 @@ public class UserInfo : Singleton<UserInfo>
 		bw.Close();
 		newData.Close();
 	}
+
+    /*
+    void Awake()
+    {   
+        //Debug.Log("UserInfo.Awake()");
+        
+        #if UNITY_STANDALONE || UNITY_ANDROID
+        try
+        {
+            StartCoroutine(FindIpAddress());
+            Debug.Log("Found ip address: " + m_ipAddress);
+        }
+        catch
+        {
+            m_waitForIpAddress = false;
+            Debug.LogError("UserInfo.FindIpAddress - caller catch");
+        }
+        #endif
+        
+        #if UNITY_EDITOR
+        if(m_overwrite)
+        {
+            Save ();
+        }
+        #endif
+        
+        Load();
+
+        if (System.String.IsNullOrEmpty(m_accountUsername))
+        {
+            string dateTimeString = TimeHelpers.BuildDateTimeString(System.DateTime.Now);
+            dateTimeString = dateTimeString.Replace("/", "_");
+            dateTimeString = dateTimeString.Replace(":", "_");
+
+            string rand = Random.Range(100000, 1000000).ToString();
+
+            m_accountUsername = dateTimeString + rand;
+
+            string newUser = "Pip";
+            m_currentUser = newUser;
+            CreateUser(newUser, "pip_state_a");
+            
+            Save();
+        }
+    }
+    */
 }

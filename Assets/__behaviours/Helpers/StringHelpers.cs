@@ -92,7 +92,38 @@ public static class StringHelpers
         {
             return "Negative " + IntegerToWritten(-n);
         }
-        
+
         return FriendlyInteger(n, "", 0);
+    }
+
+    public static DateTime GetDateTimeYMD(string dateString, string separator)
+    {
+        //Debug.Log("GetDateTimeYMD()");
+
+        int[] dates = new int[3];
+
+        for(int i = 0; i < dates.Length; ++i)
+        {
+            //Debug.Log("dateString: " + dateString);
+
+            int separatorIndex = dateString.IndexOf(separator);
+
+            string singleString = separatorIndex == -1 ? dateString : dateString.Substring(0, separatorIndex);
+            //Debug.Log(i + " - " + singleString);
+
+            try
+            {
+                dates[i] = Convert.ToInt32(singleString);
+            }
+            catch
+            {
+                dates[i] = int.MaxValue;
+                Debug.LogError("Failed to find date " + i);
+            }
+
+            dateString = dateString.Substring(separatorIndex + 1);
+        }
+
+        return new DateTime(dates[0], dates[1], dates[2]);
     }
 }

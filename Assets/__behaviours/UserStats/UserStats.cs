@@ -111,7 +111,7 @@ public class UserStats : Singleton<UserStats>
             {
                 //Debug.Log("Using Debug Activity Data");
 
-                form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
+                //form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
                 form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
                 form.AddField (m_modelName + "[scene]", Application.loadedLevelName);
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
@@ -390,7 +390,7 @@ public class UserStats : Singleton<UserStats>
 
 		void BuildSessionIdentifier()
 		{
-			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.accountUsername, m_sessionId, GetTrimmedStartTime() });
+			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.GetEmail(), m_sessionId, GetTrimmedStartTime() });
 		}
 
 		public static string OnNewGame(string scene)
@@ -443,7 +443,7 @@ public class UserStats : Singleton<UserStats>
 
             if (UserStats.Instance.m_debugActivityData)
             {
-                form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
+                //form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
                 form.AddField(m_modelName + "[child_name]", UserInfo.Instance.childName);
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
 
@@ -564,7 +564,7 @@ public class UserStats : Singleton<UserStats>
             //DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(byte[]));
 #endif
 
-			form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
+			//form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
 			form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
             form.AddField (m_modelName + "[platform]", Application.platform.ToString());
 			form.AddField (m_modelName + "[has_completed]", Convert.ToInt32(m_hasCompleted));
