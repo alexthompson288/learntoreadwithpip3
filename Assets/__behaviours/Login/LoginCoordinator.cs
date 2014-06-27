@@ -24,111 +24,50 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnPressLogin(PipButton button)
     {
-        string responseContent = RequestToken();
-
-        bool loginSuccess = !responseContent.Contains("error");
-
-        Debug.Log("loginSuccess: " + loginSuccess);
+        string tokenResponse = UserHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
+        
+        bool hasToken = !tokenResponse.Contains("error");
+        
+        Debug.Log("hasToken: " + hasToken);
         Debug.Log("RESPONSE_CONTENT");
-        Debug.Log(responseContent);
-
-        if (loginSuccess)
+        Debug.Log(tokenResponse);
+        
+        if (hasToken)
         {
-            string accessPrefix = "\"access_token\": \"";
-            string accessToken = ParseResponse(responseContent, accessPrefix);
+            string accessPrefix = "\"access_token\":\"";
+            string accessToken = UserHelpers.ParseResponse(tokenResponse, accessPrefix, "\"");
             Debug.Log("ACCESS_TOKEN: " + accessToken);
-
-            string expirationPrefix = "\"expiration_date\": \"";
-            string expirationDate = ParseResponse(responseContent, expirationPrefix);
+            
+            string expirationPrefix = "\"expiration_date\":\"";
+            string expirationDate = UserHelpers.ParseResponse(tokenResponse, expirationPrefix, "\"");
             Debug.Log("EXPIRATION_DATE: " + expirationDate);
-
-            UserInfo.Instance.LogIn(m_emailInput.text, accessToken, expirationDate);
+            
+            UserInfo.Instance.SaveUserDetails(m_emailInput.text, accessToken, expirationDate);
 
             m_tweenBehaviour.On();
-        }
+            /*
+            UserHelpers.UserState userState = UserHelpers.GetUserState();
+
+            switch(userState)
+            {
+                case UserHelpers.UserState.Good:
+                    m_tweenBehaviour.On();
+                    break;
+                case UserHelpers.UserState.Expired:
+                    Debug.LogError("SUBSCRIPTION EXPIRED");
+                    break;
+                case UserHelpers.UserState.InvalidToken:
+                    Debug.LogError("INVALID TOKEN");
+                    break;
+            }
+            */
+        } 
         else
         {
-            UserInfo.Instance.LogOut();
+            // Account does not exist
+            Debug.LogError("ACCOUNT DOES NOT EXIST");
         }
     }
 
-    string ParseResponse(string responseContent, string prefix)
-    {
-        int prefixIndex = responseContent.IndexOf(prefix);
 
-        string info = responseContent.Substring(prefixIndex + prefix.Length);
-
-        int endIndex = info.IndexOf("\"");
-
-        return info.Substring(0, endIndex);
-    }
-
-    string RequestToken()
-    {
-        Debug.Log("RequestToken()");
-        
-        #if UNITY_EDITOR
-        // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
-        //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        #endif
-        
-        Debug.Log("Creating request");
-        var request = System.Net.WebRequest.Create("http://private-281e5-pip.apiary-mock.com/api/v1/token") as System.Net.HttpWebRequest;
-        request.KeepAlive = true;
-        request.Method = "POST";
-        request.ContentType="application/json";
-
-        string email = m_emailInput.text;
-        string password = m_passwordInput.text;
-
-
-#if UNITY_EDITOR
-        email = "not@theemail.com";
-        password = "notThePassword";
-#endif
-
-        byte[] byteArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
-        request.ContentLength = byteArray.Length;
-        using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
-        
-        Debug.Log("Getting response");
-        string responseContent=null;
-        using (var response = request.GetResponse() as System.Net.HttpWebResponse) {
-            using (var reader = new System.IO.StreamReader(response.GetResponseStream())) {
-                responseContent = reader.ReadToEnd();
-            }
-        }
-        
-        Debug.Log("RequestToken() - RESPONSE_CONTENT");
-        Debug.Log(responseContent);
-
-        return responseContent;
-    }
-
-    string GetUser()
-    {
-        #if UNITY_EDITOR
-        // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
-        //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        #endif
-        
-        var request = System.Net.WebRequest.Create("http://private-281e5-pip.apiary-mock.com/api/v1/users/me") as System.Net.HttpWebRequest;
-        request.KeepAlive = true;
-        request.Method = "GET";
-        request.ContentType="application/json";
-        request.Headers.Add("authorization", "\"Token token=%{access_token}\"");
-        request.ContentLength = 0;
-        
-        string responseContent=null;
-        using (var response = request.GetResponse() as System.Net.HttpWebResponse) {
-            using (var reader = new System.IO.StreamReader(response.GetResponseStream())) {
-                responseContent = reader.ReadToEnd();
-            }
-        }
-        
-        Debug.Log("GetUser() - RESPONSE_CONTENT");
-        Debug.Log(responseContent);
-
-        return responseContent;
-    }
 }

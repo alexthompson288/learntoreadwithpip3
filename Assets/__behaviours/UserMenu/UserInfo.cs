@@ -14,10 +14,15 @@ public class UserInfo : Singleton<UserInfo>
     public delegate void UserChangeEventHandler();
     public event UserChangeEventHandler ChangingUser;
 
-    bool m_isLoggedIn = false;
+    bool m_canPlay = false;
     string m_email = "";
     string m_accessToken = "";
     string m_expirationDate = "";
+
+    public string GetAccessToken()
+    {
+        return m_accessToken;
+    }
 
     void Awake()
     {   
@@ -41,42 +46,18 @@ public class UserInfo : Singleton<UserInfo>
             expirationDate = DateTime.Now.AddDays(-2);
         }
 
-        if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
+        if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || UserHelpers.GetUserState() != UserHelpers.UserState.Good)
         {
-            m_isLoggedIn = false;
             GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
         }
-        else
-        {
-            m_isLoggedIn = true;
-        }
     }
 
-    void LogDateTime(DateTime dt, string dateName = "")
+    public void SaveUserDetails(string myEmail, string myAccessToken, string myExpirationDate)
     {
-        Debug.Log("LogDateTime() - " + dateName);
-        Debug.Log(dt.Year);
-        Debug.Log(dt.Month);
-        Debug.Log(dt.Day);
-    }
-
-    public void LogIn(string myEmail, string myAccessToken, string myExpirationDate)
-    {
-        m_isLoggedIn = true;
         m_email = myEmail;
         m_accessToken = myAccessToken;
         m_expirationDate = myExpirationDate;
         Save();
-    }
-
-    public void LogOut()
-    {
-        m_isLoggedIn = false;
-    }
-
-    public bool IsLoggedIn()
-    {
-        return m_isLoggedIn;
     }
 
     public string GetEmail()
