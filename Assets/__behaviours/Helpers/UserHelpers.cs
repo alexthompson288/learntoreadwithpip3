@@ -1,5 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+
+public class UserException : Exception
+{
+    public enum ExceptionType
+    {
+        Expired,
+        InvalidToken
+    }
+
+    ExceptionType m_exceptionType;
+    public ExceptionType exceptionType
+    {
+        get
+        {
+            return m_exceptionType;
+        }
+    }
+
+    public UserException(ExceptionType myExceptionType)
+    {
+        m_exceptionType = myExceptionType;
+    }
+}
 
 public static class UserHelpers 
 {
@@ -78,40 +102,33 @@ public static class UserHelpers
 		return responseContent;
 	}
 
-	public enum UserState
-	{
-		Good,
-		Expired,
-		InvalidToken,
-	}
-
-	public static UserState GetUserState()
+	public static bool IsUserLegal()
 	{
 		Debug.Log ("UserHelpers.GetUserState()");
 		string userResponse = GetUser();
 		
 		if (!userResponse.Contains("error"))
-		{
-			string userPrefix = "\"can_access_content\":";
+        {
+            string userPrefix = "\"can_access_content\":";
 
-			string canAccessContent = ParseResponse(userResponse, userPrefix, "}");
-			Debug.Log("canAccessContent: " + canAccessContent);
+            string canAccessContent = ParseResponse(userResponse, userPrefix, "}");
+            Debug.Log("canAccessContent: " + canAccessContent);
 
-			if (canAccessContent == "true")
-			{
-				Debug.Log("GOOD");
-				return UserState.Good;
-			}
-			else
-			{
-				Debug.Log("EXPIRED");
-				return UserState.Expired;
-			}
-		}
-		else
-		{
-			Debug.Log("INVALID_TOKEN");
-			return UserState.InvalidToken;
-		}
+            if (canAccessContent == "true")
+            {
+                Debug.Log("GOOD");
+                return true;
+            } 
+            else
+            {
+                Debug.Log("EXPIRED");
+                throw new UserException(UserException.ExceptionType.Expired);
+            }
+        } 
+        else
+        {
+            Debug.Log("INVALID_TOKEN");
+            throw new UserException(UserException.ExceptionType.InvalidToken);
+        }
 	}
 }

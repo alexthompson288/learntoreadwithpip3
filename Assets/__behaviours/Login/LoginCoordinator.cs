@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Net;
 
 public class LoginCoordinator : Singleton<LoginCoordinator> 
 {
@@ -11,9 +13,16 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private UILabel m_passwordInput;
     [SerializeField]
     private PipButton m_loginButton;
+    [SerializeField]
+    private UILabel m_infoLabel;
+    [SerializeField]
+    private GameObject m_waitingIcon;
 
     void Awake()
     {
+        m_waitingIcon.transform.localScale = Vector3.zero;
+        m_waitingIcon.gameObject.SetActive(false);
+
         m_loginButton.Unpressing += OnPressLogin;
     }
 
@@ -24,7 +33,31 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnPressLogin(PipButton button)
     {
-        string tokenResponse = UserHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
+        StartCoroutine(OnPressLoginCo());
+    }
+
+    IEnumerator OnPressLoginCo()
+    {
+        float scaleTweenDuration = 0.3f;
+
+        m_waitingIcon.gameObject.SetActive(true);
+        iTween.ScaleTo(m_waitingIcon, Vector3.one, scaleTweenDuration);
+        yield return new WaitForSeconds(scaleTweenDuration);
+
+        string tokenResponse = "";
+
+        try
+        {
+            tokenResponse = UserHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
+        }
+        catch(WebException ex)
+        {
+            SetInfoText(ex);
+        }
+
+        iTween.ScaleTo(m_waitingIcon, Vector3.one, scaleTweenDuration);
+        yield return new WaitForSeconds(scaleTweenDuration + 0.1f);
+        m_waitingIcon.gameObject.SetActive(false);
         
         bool hasToken = !tokenResponse.Contains("error");
         
@@ -43,31 +76,56 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             Debug.Log("EXPIRATION_DATE: " + expirationDate);
             
             UserInfo.Instance.SaveUserDetails(m_emailInput.text, accessToken, expirationDate);
-
+            
             m_tweenBehaviour.On();
-            /*
-            UserHelpers.UserState userState = UserHelpers.GetUserState();
 
-            switch(userState)
+            bool isUserLegal = false;
+
+            try
             {
-                case UserHelpers.UserState.Good:
-                    m_tweenBehaviour.On();
-                    break;
-                case UserHelpers.UserState.Expired:
-                    Debug.LogError("SUBSCRIPTION EXPIRED");
-                    break;
-                case UserHelpers.UserState.InvalidToken:
-                    Debug.LogError("INVALID TOKEN");
-                    break;
+                isUserLegal = UserHelpers.IsUserLegal();
             }
-            */
+            catch(WebException ex)
+            {
+                SetInfoText(ex);
+            }
+            catch(UserException ex)
+            {
+                SetInfoText(ex);
+            }
+
+            if(isUserLegal)
+            {
+                m_tweenBehaviour.On();
+            }
         } 
         else
         {
             // Account does not exist
             Debug.LogError("ACCOUNT DOES NOT EXIST");
+            SetInfoText("Account does not exist");
         }
     }
 
+    public void SetInfoText(UserException ex)
+    {
+        switch (ex.exceptionType)
+        {
+            case UserException.ExceptionType.Expired:
+                break;
 
+            case UserException.ExceptionType.InvalidToken:
+                break;
+        }
+    }
+
+    public void SetInfoText(WebException ex)
+    {
+
+    }
+
+    public void SetInfoText(string text)
+    {
+        m_infoLabel.text = text;
+    }
 }

@@ -9,12 +9,13 @@ using System;
 public class UserInfo : Singleton<UserInfo> 
 {
     [SerializeField]
+    private bool m_attemptLogin;
+    [SerializeField]
     private GameObject m_loginPrefab;
 
     public delegate void UserChangeEventHandler();
     public event UserChangeEventHandler ChangingUser;
 
-    bool m_canPlay = false;
     string m_email = "";
     string m_accessToken = "";
     string m_expirationDate = "";
@@ -35,20 +36,38 @@ public class UserInfo : Singleton<UserInfo>
         
         Load();
 
+        if (m_attemptLogin)
+        {
+            Debug.Log("ATTEMPTING LOGIN");
 
-        DateTime expirationDate;
-        try
-        {
-            expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
-        }
-        catch
-        {
-            expirationDate = DateTime.Now.AddDays(-2);
-        }
+            DateTime expirationDate;
+            try
+            {
+                expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
+            } catch
+            {
+                expirationDate = DateTime.Now.AddDays(-2);
+            }
 
-        if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || UserHelpers.GetUserState() != UserHelpers.UserState.Good)
-        {
-            GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
+            bool isUserLegal = false;
+            Exception ex = null;
+            try
+            {
+                isUserLegal = UserHelpers.IsUserLegal();
+            } 
+            catch (UserException userEx)
+            {
+                ex = userEx;
+            } 
+            catch (WebException webEx)
+            {
+                ex = webEx;
+            }
+
+            if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
+            {
+                GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
+            }
         }
     }
 
