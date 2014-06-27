@@ -176,7 +176,7 @@ public class JoinPairsPlayer : GamePlayer
 
     JoinableLineDraw SpawnLineDraw(GameObject lineDrawPrefab, DataRow data, int locatorIndex)
     {
-        GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(lineDrawPrefab, m_locators[locatorIndex]);
+        GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(lineDrawPrefab, m_locators[locatorIndex], true);
 
         m_spawnedJoinables.Add(newGo);
 

@@ -38,6 +38,8 @@ public class QuizCoordinator : MonoBehaviour
 
     float m_widgetOffDistance = 3;
 
+    bool m_hasAnswered = false;
+
     IEnumerator Start()
     {
         m_pictureOnPos = m_questionPictureParent.transform.position;
@@ -86,6 +88,8 @@ public class QuizCoordinator : MonoBehaviour
     IEnumerator AskQuestion(float delay = 0)
     {
         yield return new WaitForSeconds(delay);
+
+        m_hasAnswered = false;
 
         m_questionPictureParent.transform.position = m_pictureBeforePos;
         m_questionLabelParent.transform.position = m_labelBeforePos;
@@ -155,34 +159,39 @@ public class QuizCoordinator : MonoBehaviour
 
     void OnAnswer(GameWidget answer)
     {
-        bool isCorrect = (answer == null || answer.labelText == m_currentQuestion ["correctanswer"].ToString());
-
-        int scoreDelta = isCorrect ? 1 : 0;
-        m_scoreKeeper.UpdateScore(scoreDelta);
-
-        for (int i = m_spawnedAnswers.Count - 1; i > -1; --i)
+        if (!m_hasAnswered)
         {
-            m_spawnedAnswers[i].Off();
-        }
-        
-        m_spawnedAnswers.Clear();
+            m_hasAnswered = true;
 
-        float tweenDuration = 0.5f;
+            bool isCorrect = (answer == null || answer.labelText == m_currentQuestion ["correctanswer"].ToString());
 
-        Vector3 pictureOffPos = new Vector3(m_pictureOnPos.x + m_widgetOffDistance, m_pictureOnPos.y, m_pictureOnPos.z);
-        iTween.MoveTo(m_questionPictureParent, pictureOffPos, tweenDuration);
+            int scoreDelta = isCorrect ? 1 : 0;
+            m_scoreKeeper.UpdateScore(scoreDelta);
 
-        Vector3 labelOffPos = new Vector3(m_labelOnPos.x + m_widgetOffDistance, m_labelOnPos.y, m_labelOnPos.z);
-        iTween.MoveTo(m_questionLabelParent, labelOffPos, tweenDuration);
+            for (int i = m_spawnedAnswers.Count - 1; i > -1; --i)
+            {
+                m_spawnedAnswers [i].Off();
+            }
+            
+            m_spawnedAnswers.Clear();
+
+            float tweenDuration = 0.5f;
+
+            Vector3 pictureOffPos = new Vector3(m_pictureOnPos.x + m_widgetOffDistance, m_pictureOnPos.y, m_pictureOnPos.z);
+            iTween.MoveTo(m_questionPictureParent, pictureOffPos, tweenDuration);
+
+            Vector3 labelOffPos = new Vector3(m_labelOnPos.x + m_widgetOffDistance, m_labelOnPos.y, m_labelOnPos.z);
+            iTween.MoveTo(m_questionLabelParent, labelOffPos, tweenDuration);
 
 
-        if (!m_scoreKeeper.HasCompleted() && m_dataPool.Count > 0)
-        {
-            StartCoroutine(AskQuestion(tweenDuration + 0.1f));
-        } 
-        else
-        {
-            StartCoroutine(CompleteGame());
+            if (!m_scoreKeeper.HasCompleted() && m_dataPool.Count > 0)
+            {
+                StartCoroutine(AskQuestion(tweenDuration + 0.1f));
+            } 
+            else
+            {
+                StartCoroutine(CompleteGame());
+            }
         }
     }
 

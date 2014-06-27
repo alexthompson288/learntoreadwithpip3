@@ -55,7 +55,7 @@ public class JoinableLineDraw : LineDraw
 
     void Start()
     {
-        iTween.ScaleFrom(gameObject, Vector3.zero, 0.3f);
+        iTween.ScaleTo(gameObject, Vector3.one, 0.3f);
     }
 
     public void SetUp(string dataType, DataRow myData)
