@@ -6,7 +6,11 @@ using Wingrove;
 public class QuizCoordinator : MonoBehaviour 
 {
     [SerializeField]
-    private UITexture m_questionTexture;
+    private GameObject m_questionPictureParent;
+    [SerializeField]
+    private UITexture m_questionPicture;
+    [SerializeField]
+    private GameObject m_questionLabelParent;
     [SerializeField]
     private UILabel m_questionLabel;
     [SerializeField]
@@ -18,9 +22,6 @@ public class QuizCoordinator : MonoBehaviour
     [SerializeField]
     private Transform[] m_locators;
 
-    int m_numAnswered = 0;
-    int m_score = 0;
-
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
 
     List<DataRow> m_dataPool = new List<DataRow>();
@@ -29,8 +30,24 @@ public class QuizCoordinator : MonoBehaviour
 
     float m_startTime;
 
+    Vector3 m_pictureOnPos;
+    Vector3 m_pictureBeforePos;
+
+    Vector3 m_labelOnPos;
+    Vector3 m_labelBeforePos;
+
+    float m_widgetOffDistance = 3;
+
     IEnumerator Start()
     {
+        m_pictureOnPos = m_questionPictureParent.transform.position;
+        m_pictureBeforePos = new Vector3(m_pictureOnPos.x - m_widgetOffDistance, m_pictureOnPos.y, m_pictureOnPos.z);
+        m_questionPictureParent.transform.position = m_pictureBeforePos;
+
+        m_labelOnPos = m_questionLabelParent.transform.position;
+        m_labelBeforePos = new Vector3(m_labelOnPos.x - m_widgetOffDistance, m_labelOnPos.y, m_labelOnPos.z);
+        m_questionLabelParent.transform.position = m_labelBeforePos;
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_dataPool = DataHelpers.GetQuizQuestions();
@@ -53,10 +70,12 @@ public class QuizCoordinator : MonoBehaviour
 
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
         if (m_dataPool.Count > 0)
         {
             m_startTime = Time.time;
-            AskQuestion();
+            StartCoroutine(AskQuestion());
         } 
         else
         {
@@ -64,8 +83,13 @@ public class QuizCoordinator : MonoBehaviour
         }
     }
 
-    void AskQuestion()
+    IEnumerator AskQuestion(float delay = 0)
     {
+        yield return new WaitForSeconds(delay);
+
+        m_questionPictureParent.transform.position = m_pictureBeforePos;
+        m_questionLabelParent.transform.position = m_labelBeforePos;
+
         m_currentQuestion = m_dataPool [Random.Range(0, m_dataPool.Count)];
 
         m_dataPool.Remove(m_currentQuestion);
@@ -77,10 +101,24 @@ public class QuizCoordinator : MonoBehaviour
         }
 
         Texture2D tex = DataHelpers.GetPicture(m_currentQuestion);
-        m_questionTexture.mainTexture = tex;
-        //m_questionTexture.MakePixelPerfect();
-        m_questionTexture.gameObject.SetActive(tex != null);
+        m_questionPicture.mainTexture = tex;
+        //m_questionPicture.MakePixelPerfect();
+        m_questionPicture.gameObject.SetActive(tex != null);
 
+
+        float tweenDuration = 0.5f;
+
+        iTween.MoveTo(m_questionPictureParent, m_pictureOnPos, tweenDuration);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+
+        yield return new WaitForSeconds(tweenDuration / 2);
+
+        iTween.MoveTo(m_questionLabelParent, m_labelOnPos, tweenDuration);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+
+        yield return new WaitForSeconds(tweenDuration / 2);
+
+        
         List<string> answerStrings = new List<string>();
 
         if (m_currentQuestion ["dummyanswer1"] != null)
@@ -119,10 +157,8 @@ public class QuizCoordinator : MonoBehaviour
     {
         bool isCorrect = (answer == null || answer.labelText == m_currentQuestion ["correctanswer"].ToString());
 
-        int scoreIncrease = isCorrect ? 1 : 0;
-
-        m_score += scoreIncrease;
-        m_scoreKeeper.UpdateScore(scoreIncrease);
+        int scoreDelta = isCorrect ? 1 : 0;
+        m_scoreKeeper.UpdateScore(scoreDelta);
 
         for (int i = m_spawnedAnswers.Count - 1; i > -1; --i)
         {
@@ -131,11 +167,18 @@ public class QuizCoordinator : MonoBehaviour
         
         m_spawnedAnswers.Clear();
 
-        ++m_numAnswered;
+        float tweenDuration = 0.5f;
 
-        if (m_numAnswered < m_targetScore && m_dataPool.Count > 0)
+        Vector3 pictureOffPos = new Vector3(m_pictureOnPos.x + m_widgetOffDistance, m_pictureOnPos.y, m_pictureOnPos.z);
+        iTween.MoveTo(m_questionPictureParent, pictureOffPos, tweenDuration);
+
+        Vector3 labelOffPos = new Vector3(m_labelOnPos.x + m_widgetOffDistance, m_labelOnPos.y, m_labelOnPos.z);
+        iTween.MoveTo(m_questionLabelParent, labelOffPos, tweenDuration);
+
+
+        if (!m_scoreKeeper.HasCompleted() && m_dataPool.Count > 0)
         {
-            AskQuestion();
+            StartCoroutine(AskQuestion(tweenDuration + 0.1f));
         } 
         else
         {
@@ -147,7 +190,7 @@ public class QuizCoordinator : MonoBehaviour
     {
         float timeTaken = Time.time - m_startTime;
 
-        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, ScoreInfo.CalculateScoreStars(m_score, m_targetScore));
+        ScoreInfo.Instance.NewScore(timeTaken, m_scoreKeeper.GetScore(), m_targetScore, ScoreInfo.CalculateScoreStars(m_scoreKeeper.GetScore(), m_targetScore));
 
         yield return new WaitForSeconds(2f);
 
