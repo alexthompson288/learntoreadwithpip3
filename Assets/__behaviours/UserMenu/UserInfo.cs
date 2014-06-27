@@ -49,6 +49,9 @@ public class UserInfo : Singleton<UserInfo>
                 expirationDate = DateTime.Now.AddDays(-2);
             }
 
+            // TODO: This is far too simple a test to determine if user is legal. 
+            // For certain types of web exceptions (eg. no internet) then user is legal
+            // However, for user exceptions (especially Expired) then user is illegal
             bool isUserLegal = false;
             Exception ex = null;
             try
