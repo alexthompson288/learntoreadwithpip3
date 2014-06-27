@@ -37,6 +37,10 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     private PipButton[] m_colorButtons;
     [SerializeField]
     private UILabel m_scaleLabel;
+    [SerializeField]
+    private UITexture m_background;
+    [SerializeField]
+    private Texture2D m_singleColorBackgroundTexture;
 
     int m_storyId = 85;
 
@@ -115,6 +119,11 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             if(numDisabled >= m_colorButtons.Length - 1)
             {
                 m_callColorButton.gameObject.SetActive(false);
+            }
+
+            if(numDisabled >= 5)
+            {
+                m_background.mainTexture = m_singleColorBackgroundTexture;
             }
 
             m_colorGrid.transform.localPosition = new Vector3(m_colorGrid.transform.localPosition.x + (m_colorGrid.cellWidth / 2 * numDisabled), m_colorGrid.transform.localPosition.y);
