@@ -205,9 +205,10 @@ public class CatapultMixedCoordinator : MonoBehaviour
             {
                 target.OnHit();
                 
-                GameObject targetDetachable = target.SpawnDetachable();
+                //GameObject targetDetachable = target.SpawnDetachable();
 
-                StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
+                //StartCoroutine(m_scoreKeeper.UpdateScore(targetDetachable));
+                m_scoreKeeper.UpdateScore(1);
 
                 target.ApplyHitForce(ball.transform);
 
