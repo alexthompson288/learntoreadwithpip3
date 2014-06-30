@@ -21,8 +21,6 @@ public class VoyageMap : MonoBehaviour
     [SerializeField]
     private UIGrid m_sessionButtonGrid;
     [SerializeField]
-    private SimpleSpriteAnim[] m_delayedSpriteAnims;
-    [SerializeField]
     private AudioSource m_locationNameAudioSource;
     [SerializeField]
     private GameObject m_pipPrefab;
@@ -145,26 +143,6 @@ public class VoyageMap : MonoBehaviour
             Debug.Log("Found Pip");
             m_pipAnim.MoveToPos(m_pipLocation.position);
             //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        yield return new WaitForSeconds(1.5f);
-
-        // TODO: Randomize these values. The delay is hard-coded so that it looks good for a meeting tomorrow
-        for (int i = 0; i < m_delayedSpriteAnims.Length; ++i)
-        {
-            float delay = 0;
-
-            if(i == 1)
-            {
-                delay = 3f;
-            }
-            else if(i ==2)
-            {
-                delay = 5f;
-            }
-
-            StartCoroutine(PlayDelayedAnimation(m_delayedSpriteAnims[i], delay));
         }
     }
 

@@ -36,6 +36,10 @@ public class UserInfo : Singleton<UserInfo>
         
         Load();
 
+#if !UNITY_EDITOR
+        m_attemptLogin = true;
+#endif
+
         if (m_attemptLogin)
         {
             Debug.Log("ATTEMPTING LOGIN");

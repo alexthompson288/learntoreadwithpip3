@@ -194,7 +194,21 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         if (m_currentModuleMap != null) // Defensive check: Should ALWAYS execute
         {
+            MakeHierarchyPanelsInvisible(m_currentModuleMap.gameObject);
+
             Destroy(m_currentModuleMap.gameObject);
+        }
+    }
+
+    // Should not be necessary, but when maps are destroyed they briefly flash at a very large scale. Possible Unity bug
+    void MakeHierarchyPanelsInvisible(GameObject parent)
+    {
+        parent.GetComponent<UIPanel>().alpha = 0; 
+        
+        UIPanel[] childPanels = parent.GetComponentsInChildren<UIPanel>() as UIPanel[];
+        foreach(UIPanel panel in childPanels)
+        {
+            panel.alpha = 0;
         }
     }
 
@@ -243,6 +257,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         
         if (m_worldMap != null)
         {
+            MakeHierarchyPanelsInvisible(m_worldMap.gameObject);
             Destroy(m_worldMap);
         }
 
@@ -251,6 +266,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             if (map != m_currentModuleMap)
             {
+                MakeHierarchyPanelsInvisible(map.gameObject);
                 Destroy(map.gameObject);
             }
         }
