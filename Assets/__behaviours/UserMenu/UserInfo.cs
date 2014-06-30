@@ -49,26 +49,33 @@ public class UserInfo : Singleton<UserInfo>
                 expirationDate = DateTime.Now.AddDays(-2);
             }
 
-            // TODO: This is far too simple a test to determine if user is legal. 
-            // For certain types of web exceptions (eg. no internet) then user is legal
-            // However, for user exceptions (especially Expired) then user is illegal
+
+            Debug.Log("CHECK USER");
             bool isUserLegal = false;
-            Exception ex = null;
             try
             {
                 isUserLegal = UserHelpers.IsUserLegal();
             } 
-            catch (UserException userEx)
+            catch (UserException ex)
             {
-                ex = userEx;
+                Debug.Log("USER_EXCEPTION");
+                LoginCoordinator.SetInfoText(ex);
             } 
-            catch (WebException webEx)
+            catch (WebException ex)
             {
-                ex = webEx;
+                if(ex.Response is System.Net.HttpWebResponse)
+                {
+                    LoginCoordinator.SetInfoText(ex, false);
+                }
+                else
+                {
+                    isUserLegal = true;
+                }
             }
 
             if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
             {
+                Debug.Log("INSTANTIATE LOGIN");
                 GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
             }
         }

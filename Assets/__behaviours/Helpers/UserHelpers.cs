@@ -59,8 +59,8 @@ public static class UserHelpers
 		#if UNITY_EDITOR
 		//k+1@x8.io / testtest
 		// tom@learnwithpip.com / pip12345
-		email = "tom@learnwithpip.com";
-		password = "pip12345";
+		//email = "tom@learnwithpip.com";
+		//password = "pip12345";
 		#endif
 		
 		byte[] byteArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
@@ -77,7 +77,7 @@ public static class UserHelpers
 		return responseContent;
 	}
 	
-	public static string GetUser()
+	static string GetUser()
 	{
 		#if UNITY_EDITOR
 		// Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.

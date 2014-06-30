@@ -18,12 +18,63 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     [SerializeField]
     private GameObject m_waitingIcon;
 
+    static string m_infoText = "Login";
+
     void Awake()
     {
         m_waitingIcon.transform.localScale = Vector3.zero;
         m_waitingIcon.gameObject.SetActive(false);
 
         m_loginButton.Unpressing += OnPressLogin;
+
+        m_infoLabel.text = m_infoText;
+    }
+
+    public static void SetInfoText(UserException ex)
+    {
+        switch (ex.exceptionType)
+        {
+            case UserException.ExceptionType.Expired:
+                SetInfoText("Your account has expired");
+                break;
+            case UserException.ExceptionType.InvalidToken:
+                SetInfoText("Login");
+                break;
+        }
+    }
+
+    public static void SetInfoText(WebException ex, bool isEmailPasswordCheck)
+    {
+        if ((ex.Response is System.Net.HttpWebResponse))
+        {
+            Debug.Log("StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+            switch ((ex.Response as System.Net.HttpWebResponse).StatusCode)
+            {
+                // Unauthorized status code can happen for 2 reasons: 1. Incorrect username/password 2. No access token
+                // In the case of no access token, this is probably because the user has never logged on from this device before
+                case System.Net.HttpStatusCode.Unauthorized:
+                    string infoText = isEmailPasswordCheck ? "Account not recognized" : "Login";
+                    SetInfoText(infoText);
+                    break;
+                default:
+                    SetInfoText("Oops!\nSomething is wrong with our servers.\nPlease try again later");
+                    break;
+            }
+        }
+        else
+        {
+            SetInfoText("Check your internet connection");
+        }
+    }
+
+    public static void SetInfoText(string myInfoText)
+    {
+        m_infoText = myInfoText;
+
+        if (Instance != null)
+        {
+            Instance.m_infoLabel.text = m_infoText;
+        }
     }
 
     public void On()
@@ -52,14 +103,18 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         catch(WebException ex)
         {
-            SetInfoText(ex);
+            SetInfoText(ex, true);
         }
 
         iTween.ScaleTo(m_waitingIcon, Vector3.one, scaleTweenDuration);
         yield return new WaitForSeconds(scaleTweenDuration + 0.1f);
         m_waitingIcon.gameObject.SetActive(false);
-        
-        bool hasToken = !tokenResponse.Contains("error");
+
+
+        string accessPrefix = "\"access_token\":\"";
+        string expirationPrefix = "\"expiration_date\":\"";
+
+        bool hasToken = tokenResponse.Contains(accessPrefix) && tokenResponse.Contains(expirationPrefix);
         
         Debug.Log("hasToken: " + hasToken);
         Debug.Log("RESPONSE_CONTENT");
@@ -67,11 +122,9 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         
         if (hasToken)
         {
-            string accessPrefix = "\"access_token\":\"";
             string accessToken = UserHelpers.ParseResponse(tokenResponse, accessPrefix, "\"");
             Debug.Log("ACCESS_TOKEN: " + accessToken);
             
-            string expirationPrefix = "\"expiration_date\":\"";
             string expirationDate = UserHelpers.ParseResponse(tokenResponse, expirationPrefix, "\"");
             Debug.Log("EXPIRATION_DATE: " + expirationDate);
             
@@ -84,48 +137,20 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             try
             {
                 isUserLegal = UserHelpers.IsUserLegal();
-            }
-            catch(WebException ex)
+            } 
+            catch (WebException ex)
             {
-                SetInfoText(ex);
-            }
-            catch(UserException ex)
+                SetInfoText(ex, false);
+            } 
+            catch (UserException ex)
             {
                 SetInfoText(ex);
             }
 
-            if(isUserLegal)
+            if (isUserLegal)
             {
                 m_tweenBehaviour.On();
             }
         } 
-        else
-        {
-            // Account does not exist
-            Debug.LogError("ACCOUNT DOES NOT EXIST");
-            SetInfoText("Account does not exist");
-        }
-    }
-
-    public void SetInfoText(UserException ex)
-    {
-        switch (ex.exceptionType)
-        {
-            case UserException.ExceptionType.Expired:
-                break;
-
-            case UserException.ExceptionType.InvalidToken:
-                break;
-        }
-    }
-
-    public void SetInfoText(WebException ex)
-    {
-
-    }
-
-    public void SetInfoText(string text)
-    {
-        m_infoLabel.text = text;
     }
 }
