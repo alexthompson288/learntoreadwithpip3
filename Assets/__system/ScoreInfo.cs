@@ -99,6 +99,36 @@ public class ScoreInfo : Singleton<ScoreInfo>
         m_scoreType = "";
     }
 
+    // New High Scores
+    ScoreTracker m_newHighScore = null;
+    int m_previousHighScore;
+
+    public bool HasNewHighScore()
+    {
+        return m_newHighScore != null;
+    }
+
+    public string GetNewHighScoreGame()
+    {
+        return m_newHighScore.GetGame();
+    }
+
+    public int GetNewHighScoreStars()
+    {
+        return m_newHighScore.GetStars();
+    }
+
+    public void RemoveNewHighScore()
+    {
+        m_newHighScore = null;
+    }
+
+    public int GetPreviousHighScoreStars()
+    {
+        return m_previousHighScore;
+    }
+
+    // Standard Score Trackers
     List<ScoreTracker> m_scoreTrackers = new List<ScoreTracker>();
 
     public int GetScore(string game, string type)
@@ -155,19 +185,25 @@ public class ScoreInfo : Singleton<ScoreInfo>
             if (oldTracker == null)
             {
                 m_scoreTrackers.Add(newTracker);
+
+                m_newHighScore = newTracker;
+                m_previousHighScore = 0;
             }
-            // Even if newStars == oldStars, the new score might be considered better if it has a better time or proportional score. This would allow us to add features in the future (eg leaderboards etc)
             else 
             {
                 int newStars = newTracker.GetStars();
                 int oldStars = oldTracker.GetStars();
 
+                // Even if newStars == oldStars, the new score might be considered better if it has a better time or proportional score. This would allow us to add features in the future (eg leaderboards etc)
                 if (newStars > oldStars 
-                    || (newStars == oldStars && (newTracker.GetTime() < oldTracker.GetTime() || (newTracker.GetProportionalScore() > oldTracker.GetProportionalScore()))))
+                    || (newStars == oldStars && (newTracker.GetTime() < oldTracker.GetTime() || (newTracker.GetProportionalScore() > oldTracker.GetProportionalScore())))) 
                 {
                     D.Log("NEW HIGH SCORE");
                     m_scoreTrackers.Remove(oldTracker);
                     m_scoreTrackers.Add(newTracker);
+
+                    m_newHighScore = newTracker;
+                    m_previousHighScore = oldTracker.GetStars();
                 }
             }
 

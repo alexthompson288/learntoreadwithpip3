@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ChooseGameButton : MonoBehaviour 
 {
@@ -8,7 +9,7 @@ public class ChooseGameButton : MonoBehaviour
     [SerializeField]
     private UISprite m_icon;
     [SerializeField]
-    private UITexture m_temporaryIconTexture;
+    private Transform m_starParent;
     [SerializeField]
     private UISprite[] m_starSprites;
     [SerializeField]
@@ -53,13 +54,13 @@ public class ChooseGameButton : MonoBehaviour
         return m_icon.spriteName;
     }
 
-    public Texture2D GetTemporaryIconTexture()
-    {
-        return m_temporaryIconTexture.mainTexture as Texture2D;
-    }
-
     public void Refresh(string colorName)
     {
         ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
+    }
+
+    public void UnlockScoreStars(List<Spline> m_starSplines, GameObject starPrefab)
+    {
+
     }
 }

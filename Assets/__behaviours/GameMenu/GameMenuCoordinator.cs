@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class GameMenuCoordinator : MonoBehaviour 
 {
@@ -16,6 +17,12 @@ public class GameMenuCoordinator : MonoBehaviour
     private UISprite m_rodSprite;
     [SerializeField]
     private TweenOnOffBehaviour[] m_gameButtonParents;
+    [SerializeField]
+    private GameObject m_splineStarPrefab;
+    [SerializeField]
+    private List<Spline> m_starSplines;
+    [SerializeField]
+    private Transform m_starEndLocation;
     
     PipButton m_currentColorButton = null;
     
@@ -42,8 +49,28 @@ public class GameMenuCoordinator : MonoBehaviour
             }
             
             ActivateGameButtons();
+
+            if(ScoreInfo.Instance.HasNewHighScore())
+            {
+                string gameName = ScoreInfo.Instance.GetNewHighScoreGame();
+
+                ChooseGameButton[] gameButtons = UnityEngine.Object.FindObjectsOfType(typeof(ChooseGameButton)) as ChooseGameButton[];
+
+                ChooseGameButton newHighScoreButton = Array.Find(gameButtons, x => x.GetNumPlayers() == 1 && x.GetComponent<PipButton>().GetString() == gameName);
+
+                if(newHighScoreButton != null)
+                {
+                    int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
+
+
+                    List<Spline> splines = new List<Spline>();
+                    splines.AddRange(m_starSplines.GetRange(0, numNewStars));
+
+                }
+            }
         }
-        
+
+        ScoreInfo.Instance.RemoveNewHighScore();
         GameMenuInfo.Instance.DestroyBookmark();
 
 #if UNITY_EDITOR
