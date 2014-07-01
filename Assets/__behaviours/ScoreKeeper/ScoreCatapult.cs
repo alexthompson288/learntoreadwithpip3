@@ -24,11 +24,9 @@ public class ScoreCatapult : ScoreKeeper
     [SerializeField]
     private Transform m_lineEndDefaultLocation;
     [SerializeField]
-    private UITexture m_hand;
+    private UISprite m_hand;
     [SerializeField]
     private Transform m_handFollowLocation;
-    [SerializeField]
-    private Texture2D m_handReleaseTexture;
 
     float m_pointDistance;
     
@@ -156,7 +154,7 @@ public class ScoreCatapult : ScoreKeeper
         } 
         else
         {
-            m_hand.mainTexture = m_handReleaseTexture;
+            m_hand.spriteName = NGUIHelpers.GetLinkedSpriteName(m_hand.spriteName);
         }
 
         #if UNITY_EDITOR
