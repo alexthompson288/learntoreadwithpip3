@@ -11,6 +11,8 @@ public class SplatRatGamePlayer : GamePlayer
     private Blackboard m_blackboard;
 	[SerializeField]
     private ProgressScoreBar m_scoreBar;
+    [SerializeField]
+    private Benny m_benny;
 	
 	[SerializeField]
 	private GameObject[] m_locators;
@@ -51,6 +53,19 @@ public class SplatRatGamePlayer : GamePlayer
 		m_blackboard.MoveWidgets();
 	}
 	
+    public IEnumerator SetUpBenny(DataRow currentData, bool play)
+    {
+        if (play)
+        {
+            m_benny.SetFirst(DataHelpers.GetLongAudio(currentData));
+            yield return StartCoroutine(m_benny.PlayAudio());
+        }
+
+        m_benny.SetFirst(DataHelpers.GetShortAudio(currentData));
+
+        yield break;
+    }
+
 	public IEnumerator DisplayLargeBlackboard(Texture2D texture, string letter, string colorReplace)
 	{
 		D.Log("DisplayInitialBlackBoard()");

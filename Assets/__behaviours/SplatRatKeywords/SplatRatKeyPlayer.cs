@@ -11,6 +11,8 @@ public class SplatRatKeyPlayer : GamePlayer
     private Blackboard m_blackboard;
 	[SerializeField]
     private ProgressScoreBar m_scoreBar;
+    [SerializeField]
+    private Benny m_benny;
 	
 	[SerializeField]
 	private GameObject[] m_locators;
@@ -46,6 +48,19 @@ public class SplatRatKeyPlayer : GamePlayer
 		m_frontTexture.mainTexture = frontTex;
 		m_rearTexture.mainTexture = rearTex;
 	}
+
+    public IEnumerator SetUpBenny(DataRow currentData, bool play)
+    {
+        if (play)
+        {
+            m_benny.SetFirst(DataHelpers.GetLongAudio(currentData));
+            yield return StartCoroutine(m_benny.PlayAudio());
+        }
+        
+        m_benny.SetFirst(DataHelpers.GetShortAudio(currentData));
+        
+        yield break;
+    }
 		
 	public IEnumerator DisplayLargeBlackboard(string word)
 	{

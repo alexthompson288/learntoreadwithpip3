@@ -22,9 +22,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	private bool m_waitForBoth;
 	int m_numWaitForPlayers;
 	
-	[SerializeField]
-	private ChangeableBennyAudio[] m_bennyTheBooks;
-	
 	string m_currentLetter = null;
 	DataRow m_currentLetterData = null;
 	
@@ -135,14 +132,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	            bennyChangeableAudio = m_graphemeAudio[m_currentLetterData];
 	        }
 			
-			D.Log("change: " + bennyChangeableAudio);
-			
-			for(int index = 0; index < m_bennyTheBooks.Length; ++index)
-			{
-				m_bennyTheBooks[index].SetUp("SPLAT_THE_RAT_INSTRUCTION", 4.8f);
-				m_bennyTheBooks[index].SetChangeableInstruction(bennyChangeableAudio);
-			}
-			
 			StartCoroutine(PlayGame(lettersPool));
 		}
 		else
@@ -190,17 +179,19 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
             yield return new WaitForSeconds(1.0f);
         }
 		
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
 		for(int index = 0; index < numPlayers; ++index)
 		{
 			D.Log("Looping to display");
+            bool playBenny = index == 0;
+            StartCoroutine(m_gamePlayers[index].SetUpBenny(m_currentLetterData, playBenny));
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_phonemeImages[m_currentLetterData], m_currentLetter, m_currentLetter));
 		}
 		
 		//WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_THE_RAT_INSTRUCTION");
 		
 		//yield return new WaitForSeconds(4.8f);
-		
-		StartCoroutine(PlayLetterSound());
 		
 		yield return new WaitForSeconds(3.5f);
 		

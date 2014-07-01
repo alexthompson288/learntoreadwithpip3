@@ -63,7 +63,7 @@ public class Benny : Collector
                 yield return null;
             }
         }
-        
+
         m_anim.PlayAnimation("CLOSE");
 
         m_isPlaying = false;

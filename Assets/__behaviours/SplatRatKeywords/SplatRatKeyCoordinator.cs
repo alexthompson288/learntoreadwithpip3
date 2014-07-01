@@ -22,9 +22,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 	private bool m_waitForBoth;
 	int m_numWaitForPlayers;
 	
-	[SerializeField]
-	private ChangeableBennyAudio[] m_bennyTheBooks;
-	
 	string m_currentLetter = null;
 	DataRow m_currentLetterData = null;
 	
@@ -112,16 +109,6 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		m_currentLetter = m_currentLetterData["word"].ToString();
 		
 
-        AudioClip bennyChangeableAudio = m_keywordAudio[m_currentLetterData];
-        
-
-		
-		for(int index = 0; index < m_bennyTheBooks.Length; ++index)
-		{
-			m_bennyTheBooks[index].SetUp("SPLAT_RAT_KEYWORDS_INSTRUCTION", 4.8f);
-			m_bennyTheBooks[index].SetChangeableInstruction(bennyChangeableAudio);
-		}
-
 		if(lettersPool.Count > 0)
 		{
 			StartCoroutine(PlayGame(lettersPool));
@@ -175,6 +162,8 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		for(int index = 0; index < numPlayers; ++index)
 		{
 			D.Log("Looping to display");
+            bool playBenny = index == 0;
+            StartCoroutine(m_gamePlayers[index].SetUpBenny(m_currentLetterData, playBenny));
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_currentLetter));
 		}
 		
