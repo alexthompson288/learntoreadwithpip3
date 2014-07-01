@@ -44,7 +44,7 @@ public static class DataHelpers
         DataRow module = null;
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery(System.String.Format("select * from programmodules WHERE colour='{0}' AND programmename='{1}'", 
-                                                                                               ColorInfo.GetColorString(pipColor), GameManager.currentProgramme));
+                                                                                               ColorInfo.GetColorString(pipColor), GameManager.programme));
         
         if (dt.Rows.Count > 0)
         {

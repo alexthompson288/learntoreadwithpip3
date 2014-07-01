@@ -96,44 +96,45 @@ public static class StringHelpers
         return FriendlyInteger(n, "", 0);
     }
 
-    public static DateTime GetDateTimeYMD(string dateString, string separator)
+    public static string CollectionToString<T>(IList<T> list, char separator = ',')
     {
-        //Debug.Log("GetDateTimeYMD()");
-
-        int[] dates = new int[3];
-
-        for(int i = 0; i < dates.Length; ++i)
-        {
-            //Debug.Log("dateString: " + dateString);
-
-            int separatorIndex = dateString.IndexOf(separator);
-
-            string singleString = separatorIndex == -1 ? dateString : dateString.Substring(0, separatorIndex);
-            //Debug.Log(i + " - " + singleString);
-
-            try
-            {
-                dates[i] = Convert.ToInt32(singleString);
-            }
-            catch
-            {
-                dates[i] = 0;
-                //Debug.LogError("Failed to find date " + i);
-                throw;
-            }
-
-            dateString = dateString.Substring(separatorIndex + 1);
-        }
+        string s = "";
 
         try
         {
-            return new DateTime(dates[0], dates[1], dates[2]);
+            foreach(T t in list)
+            {
+                s += t.ToString() + separator.ToString();
+            }
+
+            s = s.TrimEnd(new char[] { separator } );
         }
         catch
         {
-            //Debug.LogError("Failed to construct date");
-            //return DateTime.Now;
             throw;
         }
+
+        return s;
+    }
+
+    public static List<T> StringToList<T>(string unsplit, char separator = ',')
+    {
+        string[] stringArray = unsplit.Split(new char[] { separator });
+
+        List<T> list = new List<T>();
+
+        try
+        {
+            foreach (string s in stringArray)
+            {
+                list.Add((T)Convert.ChangeType(s, typeof(T)));
+            }
+        }
+        catch
+        {
+            throw;
+        }
+
+        return list;
     }
 }

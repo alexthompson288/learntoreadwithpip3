@@ -5,18 +5,32 @@ using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
 {
-    string m_currentProgramme = "Reading1";
-    public static string currentProgramme
+    string m_programme = "Reading1";
+    public static string programme
     {
         get
         {
-            return Instance.m_currentProgramme;
+            return Instance.m_programme;
         }
     }
     
-    public void SetCurrentProgramme(string newProgramme)
+    public void SetProgramme(string myProgramme)
     {
-        m_currentProgramme = newProgramme;
+        m_programme = myProgramme;
+    }
+
+    string m_activityType = "";
+    public static string activityType
+    {
+        get
+        {
+            return Instance.m_activityType;
+        }
+    }
+
+    public void SetActivityType(string myActivityType)
+    {
+        m_activityType = myActivityType;
     }
 
     public static IEnumerator WaitForInstance()
@@ -100,15 +114,20 @@ public class GameManager : Singleton<GameManager>
 
             Reset();
 
-            if(PrivateCompleted != null)
+            if(PrivateCompletedAll != null)
             {
-                PrivateCompleted();
+                PrivateCompletedAll();
             }
 
             TransitionScreen.Instance.ChangeLevel(returnScene, false);
         } 
         else
         {
+            if(PrivateCompletedSingle != null)
+            {
+                PrivateCompletedSingle();
+            }
+
             PlayNextGame();
         }
     }
@@ -291,20 +310,38 @@ public class GameManager : Singleton<GameManager>
     State m_state = State.Sleep;
 
     public delegate void GameManagerEventHandler ();
-    private event GameManagerEventHandler PrivateCompleted;
-    public event GameManagerEventHandler Completed
+
+    private event GameManagerEventHandler PrivateCompletedAll;
+    public event GameManagerEventHandler CompletedAll
     {
         add
         {
-            if(PrivateCompleted == null || !PrivateCompleted.GetInvocationList().Contains(value))
+            if(PrivateCompletedAll == null || !PrivateCompletedAll.GetInvocationList().Contains(value))
             {
-                PrivateCompleted += value;
+                PrivateCompletedAll += value;
             }
         }
 
         remove
         {
-            PrivateCompleted -= value;
+            PrivateCompletedAll -= value;
+        }
+    }
+
+    private event GameManagerEventHandler PrivateCompletedSingle;
+    public event GameManagerEventHandler CompletedSingle
+    {
+        add
+        {
+            if(PrivateCompletedSingle == null || !PrivateCompletedSingle.GetInvocationList().Contains(value))
+            {
+                PrivateCompletedSingle += value;
+            }
+        }
+        
+        remove
+        {
+            PrivateCompletedSingle -= value;
         }
     }
 

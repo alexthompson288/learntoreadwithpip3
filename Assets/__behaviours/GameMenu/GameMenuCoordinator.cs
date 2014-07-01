@@ -48,7 +48,7 @@ public class GameMenuCoordinator : MonoBehaviour
 
 #if UNITY_EDITOR
         string programmeName = Application.loadedLevelName == "NewGameMenu" ? "Reading1" : "Maths1";
-        GameManager.Instance.SetCurrentProgramme(programmeName);
+        GameManager.Instance.SetProgramme(programmeName);
 #endif
     }
     

@@ -18,13 +18,13 @@ public class MainMenuCoordinator : MonoBehaviour
 
     void OnPressRead(PipButton button)
     {
-        GameManager.Instance.SetCurrentProgramme("Reading1");
+        GameManager.Instance.SetProgramme("Reading1");
         TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
     }
 
     void OnPressMaths(PipButton button)
     {
-        GameManager.Instance.SetCurrentProgramme("Maths1");
+        GameManager.Instance.SetProgramme("Maths1");
         TransitionScreen.Instance.ChangeLevel("NewNumberGameMenu", false);
     }
 }

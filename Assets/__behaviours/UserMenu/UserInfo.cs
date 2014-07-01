@@ -47,9 +47,12 @@ public class UserInfo : Singleton<UserInfo>
             DateTime expirationDate;
             try
             {
-                expirationDate = StringHelpers.GetDateTimeYMD(m_expirationDate.Replace("\"", ""), "-");
-            } catch
+
+                expirationDate = DateTime.ParseExact(m_expirationDate, "yyyy-MM-dd", null);
+            } 
+            catch
             {
+                Debug.Log("CATCHING EXPIRATION DATE");
                 expirationDate = DateTime.Now.AddDays(-2);
             }
 
@@ -59,6 +62,7 @@ public class UserInfo : Singleton<UserInfo>
             try
             {
                 isUserLegal = UserHelpers.IsUserLegal();
+                Debug.Log("NO_ERROR - isUserLegal: " + isUserLegal);
             } 
             catch (UserException ex)
             {
@@ -67,6 +71,7 @@ public class UserInfo : Singleton<UserInfo>
             } 
             catch (WebException ex)
             {
+                Debug.Log("WEB_EXCEPTION");
                 if(ex.Response is System.Net.HttpWebResponse)
                 {
                     LoginCoordinator.SetInfoText(ex, false);
