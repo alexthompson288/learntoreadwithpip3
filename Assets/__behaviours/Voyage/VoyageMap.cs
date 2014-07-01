@@ -80,7 +80,7 @@ public class VoyageMap : MonoBehaviour
 
     IEnumerator Start()
     {
-        Debug.Log("VoyageMap.Start()");
+        D.Log("VoyageMap.Start()");
 
         m_locationNameAudioSource.Play();
 
@@ -116,7 +116,7 @@ public class VoyageMap : MonoBehaviour
 
         DataRow module = DataHelpers.GetModule(m_color);
         string dataType = module != null ? module ["modulereward"].ToString() : "Custom";
-        Debug.Log("module dataType: " + dataType);
+        D.Log("module dataType: " + dataType);
 
         DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number");
         foreach (DataRow session in sessionsTable.Rows)
@@ -130,7 +130,7 @@ public class VoyageMap : MonoBehaviour
         
         if (m_pipAnim == null)
         {
-            Debug.Log("Spawning Pip");
+            D.Log("Spawning Pip");
             Transform pipParent = VoyageCoordinator.Instance.GetPipParent();
             m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, pipParent).GetComponent<PipAnim>() as PipAnim;
             
@@ -140,7 +140,7 @@ public class VoyageMap : MonoBehaviour
         }
         else
         {
-            Debug.Log("Found Pip");
+            D.Log("Found Pip");
             m_pipAnim.MoveToPos(m_pipLocation.position);
             //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
         }
@@ -149,7 +149,7 @@ public class VoyageMap : MonoBehaviour
 
     IEnumerator PlayDelayedAnimation(SimpleSpriteAnim anim, float delay)
     {
-        Debug.Log(anim.transform.parent.name + " delay: " + delay);
+        D.Log(anim.transform.parent.name + " delay: " + delay);
 
         yield return new WaitForSeconds(delay);
 
@@ -173,23 +173,23 @@ public class VoyageMap : MonoBehaviour
     /*
     void Awake()
     {
-        Debug.Log("VoyageMap.Awake()");
+        D.Log("VoyageMap.Awake()");
 
         if (m_pipAnim == null)
         {
-            Debug.Log("Spawning Pip");
+            D.Log("Spawning Pip");
             Transform pipParent = VoyageCoordinator.Instance.GetPipParent();
 
-            Debug.Log("PRE - " + pipParent.transform.position);
-            Debug.Log("GLO - " + m_pipLocation.position);
-            Debug.Log("LOC - " + m_pipLocation.localPosition);
+            D.Log("PRE - " + pipParent.transform.position);
+            D.Log("GLO - " + m_pipLocation.position);
+            D.Log("LOC - " + m_pipLocation.localPosition);
 
             Vector3 globalPos = m_pipLocation.TransformPoint(m_pipLocation.position);
-            Debug.Log("globalPos: " + globalPos);
+            D.Log("globalPos: " + globalPos);
 
             pipParent.transform.position = m_pipLocation.position;
 
-            Debug.Log("POST - " + pipParent.transform.position);
+            D.Log("POST - " + pipParent.transform.position);
 
             m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, pipParent).GetComponent<PipAnim>() as PipAnim;
 
@@ -201,7 +201,7 @@ public class VoyageMap : MonoBehaviour
         }
         else
         {
-            Debug.Log("Found Pip");
+            D.Log("Found Pip");
             //m_pipAnim.transform.parent = m_pipLocation;
             StartCoroutine(m_pipAnim.MoveToPos(m_pipLocation.position));
         }

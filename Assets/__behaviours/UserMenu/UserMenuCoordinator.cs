@@ -23,10 +23,10 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 		Dictionary<string, string> users = UserInfo.Instance.GetUsers();
 
-		Debug.Log("Users");
+		D.Log("Users");
 		foreach(KeyValuePair<string, string> kvp in users)
 		{
-			Debug.Log(kvp.Key + " - " + kvp.Value);
+			D.Log(kvp.Key + " - " + kvp.Value);
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
 			newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
 		}

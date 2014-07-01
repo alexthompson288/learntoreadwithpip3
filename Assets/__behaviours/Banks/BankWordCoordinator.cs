@@ -64,19 +64,19 @@ public class BankWordCoordinator : MonoBehaviour
 
     IEnumerator RefreshPipPad()
     {
-        Debug.Log("RefreshPipPad()");
+        D.Log("RefreshPipPad()");
 
-        //Debug.Log("currentIndex: " + m_currentIndex);
-        //Debug.Log("wordPool.Count: " + m_wordPool.Count);
+        //D.Log("currentIndex: " + m_currentIndex);
+        //D.Log("wordPool.Count: " + m_wordPool.Count);
         if (m_wordPool.Count > 0)
         {
             string word = m_wordPool [m_currentIndex] ["word"].ToString();
 
-            Debug.Log("word: " + word);
+            D.Log("word: " + word);
             
             //Texture2D tex = Resources.Load<Texture2D>("Images/word_images_png_350/_" + word);
             Texture2D tex = DataHelpers.GetPicture(m_wordPool[m_currentIndex]);
-            Debug.Log("tex: " + tex);
+            D.Log("tex: " + tex);
             float tweenDuration = 0.3f;
             if (tex != null)
             {
@@ -112,7 +112,7 @@ public class BankWordCoordinator : MonoBehaviour
     
     void TogglePicture(ClickEvent clickBehaviour)
     {
-        Debug.Log("TogglePicture()");
+        D.Log("TogglePicture()");
         
         m_pictureActive = !m_pictureActive;
         

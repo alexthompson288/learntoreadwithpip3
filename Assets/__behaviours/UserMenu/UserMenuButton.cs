@@ -22,7 +22,7 @@ public class UserMenuButton : MonoBehaviour
 	// Use this for initialization
 	public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
 	{
-        Debug.Log("imageName: " + imageName);
+        D.Log("imageName: " + imageName);
 
 		m_label.text = userName;
 

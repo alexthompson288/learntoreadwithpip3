@@ -80,7 +80,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
 
 		m_numPages = dt.Rows.Count;
-		Debug.Log("There are " + m_numPages + " pages");
+		D.Log("There are " + m_numPages + " pages");
 
 		m_hasStoryData = true;
 
@@ -107,9 +107,9 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
         if ( dataTable.Rows.Count > 0 )
         {
             SavedAssetBundles.AssetVersionResult avr =  SavedAssetBundles.Instance.GetOnlineAssetVersions();
-			Debug.Log("avr: " + avr);
-			Debug.Log("avr.m_assetList: " + avr.m_assetList);
-			Debug.Log("avr.m_assetList.Count: " + avr.m_assetList.Count);
+			D.Log("avr: " + avr);
+			D.Log("avr.m_assetList: " + avr.m_assetList);
+			D.Log("avr.m_assetList.Count: " + avr.m_assetList.Count);
             string expectedBundleName = "{PLATFORM}/" + dataTable.Rows[0]["title"].ToString().Replace(" ", "_").Replace("?", "_").Replace("!","_").ToLower() + ".unity3d";
 
             int latestVersion = 0;
@@ -124,14 +124,14 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
             if ((!SavedAssetBundles.Instance.HasAny(expectedBundleName))
                 || (!SavedAssetBundles.Instance.HasVersion(expectedBundleName, latestVersion)))
             {
-                Debug.Log("Need new version of " + expectedBundleName);
+                D.Log("Need new version of " + expectedBundleName);
                 yield return StartCoroutine(AssetBundleLoader.Instance.DownloadWebAssetBundle(
                     Path.Combine(GameDataBridge.Instance.GetOnlineBaseURL(), expectedBundleName), SavedAssetBundles.Instance.GetSavedName(expectedBundleName), expectedBundleName, latestVersion));
             }
             else
             {
                 // load it
-                Debug.Log("Already have " + expectedBundleName);
+                D.Log("Already have " + expectedBundleName);
                 yield return StartCoroutine(
                     AssetBundleLoader.Instance.LoadPersistentDataAssetBundle(SavedAssetBundles.Instance.GetSavedName(expectedBundleName))
                 );
@@ -161,7 +161,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
 	public IEnumerator PrevPage()
 	{
-		Debug.Log("PrevPage()");
+		D.Log("PrevPage()");
 		
 		ClearOld();
 		
@@ -260,7 +260,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
 
     DataTable UpdateCurrentDisplayer()
     {
-		//Debug.Log("UpdateCurrentDisplayer()");
+		//D.Log("UpdateCurrentDisplayer()");
 
         int currentPageOneBased = m_currentPage + 1;
 

@@ -97,10 +97,10 @@ public class ScorePip : ScoreKeeper
     }
     
     bool m_hasFinishedJumpAnim = false;
-    
+
     public override IEnumerator On()
     {
-        Debug.Log("ScorePip.On()");
+        D.Log("ScorePip.On()");
         
         m_popAnimManager.StopRandom();
         

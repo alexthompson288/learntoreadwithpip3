@@ -194,7 +194,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         if (VoyageInfo.Instance.hasBookmark)
         {
-            //Debug.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
+            //D.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
             VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
         }
 

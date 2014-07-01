@@ -24,10 +24,10 @@ public class FlySwatPlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        Debug.Log("SelectCharacter");
+        D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        Debug.Log("m_selectedCharacter: " + m_selectedCharacter);
+        D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);

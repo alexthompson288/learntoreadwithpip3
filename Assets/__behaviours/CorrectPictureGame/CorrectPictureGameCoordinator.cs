@@ -41,8 +41,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		for(int i = m_wordSelection.Count - 1; i > -1; --i)
 		{
-			//Debug.Log(m_wordSelection[i]["word"].ToString());
-            Debug.Log("word: " + m_wordSelection[i]["word"]);
+			//D.Log(m_wordSelection[i]["word"].ToString());
+            D.Log("word: " + m_wordSelection[i]["word"]);
 			Texture2D tex = null;
 			if(m_wordSelection[i]["image"] != null)
 			{
@@ -52,7 +52,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			{
 				tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_wordSelection[i]["word"].ToString());
 			}
-			Debug.Log("tex: " + tex);
+			D.Log("tex: " + tex);
 			if(tex != null)
 			{
 				m_remainingWords.Add(m_wordSelection[i]["word"].ToString());
@@ -67,7 +67,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			Resources.UnloadUnusedAssets();
 		}
 
-		Debug.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
+		D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 		if(m_maxSpawn > m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		{
 			m_maxSpawn = m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()];

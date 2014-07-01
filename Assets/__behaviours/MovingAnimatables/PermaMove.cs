@@ -45,7 +45,7 @@ public class PermaMove : MonoBehaviour
 
 	public void Play()
 	{
-		Debug.Log("PermaMove.Play()");
+		D.Log("PermaMove.Play()");
 		m_paused = false;
 	}
 }

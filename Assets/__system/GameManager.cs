@@ -55,17 +55,17 @@ public class GameManager : Singleton<GameManager>
 
     void PlayNextGame()
     {
-        Debug.Log("GameManager.PlayNextGame()");
+        D.Log("GameManager.PlayNextGame()");
 
         m_state = State.StartGame;
 
-        Debug.Log("Num Scenes: " + m_gameNames.Count);
+        D.Log("Num Scenes: " + m_gameNames.Count);
 
-        Debug.Log("m_gameNames.Count: " + m_gameNames.Count);
+        D.Log("m_gameNames.Count: " + m_gameNames.Count);
 
         m_currentGameName = m_gameNames.Dequeue();
 
-        Debug.Log("m_currentGameName: " + m_currentGameName);
+        D.Log("m_currentGameName: " + m_currentGameName);
 
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
@@ -104,9 +104,9 @@ public class GameManager : Singleton<GameManager>
 
     public void CompleteGame()
     {
-        Debug.Log("GameManager.CompleteGame()");
+        D.Log("GameManager.CompleteGame()");
 
-        Debug.Log(System.String.Format("{0} scenes remaining", m_gameNames.Count));
+        D.Log(System.String.Format("{0} scenes remaining", m_gameNames.Count));
 
         if (m_gameNames.Count == 0)
         {

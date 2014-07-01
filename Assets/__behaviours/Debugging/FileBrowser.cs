@@ -6,24 +6,24 @@ public class FileBrowser : MonoBehaviour
 {
     public void LogPersistentDataPath()
     {
-        Debug.Log("LOG PERSISTENT DATAPATH");
+        D.Log("LOG PERSISTENT DATAPATH");
         ProcessFolder(Application.persistentDataPath);
     }
 
     public void LogDataPath()
     {
-        Debug.Log("LOG DATAPATH");
+        D.Log("LOG DATAPATH");
         ProcessFolder(Application.dataPath);
     }
 
     void ProcessFolder(string f) 
     {
-        Debug.Log("Folder: " + f);
+        D.Log("Folder: " + f);
             
         var txtFiles = Directory.GetFiles(f);
         foreach (string currentFile in txtFiles)
         {
-            Debug.Log("File: " + currentFile);
+            D.Log("File: " + currentFile);
         }
             
         string[] subs = Directory.GetDirectories(f);
@@ -36,10 +36,10 @@ public class FileBrowser : MonoBehaviour
     // Use this for initialization
     void Start () 
     {
-        //Debug.Log("LOG DATAPATH");
+        //D.Log("LOG DATAPATH");
         //ProcessFolder(Application.dataPath);
 
-        //Debug.Log("LOG PERSISTENT DATAPATH");
+        //D.Log("LOG PERSISTENT DATAPATH");
         //ProcessFolder(Application.persistentDataPath);
     }
 }

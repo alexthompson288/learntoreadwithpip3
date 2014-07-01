@@ -12,7 +12,7 @@ public class StoryPageDisplayer : MonoBehaviour
 	
     public void Show(Texture2D fg, Texture2D bg)
     {
-		//Debug.Log("StoryPageDisplayer.Show()");
+		//D.Log("StoryPageDisplayer.Show()");
 
         m_pageFG.material.mainTexture = fg;
         if (fg != null)
@@ -32,7 +32,7 @@ public class StoryPageDisplayer : MonoBehaviour
             {
                 Vector2 scale = new UnityEngine.Vector2((float)fg.width / 2048.0f,
                     (float)fg.height / 1536.0f);
-                //Debug.Log(scale);
+                //D.Log(scale);
                 m_scaleTransform.localScale = new Vector3(scale.x, scale.y, 1);
                 m_scaleTransform.localPosition = new Vector3((1 - scale.x) * 512, (1 - scale.y) * -384);
             }
@@ -42,9 +42,9 @@ public class StoryPageDisplayer : MonoBehaviour
             m_scaleTransform.localScale = Vector3.one;
         }
         m_pageBG.material.mainTexture = bg;
-		//Debug.Log("m_pageBG.material.mainTexture: " + m_pageBG.material.mainTexture);
+		//D.Log("m_pageBG.material.mainTexture: " + m_pageBG.material.mainTexture);
 
-		//Debug.Log("Finished setting images");
+		//D.Log("Finished setting images");
     }
 
     public void Turn(Transform other)
@@ -97,7 +97,7 @@ public class StoryPageDisplayer : MonoBehaviour
 	/*
     public IEnumerator TurnPageBack(Transform other)
     {
-		//Debug.Log("StoryPageDisplay.TurnBackCo()");
+		//D.Log("StoryPageDisplay.TurnBackCo()");
         other.localPosition = new Vector3(-520, 0, 0.2f);
         transform.localPosition = new Vector3(-520, 0, 0.0f);
         transform.rotation = Quaternion.Euler(new Vector3(0, 90, 0));
@@ -109,7 +109,7 @@ public class StoryPageDisplayer : MonoBehaviour
 
     public IEnumerator TurnPage(Transform other)
     {
-		//Debug.Log("StoryPageDisplay.TurnCo()");
+		//D.Log("StoryPageDisplay.TurnCo()");
         //Animation[] anims = GetComponentsInChildren<Animation>();
         //foreach (Animation anim in anims)
         //{

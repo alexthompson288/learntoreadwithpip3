@@ -50,7 +50,7 @@ public static class UserHelpers
 		//System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 		#endif
 		
-		Debug.Log(m_url + m_tokenRequest);
+		D.Log(m_url + m_tokenRequest);
 		var request = System.Net.WebRequest.Create(m_url + m_tokenRequest) as System.Net.HttpWebRequest;
 		request.KeepAlive = true;
 		request.Method = "POST";
@@ -84,7 +84,7 @@ public static class UserHelpers
 		//System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 		#endif
 		
-		Debug.Log (m_url + m_userRequest);
+		D.Log (m_url + m_userRequest);
 		var request = System.Net.WebRequest.Create(m_url + m_userRequest) as System.Net.HttpWebRequest;
 		request.KeepAlive = true;
 		request.Method = "GET";
@@ -104,7 +104,7 @@ public static class UserHelpers
 
 	public static bool IsUserLegal()
 	{
-		Debug.Log ("UserHelpers.GetUserState()");
+		D.Log ("UserHelpers.GetUserState()");
 		string userResponse = GetUser();
 		
 		if (!userResponse.Contains("error"))
@@ -112,22 +112,22 @@ public static class UserHelpers
             string userPrefix = "\"can_access_content\":";
 
             string canAccessContent = ParseResponse(userResponse, userPrefix, "}");
-            Debug.Log("canAccessContent: " + canAccessContent);
+            D.Log("canAccessContent: " + canAccessContent);
 
             if (canAccessContent == "true")
             {
-                Debug.Log("GOOD");
+                D.Log("GOOD");
                 return true;
             } 
             else
             {
-                Debug.Log("EXPIRED");
+                D.Log("EXPIRED");
                 throw new UserException(UserException.ExceptionType.Expired);
             }
         } 
         else
         {
-            Debug.Log("INVALID_TOKEN");
+            D.Log("INVALID_TOKEN");
             throw new UserException(UserException.ExceptionType.InvalidToken);
         }
 	}

@@ -77,7 +77,7 @@ public class Analytics : Singleton<Analytics>
             }
             catch
             {
-                Debug.LogError("Could not convert incorrectDataString into List<int>");
+                D.LogError("Could not convert incorrectDataString into List<int>");
             }
 
             m_timeStarted = br.ReadString();

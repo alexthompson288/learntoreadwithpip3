@@ -383,7 +383,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
-        Debug.Log("DataHelpers.GetData(" + dataType + ")");
+        D.Log("DataHelpers.GetData(" + dataType + ")");
 
         if (dataPool.Count == 0)
         {
@@ -417,7 +417,7 @@ public static class DataHelpers
                     dataPool = GetQuizQuestions();
                     break;
                 case "numbers":
-                    Debug.Log("Getting numbers");
+                    D.Log("Getting numbers");
                     dataPool = GetNumbers();
                     break;
                 case "shapes":
@@ -480,7 +480,7 @@ public static class DataHelpers
         
         if (dataPool.Count == 0)
         {
-            Debug.LogWarning("Defaulting to all correctsentences");
+            D.LogWarning("Defaulting to all correctsentences");
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
         }
@@ -549,7 +549,7 @@ public static class DataHelpers
         
         if(dataPool.Count == 0)
         {
-            Debug.LogWarning("Defaulting to Pink Phonemes");
+            D.LogWarning("Defaulting to Pink Phonemes");
             dataPool = GetModulePhonemes(GetModuleId(ColorInfo.PipColor.Pink));
         }
         
@@ -786,7 +786,7 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        Debug.Log("DataHelpers.GetNumbers()"); 
+        D.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> numbers = GameManager.Instance.GetData("numbers");
 
         if (numbers.Count == 0)
@@ -813,7 +813,7 @@ public static class DataHelpers
     /*
     public static List<DataRow> GetNumbers()
     {
-        Debug.Log("DataHelpers.GetNumbers()"); 
+        D.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
 
         int[] boundaryValues = new int[2];
@@ -831,7 +831,7 @@ public static class DataHelpers
             boundaryValues[1] = 10;
         }
 
-        Debug.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
+        D.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
 
         Array.Sort(boundaryValues);
 
@@ -1098,7 +1098,7 @@ public static class DataHelpers
                     } 
                     catch
                     {
-                        Debug.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
+                        D.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
                     }
                 }
             }

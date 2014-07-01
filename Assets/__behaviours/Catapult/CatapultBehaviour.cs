@@ -115,7 +115,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		} 
 		else 
 		{
-            //Debug.Log("LAUNCH");
+            //D.Log("LAUNCH");
             m_currentBall.SetHasLaunchedTrue();
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
@@ -138,7 +138,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
     {
         m_currentBall = null;
 
-        //Debug.Log("ResetLineRendererPos");
+        //D.Log("ResetLineRendererPos");
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("position", m_ballCentre);
         tweenArgs.Add("speed", 3);
@@ -151,7 +151,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 
     void SpawnBall()
     {
-        //Debug.Log("SpawnBall");
+        //D.Log("SpawnBall");
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
         newBall.GetComponent<CatapultAmmo>().SetUp(this);
         m_spawnedBalls.Add(newBall.GetComponent<CatapultAmmo>() as CatapultAmmo);

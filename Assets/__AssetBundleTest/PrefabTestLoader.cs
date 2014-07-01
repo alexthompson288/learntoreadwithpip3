@@ -12,16 +12,16 @@ public class PrefabTestLoader : MonoBehaviour
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        Debug.Log("Waiting for Instance");
+        D.Log("Waiting for Instance");
         yield return StartCoroutine(AssetBundleLoaderTest.WaitForInstance());
 
-        Debug.Log("Waiting for download");
+        D.Log("Waiting for download");
         yield return StartCoroutine(AssetBundleLoaderTest.Instance.LoadBundleCo<GameObject>(url, 1, "", ""));
 
-        Debug.Log("Getting obj");
+        D.Log("Getting obj");
         GameObject loadedGo = AssetBundleLoaderTest.Instance.GetObj() as GameObject;
 
-        Debug.Log(loadedGo);
+        D.Log(loadedGo);
 
         if (loadedGo != null)
         {

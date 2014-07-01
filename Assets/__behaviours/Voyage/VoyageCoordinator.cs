@@ -51,7 +51,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     int m_sessionId;
     public void SetSessionId(int sessionId)
     {
-        Debug.Log("SetSessionId: " + sessionId);
+        D.Log("SetSessionId: " + sessionId);
         m_sessionId = sessionId;
     }
 
@@ -107,7 +107,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If VoyageInfo has a bookmark then we might want to spawn in a module map instead of the world map
             if (VoyageInfo.Instance.hasBookmark)
             {
-                Debug.Log("Instantiate module map");
+                D.Log("Instantiate module map");
 
                 int moduleId = VoyageInfo.Instance.currentModuleId;
 
@@ -123,7 +123,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         /*
                         if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionId))
                         {
-                            Debug.Log("Session Not Complete");
+                            D.Log("Session Not Complete");
 
                             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id=" + VoyageInfo.Instance.currentSessionId);
                             if(dt.Rows.Count > 0)
@@ -132,12 +132,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                             }
                             else
                             {
-                                Debug.LogError("Could not find sessions with id: " + VoyageInfo.Instance.currentSessionId);
+                                D.LogError("Could not find sessions with id: " + VoyageInfo.Instance.currentSessionId);
                             }
                         }
                         else
                         {
-                            Debug.Log("Session Complete");
+                            D.Log("Session Complete");
                         }
                         */
                     }
@@ -147,7 +147,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If we have not spawned a module map then spawn the world map instead
             if(!hasSpawnedModuleMap)
             {
-                Debug.Log("Instantiate world map");
+                D.Log("Instantiate world map");
                 InstantiateWorldMap();
             }
 

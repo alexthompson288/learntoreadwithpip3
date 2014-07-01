@@ -53,10 +53,10 @@ public class UnitProgressCoordinator : MonoBehaviour
     			{
     				if(sentence["is_target_sentence"] != null && sentence["is_target_sentence"].ToString() == "t")
     				{
-    					Debug.Log("target: " + sentence["text"].ToString());
+    					D.Log("target: " + sentence["text"].ToString());
     					Texture2D tex = Resources.Load<Texture2D>("unitProgress_backgrounds/" + sentence["text"].ToString());
 
-    					Debug.Log("tex: " + tex);
+    					D.Log("tex: " + tex);
 
     					if(tex != null)
     					{
@@ -65,10 +65,10 @@ public class UnitProgressCoordinator : MonoBehaviour
     				}
     				else if(sentence["is_dummy_sentence"] != null && sentence["is_dummy_sentence"].ToString() == "t")
     				{
-    					Debug.Log("dummy: " + sentence["text"].ToString());
+    					D.Log("dummy: " + sentence["text"].ToString());
     					AudioClip clip = Resources.Load<AudioClip>("unitProgress_audio/" + sentence["text"].ToString());
 
-    					Debug.Log("clip: " + clip);
+    					D.Log("clip: " + clip);
 
     					if(clip != null)
     					{

@@ -95,7 +95,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 		m_targetCorrectLetters = phonemes.Length;
 		
-		Debug.Log("m_currentWord: " + m_currentWord);
+		D.Log("m_currentWord: " + m_currentWord);
 		
 		//SpeakCurrentWord();
 		
@@ -107,7 +107,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		{
 			int i = Random.Range(0, locators.Count);
 			DraggableLabel newDraggable = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggablePrefab, locators[i]).GetComponent<DraggableLabel>() as DraggableLabel;
-			Debug.Log(locators[i].name);
+			D.Log(locators[i].name);
 			locators.RemoveAt(i);
 			newDraggable.SetUp(phoneme, null, true);
 			m_draggables.Add(newDraggable);

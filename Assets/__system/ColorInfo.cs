@@ -130,7 +130,7 @@ public class ColorInfo : Singleton<ColorInfo>
                 return PipColor.Cream;
                 break;
             default:
-                Debug.LogError("No color found for: " + color);
+                D.LogError("No color found for: " + color);
                 throw new NoColor();
                 break;
         }

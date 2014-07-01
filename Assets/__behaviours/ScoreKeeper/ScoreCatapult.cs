@@ -80,7 +80,7 @@ public class ScoreCatapult : ScoreKeeper
             yield return null;
         } 
         
-        Debug.Log("LAUNCH!!!");
+        D.Log("LAUNCH!!!");
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
         m_hasLaunched = true;
         iTween.Stop(m_rigidbody.gameObject);
@@ -92,7 +92,7 @@ public class ScoreCatapult : ScoreKeeper
 
     void TweenRigidbody()
     {
-        Debug.Log("ScoreCatapault Tween");
+        D.Log("ScoreCatapault Tween");
 
         Vector3 targetPos = m_origin.position + (m_target.position - m_origin.position).normalized * m_pointDistance * m_score;
 
@@ -109,11 +109,11 @@ public class ScoreCatapult : ScoreKeeper
     
     public void ReleaseLineEnd()
     {
-        Debug.Log("ReleaseLineEnd()");
+        D.Log("ReleaseLineEnd()");
 
         if (m_hasLaunched)
         {
-            Debug.Log("Releasing");
+            D.Log("Releasing");
 
             Hashtable tweenArgs = new Hashtable();
             

@@ -36,13 +36,14 @@ public class UserInfo : Singleton<UserInfo>
         
         Load();
 
-#if !UNITY_EDITOR
-        m_attemptLogin = true;
-#endif
+        if (!Debug.isDebugBuild)
+        {
+            m_attemptLogin = true;
+        }
 
         if (m_attemptLogin)
         {
-            Debug.Log("ATTEMPTING LOGIN");
+            D.Log("ATTEMPTING LOGIN");
 
             DateTime expirationDate;
             try
@@ -52,26 +53,26 @@ public class UserInfo : Singleton<UserInfo>
             } 
             catch
             {
-                Debug.Log("CATCHING EXPIRATION DATE");
+                D.Log("CATCHING EXPIRATION DATE");
                 expirationDate = DateTime.Now.AddDays(-2);
             }
 
 
-            Debug.Log("CHECK USER");
+            D.Log("CHECK USER");
             bool isUserLegal = false;
             try
             {
                 isUserLegal = UserHelpers.IsUserLegal();
-                Debug.Log("NO_ERROR - isUserLegal: " + isUserLegal);
+                D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
             } 
             catch (UserException ex)
             {
-                Debug.Log("USER_EXCEPTION");
+                D.Log("USER_EXCEPTION");
                 LoginCoordinator.SetInfoText(ex);
             } 
             catch (WebException ex)
             {
-                Debug.Log("WEB_EXCEPTION");
+                D.Log("WEB_EXCEPTION");
                 if(ex.Response is System.Net.HttpWebResponse)
                 {
                     LoginCoordinator.SetInfoText(ex, false);
@@ -84,7 +85,7 @@ public class UserInfo : Singleton<UserInfo>
 
             if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
             {
-                Debug.Log("INSTANTIATE LOGIN");
+                D.Log("INSTANTIATE LOGIN");
                 GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
             }
         }
@@ -143,7 +144,7 @@ public class UserInfo : Singleton<UserInfo>
 
         WWWForm form = new WWWForm();
 
-        //Debug.Log("Posting user data: " + m_accountUsername);
+        //D.Log("Posting user data: " + m_accountUsername);
 
         //form.AddField(modelName + "[account_username]", m_accountUsername);
         //form.AddField(modelName + "[email]", m_userEmail);
@@ -161,17 +162,17 @@ public class UserInfo : Singleton<UserInfo>
     void FindIp()
     {
         string hostName = Dns.GetHostName();
-        Debug.Log("HostName: " + hostName);
+        D.Log("HostName: " + hostName);
         IPAddress[] ipAddresses = Dns.GetHostAddresses(hostName);
         foreach (IPAddress address in ipAddresses)
         {
-            Debug.Log("ip: " + address.ToString());
+            D.Log("ip: " + address.ToString());
         }
     }
 
     void FindIp2()
     {
-        Debug.Log("ip2: " + Network.player.ipAddress);
+        D.Log("ip2: " + Network.player.ipAddress);
     }
     */
 
@@ -187,7 +188,7 @@ public class UserInfo : Singleton<UserInfo>
         }
         catch
         {
-            Debug.Log("FindIpAddress - catch - after finding");
+            D.Log("FindIpAddress - catch - after finding");
             myExtIPWWW = null;
         }
 
@@ -206,13 +207,13 @@ public class UserInfo : Singleton<UserInfo>
                     
                 myExtIP = myExtIP.Substring(0, myExtIP.IndexOf("<"));
                     
-                Debug.Log("ip address: " + myExtIP);
+                D.Log("ip address: " + myExtIP);
 
                 m_ipAddress = myExtIP;
             }
             catch
             {
-                Debug.Log("FindIpAddress - catch - after parsing address");
+                D.Log("FindIpAddress - catch - after parsing address");
                 m_ipAddress = "";
             }
         }
@@ -293,8 +294,8 @@ public class UserInfo : Singleton<UserInfo>
 		MemoryStream data = ds.Load();
 		BinaryReader br = new BinaryReader(data);
 
-        //Debug.Log("UserInfo.Load()");
-        //Debug.Log("data.Length: " + data.Length);
+        //D.Log("UserInfo.Load()");
+        //D.Log("data.Length: " + data.Length);
 		
 		if (data.Length != 0)
 		{
@@ -344,18 +345,18 @@ public class UserInfo : Singleton<UserInfo>
     /*
     void Awake()
     {   
-        //Debug.Log("UserInfo.Awake()");
+        //D.Log("UserInfo.Awake()");
         
         #if UNITY_STANDALONE || UNITY_ANDROID
         try
         {
             StartCoroutine(FindIpAddress());
-            Debug.Log("Found ip address: " + m_ipAddress);
+            D.Log("Found ip address: " + m_ipAddress);
         }
         catch
         {
             m_waitForIpAddress = false;
-            Debug.LogError("UserInfo.FindIpAddress - caller catch");
+            D.LogError("UserInfo.FindIpAddress - caller catch");
         }
         #endif
         

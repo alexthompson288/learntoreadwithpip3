@@ -5,6 +5,6 @@ public class LogWhenClicked : MonoBehaviour
 {
 	void OnClick () 
 	{
-		Debug.Log(name + " has been clicked");
+		D.Log(name + " has been clicked");
 	}
 }

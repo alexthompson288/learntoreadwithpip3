@@ -157,9 +157,9 @@ public class SpriteAnim : MonoBehaviour
     {
         if (!IsPlaying())
         {
-            //Debug.Log("m_playAnim: " + m_playAnim);
-            //Debug.Log("m_currentAnimation: " + m_currentAnimation);
-            //Debug.Log("m_availableAnimations.Length: " + m_availableAnimations.Length);
+            //D.Log("m_playAnim: " + m_playAnim);
+            //D.Log("m_currentAnimation: " + m_currentAnimation);
+            //D.Log("m_availableAnimations.Length: " + m_availableAnimations.Length);
         }
 
         if (IsPlaying())

@@ -83,7 +83,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 			m_numSpawn = m_locators.Length;
 		}
 
-		Debug.Log("m_lettersPool.Count: " + m_lettersPool.Count);
+		D.Log("m_lettersPool.Count: " + m_lettersPool.Count);
 
         foreach (DataRow myPh in m_lettersPool)
         {
@@ -150,8 +150,8 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 		while(locators.Count > m_numSpawn)
 		{
 			int removeIndex = Random.Range(0, locators.Count);
-			//Debug.Log("removeIndex: " + removeIndex);
-			//Debug.Log("name: " + locators[removeIndex].name);
+			//D.Log("removeIndex: " + removeIndex);
+			//D.Log("name: " + locators[removeIndex].name);
 			locators.RemoveAt(removeIndex);
 		}
 		

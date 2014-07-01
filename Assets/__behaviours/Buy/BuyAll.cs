@@ -45,11 +45,11 @@ public class BuyAll : MonoBehaviour
 			break;
 		}
 
-		//Debug.Log("BuyAll - " + m_buyType + " - unlocked: " + !locked);
+		//D.Log("BuyAll - " + m_buyType + " - unlocked: " + !locked);
 		
 		collider.enabled = locked;
 
-		//Debug.Log(m_buyType + " - collider.enabled: " + collider.enabled);
+		//D.Log(m_buyType + " - collider.enabled: " + collider.enabled);
 		m_background.color = locked ? BuyManager.Instance.buyableColor : BuyManager.Instance.unbuyableColor;
 	}
 }

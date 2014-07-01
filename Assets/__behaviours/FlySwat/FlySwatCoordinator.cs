@@ -57,8 +57,8 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         m_dataPool = DataHelpers.GetData(m_dataType);
         m_currentData = DataHelpers.GetSingleTargetData(m_dataType, m_dataPool);
 
-        //Debug.Log("dataPool.Count: " + m_dataPool.Count);
-        //Debug.Log("currentData: " + m_currentData);
+        //D.Log("dataPool.Count: " + m_dataPool.Count);
+        //D.Log("currentData: " + m_currentData);
 
         StartCoroutine(StartGame());
 	}
@@ -168,9 +168,9 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
             float twoStarPerQuestion = 4f;
             float threeStarPerQuestion = 2.5f;
 
-            //Debug.Log("TimeTaken: " + timeTaken);
-            //Debug.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
-            //Debug.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
+            //D.Log("TimeTaken: " + timeTaken);
+            //D.Log("twoStar: " + twoStarPerQuestion * (float)m_targetScore);
+            //D.Log("threeStar: " + threeStarPerQuestion * (float)m_targetScore);
             
             int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 

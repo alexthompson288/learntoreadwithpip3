@@ -110,10 +110,10 @@ public class BankLettersCoordinator : MonoBehaviour
 
     void ShowNew()
     {
-        Debug.Log("ShowNew()");
+        D.Log("ShowNew()");
 
-        Debug.Log("count: " + m_phonemePool.Count);
-        Debug.Log("currentIndex: " + m_currentIndex);
+        D.Log("count: " + m_phonemePool.Count);
+        D.Log("currentIndex: " + m_currentIndex);
 
         string labelText = m_isAlphabet ? m_letterPool [m_currentIndex] : m_phonemePool [m_currentIndex] ["phoneme"].ToString();
         m_graphemeLabel.text = labelText;

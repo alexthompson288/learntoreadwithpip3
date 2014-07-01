@@ -59,7 +59,7 @@ public class SessionInformation : Singleton<SessionInformation>
 
 		/*
 		Object[] unlockableTextures = Resources.LoadAll("Images/collection_room_additional_images 1");
-		Debug.Log("unlockableTextures: " + unlockableTextures);
+		D.Log("unlockableTextures: " + unlockableTextures);
 		string[] unlockableItems = new string[unlockableTextures.Length];
 		
 		for(int index = 0; index < unlockableItems.Length; ++index)
@@ -104,21 +104,21 @@ public class SessionInformation : Singleton<SessionInformation>
 		SetCoins(numStars);
 		m_hasEverWonCoin = true;
 		Save();
-		Debug.Log("Created Debug Stars/Coins: " + GetCoins());
+		D.Log("Created Debug Stars/Coins: " + GetCoins());
 	}
 	
 	IEnumerator ResetLettersAndStarVar(bool createDebugStars)
 	{
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		yield return new WaitForSeconds(3f);
-		Debug.Log("Resetting");
+		D.Log("Resetting");
 		m_highestLevelCompleteForApp.Clear();
 		m_starsEarnedForHighestLevel.Clear();
 		m_coins.Clear();
 		m_unlockedLetters.Clear();
 		m_unlockableItems.Clear();
 		Save();
-		Debug.Log("Reset");
+		D.Log("Reset");
 		
 		if(createDebugStars)
 		{
@@ -241,7 +241,7 @@ public class SessionInformation : Singleton<SessionInformation>
 		{
 			if(level + 1 > GetHighestLevelCompletedForApp()) // level is zero-based, highestLevelCompleted is one-based
 			{
-				Debug.Log("starsEarned: " + starsEarned);
+				D.Log("starsEarned: " + starsEarned);
 				m_starsEarnedForHighestLevel[m_currentApp] = starsEarned;
 			}
 		}
@@ -273,7 +273,7 @@ public class SessionInformation : Singleton<SessionInformation>
 		{
 			if(level + 1 > GetHighestLevelCompletedForApp()) // level is zero-based, highestLevelCompleted is one-based
 			{
-				Debug.Log("coins: " + coins);
+				D.Log("coins: " + coins);
 				m_coins[m_currentApp] = coins;
 			}
 		}
@@ -282,7 +282,7 @@ public class SessionInformation : Singleton<SessionInformation>
 	
 	public void SetCoins(int coins)
 	{
-		Debug.Log("coins: " + coins);
+		D.Log("coins: " + coins);
 		if (!string.IsNullOrEmpty(m_currentApp))
         {
 			m_coins[m_currentApp] = coins;
@@ -310,12 +310,12 @@ public class SessionInformation : Singleton<SessionInformation>
 	{
 		if(m_unlockableItems.ContainsKey(itemName))
 		{
-			Debug.Log("Unlocking: " + itemName);
+			D.Log("Unlocking: " + itemName);
 			m_unlockableItems[itemName] = true;
 		}
 		else
 		{
-			Debug.LogError("No item with name: " + itemName);	
+			D.LogError("No item with name: " + itemName);	
 		}
 		Save ();
 		
@@ -339,7 +339,7 @@ public class SessionInformation : Singleton<SessionInformation>
 
     public void SelectGame(string gameScene, bool supportsTwoPlayer)
     {
-		Debug.Log("SelectGame() - supports 2: " + supportsTwoPlayer);
+		D.Log("SelectGame() - supports 2: " + supportsTwoPlayer);
         m_selectedGame = gameScene;
         m_selectedGameSupportsTwoPlayer = supportsTwoPlayer;
     }
@@ -347,7 +347,7 @@ public class SessionInformation : Singleton<SessionInformation>
     public bool SupportsTwoPlayer()
     {
 #if UNITY_STANDALONE
-		Debug.Log("STANDALONE");
+		D.Log("STANDALONE");
 		return false;
 #else
         return m_selectedGameSupportsTwoPlayer;

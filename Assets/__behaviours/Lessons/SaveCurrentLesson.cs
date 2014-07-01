@@ -10,7 +10,7 @@ public class SaveCurrentLesson : MonoBehaviour
 	
 	void OnClick()
 	{
-		Debug.Log("Saving lesson");
+		D.Log("Saving lesson");
 		LessonNameCoordinator.Instance.OnInputFinish();
 		
 		#if UNITY_IPHONE
@@ -47,7 +47,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			m_eventParameters.Add(dataType.ToString(), "NO DATA");
 			#endif
 			
-			Debug.Log("Adding: " + columnName.Replace("set", ""));
+			D.Log("Adding: " + columnName.Replace("set", ""));
 			
 			int setNum = 1;
 			
@@ -66,7 +66,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log("Adding story: " + data[0]["title"].ToString());
+				D.Log("Adding story: " + data[0]["title"].ToString());
 				LessonInfo.Instance.AddData(System.Convert.ToInt32(data[0]["id"]), dataType);
 			}
 		}
@@ -106,7 +106,7 @@ public class SaveCurrentLesson : MonoBehaviour
 	{
 		m_eventParameters.Clear();
 
-		Debug.Log("Saving lesson");
+		D.Log("Saving lesson");
 		LessonNameCoordinator.Instance.OnInputFinish();
 
 #if UNITY_IPHONE
@@ -143,7 +143,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			//FlurryBinding.logEvent("No lesson data for " + dataType, false);
 #endif
 
-			Debug.Log("Adding: " + columnName.Replace("set", ""));
+			D.Log("Adding: " + columnName.Replace("set", ""));
 			
 			int setNum = 1;
 			
@@ -157,7 +157,7 @@ public class SaveCurrentLesson : MonoBehaviour
 			{
 				string attributeName = (dataType == "phonemes") ? "phoneme" : "word";
 
-				Debug.Log(datum[attributeName]);
+				D.Log(datum[attributeName]);
 
 				LessonInfo.Instance.AddData(System.Convert.ToInt32(datum["id"]), dataType);
 			}
@@ -187,11 +187,11 @@ public class SaveCurrentLesson : MonoBehaviour
 				{
 					if(data[i][attribute] == null)
 					{
-						Debug.LogError(string.Format("ID {0} has no {1} attribute", data[i]["id"].ToString(), attribute));
+						D.LogError(string.Format("ID {0} has no {1} attribute", data[i]["id"].ToString(), attribute));
 					}
 					else
 					{
-						Debug.LogError("Error logging data for " + dataType);
+						D.LogError("Error logging data for " + dataType);
 					}
 				}
 

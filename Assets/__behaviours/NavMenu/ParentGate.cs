@@ -108,7 +108,7 @@ public class ParentGate : Singleton<ParentGate>
         }
         */
 
-        Debug.Log("Answer: " + CheckAnswer(answerBehaviour));
+        D.Log("Answer: " + CheckAnswer(answerBehaviour));
 
 		if(OnParentGateAnswer != null)
 		{

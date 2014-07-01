@@ -69,7 +69,7 @@ public class VideoPlayer : MonoBehaviour
             m_progressBarParent.transform.localScale = progressBarScale;
         }
 
-        Debug.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy(m_filename));
+        D.Log("StreamingAssets - " + m_filename + ": " + HasStreamingAssetsCopy(m_filename));
 
         m_playButton.Unpressing += OnPressPlay;
         m_deleteButton.Unpressing += OnPressDelete;
@@ -114,15 +114,15 @@ public class VideoPlayer : MonoBehaviour
 
     IEnumerator OnPressPlayCo()
     {
-        Debug.Log("OnPressPlayCo()");
+        D.Log("OnPressPlayCo()");
         if (!HasLocalCopy())
         {
-            Debug.Log("No local copy found, downloading");
+            D.Log("No local copy found, downloading");
             yield return StartCoroutine("DownloadVideo");
         } 
         else
         {
-            Debug.Log("Found local copy");
+            D.Log("Found local copy");
         }
 
         string playPath = HasStreamingAssetsCopy(m_filename) ? m_streamingAssetsRelativePath + m_filename : GetFullPath(m_filename);
@@ -142,24 +142,24 @@ public class VideoPlayer : MonoBehaviour
 
     void OnPressDownload(PipButton button)
     {
-        Debug.Log("OnPressDownload()");
+        D.Log("OnPressDownload()");
         if (!HasLocalCopy())
         {
-            Debug.Log("No local copy found, downloading");
+            D.Log("No local copy found, downloading");
             StartCoroutine("DownloadVideo");
         }
         else
         {
-            Debug.Log("Found local copy, no download");
+            D.Log("Found local copy, no download");
         }
     }
 
     void OnPressDelete(PipButton button)
     {
-        Debug.Log("OnPressDelete()");
+        D.Log("OnPressDelete()");
         if (File.Exists(GetFullPath(m_filename))) // Don't call HasLocalCopy(), we need to ignore StreamingAssets because the directory is not writable
         {
-            Debug.Log("Found local copy, deleting");
+            D.Log("Found local copy, deleting");
             File.Delete(GetFullPath(m_filename));
 
             if(Deleted != null)
@@ -169,7 +169,7 @@ public class VideoPlayer : MonoBehaviour
         } 
         else
         {
-            Debug.Log("No local copy found");
+            D.Log("No local copy found");
         }
     }
 
@@ -189,9 +189,9 @@ public class VideoPlayer : MonoBehaviour
 
     IEnumerator DownloadVideo()
     {
-        Debug.Log("VideoPlayer.DownloadVideo(): " + m_filename);
+        D.Log("VideoPlayer.DownloadVideo(): " + m_filename);
 
-        Debug.Log("DISABLE UI");
+        D.Log("DISABLE UI");
         UICamera[] uiCams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
         
         foreach (UICamera cam in uiCams)
@@ -208,32 +208,32 @@ public class VideoPlayer : MonoBehaviour
             yield return new WaitForSeconds(m_progressTweenDuration);
         }
 
-        Debug.Log("WAIT");
-        Debug.Log("Download url: " + m_url + m_filename);
+        D.Log("WAIT");
+        D.Log("Download url: " + m_url + m_filename);
         m_www = new WWW(m_url + m_filename);
 
         StartCoroutine("UpdateProgressBar");
 
         yield return m_www;
         
-        Debug.Log("DOWNLOADED");
+        D.Log("DOWNLOADED");
         
         if (m_www.isDone && m_www.error == null)
         {
-            Debug.Log("WRITING");
+            D.Log("WRITING");
             FileStream stream = new FileStream(GetFullPath(m_filename), FileMode.Create);
             stream.Write(m_www.bytes, 0, m_www.bytes.Length);
             stream.Close();
         } 
         else
         {
-            Debug.Log("DOWNLOAD FAILED");
-            Debug.Log("www.isDone: " + m_www.isDone);
-            Debug.Log("www.error == null: " + m_www.error == null);
+            D.Log("DOWNLOAD FAILED");
+            D.Log("www.isDone: " + m_www.isDone);
+            D.Log("www.error == null: " + m_www.error == null);
             
             if(m_www.error != null)
             {
-                Debug.Log("error: " + m_www.error);
+                D.Log("error: " + m_www.error);
             }
 
             StopCoroutine("UpdateProgressBar");
@@ -248,7 +248,7 @@ public class VideoPlayer : MonoBehaviour
 
         yield return(StartCoroutine(ResetProgressBar()));
 
-        Debug.Log("ENABLE UI");
+        D.Log("ENABLE UI");
         foreach (UICamera cam in uiCams)
         {
             cam.enabled = true;

@@ -45,15 +45,15 @@ public class MovingWidget : MonoBehaviour
 
 			if(m_debbugingWord == null || m_debbugingWord == "" || m_debbugingWord == " ")
 			{
-				Debug.LogError("EMPTY DATA!");
-				Debug.Log("data: " + m_data);
-				Debug.Log("id: " + m_data["id"].ToString());
-				Debug.Log("word: " + m_data["word"].ToString());
+				D.LogError("EMPTY DATA!");
+				D.Log("data: " + m_data);
+				D.Log("id: " + m_data["id"].ToString());
+				D.Log("word: " + m_data["word"].ToString());
 			}
 		}
 		else
 		{
-			Debug.LogError("NO DATA!");
+			D.LogError("NO DATA!");
 		}
 	}
 

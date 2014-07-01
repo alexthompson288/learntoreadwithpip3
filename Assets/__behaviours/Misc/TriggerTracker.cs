@@ -8,13 +8,13 @@ public class TriggerTracker : MonoBehaviour
 	
 	void OnTriggerEnter (Collider other) 
 	{
-		Debug.Log(other.name + " has entered " + name);
+		D.Log(other.name + " has entered " + name);
 		m_trackedObjects.Add(other.gameObject);
 	}
 
 	void OnTriggerExit (Collider other) 
 	{
-		Debug.Log(other.name + " has exited " + name);
+		D.Log(other.name + " has exited " + name);
 		if(m_trackedObjects.Contains(other.gameObject))
 		{
 			m_trackedObjects.Remove(other.gameObject);

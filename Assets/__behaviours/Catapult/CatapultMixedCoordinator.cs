@@ -145,7 +145,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     void InitializeTargets(Target[] targets)
     {
-        Debug.Log("targets.Length: " + targets.Length);
+        D.Log("targets.Length: " + targets.Length);
 
         for(int i = 0; i < targets.Length; ++i)
         {

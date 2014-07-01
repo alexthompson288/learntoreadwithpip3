@@ -63,7 +63,7 @@ public class ScoreLights : ScoreKeeper
         int divisor = m_targetScore > 1 ? m_targetScore - 1 : m_targetScore;
         Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition) / divisor;
 
-        Debug.Log("delta: " + delta);
+        D.Log("delta: " + delta);
 
         for (int index = 0; index < targetScore; ++index)
         {

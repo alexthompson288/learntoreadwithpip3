@@ -55,18 +55,18 @@ public class CatapultAmmo : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        //Debug.Log("CatapultAmmo.OnTriggerExit");
+        //D.Log("CatapultAmmo.OnTriggerExit");
         if (m_hasLaunched && other.collider.tag == "BallExitTrigger")
         {
-            //Debug.Log("CALL RESET");
+            //D.Log("CALL RESET");
 
             CatapultBehaviour.Instance.ResetLineRendererPos();
         } 
         else
         {
-            //Debug.Log("NO RESET");
-            //Debug.Log("hasLaunched: " + m_hasLaunched);
-            //Debug.Log("BallExitTrigger: " + (other.collider.tag == "BallExitTrigger"));
+            //D.Log("NO RESET");
+            //D.Log("hasLaunched: " + m_hasLaunched);
+            //D.Log("BallExitTrigger: " + (other.collider.tag == "BallExitTrigger"));
         }
     }
 

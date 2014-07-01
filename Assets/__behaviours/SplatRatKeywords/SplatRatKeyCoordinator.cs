@@ -57,7 +57,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		
 		if(ratEnviro != null)
 		{
-			Debug.Log("Found ratEnviro");
+			D.Log("Found ratEnviro");
 
 			Texture2D frontTex = ratEnviro.GetFrontTex();
 			Texture2D rearTex = ratEnviro.GetRearTex();
@@ -69,10 +69,10 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		}
 		else
 		{
-			Debug.LogError("ratEnviro is null");
+			D.LogError("ratEnviro is null");
 		}
 
-		Debug.Log("SplatRatKeyCoordinator.Start()");
+		D.Log("SplatRatKeyCoordinator.Start()");
 		yield return new WaitForSeconds(0.5f);
 		WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
 		
@@ -94,11 +94,11 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		lettersPool.AddRange(DataHelpers.GetKeywords());
 
 		
-		Debug.Log("lettersPool.Count: " + lettersPool.Count);
+		D.Log("lettersPool.Count: " + lettersPool.Count);
 		
         foreach (DataRow myPh in lettersPool)
         {
-			Debug.Log("word: " + myPh["word"].ToString());
+			D.Log("word: " + myPh["word"].ToString());
             string audioFilename = string.Format("{0}",
                 myPh["word"]);
 			
@@ -128,7 +128,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		}
 		else
 		{
-			Debug.Log("No words found");
+			D.Log("No words found");
 			FinishGame(0);
 		}
 	}
@@ -136,7 +136,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 	IEnumerator PlayGame(List<DataRow> lettersPool)
     {
         int numPlayers = GetNumPlayers();
-		Debug.Log("numPlayers: " + numPlayers);
+		D.Log("numPlayers: " + numPlayers);
         if (numPlayers == 2)
         {
             while (true)
@@ -174,7 +174,7 @@ public class SplatRatKeyCoordinator : Singleton<SplatRatKeyCoordinator>
 		
 		for(int index = 0; index < numPlayers; ++index)
 		{
-			Debug.Log("Looping to display");
+			D.Log("Looping to display");
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_currentLetter));
 		}
 		

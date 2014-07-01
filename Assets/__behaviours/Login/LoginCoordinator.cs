@@ -22,6 +22,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void Awake()
     {
+        if (!Application.isEditor)
+        {
+            m_passwordInput.GetComponent<UIInput>().isPassword = true;
+        }
+       
         m_waitingIcon.transform.localScale = Vector3.zero;
         m_waitingIcon.gameObject.SetActive(false);
 
@@ -47,7 +52,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         if ((ex.Response is System.Net.HttpWebResponse))
         {
-            Debug.Log("StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+            D.Log("StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
             switch ((ex.Response as System.Net.HttpWebResponse).StatusCode)
             {
                 // Unauthorized status code can happen for 2 reasons: 1. Incorrect username/password 2. No access token
@@ -116,17 +121,17 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         bool hasToken = tokenResponse.Contains(accessPrefix) && tokenResponse.Contains(expirationPrefix);
         
-        Debug.Log("hasToken: " + hasToken);
-        Debug.Log("RESPONSE_CONTENT");
-        Debug.Log(tokenResponse);
+        D.Log("hasToken: " + hasToken);
+        D.Log("RESPONSE_CONTENT");
+        D.Log(tokenResponse);
         
         if (hasToken)
         {
             string accessToken = UserHelpers.ParseResponse(tokenResponse, accessPrefix, "\"");
-            Debug.Log("ACCESS_TOKEN: " + accessToken);
+            D.Log("ACCESS_TOKEN: " + accessToken);
             
             string expirationDate = UserHelpers.ParseResponse(tokenResponse, expirationPrefix, "\"");
-            Debug.Log("EXPIRATION_DATE: " + expirationDate);
+            D.Log("EXPIRATION_DATE: " + expirationDate);
             
             UserInfo.Instance.SaveUserDetails(m_emailInput.text, accessToken, expirationDate);
             

@@ -44,7 +44,7 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
 
 	public override bool Equals(System.Object obj)
 	{
-		Debug.Log("Override Equals");
+		D.Log("Override Equals");
 		DataRow other = obj as DataRow;
 
 		if(other == null)
@@ -81,7 +81,7 @@ public class DataRow : Dictionary<string, object>, IEquatable<DataRow>
         }
         catch
         {
-            Debug.LogError(this["tablename"].ToString() + " has no int attribute called " + attributeName);
+            D.LogError(this["tablename"].ToString() + " has no int attribute called " + attributeName);
             return -1;
         }
     }
@@ -91,37 +91,37 @@ public class SectionComparer : IComparer<DataRow>
 {
 	public int Compare(DataRow a, DataRow b)
 	{
-		//Debug.Log("Compare");
+		//D.Log("Compare");
 		int idA = System.Convert.ToInt32(a["id"]);
 		int idB = System.Convert.ToInt32(b["id"]);
 		if((idA != idB) || a == null || b == null || a["linking_index"] == null || b["linking_index"] == null)
 		{
-			//Debug.Log("Default 0");
+			//D.Log("Default 0");
 			
-			//Debug.Log("!=: " + (idA != idB));
+			//D.Log("!=: " + (idA != idB));
 			
 			return 0;
 		}
 		else
 		{
-			//Debug.LogWarning("CHECKING " + idA + " - " + idB);
+			//D.LogWarning("CHECKING " + idA + " - " + idB);
 			int indexA = System.Convert.ToInt32(a["linking_index"]);
 			int indexB = System.Convert.ToInt32(b["linking_index"]);
 			if(indexA < indexB)
 			{
-				//Debug.LogWarning("Sort -1");
+				//D.LogWarning("Sort -1");
 				return -1;
 			}
 			else if(indexA > indexB)
 			{
-				//Debug.LogWarning("Sort 1");
+				//D.LogWarning("Sort 1");
 				return 1;
 			}
 			else
 			{
-				//Debug.Log("Special 0");
-				//Debug.Log("a: " + idA + " - " + indexA);
-				//Debug.Log("b: " + idB + " - " + indexB);
+				//D.Log("Special 0");
+				//D.Log("a: " + idA + " - " + indexA);
+				//D.Log("b: " + idB + " - " + indexB);
 				return 0;
 			}
 		}

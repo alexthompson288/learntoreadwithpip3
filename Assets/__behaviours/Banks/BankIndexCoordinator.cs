@@ -66,14 +66,14 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         m_gridStartPosition = m_defaultGrid.transform.localPosition;
 
-        Debug.Log("gridStartPos: " + m_gridStartPosition);
+        D.Log("gridStartPos: " + m_gridStartPosition);
 
         m_clearButton.Unpressing += ClearAnswers;
         m_testButton.Unpressing += OnClickTestButton;
 
         NavMenu.Instance.HideCallButton();
 
-        Debug.Log("gameName: " + DataHelpers.GetGameName());
+        D.Log("gameName: " + DataHelpers.GetGameName());
 
         string defaultDataType = Application.loadedLevelName == "NewBankWords" ? "words" : "phonemes";
         m_dataType = DataHelpers.GameOrDefault(defaultDataType);
@@ -227,12 +227,12 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
  
         if (data.Count == 0)
         {
-            Debug.Log("No Data!");
+            D.Log("No Data!");
             m_noDataSign.On();
         }
         else if(m_noDataSign.IsOn())
         {
-            Debug.Log("Dismiss no data sign");
+            D.Log("Dismiss no data sign");
             m_noDataSign.Off();
         }
 
@@ -245,7 +245,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
         }
         
-        //Debug.Log("data.Count: " + data.Count);
+        //D.Log("data.Count: " + data.Count);
         
         yield return new WaitForSeconds(0.1f);
         

@@ -63,7 +63,7 @@ public class ScoreKeeper : MonoBehaviour
 
     public virtual bool HasCompleted() 
     {
-        Debug.Log("base.HasFinished()");
+        D.Log("base.HasFinished()");
         return true;
     }
 

@@ -68,21 +68,21 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         yield return new WaitForSeconds(0.5f);
 
-        Debug.Log("wordPool.Count: " + m_wordsPool.Count);
+        D.Log("wordPool.Count: " + m_wordsPool.Count);
         
         if(m_wordsPool.Count > 0)
         {
             m_audioSource.clip = m_instructions;
             m_audioSource.Play();
 
-            Debug.Log("Playing");
+            D.Log("Playing");
 
             while(m_audioSource.isPlaying)
             {
                 yield return null;
             }
 
-            Debug.Log("Played");
+            D.Log("Played");
 
             m_startTime = Time.time;
             StartCoroutine(SpawnQuestion());
@@ -144,7 +144,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator CompleteGame ()
     {
-        Debug.Log("CompleteGame()");
+        D.Log("CompleteGame()");
 
         float timeTaken = Time.time - m_startTime;
         
@@ -155,15 +155,15 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
 
-        Debug.Log("WAIT FOR SCOREKEEPER");
+        D.Log("WAIT FOR SCOREKEEPER");
 
         yield return StartCoroutine(m_scoreKeeper.On());
 
-        Debug.Log("SET DEFAULT");
+        D.Log("SET DEFAULT");
 
         SessionInformation.SetDefaultPlayerVar();
 
-        Debug.Log("COMPLETE");
+        D.Log("COMPLETE");
 
         GameManager.Instance.CompleteGame();
     }
@@ -197,7 +197,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
-            Debug.Log("CALL COMPLETEGAME");
+            D.Log("CALL COMPLETEGAME");
             StartCoroutine(CompleteGame());
         }
     }
@@ -209,7 +209,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         PadLetter padLetter = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
 
-        //Debug.Log("first attempt: " + padLetter);
+        //D.Log("first attempt: " + padLetter);
 
         int firstLetterIndex = int.MaxValue;
         foreach(KeyValuePair<int, string> kvp in m_currentLetters)
@@ -224,7 +224,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         if(foundPhoneme)
         {
-            //Debug.Log("Correct");
+            //D.Log("Correct");
             m_draggables.Remove(currentDraggable);
 
             foreach(GameWidget draggable in m_draggables)
@@ -236,7 +236,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             if(padLetter == null)
             {
                 padLetter = SpellingPadBehaviour.Instance.GetFirstUnansweredPhoneme();
-                //Debug.Log("second attempt: " + padLetter);
+                //D.Log("second attempt: " + padLetter);
             }
 
             if(padLetter != null)
@@ -247,7 +247,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             }
             else // Defensive: This should never execute
             {
-                Debug.LogError("No spelling pad phoneme!");
+                D.LogError("No spelling pad phoneme!");
                 m_currentLetters.Remove(firstLetterIndex);
             }
 
@@ -278,7 +278,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         }
         else
         {
-            //Debug.Log("Incorrect");
+            //D.Log("Incorrect");
             
             SpeakCurrentWord();
             

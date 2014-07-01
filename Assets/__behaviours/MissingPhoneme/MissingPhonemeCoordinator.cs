@@ -78,7 +78,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		{
 			if(letter["is_dummy_phoneme"] == null)
 			{
-				Debug.Log(letter["phoneme"].ToString() + " has no dummy property");
+				D.Log(letter["phoneme"].ToString() + " has no dummy property");
 			}
 			if(letter["is_dummy_phoneme"] != null && letter["is_dummy_phoneme"].ToString() == "t")
 			{
@@ -119,16 +119,16 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			}
 		}
 		
-		Debug.Log("target");
+		D.Log("target");
 		foreach(DataRow targetLetter in m_targetLetterPool)
 		{
-			Debug.Log(targetLetter["phoneme"].ToString());
+			D.Log(targetLetter["phoneme"].ToString());
 		}
 
-		Debug.Log("dummy");
+		D.Log("dummy");
 		foreach(DataRow dummyLetter in m_dummyLetterPool)
 		{
-			Debug.Log(dummyLetter["phoneme"].ToString());
+			D.Log(dummyLetter["phoneme"].ToString());
 		}
 
 		if(Game.session == Game.Session.Premade && !m_useLinkingIndices)
@@ -176,7 +176,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 
         //UserStats.Activity.AddWord(m_currentWordData);
 		
-		Debug.Log("currentWord: " + currentWord);
+		D.Log("currentWord: " + currentWord);
 
 		HashSet<string> answerPhonemes = new HashSet<string>();
 		string targetPhoneme = null;
@@ -185,7 +185,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		{
 			if(m_useLinkingIndices)
 			{
-				Debug.Log("Linking Index: " + m_currentWordData["linking_index"].ToString());
+				D.Log("Linking Index: " + m_currentWordData["linking_index"].ToString());
 
 				foreach(DataRow letter in m_targetLetterPool)
 				{
@@ -255,7 +255,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 			
-		Debug.Log("targetPhoneme: " + targetPhoneme);
+		D.Log("targetPhoneme: " + targetPhoneme);
 
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE phoneme ='" + targetPhoneme + "'");
         if (dt.Rows.Count > 0)

@@ -15,7 +15,7 @@ public class TestMobileTexture : MonoBehaviour
 
     void OnFinished(MobileMovieTexture sender)
     {
-        Debug.Log(sender.Path + " has finished ");
+        D.Log(sender.Path + " has finished ");
     }
 
     void OnGUI()

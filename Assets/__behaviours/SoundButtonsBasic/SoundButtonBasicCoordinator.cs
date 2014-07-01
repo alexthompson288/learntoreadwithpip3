@@ -50,7 +50,7 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 
 	void ShowWord ()
 	{
-		Debug.Log("ShowWord()");
+		D.Log("ShowWord()");
 		DataRow targetWord = m_wordPool[Random.Range(0, m_wordPool.Count)];
 
 		PipPadBehaviour.Instance.Show(targetWord["word"].ToString());
@@ -80,7 +80,7 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 
 	public void OnButtonClick(PipPadPhoneme button)
 	{
-		Debug.Log("OnButtonClick()");
+		D.Log("OnButtonClick()");
 
 		if(button.gameObject == m_orderedPhonemes[0])
 		{

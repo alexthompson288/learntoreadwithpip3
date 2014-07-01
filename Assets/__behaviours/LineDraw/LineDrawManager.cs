@@ -167,7 +167,7 @@ public class LineDrawManager : Singleton<LineDrawManager>
         } 
         else
         {
-            Debug.LogError("Missing Key: " + line);
+            D.LogError("Missing Key: " + line);
         }
     }
 

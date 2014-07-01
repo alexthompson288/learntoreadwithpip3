@@ -53,7 +53,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		if(ratEnviro != null)
 		{
-			Debug.Log("Found ratEnviro");
+			D.Log("Found ratEnviro");
 			
 			Texture2D frontTex = ratEnviro.GetFrontTex();
 			Texture2D rearTex = ratEnviro.GetRearTex();
@@ -65,7 +65,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		}
 		else
 		{
-			Debug.LogError("ratEnviro is null");
+			D.LogError("ratEnviro is null");
 		}
 
         if (GetNumPlayers() == 2)
@@ -95,7 +95,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		List<DataRow> lettersPool = DataHelpers.GetPhonemes();
 
-		Debug.Log("lettersPool.Count: " + lettersPool.Count);
+		D.Log("lettersPool.Count: " + lettersPool.Count);
 
 
         foreach (DataRow myPh in lettersPool)
@@ -105,7 +105,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
                             myPh["phoneme"],
                             myPh["mneumonic"].ToString().Replace(" ", "_"));
 			
-			Debug.Log("phoneme: " + myPh["phoneme"]);
+			D.Log("phoneme: " + myPh["phoneme"]);
 
             m_phonemeImages[myPh] = (Texture2D)Resources.Load(imageFilename);
 
@@ -135,7 +135,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	            bennyChangeableAudio = m_graphemeAudio[m_currentLetterData];
 	        }
 			
-			Debug.Log("change: " + bennyChangeableAudio);
+			D.Log("change: " + bennyChangeableAudio);
 			
 			for(int index = 0; index < m_bennyTheBooks.Length; ++index)
 			{
@@ -192,7 +192,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		
 		for(int index = 0; index < numPlayers; ++index)
 		{
-			Debug.Log("Looping to display");
+			D.Log("Looping to display");
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_phonemeImages[m_currentLetterData], m_currentLetter, m_currentLetter));
 		}
 		

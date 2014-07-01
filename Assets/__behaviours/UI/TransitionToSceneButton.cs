@@ -12,7 +12,6 @@ public class TransitionToSceneButton : MonoBehaviour {
 
     void OnClick()
     {
-		Debug.Log(name + " - TransitionToSceneButton.OnClick()");
         TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
         if (ts != null)
         {
