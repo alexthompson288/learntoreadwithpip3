@@ -148,7 +148,7 @@ public class DraggableLabel : MonoBehaviour
 				
 				m_hasDragged = false;
 	     	}
-	     	else
+	     	else if(m_hasDragged)
 	     	{
 				if(OnRelease != null)
 				{

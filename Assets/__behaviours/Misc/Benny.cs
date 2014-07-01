@@ -12,11 +12,21 @@ public class Benny : Collector
 
     public void SetFirst(AudioClip clip)
     {
+        if (m_clips.Length == 0)
+        {
+            m_clips = new AudioClip[2];
+        }
+
         m_clips[0] = clip;
     }
 
     public void SetSecond(AudioClip clip)
     {
+        if (m_clips.Length == 0)
+        {
+            m_clips = new AudioClip[2];
+        }
+
         m_clips[1] = clip;
     }
 

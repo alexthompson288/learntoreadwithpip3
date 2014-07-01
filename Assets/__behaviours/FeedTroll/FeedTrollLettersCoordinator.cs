@@ -112,8 +112,11 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 
         yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
 
-        m_audioSource.clip = m_instructionAudio;
-        m_audioSource.Play();
+        //m_audioSource.clip = m_instructionAudio;
+        //m_audioSource.Play();
+
+        m_benny.SetFirst(m_instructionAudio);
+        yield return StartCoroutine(m_benny.PlayAudio());
 
         yield return new WaitForSeconds(2f);
 
@@ -163,8 +166,8 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 			
 			DraggableLabel draggable = newLetter.GetComponent<DraggableLabel>() as DraggableLabel;
 			draggable.SetUp(kvp.Key, m_graphemeAudio[kvp.Value]);
-			//draggable.OnRelease += OnDraggableRelease;
-            draggable.SetCanDrag(false);
+			draggable.OnRelease += OnDraggableRelease;
+            //draggable.SetCanDrag(false);
             draggable.OnNoDragClick += OnDraggableRelease;
 			m_spawnedDraggables.Add(draggable);
 		}
