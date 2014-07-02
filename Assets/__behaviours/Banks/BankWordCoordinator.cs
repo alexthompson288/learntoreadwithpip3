@@ -142,13 +142,13 @@ public class BankWordCoordinator : MonoBehaviour
 
     void OnClickCorrect(ClickEvent click)
     {
-        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType(), true);
+        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType(), true);
         OnArrowClick(1);
     }
     
     void OnClickIncorrect(ClickEvent click)
     {
-        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType(), false);
+        BankInfo.Instance.NewAnswer(m_wordPool[m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType(), false);
         OnArrowClick(1);
     }
     
@@ -180,7 +180,7 @@ public class BankWordCoordinator : MonoBehaviour
             m_currentIndex += direction;
             ClampCurrentIndex();
 
-            while(BankInfo.Instance.IsCorrect(m_wordPool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType()))
+            while(BankInfo.Instance.IsCorrect(m_wordPool[m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType()))
             {
                 m_currentIndex += direction;
                 ClampCurrentIndex();
@@ -218,7 +218,7 @@ public class BankWordCoordinator : MonoBehaviour
         
         foreach (DataRow word in m_wordPool)
         {
-            if(!BankInfo.Instance.IsCorrect(word.GetId(), BankIndexCoordinator.Instance.GetDataType()))
+            if(!BankInfo.Instance.IsCorrect(word.GetId().ToString(), BankIndexCoordinator.Instance.GetDataType()))
             {
                 allCorrect = false;
             }

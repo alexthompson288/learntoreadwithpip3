@@ -264,6 +264,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
             foreach(BankButton bankButton in bankButtons)
             {
+                // Find the first button which has not already been answered correctly
                 if(!bankButton.HasAnsweredCorrect())
                 {
                     ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
@@ -287,7 +288,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     void ClearAnswers(PipButton click)
     {
-        BankInfo.Instance.ClearAnswers();
+        BankInfo.Instance.ClearAnswers(m_dataType);
         RefreshButtons();
     }
 }

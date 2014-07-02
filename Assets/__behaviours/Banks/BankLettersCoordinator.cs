@@ -184,11 +184,11 @@ public class BankLettersCoordinator : MonoBehaviour
     {
         if (m_isAlphabet)
         {
-            BankInfo.Instance.NewAnswer(m_letterPool[m_currentIndex], true);
+            BankInfo.Instance.NewAnswer(m_letterPool[m_currentIndex], BankIndexCoordinator.Instance.GetDataType(), true);
         } 
         else
         {
-            BankInfo.Instance.NewAnswer(m_phonemePool [m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType() , true);
+            BankInfo.Instance.NewAnswer(m_phonemePool [m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType() , true);
         }
 
         OnArrowClick(1);
@@ -198,11 +198,11 @@ public class BankLettersCoordinator : MonoBehaviour
     {
         if (m_isAlphabet)
         {
-            BankInfo.Instance.NewAnswer(m_letterPool[m_currentIndex], false);
+            BankInfo.Instance.NewAnswer(m_letterPool[m_currentIndex], BankIndexCoordinator.Instance.GetDataType(), false);
         } 
         else
         {
-            BankInfo.Instance.NewAnswer(m_phonemePool [m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType(), false);
+            BankInfo.Instance.NewAnswer(m_phonemePool [m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType(), false);
         }
 
         OnArrowClick(1);
@@ -233,7 +233,7 @@ public class BankLettersCoordinator : MonoBehaviour
 
             if(m_isAlphabet)
             {
-                while(BankInfo.Instance.IsCorrect(m_letterPool[m_currentIndex]))
+                while(BankInfo.Instance.IsCorrect(m_letterPool[m_currentIndex], BankIndexCoordinator.Instance.GetDataType()))
                 {
                     m_currentIndex += direction;
                     ClampCurrentIndex();
@@ -241,7 +241,7 @@ public class BankLettersCoordinator : MonoBehaviour
             }
             else
             {
-                while(BankInfo.Instance.IsCorrect(m_phonemePool[m_currentIndex].GetId(), BankIndexCoordinator.Instance.GetDataType()))
+                while(BankInfo.Instance.IsCorrect(m_phonemePool[m_currentIndex].GetId().ToString(), BankIndexCoordinator.Instance.GetDataType()))
                 {
                     m_currentIndex += direction;
                     ClampCurrentIndex();
@@ -283,7 +283,7 @@ public class BankLettersCoordinator : MonoBehaviour
 
         foreach (DataRow phoneme in m_phonemePool)
         {
-            if(!BankInfo.Instance.IsCorrect(phoneme.GetId(), BankIndexCoordinator.Instance.GetDataType()))
+            if(!BankInfo.Instance.IsCorrect(phoneme.GetId().ToString(), BankIndexCoordinator.Instance.GetDataType()))
             {
                 allCorrect = false;
             }
@@ -291,7 +291,7 @@ public class BankLettersCoordinator : MonoBehaviour
 
         foreach (string letter in m_letterPool)
         {
-            if(!BankInfo.Instance.IsCorrect(letter))
+            if(!BankInfo.Instance.IsCorrect(letter, BankIndexCoordinator.Instance.GetDataType()))
             {
                 allCorrect = false;
             }

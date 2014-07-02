@@ -84,7 +84,17 @@ public static class NGUIHelpers
 
     public static void PositionGridHorizontal(UIGrid grid, float offset = 0)
     {
-        grid.transform.localPosition = new Vector3(-(grid.transform.childCount - 1) * grid.cellWidth / 2,
+        int childCount = grid.transform.childCount;
+
+        for (int i = 0; i < grid.transform.childCount; ++i)
+        {
+            if(!grid.transform.GetChild(i).gameObject.activeInHierarchy)
+            {
+                --childCount;
+            }
+        }
+
+        grid.transform.localPosition = new Vector3(offset + -(grid.transform.childCount - 1) * grid.cellWidth / 2,
                                                    grid.transform.localPosition.y, grid.transform.localPosition.z);
     }
 }

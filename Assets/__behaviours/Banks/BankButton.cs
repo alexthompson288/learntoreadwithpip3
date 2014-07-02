@@ -98,22 +98,22 @@ public class BankButton : MonoBehaviour
 
         if (isAlphabet)
         {
-            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_labelText));
+            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_labelText, m_dataType));
         } 
         else
         {
-            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_id, m_dataType));
+            m_scoreSprite.gameObject.SetActive(BankInfo.Instance.IsAnswer(m_id.ToString(), m_dataType));
         }
 
         if (m_scoreSprite.gameObject.activeInHierarchy)
         {
             if (isAlphabet)
             {
-                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_labelText) ? "correct" : "incorrect";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_labelText, m_dataType) ? "correct" : "incorrect";
             } 
             else
             {
-                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id, m_dataType) ? "correct" : "incorrect";
+                m_scoreSprite.spriteName = BankInfo.Instance.IsCorrect(m_id.ToString(), m_dataType) ? "correct" : "incorrect";
             }
         }
     }
@@ -122,11 +122,11 @@ public class BankButton : MonoBehaviour
     {
         if (m_dataType == "alphabet")
         {
-            return BankInfo.Instance.IsCorrect(m_labelText);
+            return BankInfo.Instance.IsCorrect(m_labelText, m_dataType);
         } 
         else
         {
-            return BankInfo.Instance.IsCorrect(m_id, m_dataType);
+            return BankInfo.Instance.IsCorrect(m_id.ToString(), m_dataType);
         }
     }
 }

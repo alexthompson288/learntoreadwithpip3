@@ -37,15 +37,67 @@ public class BankInfo : Singleton<BankInfo>
     }
 
     // Answer string stores both id and datatype, they need to be stored in a single string because ids are shared between tables and so keys would not be unique if they were kept separate
-    Dictionary<string, bool> m_answers = new Dictionary<string, bool>();
+    //Dictionary<string, bool> m_answers = new Dictionary<string, bool>();
+    List<Answer> m_answers = new List<Answer>();
 
+    class Answer
+    {
+        string m_identifier;
+        string m_dataType;
+        bool m_isCorrect;
 
+        public Answer(string myIdentifier, string myDataType, bool myIsCorrect)
+        {
+            m_identifier = myIdentifier;
+            m_dataType = myDataType;
+            m_isCorrect = myIsCorrect;
+        }
+
+        public string GetIdentifier()
+        {
+            return m_identifier;
+        }
+
+        public string GetDataType()
+        {
+            return m_dataType;
+        }
+
+        public bool IsCorrect()
+        {
+            return m_isCorrect;
+        }
+    }
+
+    public void NewAnswer(string identifier, string dataType, bool isCorrect)
+    {
+        m_answers.Add(new Answer(identifier, dataType, isCorrect));
+        Save();
+    }
+
+    public bool IsAnswer(string identifier, string dataType)
+    {
+        return m_answers.Find(x => x.GetDataType() == dataType && x.GetIdentifier() == identifier) != null;
+    }
+
+    public bool IsCorrect(string identifier, string dataType)
+    {
+        Answer answer = m_answers.Find(x => x.GetDataType() == dataType && x.GetIdentifier() == identifier);
+        return answer != null ? answer.IsCorrect() : false;
+    }
+
+    public void ClearAnswers(string dataType)
+    {
+        m_answers.RemoveAll(x => x.GetDataType() == dataType);
+        Save();
+    }
+
+    /*
     public void NewAnswer(string s, bool isCorrect)
     {
         m_answers [s] = isCorrect;
         Save();
     }
-
 
     public void NewAnswer(int id, string dataType, bool isCorrect)
     {
@@ -125,6 +177,7 @@ public class BankInfo : Singleton<BankInfo>
         m_answers.Clear();
         Save();
     }
+    */
 
     void Load()
     {
@@ -137,8 +190,16 @@ public class BankInfo : Singleton<BankInfo>
             int numAnswers = br.ReadInt32();
             for(int i = 0; i < numAnswers; ++i)
             {
+                m_answers.Add(new Answer(br.ReadString(), br.ReadString(), br.ReadBoolean()));
+            }
+            // TODO
+            /*
+            int numAnswers = br.ReadInt32();
+            for(int i = 0; i < numAnswers; ++i)
+            {
                 m_answers.Add(br.ReadString(), br.ReadBoolean());
             }
+            */
         }
         
         br.Close();
@@ -155,13 +216,23 @@ public class BankInfo : Singleton<BankInfo>
         DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", user));
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
-        
+
+        // TODO
+        bw.Write(m_answers.Count);
+        foreach (Answer answer in m_answers)
+        {
+            bw.Write(answer.GetIdentifier());
+            bw.Write(answer.GetDataType());
+            bw.Write(answer.IsCorrect());
+        }
+        /*
         bw.Write(m_answers.Count);
         foreach (KeyValuePair<string, bool> kvp in m_answers)
         {
             bw.Write(kvp.Key);
             bw.Write(kvp.Value);
         }
+        */
         
         ds.Save(newData);
         
