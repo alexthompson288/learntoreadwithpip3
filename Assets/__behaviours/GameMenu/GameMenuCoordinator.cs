@@ -21,10 +21,25 @@ public class GameMenuCoordinator : MonoBehaviour
     private GameObject m_starPrefab;
     [SerializeField]
     private UIGrid m_starSpawnGrid;
+    [SerializeField]
+    private Transform m_singleplayerParent;
+    [SerializeField]
+    private Transform m_singleplayerParentOff;
+    [SerializeField]
+    private GameObject m_multiplayerParent;
     
     PipButton m_currentColorButton = null;
     
     bool m_hasActivatedGameButtons = false;
+
+#if UNITY_STANDALONE
+    void Awake()
+    {
+        m_singleplayerParent.localPosition = new Vector3(m_singleplayerParent.localPosition.x, 0, m_singleplayerParent.localPosition.z);
+        m_singleplayerParentOff.localPosition = new Vector3(m_singleplayerParentOff.localPosition.x, 0, m_singleplayerParentOff.localPosition.z);
+        m_multiplayerParent.SetActive(false);
+    }
+#endif
     
     IEnumerator Start()
     {
@@ -90,7 +105,10 @@ public class GameMenuCoordinator : MonoBehaviour
         
         foreach (TweenOnOffBehaviour parent in m_gameButtonParents)
         {
-            parent.On();
+            if(parent.gameObject.activeInHierarchy)
+            {
+                parent.On();
+            }
         }
     }
     

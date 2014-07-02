@@ -74,8 +74,8 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     void Start()
     {
-        GameManager.Instance.CompletedAll += OnGameCompleteOrCancel;
-        GameManager.Instance.Cancelling += OnGameCompleteOrCancel;
+        GameManager.Instance.CompletedAll += OnGameComplete;
+        GameManager.Instance.Cancelling += OnGameCancel;
 
 #if UNITY_EDITOR
         if(m_overwrite)
@@ -103,8 +103,14 @@ public class ScoreInfo : Singleton<ScoreInfo>
         UserInfo.Instance.ChangingUser += OnChangeUser;
     }
 
-    void OnGameCompleteOrCancel()
+    void OnGameComplete()
     {
+        m_scoreType = "";
+    }
+
+    void OnGameCancel()
+    {
+        m_newHighScore = null;
         m_scoreType = "";
     }
 
