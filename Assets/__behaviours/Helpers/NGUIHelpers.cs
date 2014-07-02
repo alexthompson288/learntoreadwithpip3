@@ -81,4 +81,10 @@ public static class NGUIHelpers
             return "";
         }
     }
+
+    public static void PositionGridHorizontal(UIGrid grid, float offset = 0)
+    {
+        grid.transform.localPosition = new Vector3(-(grid.transform.childCount - 1) * grid.cellWidth / 2,
+                                                   grid.transform.localPosition.y, grid.transform.localPosition.z);
+    }
 }

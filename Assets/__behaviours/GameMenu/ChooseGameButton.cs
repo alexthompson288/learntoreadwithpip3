@@ -73,36 +73,50 @@ public class ChooseGameButton : MonoBehaviour
         }
     }
 
-    public void TweenScoreStars(GameObject starPrefab, Transform m_starSpawnLocation)
+    public void TweenScoreStars(GameObject starPrefab, UIGrid starSpawnGrid)
     {
         Debug.Log("TweenScoreStars()");
         int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
         int startIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
 
-        //int numNewStars = 2;
-        //int startIndex = 0;
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
-        D.Log("TotalStars: " + ScoreInfo.Instance.GetNewHighScoreStars());
-        D.Log("NewStars: " + numNewStars);
-        D.Log("startIndex: " + startIndex);
+        List<GameObject> newStars = new List<GameObject>();
 
         for(int i = startIndex; i < startIndex + numNewStars && i < m_starSprites.Length; ++i)
         {
-            GameObject newStar = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(starPrefab, m_starSpawnLocation);
-            newStar.transform.parent = m_starSprites[i].transform.parent;
-            newStar.transform.localScale = Vector3.one * 3;
-
-            Debug.Log("Tweening");
-
-            float tweenDuration = 1f;
-
-            iTween.ScaleTo(newStar, Vector3.one, tweenDuration);
-            iTween.MoveTo(newStar, m_starSprites[i].transform.position, tweenDuration);
-            TweenAlpha.Begin(m_starSprites[i].gameObject, tweenDuration, 0);
-            //iTween.PunchRotation(newStar, new Vector3(0, 0, 360f), tweenDuration);
-            iTween.ShakeRotation(newStar, new Vector3(0, 0, 360f), tweenDuration);
+            newStars.Add(Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(starPrefab, starSpawnGrid.transform, true));
         }
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+        starSpawnGrid.Reposition();
+
+        NGUIHelpers.PositionGridHorizontal(starSpawnGrid);
+
+        for (int i = 0; i < newStars.Count && i < m_starSprites.Length; ++i)
+        {
+            newStars[i].transform.parent = m_starSprites[i].transform.parent;
+            StartCoroutine(TweenStar(newStars[i], m_starSprites[i].transform, i == startIndex));
+        }
+    }
+
+    IEnumerator TweenStar(GameObject star, Transform target, bool playAudio)
+    {
+        float spawnTweenDuration = 0.5f;
+
+        iTween.ScaleTo(star, Vector3.one * 1.5f, spawnTweenDuration);
+
+        yield return new WaitForSeconds(spawnTweenDuration + 0.2f);
+
+        float moveTweenDuration = 1f;
+        
+        iTween.MoveTo(star, target.position, moveTweenDuration);
+        TweenAlpha.Begin(target.gameObject, moveTweenDuration, 0);
+        iTween.ShakeRotation(star, new Vector3(0, 0, 360f), moveTweenDuration);
+        iTween.ScaleTo(star, Vector3.one, moveTweenDuration);
+
+        if (playAudio)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+        }
     }
 }

@@ -20,7 +20,7 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private GameObject m_starPrefab;
     [SerializeField]
-    private Transform m_starSpawnLocation;
+    private UIGrid m_starSpawnGrid;
     [SerializeField]
     private List<Spline> m_starSplines;
     [SerializeField]
@@ -40,7 +40,7 @@ public class GameMenuCoordinator : MonoBehaviour
             button.Pressing += OnPressColorButton;
         }
 
-
+        /*
         if (GameMenuInfo.Instance.HasBookmark())
         {
             ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
@@ -65,13 +65,16 @@ public class GameMenuCoordinator : MonoBehaviour
 
                 if(newHighScoreButton != null)
                 {
-                    newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnLocation);
+                    WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+                    m_singlePlayerAnim.PlayAnimation("JUMP");
+                    newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnGrid);
                 }
             }
         }
+        */
 
         //////////////////////////////////////////////////////////////////////////// 
-        /* 
+
         ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
         m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);
         
@@ -84,7 +87,7 @@ public class GameMenuCoordinator : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        string gameName = "NewJoinWordPictures";
+        string gameName = "NewSensibleSpelling";
         
         ChooseGameButton[] gameButtons = UnityEngine.Object.FindObjectsOfType(typeof(ChooseGameButton)) as ChooseGameButton[];
         
@@ -92,9 +95,11 @@ public class GameMenuCoordinator : MonoBehaviour
         
         if(newHighScoreButton != null)
         {
-            newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnLocation);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+            m_singlePlayerAnim.PlayAnimation("JUMP");
+            newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnGrid);
         }
-        */
+
         ////////////////////////////////////////////////////////////////////////////
 
         ScoreInfo.Instance.RemoveNewHighScore();
