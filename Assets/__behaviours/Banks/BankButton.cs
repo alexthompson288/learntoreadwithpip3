@@ -117,4 +117,16 @@ public class BankButton : MonoBehaviour
             }
         }
     }
+
+    public bool HasAnsweredCorrect()
+    {
+        if (m_dataType == "alphabet")
+        {
+            return BankInfo.Instance.IsCorrect(m_labelText);
+        } 
+        else
+        {
+            return BankInfo.Instance.IsCorrect(m_id, m_dataType);
+        }
+    }
 }

@@ -260,7 +260,16 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     {
         if (OnMoveToShow != null)
         {
-            OnMoveToShow(null, "");
+            BankButton[] bankButtons = UnityEngine.Object.FindObjectsOfType(typeof(BankButton)) as BankButton[];
+
+            foreach(BankButton bankButton in bankButtons)
+            {
+                if(!bankButton.HasAnsweredCorrect())
+                {
+                    ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
+                    OnMoveToShow(click.GetData(), click.GetString());
+                }
+            }
         }
         
         BankCamera.Instance.MoveToShow();
