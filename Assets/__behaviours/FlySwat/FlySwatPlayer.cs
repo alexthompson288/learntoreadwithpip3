@@ -205,7 +205,11 @@ public class FlySwatPlayer : GamePlayer
 
             GameObject fly = widget.transform.parent.gameObject;
 
-            yield return StartCoroutine(widget.OffCo());
+            float destroyDuration = widget.GetOffDuration();
+
+            widget.Off();
+
+            yield return new WaitForSeconds(destroyDuration);
 
             Destroy(fly);
         }

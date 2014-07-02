@@ -128,7 +128,7 @@ public class BankInfo : Singleton<BankInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", UserInfo.Instance.GetCurrentUserName()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
         
@@ -149,7 +149,7 @@ public class BankInfo : Singleton<BankInfo>
     {
         if (String.IsNullOrEmpty(user))
         {
-            user = UserInfo.Instance.GetCurrentUser();
+            user = UserInfo.Instance.GetCurrentUserName();
         }
 
         DataSaver ds = new DataSaver(String.Format("BankInfo_{0}", user));

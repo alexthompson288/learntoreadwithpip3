@@ -112,13 +112,13 @@ public class UserStats : Singleton<UserStats>
                 //D.Log("Using Debug Activity Data");
 
                 //form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
-                form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
+                form.AddField (m_modelName + "[child_name]", UserInfo.Instance.GetCurrentUserName());
                 form.AddField (m_modelName + "[scene]", Application.loadedLevelName);
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
                 form.AddField (m_modelName + "[updated_at]", GetTrimmedEndTime());
 
                 //D.Log("accountUsername: " + UserInfo.Instance.accountUsername);
-                //D.Log("childName: " + UserInfo.Instance.childName);
+                //D.Log("childName: " + UserInfo.Instance.GetCurrentUserName());
                 //D.Log("setNum: " + m_setNum);
                 //D.Log("createdAt: " + GetTrimmedStartTime());
                 //D.Log("updatedAt: " + GetTrimmedEndTime());
@@ -444,7 +444,7 @@ public class UserStats : Singleton<UserStats>
             if (UserStats.Instance.m_debugActivityData)
             {
                 //form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
-                form.AddField(m_modelName + "[child_name]", UserInfo.Instance.childName);
+                form.AddField(m_modelName + "[child_name]", UserInfo.Instance.GetCurrentUserName());
                 form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());
 
                 form.AddField (m_modelName + "[scenes]", "TestScenesList");
@@ -552,7 +552,7 @@ public class UserStats : Singleton<UserStats>
 #if UNITY_EDITOR
             //D.Log ("base.PostData(): " + m_modelName);
             //D.Log("accountUsername: " + UserInfo.Instance.accountUsername);
-            //D.Log("childName: " + UserInfo.Instance.childName);
+            //D.Log("childName: " + UserInfo.Instance.GetCurrentUserName());
             //D.Log("platform: " + Application.platform.ToString());
             //D.Log("hasCompleted: " + m_hasCompleted);
             //D.Log("start: " + GetTrimmedStartTime());
@@ -565,7 +565,7 @@ public class UserStats : Singleton<UserStats>
 #endif
 
 			//form.AddField (m_modelName + "[account_username]", UserInfo.Instance.accountUsername);
-			form.AddField (m_modelName + "[child_name]", UserInfo.Instance.childName);
+			form.AddField (m_modelName + "[child_name]", UserInfo.Instance.GetCurrentUserName());
             form.AddField (m_modelName + "[platform]", Application.platform.ToString());
 			form.AddField (m_modelName + "[has_completed]", Convert.ToInt32(m_hasCompleted));
 			form.AddField (m_modelName + "[created_at]", GetTrimmedStartTime());

@@ -81,10 +81,19 @@ public class ScoreInfo : Singleton<ScoreInfo>
         if(m_overwrite)
         {
             D.Log("OVERWRITING SCOREINFO");
+
             string[] users = UserInfo.Instance.GetUserNames();
-            foreach(string user in users)
+
+            if(users.Length > 0)
             {
-                Save(user);
+                foreach(string user in users)
+                {
+                    Save(user);
+                }
+            }
+            else
+            {
+                Save();
             }
         }
 #endif
@@ -275,7 +284,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", UserInfo.Instance.GetCurrentUserName()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
 
@@ -312,7 +321,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
     {
         if (System.String.IsNullOrEmpty(userName))
         {
-            userName = UserInfo.Instance.GetCurrentUser();
+            userName = UserInfo.Instance.GetCurrentUserName();
         }
 
         DataSaver ds = new DataSaver(System.String.Format("ScoreInfo_{0}", userName));

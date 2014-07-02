@@ -18,7 +18,9 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private TweenOnOffBehaviour[] m_gameButtonParents;
     [SerializeField]
-    private GameObject m_splineStarPrefab;
+    private GameObject m_starPrefab;
+    [SerializeField]
+    private Transform m_starSpawnLocation;
     [SerializeField]
     private List<Spline> m_starSplines;
     [SerializeField]
@@ -37,7 +39,8 @@ public class GameMenuCoordinator : MonoBehaviour
         {
             button.Pressing += OnPressColorButton;
         }
-        
+
+
         if (GameMenuInfo.Instance.HasBookmark())
         {
             ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
@@ -50,25 +53,49 @@ public class GameMenuCoordinator : MonoBehaviour
             
             ActivateGameButtons();
 
+            yield return new WaitForSeconds(1f);
+
             if(ScoreInfo.Instance.HasNewHighScore())
             {
                 string gameName = ScoreInfo.Instance.GetNewHighScoreGame();
-
+                
                 ChooseGameButton[] gameButtons = UnityEngine.Object.FindObjectsOfType(typeof(ChooseGameButton)) as ChooseGameButton[];
-
+                
                 ChooseGameButton newHighScoreButton = Array.Find(gameButtons, x => x.GetNumPlayers() == 1 && x.GetComponent<PipButton>().GetString() == gameName);
 
                 if(newHighScoreButton != null)
                 {
-                    int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
-
-
-                    List<Spline> splines = new List<Spline>();
-                    splines.AddRange(m_starSplines.GetRange(0, numNewStars));
-
+                    newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnLocation);
                 }
             }
         }
+
+        //////////////////////////////////////////////////////////////////////////// 
+        /* 
+        ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
+        m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);
+        
+        if (m_currentColorButton != null)
+        {
+            m_currentColorButton.ChangeSprite(true);
+        }
+        
+        ActivateGameButtons();
+
+        yield return new WaitForSeconds(1f);
+
+        string gameName = "NewJoinWordPictures";
+        
+        ChooseGameButton[] gameButtons = UnityEngine.Object.FindObjectsOfType(typeof(ChooseGameButton)) as ChooseGameButton[];
+        
+        ChooseGameButton newHighScoreButton = Array.Find(gameButtons, x => x.GetNumPlayers() == 1 && x.GetComponent<PipButton>().GetString() == gameName);
+        
+        if(newHighScoreButton != null)
+        {
+            newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnLocation);
+        }
+        */
+        ////////////////////////////////////////////////////////////////////////////
 
         ScoreInfo.Instance.RemoveNewHighScore();
         GameMenuInfo.Instance.DestroyBookmark();

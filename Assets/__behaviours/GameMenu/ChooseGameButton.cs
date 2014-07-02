@@ -9,8 +9,6 @@ public class ChooseGameButton : MonoBehaviour
     [SerializeField]
     private UISprite m_icon;
     [SerializeField]
-    private Transform m_starParent;
-    [SerializeField]
     private UISprite[] m_starSprites;
     [SerializeField]
     private string m_blackboardSpriteName;
@@ -56,11 +54,55 @@ public class ChooseGameButton : MonoBehaviour
 
     public void Refresh(string colorName)
     {
-        ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
+        // If we have recently achieved a new high score, then don't show the new stars yet
+        if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_game ["name"].ToString())
+        {
+            int numStars = ScoreInfo.Instance.GetPreviousHighScoreStars();
+
+            System.Array.Sort(m_starSprites, CollectionHelpers.LocalLeftToRight);
+            
+            for (int i = 0; i < m_starSprites.Length; ++i)
+            {
+                string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
+                m_starSprites[i].spriteName = spriteName;
+            }
+        } 
+        else
+        {
+            ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
+        }
     }
 
-    public void UnlockScoreStars(List<Spline> m_starSplines, GameObject starPrefab)
+    public void TweenScoreStars(GameObject starPrefab, Transform m_starSpawnLocation)
     {
+        Debug.Log("TweenScoreStars()");
+        int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
+        int startIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
 
+        //int numNewStars = 2;
+        //int startIndex = 0;
+
+        D.Log("TotalStars: " + ScoreInfo.Instance.GetNewHighScoreStars());
+        D.Log("NewStars: " + numNewStars);
+        D.Log("startIndex: " + startIndex);
+
+        for(int i = startIndex; i < startIndex + numNewStars && i < m_starSprites.Length; ++i)
+        {
+            GameObject newStar = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(starPrefab, m_starSpawnLocation);
+            newStar.transform.parent = m_starSprites[i].transform.parent;
+            newStar.transform.localScale = Vector3.one * 3;
+
+            Debug.Log("Tweening");
+
+            float tweenDuration = 1f;
+
+            iTween.ScaleTo(newStar, Vector3.one, tweenDuration);
+            iTween.MoveTo(newStar, m_starSprites[i].transform.position, tweenDuration);
+            TweenAlpha.Begin(m_starSprites[i].gameObject, tweenDuration, 0);
+            //iTween.PunchRotation(newStar, new Vector3(0, 0, 360f), tweenDuration);
+            iTween.ShakeRotation(newStar, new Vector3(0, 0, 360f), tweenDuration);
+        }
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
     }
 }

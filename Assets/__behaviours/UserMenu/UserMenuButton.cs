@@ -29,7 +29,7 @@ public class UserMenuButton : MonoBehaviour
         m_spriteNameA = imageName;
         m_spriteNameB = NGUIHelpers.GetLinkedSpriteName(m_spriteNameA);
 
-        bool isCurrentUser = userName == UserInfo.Instance.GetCurrentUser();
+        bool isCurrentUser = userName == UserInfo.Instance.GetCurrentUserName();
         m_picture.spriteName = isCurrentUser ? m_spriteNameB : m_spriteNameA;
         m_background.color = isCurrentUser ? ColorInfo.GetColor(m_pipColorB) : ColorInfo.GetColor(m_pipColorA);
 

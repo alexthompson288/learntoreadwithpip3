@@ -181,7 +181,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUser()));
+        DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", UserInfo.Instance.GetCurrentUserName()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
         
@@ -210,7 +210,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
     {
         if (System.String.IsNullOrEmpty(user))
         {
-            user = UserInfo.Instance.GetCurrentUser();
+            user = UserInfo.Instance.GetCurrentUserName();
         }
 
         DataSaver ds = new DataSaver(System.String.Format("VoyageInfo_{0}", user));

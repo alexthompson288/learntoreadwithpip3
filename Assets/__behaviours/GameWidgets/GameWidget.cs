@@ -341,8 +341,13 @@ public class GameWidget : MonoBehaviour
     {
         StartCoroutine(OffCo());
     }
+
+    public float GetOffDuration()
+    {
+        return m_scaleTweenDuration;
+    }
     
-    public IEnumerator OffCo()
+    IEnumerator OffCo()
     {
         collider.enabled = false;
         iTween.Stop(gameObject);
@@ -350,10 +355,7 @@ public class GameWidget : MonoBehaviour
         
         yield return new WaitForSeconds(m_scaleTweenDuration);
         
-        if (gameObject != null)
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 
     public void EnableDrag(bool enable)
