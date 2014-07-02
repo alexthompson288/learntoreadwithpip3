@@ -21,10 +21,6 @@ public class GameMenuCoordinator : MonoBehaviour
     private GameObject m_starPrefab;
     [SerializeField]
     private UIGrid m_starSpawnGrid;
-    [SerializeField]
-    private List<Spline> m_starSplines;
-    [SerializeField]
-    private Transform m_starEndLocation;
     
     PipButton m_currentColorButton = null;
     
