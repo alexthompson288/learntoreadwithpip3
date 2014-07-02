@@ -27,12 +27,6 @@ public class SoundButtonBasicCoordinator : MonoBehaviour
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		m_wordPool = DataHelpers.GetWords();
-
-		/*
-		int sectionId = 1392;
-		DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id = words.id WHERE section_id=" + sectionId);
-		m_wordPool = dt.Rows;
-		*/
 		
 		m_scoreBar.SetStarsTarget(m_targetScore);
 

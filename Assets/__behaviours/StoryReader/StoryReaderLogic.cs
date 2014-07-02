@@ -357,7 +357,7 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
     {
 		if (m_showWords)
         {
-            //textposition
+            //text position
             string textToDisplay = row [m_currentLanguage].ToString().Replace("\\n", "\n");
 
             string[] lines = textToDisplay.Split('\n');
