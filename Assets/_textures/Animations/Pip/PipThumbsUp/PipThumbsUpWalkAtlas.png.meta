@@ -39,7 +39,11 @@ TextureImporter:
   spritePixelsToUnits: 100
   alphaIsTransparency: 0
   textureType: 5
-  buildTargetSettings: []
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 4096
+    textureFormat: 13
+    compressionQuality: 50
   spriteSheet:
     sprites: []
   spritePackingTag: 
