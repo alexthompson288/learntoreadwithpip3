@@ -71,6 +71,13 @@ public class BankInfo : Singleton<BankInfo>
 
     public void NewAnswer(string identifier, string dataType, bool isCorrect)
     {
+        int answerIndex = m_answers.FindIndex(x => x.GetIdentifier() == identifier && x.GetDataType() == dataType);
+
+        if (answerIndex != -1)
+        {
+            m_answers.RemoveAt(answerIndex);
+        }
+
         m_answers.Add(new Answer(identifier, dataType, isCorrect));
         Save();
     }

@@ -289,7 +289,6 @@ public class StoryReaderLogic : Singleton<StoryReaderLogic>
                 m_storyPicture.mainTexture = bgImage != null ? bgImage : image;
             }
 
-
 			string storyType = SessionInformation.Instance.GetStoryType();
 
 			if(storyType == "" || storyType == null)

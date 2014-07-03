@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EditorAudioVolume : MonoBehaviour 
+public class EditorAudioListenerVolume : MonoBehaviour 
 {
 #if UNITY_EDITOR
 	[SerializeField]
