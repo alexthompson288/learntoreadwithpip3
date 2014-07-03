@@ -40,6 +40,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     List<DataRow> m_data = new List<DataRow>();
 
+    List<ClickEvent> m_spawnedDataClicks = new List<ClickEvent>();
+
     PipButton m_currentButton = null;
 
     Vector3 m_gridStartPosition;
@@ -180,6 +182,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
                 m_currentButton.ChangeSprite(false);
             }
 
+            m_spawnedDataClicks.Clear();
+
             m_currentButton = button;
             //StartCoroutine(MoveCurrentColorSprite(button));
             StartCoroutine(ChangeColorCo(button.pipColor));
@@ -240,11 +244,13 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         {
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_defaultGrid.transform);
             newButton.GetComponent<BankButton>().SetUp(m_dataType, row);
-            newButton.GetComponent<ClickEvent>().SetData(row);
-            newButton.GetComponent<ClickEvent>().SingleClicked += OnClickTestButton;
             newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
+            ClickEvent click = newButton.GetComponent<ClickEvent>() as ClickEvent;
+            click.SetData(row);
+            click.SingleClicked += OnClickTestButton;
+            m_spawnedDataClicks.Add(click);
         }
-        
+
         //D.Log("data.Count: " + data.Count);
         
         yield return new WaitForSeconds(0.1f);
@@ -253,37 +259,75 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         yield return new WaitForSeconds(0.1f);
 
+        m_spawnedDataClicks.Sort(CollectionHelpers.LocalLeftToRight_TopToBottom);
+        
+        foreach (ClickEvent logClick in m_spawnedDataClicks)
+        {
+            D.Log(logClick.GetData()["phoneme"]);
+        }
+
         TweenAlpha.Begin(m_defaultGridPanel.gameObject, alphaTweenDuration, 1); 
     }
 
-    void OnClickTestButton(PipButton button)
+    void OnClickTestButton()
     {
         if (OnMoveToShow != null)
         {
             BankButton[] bankButtons = UnityEngine.Object.FindObjectsOfType(typeof(BankButton)) as BankButton[];
-
-            foreach(BankButton bankButton in bankButtons)
+            Array.Sort(bankButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
+            BankButton bankButton = Array.Find(bankButtons, x => !x.HasAnsweredCorrect());
+            
+            if(bankButton == null && bankButtons.Length > 0)
             {
-                // Find the first button which has not already been answered correctly
-                if(!bankButton.HasAnsweredCorrect())
-                {
-                    ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
-                    OnMoveToShow(click.GetData(), click.GetString());
-                }
+                bankButton = bankButtons[0];
+            }
+            
+            if(bankButton != null)
+            {
+                ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
+                OnMoveToShow(click.GetData(), click.GetString());
+                BankCamera.Instance.MoveToShow();
             }
         }
-        
-        BankCamera.Instance.MoveToShow();
+    }
+
+    void OnClickTestButton(PipButton button)
+    {
+        OnClickTestButton();
     }
     
     void OnClickTestButton(ClickEvent click)
     {
         if (OnMoveToShow != null)
         {
-            OnMoveToShow(click.GetData(), click.GetString());
-        }
+            bool foundLegal = false;
 
-        BankCamera.Instance.MoveToShow();
+            if(click.GetComponent<BankButton>().HasAnsweredCorrect())
+            {
+                int originalIndex = m_spawnedDataClicks.IndexOf(click);
+                int legalIndex = m_spawnedDataClicks.FindIndex(originalIndex, x => !x.GetComponent<BankButton>().HasAnsweredCorrect());
+
+                if(legalIndex != -1)
+                {
+                    click = m_spawnedDataClicks[legalIndex];
+                    foundLegal = true;
+                }
+            }
+            else
+            {
+                foundLegal = true;
+            }
+
+            if(foundLegal)
+            {
+                OnMoveToShow(click.GetData(), click.GetString());
+                BankCamera.Instance.MoveToShow();
+            }
+            else
+            {
+                OnClickTestButton();
+            }
+        }
     }
 
     void ClearAnswers(PipButton click)

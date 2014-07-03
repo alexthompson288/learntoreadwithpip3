@@ -51,7 +51,7 @@ public class BankWordCoordinator : MonoBehaviour
 
         m_currentIndex = word == null ? 0 : m_wordPool.IndexOf(word);
 
-        if (word == null && AllAnswersCorrect())
+        if (word == null || AllAnswersCorrect())
         {
             ToggleAllCorrectNotice(true);
         } 

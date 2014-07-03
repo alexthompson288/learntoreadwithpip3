@@ -404,7 +404,7 @@ public static class DataHelpers
                 case "sentences":
                     dataPool = GetSentences();
                     break;
-                case "nonreadablewords":
+                case "m_starSpawnGridwords":
                     dataPool = GetNonReadableWords();
                     break;
                 case "stories":
@@ -560,7 +560,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
         
-        dataPool.RemoveAll(x => x ["nonreadable"] == null || x ["nonreadable"].ToString() == "f" || String.IsNullOrEmpty(x["word"].ToString()));
+        dataPool.RemoveAll(x => x ["m_starSpawnGrid"] == null || x ["m_starSpawnGrid"].ToString() == "f" || String.IsNullOrEmpty(x["word"].ToString()));
         
         if(dataPool.Count == 0)
         {
@@ -574,7 +574,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("words");
         
-        dataPool.RemoveAll(x => (x ["nonreadable"] != null && x ["nonreadable"].ToString() == "t") || String.IsNullOrEmpty(x["word"].ToString()));
+        dataPool.RemoveAll(x => (x ["m_starSpawnGrid"] != null && x ["m_starSpawnGrid"].ToString() == "t") || String.IsNullOrEmpty(x["word"].ToString()));
         
         if(dataPool.Count == 0)
         {

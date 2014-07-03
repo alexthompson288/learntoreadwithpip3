@@ -76,11 +76,11 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 
 		foreach(DataRow letter in letterPool)
 		{
-			if(letter["is_dummy_phoneme"] == null)
+			if(letter["m_starSpawnGrid"] == null)
 			{
 				D.Log(letter["phoneme"].ToString() + " has no dummy property");
 			}
-			if(letter["is_dummy_phoneme"] != null && letter["is_dummy_phoneme"].ToString() == "t")
+			if(letter["m_starSpawnGrid"] != null && letter["m_starSpawnGrid"].ToString() == "t")
 			{
 				m_dummyLetterPool.Add(letter);
 			}

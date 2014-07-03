@@ -87,7 +87,7 @@ public class BankLettersCoordinator : MonoBehaviour
             passedTarget = phoneme != null;
         }
 
-        if (passedTarget || !AllAnswersCorrect())
+        if (passedTarget && !AllAnswersCorrect())
         {
             ToggleAllCorrectNotice(false);
             ShowNew();
@@ -98,7 +98,7 @@ public class BankLettersCoordinator : MonoBehaviour
         }
     }
 
-    void ToggleAllCorrectNotice(bool allCorrect)
+    public void ToggleAllCorrectNotice(bool allCorrect)
     {
         m_allCorrectNotice.SetActive(allCorrect);
         m_mnemonicTexture.gameObject.SetActive(!m_isAlphabet && !allCorrect);

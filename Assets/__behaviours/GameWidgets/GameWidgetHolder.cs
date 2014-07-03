@@ -54,7 +54,7 @@ public class GameWidgetHolder : MonoBehaviour
         List<GameWidget> newWidgets = new List<GameWidget>();
         int firstLocatorIndex = m_heldWidgets.Count;
 
-        System.Array.Sort(m_locators, CollectionHelpers.TopToBottomThenLeftToRight);
+        System.Array.Sort(m_locators, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
         for (int i = 0; i < numSpawn; ++i)
         {

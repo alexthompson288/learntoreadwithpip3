@@ -29,7 +29,7 @@ public class CountingTarget : Target
 
     void Awake()
     {
-        System.Array.Sort(m_locators, CollectionHelpers.TopToBottomThenLeftToRight);
+        System.Array.Sort(m_locators, CollectionHelpers.LocalLeftToRight_TopToBottom);
     }
 
     public override void Off()

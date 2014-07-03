@@ -80,21 +80,7 @@ public class CollectionHelpers
 
 	public static int LeftToRight(Transform a, Transform b)
 	{
-		float posA = a.position.x;
-		float posB = b.position.x;
-
-		if(posA < posB)
-		{
-			return -1;
-		}
-		else if(posA > posB)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+        return a.position.x.CompareTo(b.position.x);
 	}
 
     public static int LocalLeftToRight(MonoBehaviour a, MonoBehaviour b)
@@ -104,53 +90,35 @@ public class CollectionHelpers
 
     public static int LocalLeftToRight(Transform a, Transform b)
     {
-        float posA = a.localPosition.x;
-        float posB = b.localPosition.x;
-        
-        if(posA < posB)
-        {
-            return -1;
-        }
-        else if(posA > posB)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+        return a.localPosition.x.CompareTo(b.localPosition.x);
     }
 
     public static int TopToBottom(MonoBehaviour a, MonoBehaviour b)
     {
-        return LeftToRight(a.transform, b.transform);
+        return TopToBottom(a.transform, b.transform);
     }
     
     public static int TopToBottom(Transform a, Transform b)
     {
-        float posA = a.position.y;
-        float posB = b.position.y;
-        
-        if(posA < posB)
-        {
-            return -1;
-        }
-        else if(posA > posB)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+        return b.position.y.CompareTo(a.position.y);
     }
 
-    public static int TopToBottomThenLeftToRight(MonoBehaviour a, MonoBehaviour b)
+    public static int LocalTopToBottom(MonoBehaviour a, MonoBehaviour b)
     {
-        return TopToBottomThenLeftToRight(a.transform, b.transform);
+        return LocalTopToBottom(a.transform, b.transform);
     }
 
-    public static int TopToBottomThenLeftToRight(Transform a, Transform b)
+    public static int LocalTopToBottom(Transform a, Transform b)
+    {
+        return b.localPosition.y.CompareTo(a.localPosition.y);
+    }
+
+    public static int LocalLeftToRight_TopToBottom(MonoBehaviour a, MonoBehaviour b)
+    {
+        return LocalLeftToRight_TopToBottom(a.transform, b.transform);
+    }
+    
+    public static int LocalLeftToRight_TopToBottom(Transform a, Transform b)
     {
         if (a == null && b == null)
         {
@@ -166,35 +134,34 @@ public class CollectionHelpers
         } 
         else
         {
-            float aX = a.position.x;
-            float aY = a.position.y;
-            float bX = b.position.x;
-            float bY = b.position.y;
+            int compare = b.localPosition.y.CompareTo(a.localPosition.y);
+            return compare != 0 ? compare : a.localPosition.x.CompareTo(b.localPosition.x);
+        }
+    }
 
-            if (Mathf.Approximately(aY, bY))
-            {
-                //D.Log("yEqual: " + a.name + " - " + b.name);
-                if (Mathf.Approximately(aX, bX))
-                {
-                    return 0;
-                }
-                if (aX < bX)
-                {
-                    return -1;
-                } 
-                else
-                {
-                    return 1;
-                }
-            } 
-            else if (aY > bY)
-            {
-                return -1;
-            } 
-            else
-            {
-                return 1;
-            }
+    public static int LocalTopToBottom_LeftToRight(MonoBehaviour a, MonoBehaviour b)
+    {
+        return LocalTopToBottom_LeftToRight(a.transform, b.transform);
+    }
+
+    public static int LocalTopToBottom_LeftToRight(Transform a, Transform b)
+    {
+        if (a == null && b == null)
+        {
+            return 0;
+        } 
+        else if (a == null)
+        {
+            return 1;
+        } 
+        else if (b == null)
+        {
+            return -1;
+        } 
+        else
+        {
+            int compare = a.localPosition.x.CompareTo(b.localPosition.x);
+            return compare != 0 ? compare : b.localPosition.y.CompareTo(a.localPosition.y);
         }
     }
 

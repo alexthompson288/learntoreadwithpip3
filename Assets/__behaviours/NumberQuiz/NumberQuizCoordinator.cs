@@ -34,7 +34,7 @@ public class NumberQuizCoordinator : GameCoordinator
     {
         m_scoreKeeper.SetTargetScore(m_targetScore);
 
-        System.Array.Sort(m_questionLocators, CollectionHelpers.TopToBottomThenLeftToRight);
+        System.Array.Sort(m_questionLocators, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 

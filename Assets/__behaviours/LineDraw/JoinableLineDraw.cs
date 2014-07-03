@@ -73,7 +73,7 @@ public class JoinableLineDraw : LineDraw
         } 
         else
         {
-            System.Array.Sort(m_numberSprites, CollectionHelpers.TopToBottomThenLeftToRight);
+            System.Array.Sort(m_numberSprites, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
             string spriteName = m_spriteNames[Random.Range(0, m_spriteNames.Length)];
 
