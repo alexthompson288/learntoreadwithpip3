@@ -17,6 +17,7 @@ public class UserInfo : Singleton<UserInfo>
     public event UserChangeEventHandler ChangingUser;
 
     string m_email = "";
+    string m_password = "";
     string m_accessToken = "";
     string m_expirationDate = "";
 
@@ -52,10 +53,36 @@ public class UserInfo : Singleton<UserInfo>
         {
             D.Log("ATTEMPTING LOGIN");
 
+            if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
+            {
+                try
+                {
+                    string tokenResponse = UserHelpers.RequestToken(m_email, m_password);
+
+                    if(tokenResponse.Contains(UserHelpers.accessPrefix) && tokenResponse.Contains(UserHelpers.expirationPrefix))
+                    {
+                        m_accessToken = UserHelpers.ParseResponse(tokenResponse, UserHelpers.accessPrefix, "\"");
+                        m_expirationDate = UserHelpers.ParseResponse(tokenResponse, UserHelpers.expirationPrefix, "\"");
+
+                        D.Log("Got new token: " + m_expirationDate);
+                    }
+                }
+                catch(WebException ex)
+                {
+                    if(ex.Response is System.Net.HttpWebResponse)
+                    {
+                        D.Log((ex.Response as HttpWebResponse).StatusCode);
+                    }
+                }
+                catch
+                {
+                    D.LogError("Could not get token using saved login details");
+                }
+            }
+
             DateTime expirationDate;
             try
             {
-
                 expirationDate = DateTime.ParseExact(m_expirationDate, "yyyy-MM-dd", null);
             } 
             catch
@@ -93,14 +120,29 @@ public class UserInfo : Singleton<UserInfo>
             if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
             {
                 D.Log("INSTANTIATE LOGIN");
-                GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
+                //GameObject.Instantiate(m_loginPrefab, Vector3.zero, Quaternion.identity);
+
+                StartCoroutine(LoadLoginScene());
             }
         }
     }
 
-    public void SaveUserDetails(string myEmail, string myAccessToken, string myExpirationDate)
+    IEnumerator LoadLoginScene()
+    {
+        yield return StartCoroutine(TransitionScreen.WaitForInstance());
+
+        string loginSceneName = "NewLogin";
+         
+        if (Application.loadedLevelName != loginSceneName)
+        {
+            TransitionScreen.Instance.ChangeLevel(loginSceneName, false);
+        }
+    }
+
+    public void SaveUserDetails(string myEmail, string myPassword, string myAccessToken, string myExpirationDate)
     {
         m_email = myEmail;
+        m_password = myPassword;
         m_accessToken = myAccessToken;
         m_expirationDate = myExpirationDate;
         Save();
@@ -210,6 +252,7 @@ public class UserInfo : Singleton<UserInfo>
         if (data.Length != 0)
         {
             m_email = br.ReadString();
+            m_password = br.ReadString();
             m_accessToken = br.ReadString();
             m_expirationDate = br.ReadString();
             
@@ -254,8 +297,9 @@ public class UserInfo : Singleton<UserInfo>
         BinaryWriter bw = new BinaryWriter(newData);
         
         bw.Write (m_email);
-        bw.Write(m_accessToken);
-        bw.Write(m_expirationDate);
+        bw.Write (m_password);
+        bw.Write (m_accessToken);
+        bw.Write (m_expirationDate);
         
         bw.Write(m_users.Count);
         foreach (KeyValuePair<string, string> kvp in m_users)

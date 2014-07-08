@@ -162,11 +162,9 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         watchTweenArgs.Add("isLocal", true);
         iTween.MoveTo(m_watchButton, watchTweenArgs);
 
-
         // Delete and Download Buttons
         m_videoPlayer.SetFilename(m_videoPlayer.GetPipisodeFilename(m_currentPipisode));
         RefreshDownloadAndDeleteButtons();
-
 
         m_pipAnimManager.PlayAnimation("THUMBS_UP");
     }

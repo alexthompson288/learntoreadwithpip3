@@ -17,9 +17,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     [SerializeField]
     private UILabel m_infoLabel;
     [SerializeField]
-    private GameObject m_waitingIcon;
+    private PipAnim m_pipAnim;
     [SerializeField]
-    private SpriteAnim m_pipAnim;
+    private SpriteAnim m_pipSpriteAnim;
+    [SerializeField]
+    private Transform m_pipLocation;
     [SerializeField]
     private UIPanel m_loginPanel;
     [SerializeField]
@@ -36,9 +38,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             m_passwordInput.GetComponent<UIInput>().isPassword = true;
         }
-       
-        m_waitingIcon.transform.localScale = Vector3.zero;
-        m_waitingIcon.gameObject.SetActive(false);
 
         m_loginButton.Unpressing += OnPressLogin;
 
@@ -49,16 +48,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
 
-        LifetimeEventTrigger[] audioTriggers = UnityEngine.Object.FindObjectsOfType(typeof(LifetimeEventTrigger)) as LifetimeEventTrigger[];
-        foreach (LifetimeEventTrigger audioTrigger in audioTriggers)
+        if (m_pipAnim != null)
         {
-            if(audioTrigger.GetStartEvent() == "PIP_THEME" && audioTrigger.GetOnDestroyEvent() == "MUSIC_STOP")
-            {
-                audioTrigger.RemoveOnDestroyEvent();
-            }
+            yield return new WaitForSeconds(0.8f);
+            m_pipAnim.MoveToPos(m_pipLocation.position);
         }
-
-        TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
     }
 
     public static void SetInfoText(UserException ex)
@@ -115,11 +109,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     IEnumerator OnPressLoginCo()
     {
-        float scaleTweenDuration = 0.3f;
+        m_infoLabel.text = "Logging in...";
 
-        m_waitingIcon.gameObject.SetActive(true);
-        iTween.ScaleTo(m_waitingIcon, Vector3.one, scaleTweenDuration);
-        yield return new WaitForSeconds(scaleTweenDuration);
+        yield return new WaitForSeconds(0.8f);
+
 
         string tokenResponse = "";
 
@@ -132,15 +125,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             SetInfoText(ex, true);
         }
 
-        iTween.ScaleTo(m_waitingIcon, Vector3.one, scaleTweenDuration);
-        yield return new WaitForSeconds(scaleTweenDuration + 0.1f);
-        m_waitingIcon.gameObject.SetActive(false);
-
-
-        string accessPrefix = "\"access_token\":\"";
-        string expirationPrefix = "\"expiration_date\":\"";
-
-        bool hasToken = tokenResponse.Contains(accessPrefix) && tokenResponse.Contains(expirationPrefix);
+        bool hasToken = tokenResponse.Contains(UserHelpers.accessPrefix) && tokenResponse.Contains(UserHelpers.expirationPrefix);
         
         D.Log("hasToken: " + hasToken);
         D.Log("RESPONSE_CONTENT");
@@ -148,13 +133,13 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         
         if (hasToken)
         {
-            string accessToken = UserHelpers.ParseResponse(tokenResponse, accessPrefix, "\"");
+            string accessToken = UserHelpers.ParseResponse(tokenResponse, UserHelpers.accessPrefix, "\"");
             D.Log("ACCESS_TOKEN: " + accessToken);
             
-            string expirationDate = UserHelpers.ParseResponse(tokenResponse, expirationPrefix, "\"");
+            string expirationDate = UserHelpers.ParseResponse(tokenResponse, UserHelpers.expirationPrefix, "\"");
             D.Log("EXPIRATION_DATE: " + expirationDate);
             
-            UserInfo.Instance.SaveUserDetails(m_emailInput.text, accessToken, expirationDate);
+            UserInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
 
             bool isUserLegal = false;
 
@@ -186,8 +171,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 #if UNITY_EDITOR
     void Update()
     {
+        /*
         if(Input.GetKeyDown(KeyCode.O))
             StartCoroutine(Off());
+        */
     }
 #endif
 
@@ -197,7 +184,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
         TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
 
-        m_pipAnim.PlayAnimation("JUMP");
+        m_pipSpriteAnim.PlayAnimation("JUMP");
         
         yield return new WaitForSeconds(0.22f);
         
@@ -205,10 +192,17 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         yield return new WaitForSeconds(0.5f);
 
-        m_tweenBehaviour.Off();
+        if (m_tweenBehaviour != null)
+        {
+            m_tweenBehaviour.Off();
 
-        yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff());
+            yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff());
 
-        Destroy(gameObject);
+            Destroy(gameObject);
+        }
+        else
+        {
+            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+        }
     }
 }

@@ -27,6 +27,24 @@ public class UserException : Exception
 
 public static class UserHelpers 
 {
+    public static string m_accessPrefix = "\"access_token\":\"";
+    public static string accessPrefix
+    {
+        get
+        {
+            return m_accessPrefix;
+        }
+    }
+    
+    public static string m_expirationPrefix = "\"expiration_date\":\"";
+    public static string expirationPrefix
+    {
+        get
+        {
+            return m_expirationPrefix;
+        }
+    }
+
 	static string m_url = "http://learnwithpip-staging.herokuapp.com/api/v1/";
 	//http://private-281e5-pip.apiary-mock.com/api/v1/token
 	//http://private-281e5-pip.apiary-mock.com/api/v1/users/me
@@ -122,6 +140,8 @@ public static class UserHelpers
 	{
 		D.Log ("UserHelpers.GetUserState()");
 		string userResponse = GetUser();
+
+        Debug.Log("IsUserLegal.userResponse: " + userResponse);
 		
 		if (!userResponse.Contains("error"))
         {

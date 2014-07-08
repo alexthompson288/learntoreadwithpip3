@@ -159,13 +159,6 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         winningPlayerHasCompletedSequence = true;
     }
 
-    void OnGUI()
-    {
-        GUILayout.Label("Time: " + (Time.time - m_startTime));
-        GUILayout.Label("TwoStar: " + (4f * (float)m_targetScore));
-        GUILayout.Label("ThreeStar: " + (2.5f * (float)m_targetScore));
-    }
-
     IEnumerator CompleteGame()
     {
         if (GetNumPlayers() == 1)

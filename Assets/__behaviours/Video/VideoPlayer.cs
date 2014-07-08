@@ -39,7 +39,7 @@ public class VideoPlayer : MonoBehaviour
     [SerializeField]
     private PipButton m_cancelButton;
     [SerializeField]
-    private GameObject m_noInternetLabel;
+    private GameObject m_errorLabelParent;
 
     WWW m_www;
 
@@ -234,14 +234,23 @@ public class VideoPlayer : MonoBehaviour
             if(m_www.error != null)
             {
                 D.Log("error: " + m_www.error);
+
+                string errorMessage = "Check your internet connection";
+
+                if(m_www.error.Contains("403"))
+                {
+                    errorMessage = "Oops!\nFile not found";
+                }
+
+                m_errorLabelParent.GetComponentInChildren<UILabel>().text = errorMessage;
             }
 
             StopCoroutine("UpdateProgressBar");
 
             m_progressBar.value = 0;
-            iTween.ScaleTo(m_noInternetLabel, Vector3.one, 0.3f);
+            iTween.ScaleTo(m_errorLabelParent, Vector3.one, 0.3f);
 
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(3f);
         }
 
         StopCoroutine("UpdateProgressBar");
@@ -269,7 +278,7 @@ public class VideoPlayer : MonoBehaviour
             iTween.ScaleTo(m_progressBarParent, Vector3.zero, m_progressTweenDuration);
             yield return new WaitForSeconds(m_progressTweenDuration);
 
-            m_noInternetLabel.transform.localScale = Vector3.zero;
+            m_errorLabelParent.transform.localScale = Vector3.zero;
             
             if(m_progressBar != null)
             {

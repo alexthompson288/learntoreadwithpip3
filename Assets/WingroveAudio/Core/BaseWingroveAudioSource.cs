@@ -5,6 +5,17 @@ namespace WingroveAudio
 {
     public abstract class BaseWingroveAudioSource : MonoBehaviour
     {
+        ///////////////////////////////////////////////////////////////
+        /// Tom added this
+
+        // This method was necessary to protect my sanity
+        // I got so sick of hearing the music when I only needed to hear SFX/Vocals that I made this method so that I could lower the volume of specific audio sources at runtime
+        public void SetClipMixVolume(float myClipMixVolume)
+        {
+            m_clipMixVolume = myClipMixVolume;
+        }
+        ///////////////////////////////////////////////////////////////
+        /// 
         [SerializeField]
         private bool m_looping = false;
         [SerializeField]
