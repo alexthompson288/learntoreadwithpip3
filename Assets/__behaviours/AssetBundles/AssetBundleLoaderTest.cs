@@ -71,6 +71,7 @@ public class AssetBundleLoaderTest : Singleton<AssetBundleLoaderTest>
 //#endif
     }
 
+    /*
     public static IEnumerator WaitForInstance()
     {
         while (AssetBundleLoaderTest.Instance == null)
@@ -78,4 +79,5 @@ public class AssetBundleLoaderTest : Singleton<AssetBundleLoaderTest>
             yield return null;
         }
     }
+    */
 }

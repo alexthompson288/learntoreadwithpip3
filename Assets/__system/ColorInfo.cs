@@ -42,6 +42,7 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public class NoColor : System.Exception {}
 
+    /*
     public static IEnumerator WaitForInstance()
     {
         while (ColorInfo.Instance == null)
@@ -49,6 +50,7 @@ public class ColorInfo : Singleton<ColorInfo>
             yield return null;
         }
     }
+    */
 
     // Methods are static to reduce typing required in other classes
     public static Color GetColor(PipColor pipColor)

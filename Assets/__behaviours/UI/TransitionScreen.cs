@@ -98,8 +98,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 		Go.addTween(tween);
 
-		//D.Log("Called tween for transition screen");
-
 		if(m_transitionSounds.Length > 0)
 		{
 			AudioClip clip = m_transitionSounds[UnityEngine.Random.Range(0, m_transitionSounds.Length)];
@@ -109,11 +107,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 				GetComponent<AudioSource>().Play();
 			}
 		}
-
-		//D.Log("Played audio");
-
-		//D.Log("FINISHED TransitionScreen.Start()");
-
 		
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
@@ -184,13 +177,11 @@ public class TransitionScreen : Singleton<TransitionScreen>
 			}
 		}
 
-
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SCENE_CHANGE");
         }
-
 
 		m_currentTextureIndex = UnityEngine.Random.Range(0, m_backgroundTextures.Length);
 
@@ -252,22 +243,22 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		D.Log("TransitionScreen.LoadNextLevel(" + level + ") - Now loading empty scene");
         m_loadingToScene = level;
 
+        /*
 		UITexture screenTex = ScreenCover.GetComponent<UITexture>() as UITexture;
 		UITexture[] textures = UnityEngine.Object.FindObjectsOfType<UITexture>() as UITexture[];
-		//D.Log("There are " + textures.Length + " textures");
 		for(int i = 0; i < textures.Length; ++i)
 		{
 			if(textures[i] != screenTex)
 			{
 				if(textures[i].mainTexture != null)
 				{
-					//D.Log("Unloading texture");
 					Resources.UnloadAsset(textures[i].mainTexture);
 				}
 
 				NGUITools.Destroy(textures[i]);
 			}
 		}
+        */      
 
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();

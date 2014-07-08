@@ -20,4 +20,12 @@ public class Singleton<T> : MonoBehaviour where T : Object
             }
         }
     }
+
+    public static IEnumerator WaitForInstance()
+    {
+        while (Instance == null)
+        {
+            yield return null;
+        }
+    }
 }

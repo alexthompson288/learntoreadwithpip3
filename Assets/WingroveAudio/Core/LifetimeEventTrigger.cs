@@ -26,6 +26,22 @@ namespace WingroveAudio
         [SerializeField]
         private bool m_linkToObject = true;
 
+
+        public string GetStartEvent()
+        {
+            return m_startEvent;
+        }
+
+        public string GetOnDestroyEvent()
+        {
+            return m_onDestroyEvent;
+        }
+        
+        public void RemoveOnDestroyEvent()
+        {
+            m_onDestroyEvent = "";
+        }
+
         // Use this for initialization
         void Start()
         {
@@ -80,7 +96,6 @@ namespace WingroveAudio
                 }
             }
         }
-
 
         void OnDestroy()
         {

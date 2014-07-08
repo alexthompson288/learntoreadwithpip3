@@ -67,7 +67,9 @@ public static class UserHelpers
 		request.ContentLength = byteArray.Length;
 		using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
 		
+
 		string responseContent=null;
+
 		using (var response = request.GetResponse() as System.Net.HttpWebResponse) {
 			using (var reader = new System.IO.StreamReader(response.GetResponseStream())) {
 				responseContent = reader.ReadToEnd();
@@ -76,6 +78,20 @@ public static class UserHelpers
 
 		return responseContent;
 	}
+
+    /*
+    HttpWebRequest webRequest;
+
+    void StartWebRequest()
+    {
+        webRequest.BeginGetResponse(new AsyncCallback(FinishWebRequest), null);
+    }
+
+    void FinishWebRequest(IAsyncResult result)
+    {
+        webRequest.EndGetResponse(result);
+    }
+    */ 
 	
 	static string GetUser()
 	{

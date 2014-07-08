@@ -260,11 +260,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         yield return new WaitForSeconds(0.1f);
 
         m_spawnedDataClicks.Sort(CollectionHelpers.LocalLeftToRight_TopToBottom);
-        
-        foreach (ClickEvent logClick in m_spawnedDataClicks)
-        {
-            D.Log(logClick.GetData()["phoneme"]);
-        }
 
         TweenAlpha.Begin(m_defaultGridPanel.gameObject, alphaTweenDuration, 1); 
     }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Net;
+using WingroveAudio;
 
 public class LoginCoordinator : Singleton<LoginCoordinator> 
 {
@@ -17,11 +18,20 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private UILabel m_infoLabel;
     [SerializeField]
     private GameObject m_waitingIcon;
+    [SerializeField]
+    private SpriteAnim m_pipAnim;
+    [SerializeField]
+    private UIPanel m_loginPanel;
+    [SerializeField]
+    private UIPanel m_successPanel;
 
     static string m_infoText = "Login";
 
     void Awake()
     {
+        m_loginPanel.alpha = 1;
+        m_successPanel.alpha = 0;
+
         if (!Application.isEditor)
         {
             m_passwordInput.GetComponent<UIInput>().isPassword = true;
@@ -33,6 +43,22 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
+    }
+
+    IEnumerator Start()
+    {
+        yield return StartCoroutine(TransitionScreen.WaitForInstance());
+
+        LifetimeEventTrigger[] audioTriggers = UnityEngine.Object.FindObjectsOfType(typeof(LifetimeEventTrigger)) as LifetimeEventTrigger[];
+        foreach (LifetimeEventTrigger audioTrigger in audioTriggers)
+        {
+            if(audioTrigger.GetStartEvent() == "PIP_THEME" && audioTrigger.GetOnDestroyEvent() == "MUSIC_STOP")
+            {
+                audioTrigger.RemoveOnDestroyEvent();
+            }
+        }
+
+        TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
     }
 
     public static void SetInfoText(UserException ex)
@@ -82,11 +108,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
     }
 
-    public void On()
-    {
-        m_tweenBehaviour.Off();
-    }
-
     void OnPressLogin(PipButton button)
     {
         StartCoroutine(OnPressLoginCo());
@@ -134,8 +155,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             D.Log("EXPIRATION_DATE: " + expirationDate);
             
             UserInfo.Instance.SaveUserDetails(m_emailInput.text, accessToken, expirationDate);
-            
-            m_tweenBehaviour.On();
 
             bool isUserLegal = false;
 
@@ -154,8 +173,42 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
             if (isUserLegal)
             {
-                m_tweenBehaviour.On();
+                StartCoroutine(Off());
             }
         } 
+    }
+
+    public void On()
+    {
+        m_tweenBehaviour.Off();
+    }
+
+#if UNITY_EDITOR
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.O))
+            StartCoroutine(Off());
+    }
+#endif
+
+    IEnumerator Off()
+    {
+        float panelTweenDuration = 0.25f;
+        TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
+        TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
+
+        m_pipAnim.PlayAnimation("JUMP");
+        
+        yield return new WaitForSeconds(0.22f);
+        
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+
+        yield return new WaitForSeconds(0.5f);
+
+        m_tweenBehaviour.Off();
+
+        yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff());
+
+        Destroy(gameObject);
     }
 }

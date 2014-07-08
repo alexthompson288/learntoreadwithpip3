@@ -112,6 +112,11 @@ public class ScorePip : ScoreKeeper
         m_pipAnim.AnimFinished += OnJumpAnimFinish;
         
         m_pipAnim.PlayAnimation("JUMP");
+
+        yield return new WaitForSeconds(0.22f);
+
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YIPPIDYPOP");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
         
         while (!m_hasFinishedJumpAnim)
         {

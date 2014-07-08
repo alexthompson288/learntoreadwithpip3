@@ -33,6 +33,7 @@ public class GameManager : Singleton<GameManager>
         m_activityType = myActivityType;
     }
 
+    /*
     public static IEnumerator WaitForInstance()
     {
         while (GameManager.Instance == null)
@@ -40,6 +41,7 @@ public class GameManager : Singleton<GameManager>
             yield return null;
         }
     }
+    */
 
     void Start()
     {
