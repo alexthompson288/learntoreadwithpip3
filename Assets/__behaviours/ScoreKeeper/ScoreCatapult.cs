@@ -85,6 +85,8 @@ public class ScoreCatapult : ScoreKeeper
         m_rigidbody.isKinematic = false;
         m_rigidbody.AddForce(m_rigidbody.transform.TransformDirection(m_launchForce), ForceMode.VelocityChange);
 
+        m_hand.spriteName = NGUIHelpers.GetLinkedSpriteName(m_hand.spriteName);
+
         yield return new WaitForSeconds(2f);
     }
 
@@ -152,10 +154,6 @@ public class ScoreCatapult : ScoreKeeper
         {
             m_hand.transform.position = m_handFollowLocation.position;
         } 
-        else
-        {
-            m_hand.spriteName = NGUIHelpers.GetLinkedSpriteName(m_hand.spriteName);
-        }
 
         #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.O))

@@ -22,7 +22,7 @@ public class ShowPipPadForWord : MonoBehaviour {
 
         BoxCollider bc = (BoxCollider)collider;
         bc.size = wordSize;
-        bc.center = new Vector3(wordSize.x / 2, 0, 0);
+        bc.center = new Vector3(wordSize.x / 2, bc.center.y, bc.center.z);
 
 		m_editedWord = word.Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", "");
 		Vector3 spriteSize = GetComponent<UILabel>().font.CalculatePrintedSize(m_editedWord, false, UIFont.SymbolStyle.None);

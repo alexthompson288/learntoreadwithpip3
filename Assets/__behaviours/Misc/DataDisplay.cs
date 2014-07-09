@@ -26,6 +26,11 @@ public class DataDisplay : MonoBehaviour
         m_showPicture = showPicture;
     }
 
+    public void On(DataRow data)
+    {
+        On(DataHelpers.GetDataType(data), data);
+    }
+
     public void On(string dataType, DataRow data)
     {
         m_dataType = dataType;

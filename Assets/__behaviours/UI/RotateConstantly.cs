@@ -7,12 +7,17 @@ public class RotateConstantly : MonoBehaviour {
     private float m_rotateSpeed;
     [SerializeField]
     private float m_randomRange = 20;
+    [SerializeField]
+    private bool m_startRandom;
 
     private float m_rotateSpeedInternal;
 
     void Start()
     {
-        transform.Rotate(Vector3.forward, Random.Range(0.0f,360.0f));
+        if (m_startRandom)
+        {
+            transform.Rotate(Vector3.forward, Random.Range(0.0f, 360.0f));
+        }
     }
 
     void OnEnable()

@@ -176,6 +176,7 @@ public class ScorePip : ScoreKeeper
     
     public override bool HasCompleted()
     {
+        Debug.Log(System.String.Format("HasCompleted(): {0} / {1}", m_score, m_targetScore));
         return m_score >= m_targetScore;
     }
 }

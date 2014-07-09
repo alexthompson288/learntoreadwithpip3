@@ -1,11 +1,49 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public static class TransformHelpers 
 {
-    public static float GetDuration(Transform tra, Vector3 targetPos, float speed)
+    public static Transform FindClosest<T>(IList<T> list, Transform target)
     {
-        return (targetPos - tra.position).magnitude / speed;
+        Transform closest = null;
+
+        if (list.Count > 0)
+        {
+            bool isGameObject = list [0] is GameObject;
+
+            if (isGameObject || list [0] is Component)
+            {
+                closest = isGameObject ? (list [0] as GameObject).transform : (list [0] as Component).transform;
+
+                float closestDistance = Vector3.Distance(closest.position, target.position);
+
+                foreach (T t in list)
+                {
+                    Transform tra = isGameObject ? (t as GameObject).transform : (t as Component).transform;
+
+                    if (Vector3.Distance(tra.position, target.position) < closestDistance)
+                    {
+                        closest = tra;
+                        closestDistance = Vector3.Distance(closest.position, target.position);
+                    }
+                }
+            }
+        }
+
+        return closest;
+    }
+
+    public static float GetDuration(Transform tra, Vector3 targetPos, float speed, bool useLocal = false)
+    {
+        if (useLocal)
+        {
+            return (targetPos - tra.localPosition).magnitude / speed;
+        } 
+        else
+        {
+            return (targetPos - tra.position).magnitude / speed;
+        }
     }
 
 	public static bool ApproxPos(GameObject a, GameObject b)

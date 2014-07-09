@@ -130,6 +130,19 @@ public class PipButton : MonoBehaviour
             return m_data;
         }
     }
+
+    public void SetPipColor(ColorInfo.PipColor myPipColor)
+    {
+        m_pipColor = myPipColor;
+
+        Color col = ColorInfo.GetColor(m_pipColor);
+        m_pressableButton.color = col;
+        
+        foreach (UIWidget widget in m_additionalColoredWidgets)
+        {
+            widget.color = col;
+        }
+    }
     
     public ColorInfo.PipColor pipColor
     {

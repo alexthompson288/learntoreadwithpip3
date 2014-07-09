@@ -72,13 +72,13 @@ public static class DataHelpers
     // DataType
     public static string GameOrDefault(string defaultDataType)
     {
-        string gameDataType = GetDataType(GetCurrentGame());
+        string gameDataType = GetGameDataType(GetCurrentGame());
         string dataType = !String.IsNullOrEmpty(gameDataType) ? gameDataType : defaultDataType;
         
         return dataType;
     }
     
-    public static string GetDataType(DataRow game)
+    public static string GetGameDataType(DataRow game)
     {
         string dataType = "";
         if (game != null)
@@ -91,6 +91,24 @@ public static class DataHelpers
     }
 
     // Generic
+    public static string GetDataType(DataRow data)
+    {
+        string dataType = data.GetTableName();
+        switch (data.GetTableName())
+        {
+            case "data_words":
+                dataType = "words";
+                break;
+            case "data_phonemes":
+                dataType = "phonemes";
+                break;
+            default:
+                break;
+        }
+
+        return dataType;
+    }
+
     public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
     {
         string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
