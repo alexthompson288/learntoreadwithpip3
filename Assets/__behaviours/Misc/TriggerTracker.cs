@@ -10,6 +10,18 @@ public class TriggerTracker : MonoBehaviour
     {
         return m_trackedObjects.Count;
     }
+
+    void Start()
+    {
+        StartCoroutine(RemoveNull());
+    }
+
+    IEnumerator RemoveNull()
+    {
+        yield return new WaitForSeconds(0.5f);
+        m_trackedObjects.RemoveAll(x => x == null);
+        StartCoroutine(RemoveNull());
+    }
 	
 	void OnTriggerEnter (Collider other) 
 	{
@@ -22,6 +34,7 @@ public class TriggerTracker : MonoBehaviour
 
 	void OnTriggerExit (Collider other) 
 	{
+        Debug.Log("OnTriggerExit()");
 		//D.Log(other.name + " has exited " + name);
 		if(m_trackedObjects.Contains(other.gameObject))
 		{

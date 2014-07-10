@@ -191,4 +191,11 @@ public class FillJarCoordinator : GameCoordinator
     {
         m_spawnedRbs.Remove(go);
     }
+
+    protected override IEnumerator CompleteGame()
+    {
+        yield return StartCoroutine(m_scoreKeeper.On());
+
+        GameManager.Instance.CompleteGame();
+    }
 }
