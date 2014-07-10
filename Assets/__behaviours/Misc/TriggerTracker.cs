@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class TriggerTracker : MonoBehaviour 
 {
+    public delegate void TriggerTrackerEventHandler (TriggerTracker tracker);
+    public event TriggerTrackerEventHandler Entered;
+    public event TriggerTrackerEventHandler Exited;
+
 	List<GameObject> m_trackedObjects = new List<GameObject>();
 
     public int GetNumTrackedObjects()
@@ -29,6 +33,11 @@ public class TriggerTracker : MonoBehaviour
         if (!m_trackedObjects.Contains(other.gameObject))
         {
             m_trackedObjects.Add(other.gameObject);
+
+            if(Entered != null)
+            {
+                Entered(this);
+            }
         }
 	}
 
@@ -39,6 +48,11 @@ public class TriggerTracker : MonoBehaviour
 		if(m_trackedObjects.Contains(other.gameObject))
 		{
 			m_trackedObjects.Remove(other.gameObject);
+
+            if(Exited != null)
+            {
+                Exited(this);
+            }
 		}
 	}
 

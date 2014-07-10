@@ -1,86 +1,111 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using Wingrove;
 
-public class CatapultCountingCoordinator : GameCoordinator 
+public class CatapultCountingCoordinator : GameCoordinator
 {
     [SerializeField]
-    private CatapultBehaviour m_catapult;
+    private GameObject m_targetPrefab;
     [SerializeField]
-    private CountingTarget m_target;
+    private DataDisplay m_dataDisplay;
     [SerializeField]
-    private DataDisplay m_display;
+    private Transform m_container;
+    [SerializeField]
+    private Transform m_containerLeftOffLocation;
+    [SerializeField]
+    private Transform m_containerRightOffLocation;
+    [SerializeField]
+    private Transform[] m_containerLocators;
+    [SerializeField]
+    private TriggerTracker m_triggerTracker;
+    [SerializeField]
+    private Transform m_targetSpawnParent;
+
+    float m_targetSpawnDelay;
+
+    Vector3 m_containerOnPos;
+
+    List<GameObject> m_spawnedTargets = new List<GameObject>();
+
+    void Awake()
+    {
+        m_containerOnPos = m_container.position;
+        m_container.position = m_containerLeftOffLocation.position;
+
+        m_triggerTracker.Entered += OnTargetEnterTrigger;
+    }
 
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        m_catapult.MoveToMultiplayerLocation(0);
-        m_scoreKeeper.SetTargetScore(m_targetScore);
-        m_target.TargetHit += OnTargetHit;
-
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_dataPool = DataHelpers.GetNumbers();
 
-        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, m_target.locatorCount);
-
-        if (m_dataPool.Count > 0)
-        {
-            AskQuestion();
-        }
-        else
-        {
-            StartCoroutine(CompleteGame());
-        }
+        StartCoroutine(SpawnTargets());
+        StartCoroutine(AskQuestion());
 	}
 
-    void AskQuestion()
+    IEnumerator SpawnTargets()
     {
-        m_currentData = GetRandomData();
-
-        m_display.On("numbers", m_currentData);
-
-        m_target.On(0);
+        SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_targetPrefab, m_targetSpawnParent);
+        yield return new WaitForSeconds(m_targetSpawnDelay);
+        StartCoroutine(SpawnTargets());
     }
 
-    void OnTargetHit(Target target, Collider other)
+    IEnumerator AskQuestion()
     {
-        m_target.StoreAmmo(other);
+        m_container.transform.position = m_containerLeftOffLocation.position;
 
-        AudioClip clip = LoaderHelpers.LoadAudioForNumber(m_target.storedAmmoCount);
+        float tweenDuration = 0.3f;
+        iTween.MoveTo(m_container.gameObject, m_containerOnPos, tweenDuration);
 
-        if (clip != null)
+        m_currentData = GetRandomData();
+        m_dataDisplay.On(m_currentData);
+
+        yield break;
+    }
+
+    void OnTargetEnterTrigger(TriggerTracker tracker)
+    {
+        PlayShortAudio(m_dataPool.Find(x => x.GetInt("value") == m_triggerTracker.GetNumTrackedObjects()));
+
+        if (m_triggerTracker.GetNumTrackedObjects() >= m_currentData.GetInt("value"))
         {
-            m_audioSource.clip = clip;
-            m_audioSource.Play();
-        }
-
-        Resources.UnloadUnusedAssets();
-
-        if (m_target.storedAmmoCount >= System.Convert.ToInt32(m_currentData ["value"]))
-        {
-            ++m_score;
             m_scoreKeeper.UpdateScore();
-
             StartCoroutine(ClearQuestion());
         }
     }
 
     IEnumerator ClearQuestion()
     {
-        yield return new WaitForSeconds(0.8f);
+        m_dataDisplay.Off();
+        float tweenDuration = 0.25f;
 
-        m_target.Off();
-        m_display.Off();
-        
-        yield return new WaitForSeconds(0.5f);
+        Hashtable tweenArgs = new Hashtable();
 
-        if (m_score < m_targetScore)
-        {
-            AskQuestion();
-        } 
-        else
+        tweenArgs.Add("position", m_containerRightOffLocation.position);
+        tweenArgs.Add("time", tweenDuration);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+
+        iTween.MoveTo(m_container.gameObject, tweenArgs);
+
+        yield return new WaitForSeconds(tweenDuration);
+
+        if (m_scoreKeeper.HasCompleted())
         {
             StartCoroutine(CompleteGame());
         }
+        else
+        {
+            StartCoroutine(AskQuestion());
+        }
+    }
+
+    IEnumerator CompleteGame()
+    {
+        yield return StartCoroutine(m_scoreKeeper.On());
+        GameManager.Instance.CompleteGame();
     }
 }

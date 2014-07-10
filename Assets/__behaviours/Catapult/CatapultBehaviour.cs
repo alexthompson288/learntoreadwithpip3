@@ -32,6 +32,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
     [SerializeField]
     private bool m_lineRendererUseWorld;
 
+
 	List<CatapultAmmo> m_spawnedBalls = new List<CatapultAmmo>();
 
     CatapultAmmo m_currentBall = null;
