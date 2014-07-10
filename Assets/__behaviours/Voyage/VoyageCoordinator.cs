@@ -316,6 +316,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
         VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, 0);
 
+        D.Log("sessionId: " + m_sessionId);
+
         DataTable sectionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + m_sessionId);
 
         if (sectionsTable.Rows.Count > 0)
@@ -348,8 +350,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 
                 if(phonemePool.Count < m_minimumDataCount)
                 {
+                    D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
                     AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(previousModuleId));
                 }
+
+                D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
                 
                 GameManager.Instance.AddData("phonemes", phonemePool);
                 GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
@@ -364,9 +369,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 
                 if(words.Count < m_minimumDataCount)
                 {
+                    D.Log("Adding extra word: " + words.Count + "/" + m_minimumDataCount);
                     AddExtraData(words, DataHelpers.GetModuleWords(previousModuleId));
                     
                 }
+
+                D.Log("WORD_POOL.COUNT: " + words.Count);
                 
                 GameManager.Instance.AddData("words", words);
                 GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));

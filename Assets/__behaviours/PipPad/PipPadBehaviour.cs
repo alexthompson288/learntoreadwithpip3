@@ -175,6 +175,9 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 			{
 				DataRow row = dt[0];
 
+                D.Log("PipPadBehavior orderedphonemes: " + row["ordered_phonemes"]);
+
+
 				if(postEvent)
 				{
 					//UserStats.Activity.AddPipPadCall(Convert.ToInt32(row["id"]));

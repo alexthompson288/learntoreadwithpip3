@@ -111,12 +111,18 @@ public static class DataHelpers
 
     public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
     {
-        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
+        D.Log(String.Format("GetSetData({0}, {1}, {2})", set ["number"], columnName, tableName));
+        D.Log(set [columnName]);
+        //string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
+        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split('\n');
+        D.Log("ids.Length: " + ids.Length);
         
         List<DataRow> data = new List<DataRow>();
         
         foreach(string id in ids)
         {
+            D.Log(id);
+
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
             
             if(dt.Rows.Count > 0)
@@ -130,9 +136,12 @@ public static class DataHelpers
     
     static List<DataRow> GetModuleData(int moduleId, string joinAttributeName, string tableName)
     {
+        D.Log(String.Format("GetModuleData({0}, {1}, {2})", moduleId, joinAttributeName, tableName));
         List<DataRow> dataPool = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
+
+        D.Log("Rows.Count: " + dt.Rows.Count);
         
         foreach (DataRow set in dt.Rows)
         {

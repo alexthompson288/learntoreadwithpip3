@@ -144,6 +144,10 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         m_dataPool = DataHelpers.GetData(m_dataType);
 
+        D.Log("JoinPairs.Start()");
+        D.Log("m_dataType:" + m_dataType);
+        D.Log("m_dataPool.Count: " + m_dataPool.Count);
+
         if (m_dataType != "numbers")
         {
             m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
