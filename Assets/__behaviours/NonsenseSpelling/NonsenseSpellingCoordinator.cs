@@ -86,7 +86,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 		m_currentWord = currentWordData["word"].ToString();
 		
-		string[] phonemeIds = currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        string[] phonemeIds = DataHelpers.GetOrderedPhonemeIdStrings(currentWordData);
 		string[] phonemes = new string[phonemeIds.Length];
 		for(int i = 0; i < phonemeIds.Length; ++i)
 		{

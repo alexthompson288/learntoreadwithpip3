@@ -26,11 +26,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private UIPanel m_loginPanel;
     [SerializeField]
     private UIPanel m_successPanel;
+    [SerializeField]
+    private Transform m_waitingIcon;
 
     static string m_infoText = "Login";
 
     void Awake()
     {
+        m_waitingIcon.transform.localScale = Vector3.zero;
         m_loginPanel.alpha = 1;
         m_successPanel.alpha = 0;
 
@@ -42,6 +45,13 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
+    }
+
+    IEnumerator RotateWaitingIcon()
+    {
+        m_waitingIcon.Rotate(Vector3.forward, 100 * Time.deltaTime);
+        yield return null;
+        StartCoroutine("RotateWaitingIcon");
     }
 
     IEnumerator Start()
@@ -110,6 +120,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     IEnumerator OnPressLoginCo()
     {
         m_infoLabel.text = "Logging in...";
+        iTween.ScaleTo(m_waitingIcon.gameObject, Vector3.one, 0.2f);
+        StartCoroutine("RotateWaitingIcon");
 
         yield return new WaitForSeconds(0.8f);
 
@@ -161,6 +173,9 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
                 StartCoroutine(Off());
             }
         } 
+
+        iTween.ScaleTo(m_waitingIcon.gameObject, Vector3.zero, 0.2f);
+        StopCoroutine("RotateWaitingIcon");
     }
 
     public void On()

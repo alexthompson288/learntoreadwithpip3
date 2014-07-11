@@ -218,7 +218,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		}
 		else
 		{
-			string[] phonemeIds = m_currentWordData["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+			string[] phonemeIds = DataHelpers.GetOrderedPhonemeIdStrings(m_currentWordData);
 			List<string> phonemes = new List<string>();
 			for(int i = 0; i < phonemeIds.Length; ++i)
 			{

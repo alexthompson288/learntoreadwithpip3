@@ -183,7 +183,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 					//UserStats.Activity.AddPipPadCall(Convert.ToInt32(row["id"]));
 				}
 				
-				string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+                string[] phonemes = DataHelpers.GetOrderedPhonemeIdStrings(row);
 
 				bool hasPhonemes = false;
 

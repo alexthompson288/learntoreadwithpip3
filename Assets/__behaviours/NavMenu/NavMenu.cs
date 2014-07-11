@@ -28,9 +28,18 @@ public class NavMenu : Singleton<NavMenu>
     private Transform m_storiesButton;
     [SerializeField]
     private Collector m_pipAnim;
+    [SerializeField]
+    private TweenOnOffBehaviour m_infoMoveable;
+    [SerializeField]
+    private PipButton m_callInfoMoveable;
+    [SerializeField]
+    private ClickEvent m_dismissInfoMoveable;
 
 	void Awake()
 	{
+        m_callInfoMoveable.Unpressing += CallInfoMoveable;
+        m_dismissInfoMoveable.SingleClicked += DismissInfoMoveable;
+
 		m_navMenuGoParent.SetActive(true);
         m_mainMoveable.gameObject.SetActive(true);
         m_buyMoveable.gameObject.SetActive(true);
@@ -64,15 +73,19 @@ public class NavMenu : Singleton<NavMenu>
 	{
 		m_callButton.SetActive(false);
 		m_callButtonRight.SetActive(true);
-		/*
-		m_callButton.transform.position = m_callButtonRightPosition.position;
-
-		Transform callButtonOff = m_callButton.GetComponent<TweenOnOffBehaviour>().GetOffLocation();
-		Vector3 newOffPosition = callButtonOff.position;
-		newOffPosition.x = m_callButtonRightPosition.position.x;
-		callButtonOff.position = newOffPosition;
-		*/
 	}
+
+    public void CallInfoMoveable(PipButton button)
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+        m_infoMoveable.On();
+    }
+
+    public void DismissInfoMoveable(ClickEvent click)
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
+        m_infoMoveable.Off();
+    }
 
 	public void Call()
 	{
@@ -82,6 +95,8 @@ public class NavMenu : Singleton<NavMenu>
 			m_mainMoveable.Off();
 			m_roomMoveable.Off();
 			m_buyMoveable.Off();
+
+            m_infoMoveable.Off();
 
             m_pipAnim.StopAnim();
 		}

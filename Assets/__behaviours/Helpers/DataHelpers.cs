@@ -86,11 +86,17 @@ public static class DataHelpers
             string gameType = game["gametype"] != null ? game["gametype"].ToString() : "";
             dataType = gameType.ToLower();
         }
-        
+
         return dataType;
     }
 
     // Generic
+    public static string[] GetArray(DataRow data, string columnName)
+    {
+        string[] array = data [columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Trim(new char[] {'\n'}).Split('\n');
+        return array;
+    }
+
     public static string GetDataType(DataRow data)
     {
         string dataType = data.GetTableName();
@@ -113,16 +119,16 @@ public static class DataHelpers
     {
         D.Log(String.Format("GetSetData({0}, {1}, {2})", set ["number"], columnName, tableName));
         D.Log(set [columnName]);
-        //string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split(',');
-        string[] ids = set[columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Split('\n');
-        D.Log("ids.Length: " + ids.Length);
+        string[] ids = GetArray(set, columnName);
+
+        //D.Log("LOGGING: " + ids.Length);
+        //D.Log("ids.Length: " + ids.Length);
         
         List<DataRow> data = new List<DataRow>();
         
         foreach(string id in ids)
         {
-            D.Log(id);
-
+            //D.Log(id);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
             
             if(dt.Rows.Count > 0)
@@ -645,7 +651,7 @@ public static class DataHelpers
     
     public static DataRow GetOnsetPhoneme(DataRow word)
     {
-        string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        string[] phonemeIds = GetOrderedPhonemeIdStrings(word);
         foreach(string id in phonemeIds)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
@@ -661,7 +667,7 @@ public static class DataHelpers
     public static List<DataRow> GetOrderedPhonemes(DataRow word)
     {
         List<DataRow> phonemes = new List<DataRow>();
-        string[] phonemeIds = word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+        string[] phonemeIds = GetArray(word, "ordered_phonemes");
         foreach(string id in phonemeIds)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
@@ -674,9 +680,9 @@ public static class DataHelpers
         return phonemes;
     }
 
-    public static string[] GetOrderedPhonemeStrings(DataRow word)
+    public static string[] GetOrderedPhonemeIdStrings(DataRow word)
     {
-        return word["ordered_phonemes"] != null ? word["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',') : null;
+        return word["ordered_phonemes"] != null ? GetArray(word, "ordered_phonemes") : null;
     }
     
     static bool WordIsKeyword(DataRow wordData)
@@ -739,8 +745,8 @@ public static class DataHelpers
 
     public static bool WordsShareOnsetPhonemes(DataRow dataA, DataRow dataB)
     {
-        string[] orderedPhonemesA = GetOrderedPhonemeStrings(dataA);
-        string[] orderedPhonemesB = GetOrderedPhonemeStrings(dataB);
+        string[] orderedPhonemesA = GetOrderedPhonemeIdStrings(dataA);
+        string[] orderedPhonemesB = GetOrderedPhonemeIdStrings(dataB);
 
         return orderedPhonemesA [0] == orderedPhonemesB [0];
     }
@@ -1064,8 +1070,7 @@ public static class DataHelpers
     // TODO: Delete when no longer used by LessonContentCoordinator
     public static bool DoesSetContainData(DataRow set, string setAttribute, string dataType)
     {
-        string[] ids = set[setAttribute].ToString().Replace("[", "").Replace("]", "").Split(',');
-        
+        string[] ids = GetArray(set, setAttribute);
         return (ids.Length > 0);
     }
 
@@ -1110,10 +1115,15 @@ public static class DataHelpers
         {
             if (setTable.Rows [0] [columnName] != null)
             {
-                string[] dataIds = setTable.Rows [0] [columnName].ToString().Replace(" ", "").Replace("-", "").Replace("'", "").Replace("[", "").Replace("]", "").Split(',');
+                string[] dataIds = setTable.Rows [0] [columnName].ToString().Replace(" ", "").Replace("-", "").Replace("'", "").Replace("[", "").Replace("]", "").Trim(new char[] { '\n' }).Split('\n');
+
+                D.Log("LOGGING: " + dataIds.Length);
+                D.Log(setTable.Rows [0] [columnName].ToString());
                 
                 foreach (string id in dataIds)
                 {
+                    D.Log(id);
+
                     try
                     {
                         DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");

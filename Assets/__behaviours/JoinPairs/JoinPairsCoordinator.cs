@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator> 
 {
     [SerializeField]
+    private GameObject m_sideBarCameraPrefab;
+    [SerializeField]
     private string m_dataType = "words";
     [SerializeField]
     private JoinPairsPlayer[] m_gamePlayers;
@@ -112,6 +114,9 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
         if (numPlayers == 2)
         {
+            GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
+            sideBarCamera.transform.parent = m_gamePlayers[0].transform;
+
             m_targetScore = 4;
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");

@@ -83,7 +83,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 		{
 			DataRow row = dt[0];
 			
-			string[] phonemes = row["ordered_phonemes"].ToString().Replace("[", "").Replace("]", "").Split(',');
+            string[] phonemes = DataHelpers.GetOrderedPhonemeIdStrings(row);
 			
 			List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
 			

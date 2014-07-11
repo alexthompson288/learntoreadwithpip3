@@ -21,6 +21,8 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
     [SerializeField]
     private float m_probabilityDataIsCurrent;
     [SerializeField]
+    private GameObject m_sideBarCameraPrefab;
+    [SerializeField]
     private bool m_waitForBoth;
     int m_numWaitForPlayers;
 
@@ -46,6 +48,9 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         }
         else
         {
+            GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
+            sideBarCamera.transform.parent = m_gamePlayers[0].transform;
+
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
         }
