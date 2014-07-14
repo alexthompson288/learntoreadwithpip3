@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public static class DataHelpers 
 {
@@ -93,8 +94,31 @@ public static class DataHelpers
     // Generic
     public static string[] GetArray(DataRow data, string columnName)
     {
+        D.Log("DataHelpers.GetArray()");
+        D.Log(data [columnName].GetType());
+
         string[] array = data [columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Trim(new char[] {'\n'}).Split('\n');
         return array;
+
+        /*
+        D.Log(data [columnName].ToString());
+        string pattern = "[^ ]+";
+        Regex rgx = new Regex(pattern);
+        MatchCollection mc = rgx.Matches(data[columnName].ToString());
+        //MatchCollection mc = rgx.Matches(text);
+        string[] items = new string[mc.Count];
+        for (int i = 0; i < items.Length; i++)
+        {
+            items[i] = mc[i].Value;
+        }
+
+        foreach (string item in items)
+        {
+            D.Log(item);
+        }
+
+        return items;  
+        */
     }
 
     public static string GetDataType(DataRow data)

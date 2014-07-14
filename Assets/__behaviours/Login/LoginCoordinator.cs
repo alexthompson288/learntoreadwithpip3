@@ -17,11 +17,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     [SerializeField]
     private UILabel m_infoLabel;
     [SerializeField]
-    private PipAnim m_pipAnim;
+    private GameObject m_pipPrefab;
     [SerializeField]
-    private SpriteAnim m_pipSpriteAnim;
+    private Transform m_pipSpawnLocation;
     [SerializeField]
-    private Transform m_pipLocation;
+    private Transform m_pipOnLocation;
     [SerializeField]
     private UIPanel m_loginPanel;
     [SerializeField]
@@ -30,6 +30,9 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private Transform m_waitingIcon;
 
     static string m_infoText = "Login";
+
+    private PipAnim m_pipAnim;
+    private SpriteAnim m_pipSpriteAnim;
 
     void Awake()
     {
@@ -58,11 +61,13 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
 
-        if (m_pipAnim != null)
-        {
-            yield return new WaitForSeconds(0.8f);
-            m_pipAnim.MoveToPos(m_pipLocation.position);
-        }
+        GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
+        m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
+        m_pipSpriteAnim = newPip.GetComponentInChildren<SpriteAnim>() as SpriteAnim;
+
+        yield return new WaitForSeconds(0.8f);
+            
+        m_pipAnim.MoveToPos(m_pipOnLocation.position);
     }
 
     public static void SetInfoText(UserException ex)
@@ -182,16 +187,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         m_tweenBehaviour.Off();
     }
-
-#if UNITY_EDITOR
-    void Update()
-    {
-        /*
-        if(Input.GetKeyDown(KeyCode.O))
-            StartCoroutine(Off());
-        */
-    }
-#endif
 
     IEnumerator Off()
     {

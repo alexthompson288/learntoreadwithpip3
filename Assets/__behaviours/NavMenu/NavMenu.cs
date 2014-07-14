@@ -4,20 +4,16 @@ using Wingrove;
 
 public class NavMenu : Singleton<NavMenu> 
 {
-	[SerializeField]
-	private TweenOnOffBehaviour m_mainMoveable;
-	[SerializeField]
-	private TweenOnOffBehaviour m_roomMoveable;
-	[SerializeField]
-	private TweenOnOffBehaviour m_buyMoveable;
-	[SerializeField]
-	private GameObject m_callButton;
-	[SerializeField]
-	private GameObject m_callButtonRight;
-	[SerializeField]
-	private GameObject m_navMenuGoParent;
-	[SerializeField]
-	private UILabel m_buyAllBooksLabel;
+    [SerializeField]
+    private TweenOnOffBehaviour[] m_moveables;
+    [SerializeField]
+    private GameObject m_callButton;
+    [SerializeField]
+    private GameObject m_navMenuGoParent;
+    [SerializeField]
+    private Transform m_pipAnimLocation;
+    [SerializeField]
+    private GameObject m_pipAnimPrefab;
     [SerializeField]
     private GameObject m_parentGate;
     [SerializeField]
@@ -26,113 +22,108 @@ public class NavMenu : Singleton<NavMenu>
     private Transform m_gamesButton;
     [SerializeField]
     private Transform m_storiesButton;
-    [SerializeField]
+
     private Collector m_pipAnim;
-    [SerializeField]
-    private TweenOnOffBehaviour m_infoMoveable;
-    [SerializeField]
-    private PipButton m_callInfoMoveable;
-    [SerializeField]
-    private ClickEvent m_dismissInfoMoveable;
 
-	void Awake()
-	{
-        m_callInfoMoveable.Unpressing += CallInfoMoveable;
-        m_dismissInfoMoveable.SingleClicked += DismissInfoMoveable;
 
-		m_navMenuGoParent.SetActive(true);
-        m_mainMoveable.gameObject.SetActive(true);
-        m_buyMoveable.gameObject.SetActive(true);
-        m_roomMoveable.gameObject.SetActive(true);
+    public enum MenuType
+    {
+        Main,
+        Flashcard,
+        Info,
+        Buy
+    }
+
+
+    void Awake()
+    {
+        GameObject newPipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipAnimPrefab, m_pipAnimLocation);
+        m_pipAnim = newPipAnim.GetComponent<PipAnim>() as Collector;
+        m_pipAnim.StopAnim();
+
+        m_navMenuGoParent.SetActive(true);
+
         m_parentGate.SetActive(true);
 
-#if UNITY_STANDALONE
+        foreach (TweenOnOffBehaviour moveable in m_moveables)
+        {
+            moveable.gameObject.SetActive(true);
+        }
+        
+        #if UNITY_STANDALONE
         if(m_pipisodesButton != null)
         {
             m_pipisodesButton.SetActive(false);
             m_gamesButton.localPosition = new Vector3(-120, m_gamesButton.localPosition.y, m_gamesButton.localPosition.z);
             m_storiesButton.localPosition = new Vector3(120, m_storiesButton.localPosition.y, m_storiesButton.localPosition.z);
         }
-#endif
-	}
-
-	void Start()
-	{
-		if(SessionInformation.Instance.GetNumPlayers() == 2) 
-		{
-			m_callButton.SetActive(false);
-		}
-	}
-
-	public void HideCallButton()
-	{
-		m_callButton.SetActive(false);
-	}
-
-	public void MoveCallButtonToRight()
-	{
-		m_callButton.SetActive(false);
-		m_callButtonRight.SetActive(true);
-	}
-
-    public void CallInfoMoveable(PipButton button)
+        #endif
+    }
+    
+    void Start()
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-        m_infoMoveable.On();
+        if(SessionInformation.Instance.GetNumPlayers() == 2) 
+        {
+            m_callButton.SetActive(false);
+        }
+    }
+    
+    public void HideCallButton()
+    {
+        m_callButton.SetActive(false);
     }
 
-    public void DismissInfoMoveable(ClickEvent click)
+    public void Call(MenuType menuType)
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
-        m_infoMoveable.Off();
+        if (menuType == MenuType.Main)
+        {
+            CallMenu();
+        } 
+        else
+        {
+            int index = (int)menuType;
+
+            if(index < m_moveables.Length)
+            {
+                CallMoveable(m_moveables[index]);
+            }
+        }
     }
 
-	public void Call()
-	{
-		if(m_mainMoveable.IsOn())
-		{
-			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
-			m_mainMoveable.Off();
-			m_roomMoveable.Off();
-			m_buyMoveable.Off();
+    void CallMenu()
+    {
+        if(m_moveables[0].IsOn())
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
 
-            m_infoMoveable.Off();
-
+            foreach(TweenOnOffBehaviour moveable in m_moveables)
+            {
+                moveable.Off();
+            }
+            
             m_pipAnim.StopAnim();
-		}
-		else
-		{
-			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-			m_mainMoveable.On();
+        }
+        else
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
+            CallMoveable(m_moveables[0]);
+            
             m_pipAnim.StartAnim();
-		}
-	}
+        }
+    }
 
-	public void CallRoomMoveable()
-	{
-		CallMoveable(m_roomMoveable);
-	}
-
-	public void CallBuyMoveable()
-	{
-		m_buyAllBooksLabel.text = System.String.Format("Unlock All {0} Books - £19.99", BuyManager.Instance.numBooks);
-
-		CallMoveable(m_buyMoveable);
-	}
-
-	public void CallMoveable(TweenOnOffBehaviour moveable)
-	{
-		if(moveable.IsOn())
-		{
-			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
-			moveable.Off();
-		}
-		else
-		{
-			WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
-			moveable.On();
-		}
-	}
-
+    void CallMoveable(TweenOnOffBehaviour moveable)
+    {
+        if(moveable.IsOn())
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
+            moveable.Off();
+        }
+        else
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+            moveable.On();
+        }
+    }
 }

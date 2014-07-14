@@ -175,7 +175,7 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         yield return new WaitForSeconds(widgetTweenDuration + 1f);
 
-        float trainTweenDuration = 0.5f;
+        float trainTweenDuration = 0.75f;
 
         Hashtable tweenArgs = new Hashtable();
 

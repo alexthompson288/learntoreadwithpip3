@@ -156,7 +156,7 @@ public class SqliteDatabase
         }
         catch
         {
-            Debug.LogError("Could not parse tablename");
+            D.LogError("Could not parse tablename");
             tableName = "default";
         }
         
@@ -165,6 +165,7 @@ public class SqliteDatabase
         {
             //object[] row = new object[columnCount];
             object[] row = new object[columnCount + 1]; // Tom Mulvaney: Add an extra column for tablename
+
 
             for (int i = 0; i < columnCount; i++)
             {

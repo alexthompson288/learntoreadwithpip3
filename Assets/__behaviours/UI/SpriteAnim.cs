@@ -175,6 +175,15 @@ public class SpriteAnim : MonoBehaviour
                 if(Mathf.Abs(m_currentFrame) < Mathf.Abs(ad.m_numFrames))
                 {
                     SetSpriteName();
+
+                    if(ad.m_isReverse)
+                    {
+                        --m_currentFrame;
+                    }
+                    else
+                    {
+                        ++m_currentFrame;
+                    }
                 }
                 else
                 {
@@ -209,6 +218,7 @@ public class SpriteAnim : MonoBehaviour
                     }
                 }
 
+                /*
                 if(ad.m_isReverse)
                 {
                     --m_currentFrame;
@@ -217,6 +227,7 @@ public class SpriteAnim : MonoBehaviour
                 {
                     ++m_currentFrame;
                 }
+                */
             }
         }
     }

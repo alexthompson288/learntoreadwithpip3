@@ -22,6 +22,8 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_cream;
     [SerializeField]
+    private Color m_orangeYellow;
+    [SerializeField]
     private Color m_tricky;
     [SerializeField]
     private Color m_highFrequency;
@@ -37,20 +39,11 @@ public class ColorInfo : Singleton<ColorInfo>
         White,
         LightBlue,
         DeepPink,
-        Cream
+        Cream,
+        OrangeYellow
     }
 
     public class NoColor : System.Exception {}
-
-    /*
-    public static IEnumerator WaitForInstance()
-    {
-        while (ColorInfo.Instance == null)
-        {
-            yield return null;
-        }
-    }
-    */
 
     // Methods are static to reduce typing required in other classes
     public static Color GetColor(PipColor pipColor)
@@ -86,6 +79,10 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case PipColor.Cream:
                 return Instance.m_cream;
+                break;
+            case PipColor.OrangeYellow:
+                return Instance.m_orangeYellow;
+                break;
             default:
                 return Color.white;
                 break;
@@ -131,6 +128,9 @@ public class ColorInfo : Singleton<ColorInfo>
             case "Cream":
                 return PipColor.Cream;
                 break;
+            case "OrangeYellow":
+                return PipColor.OrangeYellow;
+                break;
             default:
                 D.LogError("No color found for: " + color);
                 throw new NoColor();
@@ -170,6 +170,9 @@ public class ColorInfo : Singleton<ColorInfo>
                 return "DeepPink";
             case PipColor.Cream:
                 return "Cream";
+                break;
+            case PipColor.OrangeYellow:
+                return "OrangeYellow";
                 break;
             default:
                 return "White";

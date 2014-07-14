@@ -6,16 +6,10 @@ public class CallNavMenu : MonoBehaviour
 	[SerializeField]
 	private bool m_multiplayerButton = false;
 	[SerializeField]
-	private MenuType m_menuType = MenuType.Main;
+	private NavMenu.MenuType m_menuType = NavMenu.MenuType.Main;
 
-	enum MenuType
-	{
-		Main,
-		Room,
-		Buy
-	}
 
-	void Start()
+    void Start()
 	{
 		if(m_multiplayerButton && SessionInformation.Instance.GetNumPlayers() < 2)
 		{
@@ -37,20 +31,7 @@ public class CallNavMenu : MonoBehaviour
 		}
 		else
 		{
-			switch(m_menuType)
-			{
-			case MenuType.Main:
-				NavMenu.Instance.Call();
-				break;
-
-			case MenuType.Room:
-				NavMenu.Instance.CallRoomMoveable();
-				break;
-
-			case MenuType.Buy:
-				NavMenu.Instance.CallBuyMoveable();
-				break;
-			}
+            NavMenu.Instance.Call(m_menuType);
 		}
 
 	}
