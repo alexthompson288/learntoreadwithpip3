@@ -6,7 +6,7 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_pink;
     [SerializeField]
-    private Color m_red;
+    private Color m_red; // Old (249, 24, 51) // (255, 64, 79)
     [SerializeField]
     private Color m_yellow;
     [SerializeField]
@@ -16,7 +16,7 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_orange;
     [SerializeField]
-    private Color m_lightBlue;
+    private Color m_skyBlue;
     [SerializeField]
     private Color m_deepPink; //f577c1
     [SerializeField]
@@ -24,9 +24,22 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_orangeYellow;
     [SerializeField]
+    private Color m_metalGrey;
+    [SerializeField]
+    private Color m_lightBlue;
+    [SerializeField]
+    private Color m_turquoise;
+    [SerializeField]
     private Color m_tricky;
     [SerializeField]
     private Color m_highFrequency;
+
+    void Start()
+    {
+        D.Log(GetPipColor("LightBlue"));
+        D.Log(GetPipColor("Pink"));
+        D.Log(GetPipColor("Cream"));
+    }
 
     public enum PipColor
     {
@@ -37,10 +50,13 @@ public class ColorInfo : Singleton<ColorInfo>
         Green,
         Orange,
         White,
-        LightBlue,
+        SkyBlue,
         DeepPink,
         Cream,
-        OrangeYellow
+        OrangeYellow,
+        MetalGrey,
+        LightBlue,
+        Turquoise
     }
 
     public class NoColor : System.Exception {}
@@ -71,8 +87,8 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.White:
                 return Color.white;
                 break;
-            case PipColor.LightBlue:
-                return Instance.m_lightBlue;
+            case PipColor.SkyBlue:
+                return Instance.m_skyBlue;
                 break;
             case PipColor.DeepPink:
                 return Instance.m_deepPink;
@@ -82,6 +98,15 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case PipColor.OrangeYellow:
                 return Instance.m_orangeYellow;
+                break;
+            case PipColor.MetalGrey:
+                return Instance.m_metalGrey;
+                break;
+            case PipColor.LightBlue:
+                return Instance.m_lightBlue;
+                break;
+            case PipColor.Turquoise:
+                return Instance.m_turquoise;
                 break;
             default:
                 return Color.white;
@@ -96,88 +121,20 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public static PipColor GetPipColor(string color)
     {
-        switch (color)
+        try
         {
-            case "Pink":
-                return PipColor.Pink;
-                break;
-            case "Red":
-                return PipColor.Red;
-                break;
-            case "Yellow":
-                return PipColor.Yellow;
-                break;
-            case "Blue":
-                return PipColor.Blue;
-                break;
-            case "Green":
-                return PipColor.Green;
-                break;
-            case "Orange":
-                return PipColor.Orange;
-                break;
-            case "White":
-                return PipColor.White;
-                break;
-            case "LightBlue":
-                return PipColor.LightBlue;
-                break;
-            case "DeepPink":
-                return PipColor.DeepPink;
-                break;
-            case "Cream":
-                return PipColor.Cream;
-                break;
-            case "OrangeYellow":
-                return PipColor.OrangeYellow;
-                break;
-            default:
-                D.LogError("No color found for: " + color);
-                throw new NoColor();
-                break;
+            PipColor colorValue = (PipColor)System.Enum.Parse(typeof(PipColor), color);
+            return colorValue;
+        }
+        catch
+        {
+            return PipColor.White;
         }
     }
 
     public static string GetColorString(PipColor pipColor)
     {
-        switch(pipColor)
-        {
-            case PipColor.Pink:
-                return "Pink";
-                break;
-            case PipColor.Red:
-                return "Red";
-                break;
-            case PipColor.Yellow:
-                return "Yellow";
-                break;
-            case PipColor.Blue:
-                return "Blue";
-                break;
-            case PipColor.Green:
-                return "Green";
-                break;
-            case PipColor.Orange:
-                return "Orange";
-                break;
-            case PipColor.White:
-                return "White";
-                break;
-            case PipColor.LightBlue:
-                return "LightBlue";
-                break;
-            case PipColor.DeepPink:
-                return "DeepPink";
-            case PipColor.Cream:
-                return "Cream";
-                break;
-            case PipColor.OrangeYellow:
-                return "OrangeYellow";
-                break;
-            default:
-                return "White";
-                break;
-        }
+        return pipColor.ToString();
     }
 
     public static int GetColorIndex(string color)

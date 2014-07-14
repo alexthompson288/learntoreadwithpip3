@@ -9,7 +9,7 @@ public class NavMenu : Singleton<NavMenu>
     [SerializeField]
     private GameObject m_callButton;
     [SerializeField]
-    private GameObject m_navMenuGoParent;
+    private GameObject m_moveableParent;
     [SerializeField]
     private Transform m_pipAnimLocation;
     [SerializeField]
@@ -40,8 +40,6 @@ public class NavMenu : Singleton<NavMenu>
         GameObject newPipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipAnimPrefab, m_pipAnimLocation);
         m_pipAnim = newPipAnim.GetComponent<PipAnim>() as Collector;
         m_pipAnim.StopAnim();
-
-        m_navMenuGoParent.SetActive(true);
 
         m_parentGate.SetActive(true);
 
@@ -102,15 +100,26 @@ public class NavMenu : Singleton<NavMenu>
             }
             
             m_pipAnim.StopAnim();
+
+            StartCoroutine("Disable");
         }
         else
         {
+            StopCoroutine("Disable");
+            m_moveableParent.SetActive(true);
+
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
             CallMoveable(m_moveables[0]);
             
             m_pipAnim.StartAnim();
         }
+    }
+
+    IEnumerator Disable()
+    {
+        yield return new WaitForSeconds(m_moveables [0].GetTotalDurationOff());
+        m_moveableParent.SetActive(false);
     }
 
     void CallMoveable(TweenOnOffBehaviour moveable)

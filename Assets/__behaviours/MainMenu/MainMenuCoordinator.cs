@@ -10,6 +10,9 @@ public class MainMenuCoordinator : MonoBehaviour
 
     IEnumerator Start()
     {
+        m_readButton.SetPipColor(ColorInfo.PipColor.OrangeYellow);
+        m_mathsButton.SetPipColor(ColorInfo.PipColor.DeepPink);
+
         yield return StartCoroutine(GameManager.WaitForInstance());
 
         m_readButton.Unpressed += OnPressRead;
