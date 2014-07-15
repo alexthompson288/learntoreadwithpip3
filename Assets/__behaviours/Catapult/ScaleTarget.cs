@@ -53,6 +53,8 @@ public class ScaleTarget : Target
 		
         yield return new WaitForSeconds(m_tweenDurationOff);
 
+        ShowDefault();
+
         ResetSpriteName();
 		
 		rigidbody.velocity = Vector3.zero;
@@ -71,6 +73,8 @@ public class ScaleTarget : Target
 	{
         //D.Log("ScaleTarget.OnCo");
 		yield return new WaitForSeconds(initialDelay);
+
+        ShowDefault();
 		
         TweenColor.Begin(gameObject, m_tweenDurationOn, Color.white);
         iTween.ScaleTo(gameObject, Vector3.one, m_tweenDurationOn);

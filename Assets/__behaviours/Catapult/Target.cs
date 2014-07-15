@@ -28,8 +28,25 @@ public class Target : MonoBehaviour
     public void SetShowPicture(bool showPicture)
     {
         m_showPicture = showPicture;
-        m_texture.gameObject.SetActive(m_showPicture);
-        m_label.gameObject.SetActive(!m_showPicture);
+        ShowDefault();
+    }
+
+    protected void ShowDefault()
+    {
+        float pictureAlpha = m_showPicture ? 1 : 0;
+        m_texture.color = new Color(m_texture.color.r, m_texture.color.g, m_texture.color.b, pictureAlpha);
+
+        float labelAlpha = m_showPicture ? 0 : 1;
+        m_label.color = new Color(m_label.color.r, m_label.color.g, m_label.color.b, labelAlpha);
+        //m_texture.gameObject.SetActive(m_showPicture);
+        //m_label.gameObject.SetActive(!m_showPicture);
+    }
+    
+    public void ShowLabel()
+    {
+        float tweenDuration = 0.1f;
+        TweenAlpha.Begin(m_label.gameObject, tweenDuration, 1);
+        TweenAlpha.Begin(m_texture.gameObject, tweenDuration, 0);
     }
 
     public bool isAlwaysCorrect
@@ -84,7 +101,9 @@ public class Target : MonoBehaviour
         m_label.text = DataHelpers.GetLabelText(m_data);
 
         m_texture.mainTexture = DataHelpers.GetPicture(newData);
-        m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
+        //m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
+        float pictureAlpha = (m_showPicture && m_texture.mainTexture != null) ? 1 : 0;
+        m_texture.color = new Color(m_texture.color.r, m_texture.color.g, m_texture.color.b, pictureAlpha);
     }
 
     void OnCollisionEnter(Collision other)
@@ -102,7 +121,6 @@ public class Target : MonoBehaviour
         }
     }
 
-
     void OnTriggerEnter(Collider other)
     {
         D.Log("Target.OnTriggerEnter()");
@@ -117,7 +135,6 @@ public class Target : MonoBehaviour
             }
         }
     }
-
 
     public void OnHit()
     {

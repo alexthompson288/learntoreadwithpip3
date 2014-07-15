@@ -236,6 +236,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
             else
             {
                 m_scoreKeeper.UpdateScore(-1);
+
+                if(m_targetsShowPicture)
+                {
+                    target.ShowLabel();
+                }
             }
         }
 
