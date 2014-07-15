@@ -34,13 +34,6 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_highFrequency;
 
-    void Start()
-    {
-        D.Log(GetPipColor("LightBlue"));
-        D.Log(GetPipColor("Pink"));
-        D.Log(GetPipColor("Cream"));
-    }
-
     public enum PipColor
     {
         Pink,

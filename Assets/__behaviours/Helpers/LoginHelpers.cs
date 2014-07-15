@@ -106,7 +106,7 @@ public static class LoginHelpers
 		return responseContent;
 	}
 	
-	static string GetUser()
+	static string GetUser(string accessToken)
 	{
 		#if UNITY_EDITOR
 		// Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
@@ -118,7 +118,7 @@ public static class LoginHelpers
 		request.KeepAlive = true;
 		request.Method = "GET";
 		request.ContentType="application/json";
-		request.Headers.Add("authorization", "Token token=\"" + LoginInfo.Instance.GetAccessToken() + "\""); //q3nXHxmk6ovg-dnoXupy
+        request.Headers.Add("authorization", "Token token=\"" + accessToken + "\""); //q3nXHxmk6ovg-dnoXupy
 		request.ContentLength = 0;
 
 		string responseContent=null;
@@ -131,10 +131,10 @@ public static class LoginHelpers
 		return responseContent;
 	}
 
-	public static bool IsUserLegal()
+	public static bool IsUserLegal(string accessToken)
 	{
 		D.Log ("LoginHelpers.GetUserState()");
-		string userResponse = GetUser();
+		string userResponse = GetUser(accessToken);
 
         Debug.Log("IsUserLegal.userResponse: " + userResponse);
 		

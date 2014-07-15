@@ -95,6 +95,7 @@ public class LoginInfo : Singleton<LoginInfo>
         
         if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
         {
+            D.Log("TRYING TO UPDATE TOKEN");
             try
             {
                 string tokenResponse = LoginHelpers.RequestToken(m_email, m_password);
@@ -133,33 +134,48 @@ public class LoginInfo : Singleton<LoginInfo>
         }
         
         
-        D.Log("CHECK USER");
         bool isUserLegal = false;
-        try
+
+        // Only check user if we actually have a token 
+        if (!System.String.IsNullOrEmpty(m_accessToken))
         {
-            isUserLegal = LoginHelpers.IsUserLegal();
-            D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
-        } 
-        catch (LoginException ex)
-        {
-            D.Log("USER_EXCEPTION");
-            LoginCoordinator.SetInfoText(ex);
-        } 
-        catch (WebException ex)
-        {
-            D.Log("WEB_EXCEPTION");
-            if(ex.Response is System.Net.HttpWebResponse)
+            D.Log("FOUND TOKEN - CHECK USER");
+
+            try
             {
-                LoginCoordinator.SetInfoText(ex, false);
-            }
-            else
+                isUserLegal = LoginHelpers.IsUserLegal(m_accessToken);
+                D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
+            } 
+            catch (LoginException ex)
             {
-                isUserLegal = true;
+                D.Log("USER_EXCEPTION: " + ex.exceptionType);
+                LoginCoordinator.SetInfoText(ex);
+            } 
+            catch (WebException ex)
+            {
+                if (ex.Response is System.Net.HttpWebResponse)
+                {
+                    D.Log("HTTP EXCEPTION: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                    LoginCoordinator.SetInfoText(ex, false);
+                } else
+                {
+                    D.Log("LEGAL WEB EXCEPTION");
+                    isUserLegal = true;
+                }
             }
+        }
+        else
+        {
+            D.Log("NO TOKEN - CANNOT CHECK USER");
         }
         
         if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
         {
+            D.Log("FAIL");
+            D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
+            D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
+            D.Log("isUserLegal: " + isUserLegal);
+
             if (Application.loadedLevelName != m_loginSceneName)
             {
                 TransitionScreen.Instance.ChangeLevel(m_loginSceneName, false);
@@ -192,7 +208,7 @@ public class LoginInfo : Singleton<LoginInfo>
 
     void Load()
     {
-        DataSaver ds = new DataSaver("MyUserInfo");
+        DataSaver ds = new DataSaver("LoginInfo");
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
         
@@ -209,7 +225,7 @@ public class LoginInfo : Singleton<LoginInfo>
     
     void Save()
     {
-        DataSaver ds = new DataSaver("MyUserInfo");
+        DataSaver ds = new DataSaver("LoginInfo");
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
         

@@ -143,7 +143,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
             try
             {
-                isUserLegal = LoginHelpers.IsUserLegal();
+                isUserLegal = LoginHelpers.IsUserLegal(accessToken);
             } 
             catch (WebException ex)
             {
@@ -168,7 +168,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
                 
                 yield return new WaitForSeconds(0.5f);
                 
-                TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+                //TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
             }
         } 
     }
