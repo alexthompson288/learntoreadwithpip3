@@ -390,7 +390,7 @@ public class UserStats : Singleton<UserStats>
 
 		void BuildSessionIdentifier()
 		{
-			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { UserInfo.Instance.GetEmail(), m_sessionId, GetTrimmedStartTime() });
+			m_sessionIdentifier = String.Format("{0}_{1}_{2}_{3}", new System.Object[] { LoginInfo.Instance.GetEmail(), m_sessionId, GetTrimmedStartTime() });
 		}
 
 		public static string OnNewGame(string scene)

@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class UserException : Exception
+public class LoginException : Exception
 {
     public enum ExceptionType
     {
@@ -19,13 +19,13 @@ public class UserException : Exception
         }
     }
 
-    public UserException(ExceptionType myExceptionType)
+    public LoginException(ExceptionType myExceptionType)
     {
         m_exceptionType = myExceptionType;
     }
 }
 
-public static class UserHelpers 
+public static class LoginHelpers 
 {
     public static string m_accessPrefix = "\"access_token\":\"";
     public static string accessPrefix
@@ -96,20 +96,6 @@ public static class UserHelpers
 
 		return responseContent;
 	}
-
-    /*
-    HttpWebRequest webRequest;
-
-    void StartWebRequest()
-    {
-        webRequest.BeginGetResponse(new AsyncCallback(FinishWebRequest), null);
-    }
-
-    void FinishWebRequest(IAsyncResult result)
-    {
-        webRequest.EndGetResponse(result);
-    }
-    */ 
 	
 	static string GetUser()
 	{
@@ -123,7 +109,7 @@ public static class UserHelpers
 		request.KeepAlive = true;
 		request.Method = "GET";
 		request.ContentType="application/json";
-		request.Headers.Add("authorization", "Token token=\"" + UserInfo.Instance.GetAccessToken() + "\""); //q3nXHxmk6ovg-dnoXupy
+		request.Headers.Add("authorization", "Token token=\"" + LoginInfo.Instance.GetAccessToken() + "\""); //q3nXHxmk6ovg-dnoXupy
 		request.ContentLength = 0;
 
 		string responseContent=null;
@@ -138,7 +124,7 @@ public static class UserHelpers
 
 	public static bool IsUserLegal()
 	{
-		D.Log ("UserHelpers.GetUserState()");
+		D.Log ("LoginHelpers.GetUserState()");
 		string userResponse = GetUser();
 
         Debug.Log("IsUserLegal.userResponse: " + userResponse);
@@ -158,13 +144,13 @@ public static class UserHelpers
             else
             {
                 D.Log("EXPIRED");
-                throw new UserException(UserException.ExceptionType.Expired);
+                throw new LoginException(LoginException.ExceptionType.Expired);
             }
         } 
         else
         {
             D.Log("INVALID_TOKEN");
-            throw new UserException(UserException.ExceptionType.InvalidToken);
+            throw new LoginException(LoginException.ExceptionType.InvalidToken);
         }
 	}
 }

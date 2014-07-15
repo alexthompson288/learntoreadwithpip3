@@ -7,8 +7,6 @@ using WingroveAudio;
 public class LoginCoordinator : Singleton<LoginCoordinator> 
 {
     [SerializeField]
-    private TweenOnOffBehaviour m_tweenBehaviour;
-    [SerializeField]
     private UILabel m_emailInput;
     [SerializeField]
     private UILabel m_passwordInput;
@@ -26,8 +24,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private UIPanel m_loginPanel;
     [SerializeField]
     private UIPanel m_successPanel;
-    [SerializeField]
-    private Transform m_waitingIcon;
 
     static string m_infoText = "Login";
 
@@ -36,7 +32,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void Awake()
     {
-        m_waitingIcon.transform.localScale = Vector3.zero;
         m_loginPanel.alpha = 1;
         m_successPanel.alpha = 0;
 
@@ -48,13 +43,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
-    }
-
-    IEnumerator RotateWaitingIcon()
-    {
-        m_waitingIcon.Rotate(Vector3.forward, 100 * Time.deltaTime);
-        yield return null;
-        StartCoroutine("RotateWaitingIcon");
     }
 
     IEnumerator Start()
@@ -70,14 +58,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_pipAnim.MoveToPos(m_pipOnLocation.position);
     }
 
-    public static void SetInfoText(UserException ex)
+    public static void SetInfoText(LoginException ex)
     {
         switch (ex.exceptionType)
         {
-            case UserException.ExceptionType.Expired:
+            case LoginException.ExceptionType.Expired:
                 SetInfoText("Your account has expired");
                 break;
-            case UserException.ExceptionType.InvalidToken:
+            case LoginException.ExceptionType.InvalidToken:
                 SetInfoText("Login");
                 break;
         }
@@ -124,95 +112,64 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     IEnumerator OnPressLoginCo()
     {
-        m_infoLabel.text = "Logging in...";
-        iTween.ScaleTo(m_waitingIcon.gameObject, Vector3.one, 0.2f);
-        StartCoroutine("RotateWaitingIcon");
-
-        yield return new WaitForSeconds(0.8f);
-
-
         string tokenResponse = "";
 
         try
         {
-            tokenResponse = UserHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
+            tokenResponse = LoginHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
         }
         catch(WebException ex)
         {
             SetInfoText(ex, true);
         }
 
-        bool hasToken = tokenResponse.Contains(UserHelpers.accessPrefix) && tokenResponse.Contains(UserHelpers.expirationPrefix);
+        bool hasToken = tokenResponse.Contains(LoginHelpers.accessPrefix) && tokenResponse.Contains(LoginHelpers.expirationPrefix);
         
         D.Log("hasToken: " + hasToken);
         D.Log("RESPONSE_CONTENT");
         D.Log(tokenResponse);
-        
+       
         if (hasToken)
         {
-            string accessToken = UserHelpers.ParseResponse(tokenResponse, UserHelpers.accessPrefix, "\"");
+            string accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
             D.Log("ACCESS_TOKEN: " + accessToken);
             
-            string expirationDate = UserHelpers.ParseResponse(tokenResponse, UserHelpers.expirationPrefix, "\"");
+            string expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
             D.Log("EXPIRATION_DATE: " + expirationDate);
             
-            UserInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
+            LoginInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
 
             bool isUserLegal = false;
 
             try
             {
-                isUserLegal = UserHelpers.IsUserLegal();
+                isUserLegal = LoginHelpers.IsUserLegal();
             } 
             catch (WebException ex)
             {
                 SetInfoText(ex, false);
             } 
-            catch (UserException ex)
+            catch (LoginException ex)
             {
                 SetInfoText(ex);
             }
 
             if (isUserLegal)
             {
-                StartCoroutine(Off());
+                float panelTweenDuration = 0.25f;
+                TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
+                TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
+                
+                m_pipSpriteAnim.PlayAnimation("JUMP");
+                
+                yield return new WaitForSeconds(0.22f);
+                
+                WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+                
+                yield return new WaitForSeconds(0.5f);
+                
+                TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
             }
         } 
-
-        iTween.ScaleTo(m_waitingIcon.gameObject, Vector3.zero, 0.2f);
-        StopCoroutine("RotateWaitingIcon");
-    }
-
-    public void On()
-    {
-        m_tweenBehaviour.Off();
-    }
-
-    IEnumerator Off()
-    {
-        float panelTweenDuration = 0.25f;
-        TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
-        TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
-
-        m_pipSpriteAnim.PlayAnimation("JUMP");
-        
-        yield return new WaitForSeconds(0.22f);
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
-
-        yield return new WaitForSeconds(0.5f);
-
-        if (m_tweenBehaviour != null)
-        {
-            m_tweenBehaviour.Off();
-
-            yield return new WaitForSeconds(m_tweenBehaviour.GetTotalDurationOff());
-
-            Destroy(gameObject);
-        }
-        else
-        {
-            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
-        }
     }
 }
