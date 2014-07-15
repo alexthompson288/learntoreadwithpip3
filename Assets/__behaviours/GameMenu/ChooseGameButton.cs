@@ -11,8 +11,6 @@ public class ChooseGameButton : MonoBehaviour
     [SerializeField]
     private UISprite[] m_starSprites;
     [SerializeField]
-    private string m_blackboardSpriteName;
-    [SerializeField]
     private int m_numPlayers = 1;
 
     DataRow m_game = null;
@@ -20,11 +18,6 @@ public class ChooseGameButton : MonoBehaviour
     public int GetNumPlayers()
     {
         return m_numPlayers;
-    }
-
-    public string GetBlackboardSpriteName()
-    {
-        return m_blackboardSpriteName;
     }
 
     public UIAtlas GetSpriteAtlas()
@@ -67,7 +60,7 @@ public class ChooseGameButton : MonoBehaviour
                 m_starSprites[i].spriteName = spriteName;
             }
         } 
-        else
+        else if(m_game != null)
         {
             ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
         }

@@ -189,6 +189,8 @@ public class VideoPlayer : MonoBehaviour
 
     IEnumerator DownloadVideo()
     {
+        m_errorLabelParent.transform.localScale = Vector3.zero;
+
         D.Log("VideoPlayer.DownloadVideo(): " + m_filename);
 
         D.Log("DISABLE UI");
@@ -278,8 +280,6 @@ public class VideoPlayer : MonoBehaviour
             iTween.ScaleTo(m_progressBarParent, Vector3.zero, m_progressTweenDuration);
             yield return new WaitForSeconds(m_progressTweenDuration);
 
-            m_errorLabelParent.transform.localScale = Vector3.zero;
-            
             if(m_progressBar != null)
             {
                 m_progressBar.value = 0;

@@ -241,7 +241,6 @@ public class GameWidget : MonoBehaviour
                 StartCoroutine(ClickScaleDown());
                 break;
             case PressReaction.ChangeSprite:
-                D.Log("Changing sprite");
                 ChangeBackgroundState(true);
                 break;
             default:

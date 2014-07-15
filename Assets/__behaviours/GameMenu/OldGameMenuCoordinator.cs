@@ -140,7 +140,7 @@ public class OldGameMenuCoordinator : MonoBehaviour
 
             //m_temporaryGameIcon.mainTexture = button.GetComponent<ChooseGameButton>().GetTemporaryIconTexture();
             m_gameIcon.atlas = button.GetComponent<ChooseGameButton>().GetSpriteAtlas();
-            m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetBlackboardSpriteName();
+            //m_gameIcon.spriteName = button.GetComponent<ChooseGameButton>().GetBlackboardSpriteName();
             m_gameIcon.MakePixelPerfect();
            
             bool isTwoPlayer = game["multiplayer"] != null && game["multiplayer"].ToString() == "t";
