@@ -68,6 +68,14 @@ public class Target : MonoBehaviour
 
     string m_dataType;
 
+    void OnClick()
+    {
+        if (m_data != null)
+        {
+            DataAudio.Instance.PlayShort(m_data);
+        }
+    }
+
     public void SetData(DataRow newData, string dataType)
     {
         m_data = newData;

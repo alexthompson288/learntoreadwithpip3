@@ -66,8 +66,6 @@ public class PipButton : MonoBehaviour
     // SpriteChange Variables and Method
     [SerializeField]
     private bool m_changeSprite;
-    //[SerializeField]
-    //private bool m_changeAdditionalSprites;
     [SerializeField]
     private string m_pressedSpriteName;
     
@@ -90,31 +88,6 @@ public class PipButton : MonoBehaviour
         } 
 
         m_pressableButton.spriteName = toStateB ? m_pressedSpriteName : m_unpressedSpriteName;
-
-        /*
-        if(m_changeAdditionalSprites)
-        {
-            foreach(UIWidget widget in m_additionalColoredWidgets)
-            {
-                if(widget is UISprite)
-                {
-                    string spriteName = (widget as UISprite).spriteName;
-                    int lastCharIndex = spriteName.Length - 1;
-
-                    if(spriteName[lastCharIndex] == 'a' && toStateB)
-                    {
-                        spriteName[lastCharIndex] = 'b';
-                    }
-                    else if(spriteName[lastCharIndex] == 'b' && !toStateB)
-                    {
-                        spriteName[lastCharIndex] = 'a';
-                    }
-
-                    (widget as UISprite).spriteName = spriteName;
-                }
-            }
-        }
-        */
     }
 
 

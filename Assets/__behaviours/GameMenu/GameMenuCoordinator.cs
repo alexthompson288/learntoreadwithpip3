@@ -35,7 +35,8 @@ public class GameMenuCoordinator : MonoBehaviour
             button.Pressing += OnPressColorButton;
         }
         
-        if (GameMenuInfo.Instance.HasBookmark())
+        //if (GameMenuInfo.Instance.HasBookmark())
+        if(true)
         {
             ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
             m_currentColorButton = Array.Find(m_colorButtons, x => x.pipColor == currentPipColor);

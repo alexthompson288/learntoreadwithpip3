@@ -94,7 +94,7 @@ public static class NGUIHelpers
             }
         }
 
-        grid.transform.localPosition = new Vector3(offset + -(grid.transform.childCount - 1) * grid.cellWidth / 2,
+        grid.transform.localPosition = new Vector3(offset + -(grid.transform.childCount - 1) * grid.cellWidth / 2 * grid.transform.localScale.x,
                                                    grid.transform.localPosition.y, grid.transform.localPosition.z);
     }
 }
