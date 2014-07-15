@@ -10,36 +10,20 @@ public class GameMenuCoordinator : MonoBehaviour
     [SerializeField]
     private PipButton[] m_gameButtons;
     [SerializeField]
-    private AnimManager m_singlePlayerAnim;
-    [SerializeField]
-    private AnimManager[] m_twoPlayerAnims;
-    [SerializeField]
-    private UISprite m_rodSprite;
-    [SerializeField]
-    private TweenOnOffBehaviour[] m_gameButtonParents;
+    private TweenOnOffBehaviour m_gameButtonParent;
     [SerializeField]
     private GameObject m_starPrefab;
     [SerializeField]
     private UIGrid m_starSpawnGrid;
     [SerializeField]
-    private Transform m_singleplayerParent;
+    private GameObject m_chooseColorLabel;
     [SerializeField]
-    private Transform m_singleplayerParentOff;
-    [SerializeField]
-    private GameObject m_multiplayerParent;
+    private UIWidget[] m_coloredWidgets;
     
     PipButton m_currentColorButton = null;
     
     bool m_hasActivatedGameButtons = false;
 
-#if UNITY_STANDALONE
-    void Awake()
-    {
-        m_singleplayerParent.localPosition = new Vector3(m_singleplayerParent.localPosition.x, 0, m_singleplayerParent.localPosition.z);
-        m_singleplayerParentOff.localPosition = new Vector3(m_singleplayerParentOff.localPosition.x, 0, m_singleplayerParentOff.localPosition.z);
-        m_multiplayerParent.SetActive(false);
-    }
-#endif
     
     IEnumerator Start()
     {
@@ -50,7 +34,7 @@ public class GameMenuCoordinator : MonoBehaviour
         {
             button.Pressing += OnPressColorButton;
         }
-
+        
         if (GameMenuInfo.Instance.HasBookmark())
         {
             ColorInfo.PipColor currentPipColor = GameMenuInfo.Instance.GetPipColor();
@@ -62,9 +46,9 @@ public class GameMenuCoordinator : MonoBehaviour
             }
             
             ActivateGameButtons();
-
+            
             yield return new WaitForSeconds(1f);
-
+            
             if(ScoreInfo.Instance.HasNewHighScore())
             {
                 string gameName = ScoreInfo.Instance.GetNewHighScoreGame();
@@ -72,27 +56,28 @@ public class GameMenuCoordinator : MonoBehaviour
                 ChooseGameButton[] gameButtons = UnityEngine.Object.FindObjectsOfType(typeof(ChooseGameButton)) as ChooseGameButton[];
                 
                 ChooseGameButton newHighScoreButton = Array.Find(gameButtons, x => x.GetNumPlayers() == 1 && x.GetComponent<PipButton>().GetString() == gameName);
-
+                
                 if(newHighScoreButton != null)
                 {
                     WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
-                    m_singlePlayerAnim.PlayAnimation("JUMP");
                     newHighScoreButton.TweenScoreStars(m_starPrefab, m_starSpawnGrid);
                 }
             }
         }
-
+        
         ScoreInfo.Instance.RemoveNewHighScore();
         GameMenuInfo.Instance.DestroyBookmark();
-
-#if UNITY_EDITOR
+        
+        #if UNITY_EDITOR
         string programmeName = Application.loadedLevelName == "NewGameMenu" ? "Reading1" : "Maths1";
         GameManager.Instance.SetProgramme(programmeName);
-#endif
+        #endif
     }
     
     void ActivateGameButtons()
     {
+        TweenAlpha.Begin(m_chooseColorLabel, 0.25f, 0);
+
         m_hasActivatedGameButtons = true;
         
         foreach (PipButton button in m_gameButtons)
@@ -103,13 +88,7 @@ public class GameMenuCoordinator : MonoBehaviour
         
         RefreshGameButtons();
         
-        foreach (TweenOnOffBehaviour parent in m_gameButtonParents)
-        {
-            if(parent.gameObject.activeInHierarchy)
-            {
-                parent.On();
-            }
-        }
+        m_gameButtonParent.On();
     }
     
     void OnPressColorButton(PipButton button)
@@ -120,6 +99,12 @@ public class GameMenuCoordinator : MonoBehaviour
         }
         
         m_currentColorButton = button;
+
+        Color color = ColorInfo.GetColor(button.pipColor);
+        foreach (UIWidget widget in m_coloredWidgets)
+        {
+            TweenColor.Begin(widget.gameObject, 0.25f, color);
+        }
         
         if (!m_hasActivatedGameButtons)
         {
@@ -134,7 +119,7 @@ public class GameMenuCoordinator : MonoBehaviour
     void OnPressGameButton(PipButton button)
     {
         DataRow game = DataHelpers.GetGame(button.GetString());
-
+        
         if (game != null && m_currentColorButton != null)
         {
             ChooseGameButton chooseGameButton = button.GetComponent<ChooseGameButton>() as ChooseGameButton;
@@ -149,7 +134,7 @@ public class GameMenuCoordinator : MonoBehaviour
             
             // Get and set all the data associated with the color
             int moduleId = DataHelpers.GetModuleId(pipColor);
-
+            
             D.Log("moduleId: " + moduleId);
             
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
@@ -172,29 +157,8 @@ public class GameMenuCoordinator : MonoBehaviour
             
             GameMenuInfo.Instance.CreateBookmark(pipColor);
             
-            StartCoroutine(StartGames());
+            GameManager.Instance.StartGames();
         }
-    }
-    
-    IEnumerator StartGames()
-    {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
-        if (SessionInformation.Instance.GetNumPlayers() == 1)
-        {
-            m_singlePlayerAnim.PlayAnimation("JUMP");
-        } 
-        else
-        {
-            m_rodSprite.spriteName = NGUIHelpers.GetLinkedSpriteName(m_rodSprite.spriteName);
-            foreach(AnimManager anim in m_twoPlayerAnims)
-            {
-                anim.PlayAnimation("JUMP");
-            }
-        }
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        GameManager.Instance.StartGames();
     }
     
     void RefreshGameButtons()
@@ -207,5 +171,5 @@ public class GameMenuCoordinator : MonoBehaviour
         {
             button.GetComponent<ChooseGameButton>().Refresh(colorName);
         }
-    }
+    }	
 }
