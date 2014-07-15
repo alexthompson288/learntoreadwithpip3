@@ -27,7 +27,7 @@ public class LoginException : Exception
 
 public static class LoginHelpers 
 {
-    public static string m_accessPrefix = "\"access_token\":\"";
+    private static string m_accessPrefix = "\"access_token\":\"";
     public static string accessPrefix
     {
         get
@@ -36,12 +36,21 @@ public static class LoginHelpers
         }
     }
     
-    public static string m_expirationPrefix = "\"expiration_date\":\"";
+    private static string m_expirationPrefix = "\"expiration_date\":\"";
     public static string expirationPrefix
     {
         get
         {
             return m_expirationPrefix;
+        }
+    }
+
+    private static string m_dateTimeFormat = "yyyy-MM-dd";
+    public static string dateTimeFormat
+    {
+        get
+        {
+            return m_dateTimeFormat;
         }
     }
 

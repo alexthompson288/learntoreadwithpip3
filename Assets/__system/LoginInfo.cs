@@ -6,6 +6,28 @@ using System.IO;
 
 public class LoginInfo : Singleton<LoginInfo>
 {
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Debugging Methods
+    public void MakeExpirationYesterday()
+    {
+        DateTime expirationDate = DateTime.Now.AddDays(-1);
+        m_expirationDate = expirationDate.ToString(LoginHelpers.dateTimeFormat);
+        D.Log("NewExpirationDate: " + m_expirationDate);
+        Save();
+    }
+
+    public void Overwrite()
+    {
+        m_email = "";
+        m_password = "";
+        m_accessToken = "";
+        m_expirationDate = "";
+        
+        Save();
+    }
+    ////////////////////////////////////////////////////////////////////////////////////
+
+
     [SerializeField]
     private bool m_attemptLogin;
 
@@ -97,11 +119,12 @@ public class LoginInfo : Singleton<LoginInfo>
                 D.LogError("Could not get token using saved login details");
             }
         }
-        
+
+
         DateTime expirationDate;
         try
         {
-            expirationDate = DateTime.ParseExact(m_expirationDate, "yyyy-MM-dd", null);
+            expirationDate = DateTime.ParseExact(m_expirationDate, LoginHelpers.dateTimeFormat, null);
         } 
         catch
         {
@@ -165,21 +188,6 @@ public class LoginInfo : Singleton<LoginInfo>
     public string GetAccessToken()
     {
         return m_accessToken;
-    }
-
-    public void MakeExpirationYesterday()
-    {
-        DateTime expirationDate = DateTime.Now.AddDays(-1);
-    }
-
-    public void Overwrite()
-    {
-        m_email = "";
-        m_password = "";
-        m_accessToken = "";
-        m_expirationDate = "";
-        
-        Save();
     }
 
     void Load()
