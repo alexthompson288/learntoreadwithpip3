@@ -6,6 +6,8 @@ using Wingrove;
 public class CatapultCountingCoordinator : GameCoordinator
 {
     [SerializeField]
+    private CatapultBehaviour m_catapult;
+    [SerializeField]
     private GameObject m_targetPrefab;
     [SerializeField]
     private DataDisplay m_dataDisplay;
@@ -16,13 +18,9 @@ public class CatapultCountingCoordinator : GameCoordinator
     [SerializeField]
     private Transform m_containerRightOffLocation;
     [SerializeField]
-    private Transform[] m_containerLocators;
-    [SerializeField]
     private TriggerTracker m_triggerTracker;
     [SerializeField]
     private Transform m_targetSpawnParent;
-
-    float m_targetSpawnDelay;
 
     Vector3 m_containerOnPos;
 
@@ -30,10 +28,19 @@ public class CatapultCountingCoordinator : GameCoordinator
 
     void Awake()
     {
+        m_scoreKeeper.SetTargetScore(m_targetScore);
+
+        m_catapult.MoveToMultiplayerLocation(0);
+
         m_containerOnPos = m_container.position;
         m_container.position = m_containerLeftOffLocation.position;
 
         m_triggerTracker.Entered += OnTargetEnterTrigger;
+    }
+
+    void OnTargetDestroy(CatapultCountingTarget target)
+    {
+        m_spawnedTargets.Remove(target.gameObject);
     }
 
 	// Use this for initialization
@@ -50,7 +57,7 @@ public class CatapultCountingCoordinator : GameCoordinator
     IEnumerator SpawnTargets()
     {
         SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_targetPrefab, m_targetSpawnParent);
-        yield return new WaitForSeconds(m_targetSpawnDelay);
+        yield return new WaitForSeconds(0.75f);
         StartCoroutine(SpawnTargets());
     }
 
@@ -80,6 +87,8 @@ public class CatapultCountingCoordinator : GameCoordinator
 
     IEnumerator ClearQuestion()
     {
+        yield return new WaitForSeconds(0.8f);
+
         m_dataDisplay.Off();
         float tweenDuration = 0.25f;
 
@@ -93,8 +102,11 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         yield return new WaitForSeconds(tweenDuration);
 
+        CollectionHelpers.DestroyObjects(m_spawnedTargets);
+
         if (m_scoreKeeper.HasCompleted())
         {
+            D.Log("HAS COMPLETED");
             StartCoroutine(CompleteGame());
         }
         else
@@ -103,7 +115,7 @@ public class CatapultCountingCoordinator : GameCoordinator
         }
     }
 
-    IEnumerator CompleteGame()
+    protected override IEnumerator CompleteGame()
     {
         yield return StartCoroutine(m_scoreKeeper.On());
         GameManager.Instance.CompleteGame();

@@ -35,7 +35,7 @@ public class SplattableRatLetter : MonoBehaviour
 		
 		ChangeLetter();
 		
-		GetComponent<UIPanel>().depth = locator.GetComponent<PanelReference>().GetDepth() - 1;
+		//GetComponent<UIPanel>().depth = locator.GetComponent<PanelReference>().GetDepth() - 1;
 
         iTween.ScaleFrom(gameObject, Vector3.zero, 1.0f);
 		
