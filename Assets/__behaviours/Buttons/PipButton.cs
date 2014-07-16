@@ -11,6 +11,8 @@ public class PipButton : MonoBehaviour
     
     // Shared Variables
     [SerializeField]
+    private bool m_mustCompletePress = true;
+    [SerializeField]
     private bool m_autoReset = true;
     [SerializeField]
     private int m_int;
@@ -108,6 +110,11 @@ public class PipButton : MonoBehaviour
 
     
     // Shared Methods
+    public void SetMustCompletePress(bool myMustCompletePress)
+    {
+        m_mustCompletePress = myMustCompletePress;
+    }
+
     public void AddPressedAudio(string audioEvent)
     {
         m_pressedAudio.Add(audioEvent);
@@ -310,9 +317,16 @@ public class PipButton : MonoBehaviour
     
     public IEnumerator Unpress()
     {
-        while (m_isTransitioning)
+        if (m_mustCompletePress)
         {
-            yield return null;
+            while (m_isTransitioning)
+            {
+                yield return null;
+            }
+        }
+        else
+        {
+            iTween.Stop(m_pressableButton.gameObject);
         }
         
         if (m_autoReset && Unpressing != null)

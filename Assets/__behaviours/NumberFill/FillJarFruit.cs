@@ -3,6 +3,9 @@ using System.Collections;
 
 public class FillJarFruit : MonoBehaviour 
 {
+    public delegate void FillJarFruitEventHandler(FillJarFruit fruit);
+    public event FillJarFruitEventHandler Destroying;
+
     [SerializeField]
     private Vector3 m_gravity = new Vector3(0, -0.2f, 0);
     [SerializeField]
@@ -44,5 +47,13 @@ public class FillJarFruit : MonoBehaviour
         }
 
         rigidbody.isKinematic = enable;
+    }
+
+    void OnDestroy()
+    {
+        if (Destroying != null)
+        {
+            Destroying(this);
+        }
     }
 }

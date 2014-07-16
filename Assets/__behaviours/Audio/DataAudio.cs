@@ -6,6 +6,11 @@ public class DataAudio : Singleton<DataAudio>
     [SerializeField]
     private AudioSource m_audioSource;
 
+    public void PlayNumber(int number)
+    {
+        Play(LoaderHelpers.LoadAudioForNumber(number));
+    }
+
 	public void PlayShort(DataRow data)
     {
         Play(DataHelpers.GetShortAudio(data));
