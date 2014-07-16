@@ -73,19 +73,16 @@ public class LoginInfo : Singleton<LoginInfo>
         if (m_attemptLogin)
         {
             AttemptLogin();
-            StartCoroutine(CheckLogin());
         }
     }
 
-    IEnumerator CheckLogin()
+    void OnLevelWasLoaded()
     {
-        yield return new WaitForSeconds(10);
+        D.Log("AAAAA: OnLevelWasLoaded()");
         if (m_hasExited)
         {
             AttemptLogin();
-        }
-        
-        StartCoroutine(CheckLogin());
+        }     
     }
     
     void AttemptLogin()

@@ -94,9 +94,6 @@ public static class DataHelpers
     // Generic
     public static string[] GetArray(DataRow data, string columnName)
     {
-        D.Log("DataHelpers.GetArray()");
-        D.Log(data [columnName].GetType());
-
         string[] array = data [columnName].ToString().Replace(" ", "").Replace("'", "").Replace("-", "").Replace("[", "").Replace("]", "").Trim(new char[] {'\n'}).Split('\n');
         return array;
 
@@ -141,18 +138,12 @@ public static class DataHelpers
 
     public static List<DataRow> GetSetData(DataRow set, string columnName, string tableName) 
     {
-        D.Log(String.Format("GetSetData({0}, {1}, {2})", set ["number"], columnName, tableName));
-        D.Log(set [columnName]);
         string[] ids = GetArray(set, columnName);
-
-        //D.Log("LOGGING: " + ids.Length);
-        //D.Log("ids.Length: " + ids.Length);
         
         List<DataRow> data = new List<DataRow>();
         
         foreach(string id in ids)
         {
-            //D.Log(id);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
             
             if(dt.Rows.Count > 0)
@@ -166,13 +157,10 @@ public static class DataHelpers
     
     static List<DataRow> GetModuleData(int moduleId, string joinAttributeName, string tableName)
     {
-        D.Log(String.Format("GetModuleData({0}, {1}, {2})", moduleId, joinAttributeName, tableName));
         List<DataRow> dataPool = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
 
-        D.Log("Rows.Count: " + dt.Rows.Count);
-        
         foreach (DataRow set in dt.Rows)
         {
             dataPool.AddRange(GetSetData(set, joinAttributeName, tableName));
@@ -440,8 +428,6 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
-        D.Log("DataHelpers.GetData(" + dataType + ")");
-
         if (dataPool.Count == 0)
         {
             switch(dataType)
@@ -474,7 +460,6 @@ public static class DataHelpers
                     dataPool = GetQuizQuestions();
                     break;
                 case "numbers":
-                    D.Log("Getting numbers");
                     dataPool = GetNumbers();
                     break;
                 case "shapes":
@@ -843,7 +828,6 @@ public static class DataHelpers
 
     public static List<DataRow> GetNumbers()
     {
-        D.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> numbers = GameManager.Instance.GetData("numbers");
 
         if (numbers.Count == 0)
@@ -1140,14 +1124,9 @@ public static class DataHelpers
             if (setTable.Rows [0] [columnName] != null)
             {
                 string[] dataIds = setTable.Rows [0] [columnName].ToString().Replace(" ", "").Replace("-", "").Replace("'", "").Replace("[", "").Replace("]", "").Trim(new char[] { '\n' }).Split('\n');
-
-                D.Log("LOGGING: " + dataIds.Length);
-                D.Log(setTable.Rows [0] [columnName].ToString());
                 
                 foreach (string id in dataIds)
                 {
-                    D.Log(id);
-
                     try
                     {
                         DataTable dataTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
