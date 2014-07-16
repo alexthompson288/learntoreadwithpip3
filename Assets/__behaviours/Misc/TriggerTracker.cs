@@ -29,7 +29,6 @@ public class TriggerTracker : MonoBehaviour
 	
 	void OnTriggerEnter (Collider other) 
 	{
-		//D.Log(other.name + " has entered " + name);
         if (!m_trackedObjects.Contains(other.gameObject))
         {
             m_trackedObjects.Add(other.gameObject);
@@ -43,8 +42,6 @@ public class TriggerTracker : MonoBehaviour
 
 	void OnTriggerExit (Collider other) 
 	{
-        Debug.Log("OnTriggerExit()");
-		//D.Log(other.name + " has exited " + name);
 		if(m_trackedObjects.Contains(other.gameObject))
 		{
 			m_trackedObjects.Remove(other.gameObject);
@@ -65,9 +62,4 @@ public class TriggerTracker : MonoBehaviour
 	{
 		m_trackedObjects.Clear();
 	}
-
-    void OnGUI()
-    {
-        GUILayout.Label("Tracking: " + m_trackedObjects.Count);
-    }
 }

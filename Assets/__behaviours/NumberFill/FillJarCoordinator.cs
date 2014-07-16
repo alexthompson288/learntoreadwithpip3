@@ -31,6 +31,14 @@ public class FillJarCoordinator : GameCoordinator
     private GameObject m_baseRight;
     [SerializeField]
     private Collider m_bottomCollider;
+    [SerializeField]
+    private GameObject m_containerParent;
+    [SerializeField]
+    private Transform m_submitButtonParent;
+    [SerializeField]
+    private Transform m_submitButtonParentLocation;
+    [SerializeField]
+    private UILabel m_triggerCounter;
 
     List<GameObject> m_spawnedRbs = new List<GameObject>();
 
@@ -62,7 +70,9 @@ public class FillJarCoordinator : GameCoordinator
 
     void OnTriggerTrackerUpdate(TriggerTracker tracker)
     {
-        DataAudio.Instance.PlayNumber(m_triggerTracker.GetNumTrackedObjects());
+        int numTrackedObjects = m_triggerTracker.GetNumTrackedObjects();
+        m_triggerCounter.text = numTrackedObjects.ToString();
+        DataAudio.Instance.PlayNumber(numTrackedObjects);
     }
 
     void OnRigidbodyDestroy(FillJarFruit rb)
@@ -80,6 +90,8 @@ public class FillJarCoordinator : GameCoordinator
 
 
         int initialNum = Random.Range(0, m_currentData.GetInt("value") + 1);
+
+        m_triggerCounter.text = initialNum.ToString();
 
         CollectionHelpers.Shuffle(m_containerLocators);
 
@@ -122,6 +134,11 @@ public class FillJarCoordinator : GameCoordinator
             m_spawnedRbs.Remove(closest.gameObject);
 
             Destroy(closest.GetComponent<FillJarFruit>());
+
+            closest.rigidbody.velocity = Vector3.zero;
+            closest.rigidbody.isKinematic = true;
+
+            yield return null;
             
             Hashtable tweenArgs = new Hashtable();
             
@@ -131,17 +148,17 @@ public class FillJarCoordinator : GameCoordinator
             tweenArgs.Add("speed", tweenSpeed);
             tweenArgs.Add("easetype", iTween.EaseType.linear);
 
-            closest.rigidbody.velocity = Vector3.zero;
-            closest.rigidbody.isKinematic = true;
             iTween.MoveTo(closest.gameObject, tweenArgs);
             
             yield return new WaitForSeconds(TransformHelpers.GetDuration(closest, m_destroyLocation.position, tweenSpeed));
 
             iTween.Stop(closest.gameObject);
 
+            yield return null;
+
             closest.rigidbody.isKinematic = false;
             closest.rigidbody.angularVelocity = Vector3.zero;
-            closest.rigidbody.AddForce(new Vector3(0, 2, 0), ForceMode.VelocityChange);
+            closest.rigidbody.AddForce(new Vector3(0, 3, 0), ForceMode.VelocityChange);
         }
 
         yield break;
@@ -161,12 +178,20 @@ public class FillJarCoordinator : GameCoordinator
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
-            iTween.ShakePosition(m_container, Vector3.one * 0.2f, 0.35f);
+            iTween.ShakePosition(m_containerParent, Vector3.one * 0.2f, 0.35f);
         }
+    }
+
+    IEnumerator UpdateSubmitButtonLocation()
+    {
+        m_submitButtonParent.transform.position = m_submitButtonParentLocation.transform.position;
+        yield return null;
+        StartCoroutine("UpdateSubmitButtonLocation");
     }
 
     IEnumerator ClearQuestion()
     {
+        StartCoroutine("UpdateSubmitButtonLocation");
         m_triggerTracker.Entered -= OnTriggerTrackerUpdate;
         m_triggerTracker.Exited -= OnTriggerTrackerUpdate;
 
@@ -202,6 +227,10 @@ public class FillJarCoordinator : GameCoordinator
 
         iTween.RotateTo(m_baseLeft, tweenArgs);
         iTween.RotateTo(m_baseRight, tweenArgs);
+
+        yield return new WaitForSeconds(tweenDuration);
+
+        StopCoroutine("UpdateSubmitButtonLocation");
 
         if (m_scoreKeeper.HasCompleted())
         {
