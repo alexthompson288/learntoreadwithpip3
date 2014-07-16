@@ -407,10 +407,18 @@ public class GameWidget : MonoBehaviour
         TweenColor.Begin(gameObject, 0.1f, col);
     }
 
-    public void FadeBackground(bool fadeOut)
+    public void FadeBackground(bool fadeOut, bool immediate = false)
     {
         float alpha = fadeOut ? 0 : 1;
-        TweenAlpha.Begin(m_background.gameObject, 0.5f, alpha);
+
+        if (immediate)
+        {
+            m_background.color = new Color(m_background.color.r, m_background.color.g, m_background.color.b, alpha);
+        } 
+        else
+        {
+            TweenAlpha.Begin(m_background.gameObject, 0.5f, alpha);
+        }
     }
 
     public void Shake()

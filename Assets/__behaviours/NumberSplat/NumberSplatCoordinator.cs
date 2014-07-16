@@ -10,6 +10,148 @@ public class NumberSplatCoordinator : GameCoordinator
     private GameObject m_numberPrefab;
     [SerializeField]
     private Transform[] m_locators;
+    [SerializeField]
+    private Transform[] m_correctLocations;
+    
+    int m_numToSpawn = 5;
+    
+    List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
+    
+    IEnumerator Start () 
+    {
+        m_numToSpawn = Mathf.Min(m_numToSpawn, m_locators.Length);
+        
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+        
+        m_dataPool = DataHelpers.GetNumbers();
+        
+        m_dataPool.Sort((x, y) => x.GetInt("value").CompareTo(y.GetInt("value")));
+        
+        m_scoreKeeper.SetTargetScore(m_targetScore);
+        
+        if (m_dataPool.Count > 0)
+        {
+            StartCoroutine(AskQuestion());
+        } 
+        else
+        {
+            StartCoroutine(CompleteGame());
+        }
+    }
+    
+    IEnumerator AskQuestion()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
+        
+        yield return new WaitForSeconds(0.1f);
+        
+        int index = UnityEngine.Random.Range(0, m_dataPool.Count - m_numToSpawn);
+        
+        List<DataRow> numberSequence = new List<DataRow>();
+        
+        while (numberSequence.Count < m_numToSpawn)
+        {
+            numberSequence.Add(m_dataPool[index]);
+            ++index;
+        }
+        
+        CollectionHelpers.Shuffle(m_locators);
+        
+        int locatorIndex = 0;
+        foreach(DataRow number in numberSequence)
+        {
+            GameObject newNumber = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_numberPrefab, m_locators[locatorIndex], true);
+            
+            GameWidget widget = newNumber.GetComponent<GameWidget>() as GameWidget;
+            widget.SetUp(number);
+            widget.Unpressing += OnAnswer;
+            m_spawnedWidgets.Add(widget);
+            ++locatorIndex;
+        }
+        
+        m_spawnedWidgets.Sort((a, b) => a.data.GetInt("value").CompareTo(b.data.GetInt("value")));
+    }
+    
+    void OnAnswer(GameWidget widget)
+    {
+        if (m_spawnedWidgets.Count > 0)
+        {
+            bool isCorrect = (widget == m_spawnedWidgets [0]);
+            
+            if (isCorrect)
+            {
+                WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
+                
+                PlayShortAudio(widget.data);
+                
+                m_spawnedWidgets.Remove(widget);
+                
+                foreach(GameWidget remainingWidget in m_spawnedWidgets)
+                {
+                    remainingWidget.TintWhite();
+                    remainingWidget.ChangeBackgroundState(false);
+                }
+                
+                if(m_spawnedWidgets.Count == 0)
+                {
+                    ++m_score;
+                    m_scoreKeeper.UpdateScore(1);
+                    
+                    StartCoroutine(ClearAnswers());
+                }
+            } 
+            else
+            {
+                WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+                widget.TintGray();
+                widget.TweenToStartPos();
+            }
+        }
+    }
+    
+    IEnumerator ClearAnswers()
+    {
+        yield return new WaitForSeconds(0.8f);
+        
+        GameWidget[] widgets = UnityEngine.Object.FindObjectsOfType(typeof(GameWidget)) as GameWidget[];
+        
+        if (widgets.Length > 0)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
+            
+            float tweenDuration = widgets[0].scaleTweenDuration;
+            
+            for(int i = widgets.Length - 1; i > -1; --i)
+            {
+                widgets[i].Off();
+            }
+            
+            yield return new WaitForSeconds(tweenDuration + 0.5f);
+        }
+        
+        if (m_score < m_targetScore)
+        {
+            StartCoroutine(AskQuestion());
+        } 
+        else
+        {
+            StartCoroutine(CompleteGame());
+        }
+    }
+}
+/*
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using Wingrove;
+
+public class NumberSplatCoordinator : GameCoordinator 
+{
+    [SerializeField]
+    private GameObject m_numberPrefab;
+    [SerializeField]
+    private Transform[] m_locators;
     
     int m_numAnswers = 5;
     
@@ -22,6 +164,8 @@ public class NumberSplatCoordinator : GameCoordinator
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_dataPool = DataHelpers.GetNumbers();
+
+        m_dataPool.Sort((x, y) => x.GetInt("value").CompareTo(y.GetInt("value")));
         
         m_scoreKeeper.SetTargetScore(m_targetScore);
         
@@ -132,7 +276,7 @@ public class NumberSplatCoordinator : GameCoordinator
         }
     }
 }
-
+*/
 /*
 using UnityEngine;
 using System.Collections;

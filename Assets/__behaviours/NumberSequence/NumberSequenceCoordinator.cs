@@ -69,6 +69,8 @@ public class NumberSequenceCoordinator : GameCoordinator
         
         m_dataPool = DataHelpers.GetNumbers();
 
+        m_dataPool.Sort((x, y) => x.GetInt("value").CompareTo(y.GetInt("value")));
+
         if (m_dataPool.Count > 0)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHOO_CHOO");

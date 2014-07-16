@@ -66,13 +66,16 @@ public class CompleteEquationCoordinator : GameCoordinator
 
         for (int i = 0; i < equationParts.Count && i < m_equationPartLocators.Length; ++i)
         {
-            if(equationParts[i] != m_currentData)
+            if(i != m_missingIndex)
             {
-                GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_equationPartLocators[i]);
+                GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_equationPartLocators[i], true);
 
                 GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
                 widget.SetUp(equationParts[i]);
+                widget.FadeBackground(true, true);
+                widget.SetPressedAudio("");
                 widget.EnableDrag(false);
+                widget.GetComponentInChildren<WobbleGUIElement>().enabled = false;
                 widget.Unpressing += OnClickEquationPart;
                 m_spawnedEquationParts.Add(widget);
             }
@@ -90,7 +93,7 @@ public class CompleteEquationCoordinator : GameCoordinator
         int locatorIndex = 0;
         foreach(DataRow answer in answers)
         {
-            GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_answerLocators[locatorIndex]);
+            GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_answerLocators[locatorIndex], true);
             
             GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
             widget.SetUp(answer);
@@ -105,8 +108,9 @@ public class CompleteEquationCoordinator : GameCoordinator
     {
         if (widget.data == m_currentData)
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
             widget.TweenToPos(m_equationPartLocators[m_missingIndex].position);
+
+            widget.FadeBackground(true);
 
             ++m_score;
             m_scoreKeeper.UpdateScore();
@@ -115,8 +119,9 @@ public class CompleteEquationCoordinator : GameCoordinator
         }
         else
         {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             widget.TweenToStartPos();
+            widget.TintGray();
         }
     }
 
@@ -127,13 +132,13 @@ public class CompleteEquationCoordinator : GameCoordinator
         CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
         CollectionHelpers.DestroyObjects(m_spawnedEquationParts, true);
 
-        if (m_score < m_targetScore)
+        if (m_scoreKeeper.HasCompleted())
         {
-            AskQuestion();
+            StartCoroutine(CompleteGame());
         }
         else
         {
-            StartCoroutine(CompleteGame());
+            AskQuestion();
         }
     }
 
@@ -145,5 +150,11 @@ public class CompleteEquationCoordinator : GameCoordinator
             m_audioSource.clip = clip;
             m_audioSource.Play();
         }
+    }
+
+    protected override IEnumerator CompleteGame()
+    {
+        yield return StartCoroutine(m_scoreKeeper.On());
+        GameManager.Instance.CompleteGame();
     }
 }
