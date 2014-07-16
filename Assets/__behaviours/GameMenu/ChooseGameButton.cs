@@ -47,22 +47,25 @@ public class ChooseGameButton : MonoBehaviour
 
     public void Refresh(string colorName)
     {
-        // If we have recently achieved a new high score, then don't show the new stars yet
-        if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_game ["name"].ToString())
+        if (m_game != null)
         {
-            int numStars = ScoreInfo.Instance.GetPreviousHighScoreStars();
-
-            System.Array.Sort(m_starSprites, CollectionHelpers.LocalLeftToRight);
-            
-            for (int i = 0; i < m_starSprites.Length; ++i)
+            // If we have recently achieved a new high score, then don't show the new stars yet
+            if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_game ["name"].ToString())
             {
-                string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
-                m_starSprites[i].spriteName = spriteName;
+                int numStars = ScoreInfo.Instance.GetPreviousHighScoreStars();
+
+                System.Array.Sort(m_starSprites, CollectionHelpers.LocalLeftToRight);
+                
+                for (int i = 0; i < m_starSprites.Length; ++i)
+                {
+                    string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
+                    m_starSprites [i].spriteName = spriteName;
+                }
             }
-        } 
-        else if(m_game != null)
-        {
-            ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
+            else
+            {
+                ScoreInfo.RefreshStars(m_starSprites, m_game ["name"].ToString(), colorName);
+            }
         }
     }
 

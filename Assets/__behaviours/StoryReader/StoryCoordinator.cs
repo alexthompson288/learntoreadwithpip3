@@ -26,7 +26,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     [SerializeField]
     private PipButton[] m_languageButtons;
     [SerializeField]
-    private PipButton m_callColorButton;
+    private PipButton m_changeColorButton;
     [SerializeField]
     private TweenOnOffBehaviour m_colorButtonMoveable;
     [SerializeField]
@@ -70,7 +70,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         System.Array.Sort(m_pageTurnButtons, CollectionHelpers.LeftToRight);
 
         m_colorBackBlocker.SingleClicked += DismissColorGrid;
-        m_callColorButton.Unpressing += CallColorGrid;
+        m_changeColorButton.Unpressing += CallColorGrid;
 
         for (int i = 0; i < m_pageTurnButtons.Length; ++i)
         {
@@ -118,7 +118,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             if(numDisabled >= m_colorButtons.Length - 1)
             {
-                m_callColorButton.gameObject.SetActive(false);
+                m_changeColorButton.gameObject.SetActive(false);
             }
 
             if(numDisabled >= 5)

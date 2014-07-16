@@ -71,6 +71,8 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         if (m_dataPool.Count > 0)
         {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHOO_CHOO");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHUGA_CHUGA");
             yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
             StartCoroutine(AskQuestion());
         }
@@ -134,11 +136,19 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         float trainTweenDuration = 2.5f;
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHUGA_CHUGA_STOP");
+
         iTween.MoveTo(m_train, m_trainOnPos, trainTweenDuration);
 
-        yield return new WaitForSeconds(trainTweenDuration);
+        yield return new WaitForSeconds(trainTweenDuration / 2);
+
+
+
+        yield return new WaitForSeconds(trainTweenDuration / 2);
 
         StartCoroutine("SpawnSteam");
+
+
     }
     
     void OnAnswer(GameWidget widget)
@@ -185,6 +195,9 @@ public class NumberSequenceCoordinator : GameCoordinator
 
         iTween.MoveTo(m_train, tweenArgs);
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHOO_CHOO");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHUGA_CHUGA");
+
         yield return new WaitForSeconds(trainTweenDuration);
 
         widget.Off();
@@ -206,6 +219,7 @@ public class NumberSequenceCoordinator : GameCoordinator
 
     protected override IEnumerator CompleteGame()
     {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHUGA_CHUGA_STOP");
         yield return StartCoroutine(m_scoreKeeper.On());
         GameManager.Instance.CompleteGame();
     }
