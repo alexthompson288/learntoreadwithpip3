@@ -9,10 +9,20 @@ public class CatapultCountingTarget : MonoBehaviour
     public delegate void TargetHitEventHandler(CatapultCountingTarget target, Collider other);
     public event TargetHitEventHandler TargetHit;
 
+    [SerializeField]
+    private UISprite m_sprite;
+    [SerializeField]
+    private string[] m_spriteNames;
+
     bool m_hasBeenHit = false;
 
 	void Start () 
     {
+        if (m_spriteNames.Length > 0)
+        {
+            m_sprite.spriteName = m_spriteNames[Random.Range(0, m_spriteNames.Length)];
+        }
+
         StartCoroutine("On");
 	}
 
@@ -30,7 +40,6 @@ public class CatapultCountingTarget : MonoBehaviour
 
     IEnumerator OnHit(Collider other)
     {
-        D.Log("HIT");
         StopCoroutine("On");
         iTween.Stop(gameObject);
         yield return null;
@@ -76,6 +85,8 @@ public class CatapultCountingTarget : MonoBehaviour
 
     void OnDestroy()
     {
+        iTween.Stop(gameObject);
+
         if (Destroying != null)
         {
             Destroying(this);

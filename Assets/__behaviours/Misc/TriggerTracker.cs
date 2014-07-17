@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class TriggerTracker : MonoBehaviour 
 {
-    public delegate void TriggerTrackerEventHandler (TriggerTracker tracker);
+    public delegate void TriggerTrackerEventHandler (TriggerTracker tracker, Collider other);
     public event TriggerTrackerEventHandler Entered;
     public event TriggerTrackerEventHandler Exited;
 
@@ -35,7 +35,7 @@ public class TriggerTracker : MonoBehaviour
 
             if(Entered != null)
             {
-                Entered(this);
+                Entered(this, other);
             }
         }
 	}
@@ -48,7 +48,7 @@ public class TriggerTracker : MonoBehaviour
 
             if(Exited != null)
             {
-                Exited(this);
+                Exited(this, other);
             }
 		}
 	}

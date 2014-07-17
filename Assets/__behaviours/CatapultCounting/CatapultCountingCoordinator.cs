@@ -21,10 +21,12 @@ public class CatapultCountingCoordinator : GameCoordinator
     private TriggerTracker m_triggerTracker;
     [SerializeField]
     private Transform m_targetSpawnParent;
+    [SerializeField]
+    private UILabel m_countingLabel;
 
     Vector3 m_containerOnPos;
 
-    List<GameObject> m_spawnedTargets = new List<GameObject>();
+    List<GameObject> m_trackedTargets = new List<GameObject>();
 
     void Awake()
     {
@@ -36,11 +38,6 @@ public class CatapultCountingCoordinator : GameCoordinator
         m_container.position = m_containerLeftOffLocation.position;
 
         m_triggerTracker.Entered += OnTargetEnterTrigger;
-    }
-
-    void OnTargetDestroy(CatapultCountingTarget target)
-    {
-        m_spawnedTargets.Remove(target.gameObject);
     }
 
 	// Use this for initialization
@@ -71,14 +68,23 @@ public class CatapultCountingCoordinator : GameCoordinator
         m_currentData = GetRandomData();
         m_dataDisplay.On(m_currentData);
 
+        m_countingLabel.text = "0";
+
         yield break;
     }
 
-    void OnTargetEnterTrigger(TriggerTracker tracker)
+    void OnTargetEnterTrigger(TriggerTracker tracker, Collider other)
     {
-        PlayShortAudio(m_dataPool.Find(x => x.GetInt("value") == m_triggerTracker.GetNumTrackedObjects()));
+        int numTrackedTargets = m_triggerTracker.GetNumTrackedObjects();
 
-        if (m_triggerTracker.GetNumTrackedObjects() >= m_currentData.GetInt("value"))
+        m_countingLabel.text = numTrackedTargets.ToString();
+
+        other.transform.parent = m_container;
+        m_trackedTargets.Add(other.gameObject);
+
+        PlayShortAudio(m_dataPool.Find(x => x.GetInt("value") == numTrackedTargets));
+
+        if (numTrackedTargets >= m_currentData.GetInt("value"))
         {
             m_scoreKeeper.UpdateScore();
             StartCoroutine(ClearQuestion());
@@ -102,11 +108,10 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         yield return new WaitForSeconds(tweenDuration);
 
-        CollectionHelpers.DestroyObjects(m_spawnedTargets);
+        CollectionHelpers.DestroyObjects(m_trackedTargets);
 
         if (m_scoreKeeper.HasCompleted())
         {
-            D.Log("HAS COMPLETED");
             StartCoroutine(CompleteGame());
         }
         else

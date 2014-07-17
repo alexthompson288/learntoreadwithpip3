@@ -68,7 +68,7 @@ public class FillJarCoordinator : GameCoordinator
         }
     }
 
-    void OnTriggerTrackerUpdate(TriggerTracker tracker)
+    void OnTriggerTrackerUpdate(TriggerTracker tracker, Collider other)
     {
         int numTrackedObjects = m_triggerTracker.GetNumTrackedObjects();
         m_triggerCounter.text = numTrackedObjects.ToString();

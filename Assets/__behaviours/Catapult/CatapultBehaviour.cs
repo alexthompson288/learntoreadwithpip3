@@ -117,7 +117,8 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		else 
 		{
             //D.Log("LAUNCH");
-            m_currentBall.SetHasLaunchedTrue();
+            //m_currentBall.SetHasLaunchedTrue();
+            ball.SetHasLaunchedTrue();
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
 

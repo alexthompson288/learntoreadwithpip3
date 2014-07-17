@@ -6,6 +6,11 @@ using UnityEngine;
 
 public class CollectionHelpers 
 {
+    public static T GetRandom<T>(IList<T> list)
+    {
+        return list [UnityEngine.Random.Range(0, list.Count)];
+    }
+
     public static void DestroyObjects<T>(IList<T> list, bool sendOffMessage = false)
     {
         bool hasDestroyed = false;
