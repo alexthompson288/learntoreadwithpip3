@@ -292,13 +292,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     void AddExtraData(List<DataRow> dataPool, List<DataRow> extraDataPool)
     {
-        if ((int)m_currentModuleMap.color > 0)
+        if (extraDataPool.Count > 0)
         {
             int safetyCounter = 0;
             while (dataPool.Count < m_minimumDataCount && safetyCounter < 100)
             {
                 DataRow data = extraDataPool [Random.Range(0, extraDataPool.Count)];
-
                 if (!dataPool.Contains(data))
                 {
                     dataPool.Add(data);
@@ -339,6 +338,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             
             // Set data
             int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
+
+            D.Log("previousModuleId: " + previousModuleId);
             
             SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
             
@@ -351,7 +352,14 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 if(phonemePool.Count < m_minimumDataCount)
                 {
                     D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
-                    AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(previousModuleId));
+
+                    int extraModuleId = previousModuleId;
+
+                    while(phonemePool.Count < m_minimumDataCount && extraModuleId > 0)
+                    {
+                        AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(extraModuleId));
+                        --extraModuleId;
+                    }
                 }
 
                 D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
@@ -369,8 +377,15 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 
                 if(words.Count < m_minimumDataCount)
                 {
-                    D.Log("Adding extra word: " + words.Count + "/" + m_minimumDataCount);
-                    AddExtraData(words, DataHelpers.GetModuleWords(previousModuleId));
+                    D.Log("Adding extra words: " + words.Count + "/" + m_minimumDataCount);
+
+                    int extraModuleId = previousModuleId;
+
+                    while(words.Count < m_minimumDataCount && extraModuleId > 0)
+                    {
+                        AddExtraData(words, DataHelpers.GetModuleWords(extraModuleId));
+                        --extraModuleId;
+                    }
                     
                 }
 
@@ -385,7 +400,13 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 
                 if(keywords.Count < m_minimumDataCount)
                 {
-                    AddExtraData(keywords, DataHelpers.GetModuleKeywords(previousModuleId));
+                    int extraModuleId = previousModuleId;
+
+                    while(keywords.Count < m_minimumDataCount && extraModuleId > 0)
+                    {
+                        AddExtraData(keywords, DataHelpers.GetModuleKeywords(extraModuleId));
+                        --extraModuleId;
+                    }
                 }
                 
                 GameManager.Instance.AddData("keywords", keywords);

@@ -61,6 +61,7 @@ public class FillJarCoordinator : GameCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         m_dataPool = DataHelpers.GetNumbers();
+        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 20);
 
         if (m_dataPool.Count > 0)
         {

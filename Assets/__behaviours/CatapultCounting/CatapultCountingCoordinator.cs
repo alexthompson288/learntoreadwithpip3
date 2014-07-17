@@ -47,6 +47,8 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         m_dataPool = DataHelpers.GetNumbers();
 
+        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 15);
+
         StartCoroutine(SpawnTargets());
         StartCoroutine(AskQuestion());
 	}
@@ -61,18 +63,11 @@ public class CatapultCountingCoordinator : GameCoordinator
     IEnumerator AskQuestion()
     {
         m_container.transform.position = m_containerLeftOffLocation.position;
-        float tweenDuration = 3f;
+        float tweenDuration = 0.8f;
         iTween.MoveTo(m_container.gameObject, m_containerOnPos, tweenDuration);
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
         m_currentData = GetRandomData();
-
-#if UNITY_EDITOR
-        while(m_currentData.GetInt("value") > 1)
-        {
-            m_currentData = GetRandomData();
-        }
-#endif
 
         m_dataDisplay.On(m_currentData);
 

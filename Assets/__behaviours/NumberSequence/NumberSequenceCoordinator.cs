@@ -50,11 +50,6 @@ public class NumberSequenceCoordinator : GameCoordinator
         yield return new WaitForSeconds(1f);
         StartCoroutine("SpawnSteam");
     }
-
-    void OnGUI()
-    {
-        GUILayout.Label("Current Index: " + m_currentIndex);
-    }
     
     IEnumerator Start()
     {

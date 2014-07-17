@@ -157,6 +157,10 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
         }
+        else
+        {
+            m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 12);
+        }
 
         foreach (DataRow data in m_dataPool)
         {
