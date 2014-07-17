@@ -40,32 +40,6 @@ public class CatapultAmmo : MonoBehaviour
         }
     }
 
-    bool m_isPressing = true;
-
-    void OnTriggerExit(Collider other)
-    {
-        //D.Log("CatapultAmmo.OnTriggerExit");
-        if (other.collider.tag == "BallExitTrigger")
-        {
-            D.Log("BallExit - isPressing: " + m_isPressing);
-        }
-
-        if (!m_isPressing && other.collider.tag == "BallExitTrigger")
-        {
-            //D.Log("CALL RESET");
-
-            CatapultBehaviour.Instance.ResetLineRendererPos();
-        } 
-        else
-        {
-            //D.Log("NO RESET");
-            //D.Log("hasLaunched: " + m_isPressing);
-            //D.Log("BallExitTrigger: " + (other.collider.tag == "BallExitTrigger"));
-        }
-    }
-
-
-
     void OnDestroy()
     {
         m_cannon.RemoveBall(this);
@@ -74,6 +48,16 @@ public class CatapultAmmo : MonoBehaviour
     void Start()
     {
         iTween.ScaleFrom (gameObject, Vector3.zero, 0.5f); // This may or may not interfere with rigidbody motion, test it out first
+    }
+
+    public IEnumerator CheckForExit(Transform catapultCentre, float thresholdDistance)
+    {
+        while ((transform.position - catapultCentre.position).magnitude < thresholdDistance)
+        {
+            yield return null;
+        }
+
+        CatapultBehaviour.Instance.ResetLineRendererPos();
     }
     
     #if UNITY_EDITOR
@@ -150,8 +134,6 @@ public class CatapultAmmo : MonoBehaviour
     
     void OnPress(bool press)
     {
-        m_isPressing = press;
-
         WingroveAudio.WingroveRoot.Instance.PostEvent (press ? m_pressedAudio : m_unpressedAudio);
         
         if(m_canDrag)
@@ -193,7 +175,6 @@ public class CatapultAmmo : MonoBehaviour
     {
         rigidbody.isKinematic = false;
         m_canDrag = false;
-        //m_isPressing = true;
     }
 
     public void Explode()

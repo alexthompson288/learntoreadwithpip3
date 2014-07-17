@@ -118,6 +118,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		{
             //D.Log("LAUNCH");
             ball.OnLaunch();
+            StartCoroutine(ball.CheckForExit(m_ballCentre, m_pullRange.y * 1.01f));
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
 

@@ -476,6 +476,7 @@ public static class DataHelpers
     {
         if (moduleId != -1)
         {
+            D.Log("GETTING PHONEMES for module: " + moduleId);
             return GetModuleData(moduleId, "setphonemes", "phonemes");
         } 
         else
