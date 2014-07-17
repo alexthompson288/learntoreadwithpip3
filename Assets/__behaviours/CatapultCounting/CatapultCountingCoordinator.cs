@@ -61,11 +61,19 @@ public class CatapultCountingCoordinator : GameCoordinator
     IEnumerator AskQuestion()
     {
         m_container.transform.position = m_containerLeftOffLocation.position;
-
-        float tweenDuration = 0.3f;
+        float tweenDuration = 3f;
         iTween.MoveTo(m_container.gameObject, m_containerOnPos, tweenDuration);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
         m_currentData = GetRandomData();
+
+#if UNITY_EDITOR
+        while(m_currentData.GetInt("value") > 1)
+        {
+            m_currentData = GetRandomData();
+        }
+#endif
+
         m_dataDisplay.On(m_currentData);
 
         m_countingLabel.text = "0";
@@ -93,7 +101,7 @@ public class CatapultCountingCoordinator : GameCoordinator
 
     IEnumerator ClearQuestion()
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1.2f);
 
         m_dataDisplay.Off();
         float tweenDuration = 0.25f;
@@ -105,10 +113,13 @@ public class CatapultCountingCoordinator : GameCoordinator
         tweenArgs.Add("easetype", iTween.EaseType.linear);
 
         iTween.MoveTo(m_container.gameObject, tweenArgs);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
 
         yield return new WaitForSeconds(tweenDuration);
 
         CollectionHelpers.DestroyObjects(m_trackedTargets);
+
+        yield return new WaitForSeconds(0.5f);
 
         if (m_scoreKeeper.HasCompleted())
         {
