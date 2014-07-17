@@ -65,7 +65,6 @@ public class DataDisplay : MonoBehaviour
         else
         {
             m_label.text = DataHelpers.GetLabelText(m_data);
-
             m_tweenBehaviour.On();
         }
     }

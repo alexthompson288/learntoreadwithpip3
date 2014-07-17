@@ -40,23 +40,17 @@ public class CatapultAmmo : MonoBehaviour
         }
     }
 
-    bool m_hasLaunched = false;
-
-    public bool HasLaunched()
-    {
-        return m_hasLaunched;
-    }
-
-    public void SetHasLaunchedTrue()
-    {
-        m_hasLaunched = true;
-    }
-
+    bool m_isPressing = true;
 
     void OnTriggerExit(Collider other)
     {
         //D.Log("CatapultAmmo.OnTriggerExit");
-        if (m_hasLaunched && other.collider.tag == "BallExitTrigger")
+        if (other.collider.tag == "BallExitTrigger")
+        {
+            D.Log("BallExit - isPressing: " + m_isPressing);
+        }
+
+        if (!m_isPressing && other.collider.tag == "BallExitTrigger")
         {
             //D.Log("CALL RESET");
 
@@ -65,7 +59,7 @@ public class CatapultAmmo : MonoBehaviour
         else
         {
             //D.Log("NO RESET");
-            //D.Log("hasLaunched: " + m_hasLaunched);
+            //D.Log("hasLaunched: " + m_isPressing);
             //D.Log("BallExitTrigger: " + (other.collider.tag == "BallExitTrigger"));
         }
     }
@@ -156,6 +150,8 @@ public class CatapultAmmo : MonoBehaviour
     
     void OnPress(bool press)
     {
+        m_isPressing = press;
+
         WingroveAudio.WingroveRoot.Instance.PostEvent (press ? m_pressedAudio : m_unpressedAudio);
         
         if(m_canDrag)
@@ -197,6 +193,7 @@ public class CatapultAmmo : MonoBehaviour
     {
         rigidbody.isKinematic = false;
         m_canDrag = false;
+        //m_isPressing = true;
     }
 
     public void Explode()

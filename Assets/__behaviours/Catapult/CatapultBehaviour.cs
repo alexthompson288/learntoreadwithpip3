@@ -117,8 +117,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		else 
 		{
             //D.Log("LAUNCH");
-            //m_currentBall.SetHasLaunchedTrue();
-            ball.SetHasLaunchedTrue();
+            ball.OnLaunch();
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
 
@@ -131,7 +130,6 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
             
             Vector3 force = Vector3.Lerp (direction * m_forceRange.x, direction * m_forceRange.y, proportionalDistance);
 
-            ball.OnLaunch();
             ball.rigidbody.AddForce (force, ForceMode.VelocityChange); // ForceMode.VelocityChange makes the application of force independent of object mass
 		}
 	}

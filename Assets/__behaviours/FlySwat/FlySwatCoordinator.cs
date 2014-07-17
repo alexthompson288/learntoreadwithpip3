@@ -50,6 +50,7 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         {
             GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
             sideBarCamera.transform.parent = m_gamePlayers[0].transform;
+            sideBarCamera.transform.localScale = Vector3.one;
 
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");

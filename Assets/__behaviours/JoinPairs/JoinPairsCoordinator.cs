@@ -116,6 +116,7 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
             sideBarCamera.transform.parent = m_gamePlayers[0].transform;
+            sideBarCamera.transform.localScale = Vector3.one;
 
             m_targetScore = 4;
             yield return new WaitForSeconds(0.5f);

@@ -33,18 +33,24 @@ public class Target : MonoBehaviour
 
     protected void ShowDefault()
     {
+        m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
+        m_label.gameObject.SetActive(!m_showPicture);
+        /*
         float pictureAlpha = m_showPicture ? 1 : 0;
         m_texture.color = new Color(m_texture.color.r, m_texture.color.g, m_texture.color.b, pictureAlpha);
 
+        m_texture.gameObject.SetActive(m_texture.mainTexture != null);
+
         float labelAlpha = m_showPicture ? 0 : 1;
         m_label.color = new Color(m_label.color.r, m_label.color.g, m_label.color.b, labelAlpha);
-        //m_texture.gameObject.SetActive(m_showPicture);
-        //m_label.gameObject.SetActive(!m_showPicture);
+        */
     }
     
     public void ShowLabel()
     {
         float tweenDuration = 0.1f;
+        m_label.color = new Color(m_label.color.r, m_label.color.g, m_label.color.b, 0);
+        m_label.gameObject.SetActive(true);
         TweenAlpha.Begin(m_label.gameObject, tweenDuration, 1);
         TweenAlpha.Begin(m_texture.gameObject, tweenDuration, 0);
     }
@@ -100,15 +106,17 @@ public class Target : MonoBehaviour
        
         m_label.text = DataHelpers.GetLabelText(m_data);
 
-        m_texture.mainTexture = DataHelpers.GetPicture(newData);
-        //m_texture.gameObject.SetActive(m_showPicture && m_texture.mainTexture != null);
-        float pictureAlpha = (m_showPicture && m_texture.mainTexture != null) ? 1 : 0;
-        m_texture.color = new Color(m_texture.color.r, m_texture.color.g, m_texture.color.b, pictureAlpha);
+        if (m_showPicture)
+        {
+            m_texture.mainTexture = DataHelpers.GetPicture(m_data);
+        }
+
+        ShowDefault();
     }
 
     void OnCollisionEnter(Collision other)
     {
-        D.Log("Target.OnCollisionEnter()");
+        //D.Log("Target.OnCollisionEnter()");
         //D.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
@@ -123,7 +131,7 @@ public class Target : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        D.Log("Target.OnTriggerEnter()");
+        //D.Log("Target.OnTriggerEnter()");
         //D.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
