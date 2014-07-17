@@ -15,8 +15,6 @@ public class NavMenu : Singleton<NavMenu>
     [SerializeField]
     private GameObject m_pipAnimPrefab;
     [SerializeField]
-    private GameObject m_parentGate;
-    [SerializeField]
     private GameObject m_pipisodesButton;
     [SerializeField]
     private Transform m_gamesButton;
@@ -40,8 +38,6 @@ public class NavMenu : Singleton<NavMenu>
         GameObject newPipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipAnimPrefab, m_pipAnimLocation);
         m_pipAnim = newPipAnim.GetComponent<PipAnim>() as Collector;
         m_pipAnim.StopAnim();
-
-        m_parentGate.SetActive(true);
 
         foreach (TweenOnOffBehaviour moveable in m_moveables)
         {
