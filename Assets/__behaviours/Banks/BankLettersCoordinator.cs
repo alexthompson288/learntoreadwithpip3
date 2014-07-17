@@ -77,7 +77,7 @@ public class BankLettersCoordinator : MonoBehaviour
         {
             m_currentIndex = System.String.IsNullOrEmpty(s) ? 0 : m_letterPool.IndexOf(s);
 
-            passedTarget = System.String.IsNullOrEmpty(s);
+            passedTarget = !System.String.IsNullOrEmpty(s);
         } 
         else
         {
@@ -110,11 +110,6 @@ public class BankLettersCoordinator : MonoBehaviour
 
     void ShowNew()
     {
-        D.Log("ShowNew()");
-
-        D.Log("count: " + m_phonemePool.Count);
-        D.Log("currentIndex: " + m_currentIndex);
-
         string labelText = m_isAlphabet ? m_letterPool [m_currentIndex] : m_phonemePool [m_currentIndex] ["phoneme"].ToString();
         m_graphemeLabel.text = labelText;
 

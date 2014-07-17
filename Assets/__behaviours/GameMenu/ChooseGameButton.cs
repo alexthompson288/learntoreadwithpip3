@@ -106,7 +106,7 @@ public class ChooseGameButton : MonoBehaviour
         float moveTweenDuration = 1f;
         
         iTween.MoveTo(star, target.position, moveTweenDuration);
-        TweenAlpha.Begin(target.gameObject, moveTweenDuration, 0);
+        //TweenAlpha.Begin(target.gameObject, moveTweenDuration, 0);
         iTween.ShakeRotation(star, new Vector3(0, 0, 360f), moveTweenDuration);
         iTween.ScaleTo(star, Vector3.one, moveTweenDuration);
 
@@ -114,5 +114,9 @@ public class ChooseGameButton : MonoBehaviour
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         }
+
+        yield return new WaitForSeconds(moveTweenDuration);
+        target.GetComponent<UISprite>().spriteName = "star_active_512";
+        Destroy(star);
     }
 }

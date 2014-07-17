@@ -124,9 +124,11 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             {
                 GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_alphabetLetterPrefab, m_alphabetGrid.transform);
                 newButton.GetComponent<BankButton>().SetUp(m_dataType, i.ToString());
-                newButton.GetComponent<ClickEvent>().SetString(i.ToString());
-                newButton.GetComponent<ClickEvent>().SingleClicked += OnClickTestButton;
                 newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
+                ClickEvent click = newButton.GetComponent<ClickEvent>() as ClickEvent;
+                click.SetString(i.ToString());
+                click.SingleClicked += OnClickTestButton;
+                m_spawnedDataClicks.Add(click);
             }
             
             m_alphabetGrid.Reposition();
@@ -280,6 +282,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             if(bankButton != null)
             {
                 ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
+                D.Log("clickString: " + click.GetString());
                 OnMoveToShow(click.GetData(), click.GetString());
                 BankCamera.Instance.MoveToShow();
             }
@@ -300,12 +303,16 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             if(click.GetComponent<BankButton>().HasAnsweredCorrect())
             {
                 int originalIndex = m_spawnedDataClicks.IndexOf(click);
-                int legalIndex = m_spawnedDataClicks.FindIndex(originalIndex, x => !x.GetComponent<BankButton>().HasAnsweredCorrect());
 
-                if(legalIndex != -1)
+                if(originalIndex != -1)
                 {
-                    click = m_spawnedDataClicks[legalIndex];
-                    foundLegal = true;
+                    int legalIndex = m_spawnedDataClicks.FindIndex(originalIndex, x => !x.GetComponent<BankButton>().HasAnsweredCorrect());
+
+                    if(legalIndex != -1)
+                    {
+                        click = m_spawnedDataClicks[legalIndex];
+                        foundLegal = true;
+                    }
                 }
             }
             else
@@ -315,6 +322,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
             if(foundLegal)
             {
+                D.Log("clickString: " + click.GetString());
                 OnMoveToShow(click.GetData(), click.GetString());
                 BankCamera.Instance.MoveToShow();
             }

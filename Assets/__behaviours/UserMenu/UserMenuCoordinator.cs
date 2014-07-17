@@ -13,12 +13,15 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 	private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private PipButton m_doneButton;
+    [SerializeField]
+    private PipButton m_logoutButton;
 
     UserMenuButton m_currentButton = null;
 
 	// Use this for initialization
 	IEnumerator Start () 
 	{
+        m_logoutButton.Unpressing += OnClickLogout;
         m_doneButton.Unpressing += OnClickDone;
 
 		Dictionary<string, string> users = UserInfo.Instance.GetUsers();
@@ -75,6 +78,11 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
             //StartCoroutine(ResetDraggablePanelPosition());
         }
 	}
+
+    void OnClickLogout(PipButton button)
+    {
+        LoginInfo.Instance.Logout();
+    }
 
     void OnClickDone(PipButton button)
     {

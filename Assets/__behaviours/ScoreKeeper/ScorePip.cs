@@ -25,6 +25,8 @@ public class ScorePip : ScoreKeeper
     private AnimManager m_popAnimManager;
     [SerializeField]
     private SplineFollower m_popSplineFollower;
+    [SerializeField]
+    private GameObject m_branchPrefab;
     
     float m_pointDistance;
     
@@ -34,6 +36,11 @@ public class ScorePip : ScoreKeeper
         
         float delta = Mathf.Abs((m_top.localPosition - m_bottom.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
+
+        for (int i = 0; i < targetScore - 1; ++i)
+        {
+            //new Vector3(m_pipParent.localPosition.x, m_bottom.localPosition.y + (m_pointDistance * m_score), m_pipParent.localPosition.z)
+        }
     }
     
     public override void UpdateScore(int delta = 1)

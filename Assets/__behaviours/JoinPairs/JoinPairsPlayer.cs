@@ -96,14 +96,15 @@ public class JoinPairsPlayer : GamePlayer
     {
         m_scoreKeeper.SetTargetScore(targetScore);
 
+
         if (dataType == "numbers")
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.numberPrefab;
-            m_secondPrefab = JoinPairsCoordinator.Instance.numberPrefab;
+            m_secondPrefab = JoinPairsCoordinator.Instance.textPrefab;
 
             m_off1 = m_leftOff;
             m_off2 = m_rightOff;
-        } 
+        }
         else if (dataType == "shapes")
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.picturePrefab;

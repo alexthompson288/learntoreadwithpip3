@@ -45,6 +45,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
+        m_dataDisplay.SetShowPicture(true);
+
         // always pip, always winner
         SessionInformation.Instance.SetPlayerIndex(0, 3);
         SessionInformation.Instance.SetWinner(0);

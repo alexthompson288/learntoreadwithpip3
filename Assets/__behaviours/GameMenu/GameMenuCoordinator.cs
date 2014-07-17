@@ -43,6 +43,12 @@ public class GameMenuCoordinator : MonoBehaviour
             if (m_currentColorButton != null)
             {
                 m_currentColorButton.ChangeSprite(true);
+
+                Color color = ColorInfo.GetColor(m_currentColorButton.pipColor);
+                foreach (UIWidget widget in m_coloredWidgets)
+                {
+                    TweenColor.Begin(widget.gameObject, 0.25f, color);
+                }
             }
             
             ActivateGameButtons();

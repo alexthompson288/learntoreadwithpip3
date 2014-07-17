@@ -51,6 +51,17 @@ public class LoginInfo : Singleton<LoginInfo>
         m_hasExited = true;
     }
 
+    public void Logout()
+    {
+        m_email = "";
+        m_password = "";
+        m_accessToken = "";
+        m_expirationDate = "";
+        Save();
+
+        TransitionScreen.Instance.ChangeLevel("NewLogin", false);
+    }
+
     void Awake()
     {
 #if UNITY_EDITOR
