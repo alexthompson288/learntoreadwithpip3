@@ -17,9 +17,9 @@ public class SplattableRatLetter : MonoBehaviour
 	[SerializeField]
 	private SimpleSpriteAnim m_spriteAnimation;
 	[SerializeField]
-	private GameObject m_locator;
-	[SerializeField]
 	private float m_splatDuration;
+
+    private GameObject m_locator;
 	
 	SplatRatGamePlayer m_gamePlayer;
 	
@@ -35,11 +35,7 @@ public class SplattableRatLetter : MonoBehaviour
 		
 		ChangeLetter();
 		
-		//GetComponent<UIPanel>().depth = locator.GetComponent<PanelReference>().GetDepth() - 1;
-
         iTween.ScaleFrom(gameObject, Vector3.zero, 1.0f);
-		
-		//m_spriteAnimation.PlayAnimation("JUMP");
 	}
 	
 	void ChangeLetter()
@@ -68,7 +64,7 @@ public class SplattableRatLetter : MonoBehaviour
 
         //UserStats.Activity.IncrementNumAnswers();
 		
-        bool isCorrect = m_gamePlayer.LetterClicked(m_letter, m_locator);
+        bool isCorrect = m_gamePlayer.LetterClicked(m_letter);
 		
 		if(isCorrect)
 		{

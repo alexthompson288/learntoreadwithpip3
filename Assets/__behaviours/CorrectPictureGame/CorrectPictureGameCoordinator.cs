@@ -41,8 +41,6 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		for(int i = m_wordSelection.Count - 1; i > -1; --i)
 		{
-			//D.Log(m_wordSelection[i]["word"].ToString());
-            D.Log("word: " + m_wordSelection[i]["word"]);
 			Texture2D tex = null;
 			if(m_wordSelection[i]["image"] != null)
 			{
@@ -52,7 +50,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			{
 				tex =(Texture2D)Resources.Load("Images/word_images_png_350/_" + m_wordSelection[i]["word"].ToString());
 			}
-			D.Log("tex: " + tex);
+
 			if(tex != null)
 			{
 				m_remainingWords.Add(m_wordSelection[i]["word"].ToString());
@@ -205,8 +203,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)
     {
         //UserStats.Activity.IncrementNumAnswers();
-
-        if(m_currentWordData["word"].ToString() == clickedBlackboard.GetImageName().Replace("_", ""))
+        if(m_currentWordData["word"].ToString().ToLower() == clickedBlackboard.GetImageName().Replace("_", "").ToLower())
         {
             StopAllCoroutines();
             StartCoroutine(OnCorrectClick());

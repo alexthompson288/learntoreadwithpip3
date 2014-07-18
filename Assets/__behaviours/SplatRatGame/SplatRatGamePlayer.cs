@@ -103,7 +103,7 @@ public class SplatRatGamePlayer : GamePlayer
 		}
 	}
 	
-	public bool LetterClicked(string letter, GameObject locator)
+	public bool LetterClicked(string letter)
     {
 		if(letter == SplatRatGameCoordinator.Instance.GetCurrentLetter())
 		{

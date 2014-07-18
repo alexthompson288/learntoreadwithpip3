@@ -77,7 +77,6 @@ public class Target : MonoBehaviour
         {
             MoveCompleted(this);
         }
-        //D.Log("Finished Invoke: " + transform.localScale.x);
     }
     
     protected DataRow m_data;
@@ -116,8 +115,6 @@ public class Target : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-        //D.Log("Target.OnCollisionEnter()");
-        //D.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
             CatapultAmmo ammoBehaviour = other.gameObject.GetComponent<CatapultAmmo>() as CatapultAmmo;
@@ -131,8 +128,6 @@ public class Target : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //D.Log("Target.OnTriggerEnter()");
-        //D.Log("TARGET ENTER: " + other.name + " - " + other.transform.parent.name);
         if (!Mathf.Approximately(transform.localScale.y, 0))
         {
             CatapultAmmo ammoBehaviour = other.GetComponent<CatapultAmmo>() as CatapultAmmo;
@@ -174,10 +169,7 @@ public class Target : MonoBehaviour
 
         rigidbody.isKinematic = false;
 
-        D.Log("ball.speed: " + ball.rigidbody.velocity.magnitude);
-
         rigidbody.AddForce(ball.rigidbody.velocity.normalized * 2, ForceMode.VelocityChange);
-        //rigidbody.AddForce(ball.rigidbody.velocity * 1.2f, ForceMode.VelocityChange);
     }
     
     public virtual void Explode()

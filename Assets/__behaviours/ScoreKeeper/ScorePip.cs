@@ -37,9 +37,16 @@ public class ScorePip : ScoreKeeper
         float delta = Mathf.Abs((m_top.localPosition - m_bottom.localPosition).magnitude);
         m_pointDistance = Mathf.Lerp(0, delta, 1f / (float)m_targetScore);
 
-        for (int i = 0; i < targetScore - 1; ++i)
+        int mirrorIndex = 0;
+        for (int heightIndex = targetScore - 1; heightIndex > 0; --heightIndex, ++mirrorIndex)
         {
-            //new Vector3(m_pipParent.localPosition.x, m_bottom.localPosition.y + (m_pointDistance * m_score), m_pipParent.localPosition.z)
+            GameObject newBranch = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_branchPrefab, transform);
+            newBranch.GetComponent<UISprite>().depth = 0;
+
+            int localScaleX = mirrorIndex % 2 == 0 ? -1 : 1;
+            newBranch.transform.localScale = new Vector3(localScaleX, 1, 1);
+
+            newBranch.transform.localPosition = new Vector3(newBranch.transform.localPosition.x, m_bottom.localPosition.y + (m_pointDistance * heightIndex), m_pipParent.localPosition.z);
         }
     }
     
