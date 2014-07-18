@@ -63,14 +63,34 @@ public class UserInfo : Singleton<UserInfo>
 
     KeyValuePair<string, string> GetUser(string userName)
     {
-        return m_users.Where(x => x.Key == userName).FirstOrDefault();
+        foreach (KeyValuePair<string, string> kvp in m_users)
+        {
+            if(kvp.Key == userName)
+            {
+                return kvp;
+            }
+        }
+
+        // Defensive: It should be impossible for this method to be called with a userName not found in the dictionary
+        D.LogWarning("Could not find user with userName: " + userName);
+
+        if (m_users.Count > 0)
+        {
+            CreateUser("Pip", "pip_state_a");
+        }
+
+        // Cannot use KeyValuePair<string, string>.FirstOrDefault() because it causes a JIT (Just-In-Time) Exception.
+        return m_users.First();
     }
     
     public void SetCurrentUser (string userName) 
     {
+        D.Log("UserInfo.SetCurrentUser(" + userName + ")");
         KeyValuePair<string, string> lastUser = m_currentUser;
 
+        D.Log("Getting username");
         m_currentUser = GetUser(userName);
+        D.Log("Found username: " + m_currentUser);
 
         // Defensive: This should never execute
         if(m_currentUser.Equals(default(KeyValuePair<string, string>)))
@@ -85,6 +105,7 @@ public class UserInfo : Singleton<UserInfo>
 
         if (m_currentUser.Key != lastUser.Key)
         {
+            D.Log("User is new");
             Save();
             
             if(ChangingUser != null)

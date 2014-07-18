@@ -60,10 +60,12 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 	public void SelectButton (UserMenuButton button)
 	{
+        D.Log("UserMenuCoordinator.SelectButton()");
         float tweenDuration = 0.25f;
 
         if (button != m_currentButton)
         {
+            D.Log("button != m_currentButton");
             if (m_currentButton != null)
             {
                 m_currentButton.ChangeSprite(false, tweenDuration);

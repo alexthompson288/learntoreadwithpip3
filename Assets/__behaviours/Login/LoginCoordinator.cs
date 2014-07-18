@@ -49,13 +49,20 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
 
-        GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
-        m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
-        m_pipSpriteAnim = newPip.GetComponentInChildren<SpriteAnim>() as SpriteAnim;
-
-        yield return new WaitForSeconds(0.8f);
+        if (LoginInfo.Instance.GetAttemptLogin())
+        {
+            GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
+            m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
+            m_pipSpriteAnim = newPip.GetComponentInChildren<SpriteAnim>() as SpriteAnim;
             
-        m_pipAnim.MoveToPos(m_pipOnLocation.position);
+            yield return new WaitForSeconds(0.8f);
+            
+            m_pipAnim.MoveToPos(m_pipOnLocation.position);
+        }
+        else
+        {
+            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+        }
     }
 
     public static void SetInfoText(LoginException ex)

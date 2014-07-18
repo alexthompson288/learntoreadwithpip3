@@ -56,6 +56,7 @@ public class UserMenuButton : MonoBehaviour
 
 	void OnClick()
 	{
+        D.Log("UserMenuButton.OnClick()");
 		UserInfo.Instance.SetCurrentUser(m_label.text);
         UserMenuCoordinator.Instance.SelectButton(this);
 	}

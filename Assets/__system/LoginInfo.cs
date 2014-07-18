@@ -44,6 +44,11 @@ public class LoginInfo : Singleton<LoginInfo>
     string m_loginSceneName = "NewLogin";
     
     bool m_hasExited = false;
+
+    public bool GetAttemptLogin()
+    {
+        return m_attemptLogin;
+    }
     
 
     void OnApplicationQuit()
