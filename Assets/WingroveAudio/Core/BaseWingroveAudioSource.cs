@@ -245,44 +245,53 @@ namespace WingroveAudio
 
         public ActiveCue Play(ActiveCue cue, float fade, GameObject target)
         {
+            D.Log(System.String.Format("BaseWingroveAudioSource.Play({0}, {1}, {2})", cue, fade, target));
             if (m_instanceLimiter == null || m_instanceLimiter.CanPlay(target))
             {
-                if ((cue == null)||(m_retriggerOnSameObjectBehaviour == RetriggerOnSameObject.PlayAnother))
-                {                    
+                D.Log("m_instanceLimiter == null || m_instanceLimiter.CanPlay(target)");
+                if ((cue == null) || (m_retriggerOnSameObjectBehaviour == RetriggerOnSameObject.PlayAnother))
+                {  
+                    D.Log("(cue == null)||(m_retriggerOnSameObjectBehaviour == RetriggerOnSameObject.PlayAnother)");
                     GameObject newCue = new GameObject("Cue");
                     cue = newCue.AddComponent<ActiveCue>();
                     cue.Initialise(gameObject, target);
                     m_currentActiveCues.Add(cue);
+
+                    D.Log("m_beatSynchronizeOnStart: " + m_beatSynchronizeOnStart);
                     if (m_beatSynchronizeOnStart)
                     {
                         BeatSyncSource current = BeatSyncSource.GetCurrent();
-                        if ( current != null )
+                        if (current != null)
                         {
                             cue.Play(fade, current.GetNextBeatTime());
-                        }
+                        } 
                         else
                         {
                             cue.Play(fade);
                         }
-                    }
+                    } 
                     else
                     {
                         cue.Play(fade);
                     }
                     if (m_instanceLimiter != null)
                     {
+                        D.Log("Adding cue to instance limiter");
                         m_instanceLimiter.AddCue(cue, target);
                     }
-                }
+                } 
                 else
                 {
+                    D.Log("(cue != null)&&(m_retriggerOnSameObjectBehaviour != RetriggerOnSameObject.PlayAnother)");
                     if (m_retriggerOnSameObjectBehaviour != RetriggerOnSameObject.DontPlay)
                     {
                         cue.Play(fade);
                     }
                 }
-                
-
+            }
+            else
+            {
+                D.Log("instanceLimiter != null && !m_instanceLimiter.CanPlay(target)");
             }
             return cue;
         }

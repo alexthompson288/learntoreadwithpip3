@@ -180,7 +180,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SCENE_CHANGE");
         }
 
 		m_currentTextureIndex = UnityEngine.Random.Range(0, m_backgroundTextures.Length);

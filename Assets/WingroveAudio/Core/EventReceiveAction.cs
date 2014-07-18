@@ -149,12 +149,15 @@ namespace WingroveAudio
 
         public override void PerformAction(string eventName, List<ActiveCue> cuesIn, List<ActiveCue> cuesOut)
         {
+            D.Log("EventReceiveAction.PerformAction()");
             if (m_delay == 0.0f)
             {
+                D.Log("Performing internal");
                 PerformActionInternal(eventName, cuesIn, cuesOut);
             }
             else
             {
+                D.Log("Performing delayed internal");
                 StartCoroutine(PerformDelayedAction(eventName, cuesIn, m_delay));
             }
         }
@@ -162,7 +165,21 @@ namespace WingroveAudio
 
         public void PerformActionInternal(string eventName, List<ActiveCue> cuesIn, List<ActiveCue> cuesOut)
         {
+            D.Log("EventReceiveAction.PerformActionInternal()");
+            D.Log("m_audioSources.Length: " + m_audioSources.Length );
+
+            if (cuesIn != null)
+            {
+                D.Log("cuesIn.Count: " + cuesIn.Count);
+            }
+            else
+            {
+                D.Log("cuesIn == null");
+            }
+
             bool disallowNulls = false;
+
+            D.Log("Looping through m_audioSources");
             foreach (BaseWingroveAudioSource was in m_audioSources)
             {
                 if (cuesIn != null)
@@ -177,6 +194,8 @@ namespace WingroveAudio
                 }
             }
 
+            D.Log("disallowNulls: " + disallowNulls);
+
             int randomIndex = Random.Range(0, m_audioSources.Length);
             bool shouldIncreaseSequence = false;
             int index = 0;
@@ -184,6 +203,7 @@ namespace WingroveAudio
 
             if (m_action == Actions.PlayRandomNoRepeats)
             {
+                D.Log("m_action == Actions.PlayRandomNoRepeats");
                 int randomP = Random.Range(0, m_availableRandoms.Count);
                 randomIndex = m_availableRandoms[randomP];
 
@@ -197,15 +217,18 @@ namespace WingroveAudio
                 }
             }
 
+            D.Log("Looping through m_audioSources");
             foreach (BaseWingroveAudioSource was in m_audioSources)
             {
                 ActiveCue useCue = null;
+                D.Log("Looping through cues");
                 if (cuesIn != null)
                 {
                     foreach (ActiveCue cue in cuesIn)
                     {
                         if (cue.GetOriginatorSource() == was.gameObject)
                         {
+                            D.Log("Found cue. Breaking from cue loop");
                             useCue = cue;
                             break;
                         }
@@ -214,6 +237,8 @@ namespace WingroveAudio
 
                 if ((!disallowNulls) || (useCue != null))
                 {
+                    D.Log("!disallowNulls || useCue != null");
+                    D.Log("m_action: " + m_action);
                     switch (m_action)
                     {
                         case Actions.Pause:
@@ -223,7 +248,9 @@ namespace WingroveAudio
                             useCue = was.Unpause(useCue);
                             break;
                         case Actions.Play:
+                            D.Log("m_action == Actions.Play");
                             useCue = was.Play(useCue, m_fadeLength, null);
+                            D.Log("useCue: " + useCue);
                             break;
                         case Actions.PlayRandom:
                             if (index == randomIndex)

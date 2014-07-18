@@ -283,16 +283,30 @@ namespace WingroveAudio
 
         public void PostEventCL(string eventName, List<ActiveCue> cuesIn, List<ActiveCue> cuesOut)
         {
+            D.Log("PostEventCL(): " + eventName);
 #if UNITY_EDITOR            
             LogEvent(eventName, null);
 #endif
             List<BaseEventReceiveAction> listOfReceivers = null;
             if (m_eventReceivers.TryGetValue(eventName, out listOfReceivers))
             {
+                if(listOfReceivers != null)
+                {
+                    D.Log("Found " + listOfReceivers.Count + " receivers");
+                }
+                else
+                {
+                    D.Log("listOfReceivers is null");
+                }
+
                 foreach (BaseEventReceiveAction evr in listOfReceivers)
                 {
                     evr.PerformAction(eventName, cuesIn, cuesOut);
                 }
+            }
+            else
+            {
+                D.Log("Could not find event: " + eventName);
             }
         }
 

@@ -92,6 +92,7 @@ namespace WingroveAudio
                     m_currentAudioSource.m_audioSource.clip = m_audioClipSource.GetAudioClip();
                     if (!m_isPaused)
                     {
+                        D.Log("Setting queueEnableAndPlay to true");
                         m_currentAudioSource.m_audioSource.loop = m_audioClipSource.GetLooping();
                         queueEnableAndPlay = true;
                     }
@@ -169,6 +170,7 @@ namespace WingroveAudio
 
             if (queueEnableAndPlay)
             {
+                D.Log("ActiveCue.Update(): queueEnableAndPlay");
                 if (m_currentAudioSource != null)
                 {
                     m_currentAudioSource.m_audioSource.enabled = true;
@@ -198,12 +200,20 @@ namespace WingroveAudio
                     if ((m_hasDSPStartTime) && (m_dspStartTime > AudioSettings.dspTime))
                     {
                         m_currentAudioSource.m_audioSource.timeSamples = m_currentPosition = 0;
+                        D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.PlayScheduled(" + m_dspStartTime + ")");
                         m_currentAudioSource.m_audioSource.PlayScheduled(m_dspStartTime);
                     }
                     else
                     {
+                        D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.Play()");
+                        D.Log("m_currentAudioSource.m_audioSource.clip: " + m_currentAudioSource.m_audioSource.clip);
                         m_currentAudioSource.m_audioSource.Play();
                     }
+                }
+                else
+                {
+                    D.Log("MISSING AUDIO SOURCE");
+                    D.LogError("ActiveCue.Update(): m_currentAudioSource == null");
                 }
             }
 
@@ -316,24 +326,31 @@ namespace WingroveAudio
 
         public void Play(float fade)
         {
+            D.Log("ActiveCue.Play(" + fade + ")");
             m_currentPosition = 0;
+            D.Log("m_currentAudioSource: " + m_currentAudioSource);
             if (m_currentAudioSource != null)
             {
                 m_currentAudioSource.m_audioSource.timeSamples = 0;
             }
             if (fade == 0.0f)
             {
+                D.Log("fade == 0.0f");
                 m_currentState = CueState.Playing;
             }
             else
             {
+                D.Log("fade != 0.0f");
                 m_currentState = CueState.PlayingFadeIn;
                 m_fadeSpeed = 1.0f / fade;
             }
+
+            D.Log("m_currentState: " + m_currentState);
         }
 
         public void Play(float fade, double dspStartTime)
         {
+            D.Log(System.String.Format("ActiveCue.Play({0}, {1})", fade, dspStartTime));
             m_currentPosition = 0;
             m_hasDSPStartTime = true;
             m_dspStartTime = dspStartTime;
@@ -448,6 +465,7 @@ namespace WingroveAudio
             {
                 if (m_currentAudioSource != null)
                 {
+                    D.Log("ActiveCue.Unpause(): m_currentAudioSource.m_audioSource.Play()");
                     m_currentAudioSource.m_audioSource.Play();
                 }
             }
