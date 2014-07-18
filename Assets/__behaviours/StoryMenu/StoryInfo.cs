@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StoryMenuInfo : Singleton<StoryMenuInfo> 
+public class StoryInfo : Singleton<StoryInfo> 
 {
     class Bookmark
     {

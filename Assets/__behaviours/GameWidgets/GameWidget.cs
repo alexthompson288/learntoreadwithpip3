@@ -151,6 +151,8 @@ public class GameWidget : MonoBehaviour
     {
         if(m_label != null)
         {
+            D.Log(m_label.text + " - " + NGUIHelpers.GetLabelWidth(m_label));
+            NGUIHelpers.MaxLabelWidth(m_label, 450);
             int newWidth = (int)((m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x + 60) * m_label.transform.localScale.x);
 
             if(newWidth < 150)

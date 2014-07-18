@@ -82,7 +82,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        ColorInfo.PipColor startPipColor = StoryMenuInfo.Instance.GetStartPipColor();
+        ColorInfo.PipColor startPipColor = StoryInfo.Instance.GetStartPipColor();
 
         m_currentColor = ColorInfo.GetColorString(startPipColor).ToLower();
 
@@ -404,78 +404,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         }
     }
 
-    /*
-    void UpdateText(DataRow storyPage)
-    {
-        if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
-        {
-            string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "");
-
-            string[] words = textToDisplay.Split(' ');
-
-            float maxWidth = 850;
-            float length = 0;
-            float height = 0;
-            float widestLineWidth = 0;
-            
-            foreach (string word in words)
-            {
-                string[] lineWords = line.Split(' ');
-                bool hadValidWord = false;
-                foreach (string newWord in lineWords)
-                {
-                    if (!string.IsNullOrEmpty(newWord) && newWord != " ")
-                    {
-                        hadValidWord = true;
-                        GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
-                            m_textPrefab, m_textAnchors [0]);
-                        
-                        m_textObjects.Add(newWordInstance);
-                        
-                        newWordInstance.GetComponent<UILabel>().text = newWord + " ";
-                        newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                        Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
-                        length += wordSize.x;
-                        widestLineWidth = Mathf.Max(widestLineWidth, length);
-                        
-                        string storyType = SessionInformation.Instance.GetStoryType();
-                        if (storyType == "" || storyType == null)
-                        {
-                            storyType = "Reception";
-                        }
-                        
-                        ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
-                        bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
-                        
-                        showPipPadForWord.SetUp(newWord, wordSize, true);
-                        
-                        // Highlight if word is on the decode list
-                        if (isOnDecodeList)
-                        {
-                            showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
-                        }
-                    }
-                }
-                if (hadValidWord)
-                {
-                    length = 0;
-                    height -= 96;
-                }
-            }
-            
-
-            if (widestLineWidth > maxWidth)
-            {
-                float scale = maxWidth / widestLineWidth;
-                m_textAnchors [0].transform.localScale = scale * Vector3.one;
-            } else
-            {
-                m_textAnchors [0].transform.localScale = Vector3.one;
-            }
-        } 
-    }
-    */
-
     void UpdatePage()
     {
         if (m_currentPage < m_numPages)
@@ -484,9 +412,13 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             
             if (storyPage != null)
             {
-                UpdateText(storyPage);
                 UpdatePicture(storyPage);
                 UpdateAudio(storyPage);
+
+                if(StoryInfo.Instance.GetShowText())
+                {
+                    UpdateText(storyPage);
+                }
             }
         }
         else
@@ -521,75 +453,4 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             button.EnableCollider(enable);
         }
     }
-
-    /*
-    void UpdateText(DataRow storyPage)
-    {
-        if (StoryMenuInfo.Instance.GetShowText() && storyPage != null && storyPage [m_currentTextAttribute] != null)
-        {
-            string textToDisplay = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n");
-            
-            string[] lines = textToDisplay.Split('\n');
-            
-            float length = 0;
-            float height = 0;
-            float widestLineWidth = 0;
-            
-            foreach (string line in lines)
-            {
-                string[] lineWords = line.Split(' ');
-                bool hadValidWord = false;
-                foreach (string newWord in lineWords)
-                {
-                    if (!string.IsNullOrEmpty(newWord) && newWord != " ")
-                    {
-                        hadValidWord = true;
-                        GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(
-                            m_textPrefab, m_textAnchors [0]);
-                        
-                        m_textObjects.Add(newWordInstance);
-                        
-                        newWordInstance.GetComponent<UILabel>().text = newWord + " ";
-                        newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                        Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
-                        length += wordSize.x;
-                        widestLineWidth = Mathf.Max(widestLineWidth, length);
-                        
-                        string storyType = SessionInformation.Instance.GetStoryType();
-                        if (storyType == "" || storyType == null)
-                        {
-                            storyType = "Reception";
-                        }
-                        
-                        ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
-                        bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
-                        
-                        showPipPadForWord.SetUp(newWord, wordSize, true);
-                        
-                        // Highlight if word is on the decode list
-                        if (isOnDecodeList)
-                        {
-                            showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
-                        }
-                    }
-                }
-                if (hadValidWord)
-                {
-                    length = 0;
-                    height -= 96;
-                }
-            }
-
-            float maxWidth = 850;
-            if (widestLineWidth > maxWidth)
-            {
-                float scale = maxWidth / widestLineWidth;
-                m_textAnchors [0].transform.localScale = scale * Vector3.one;
-            } else
-            {
-                m_textAnchors [0].transform.localScale = Vector3.one;
-            }
-        } 
-    }
-    */
 }
