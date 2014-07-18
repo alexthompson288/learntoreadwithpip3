@@ -64,7 +64,15 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 
         if (m_pipisodes.Count > 0)
         {
-            SelectPipisode(m_pipisodes[0]);
+            if(PipisodeInfo.Instance.HasBookmark())
+            {
+                SelectPipisode(PipisodeInfo.Instance.GetCurrentPipisode());
+                PipisodeInfo.Instance.SetCurrentPipisode(null);
+            }
+            else
+            {
+                SelectPipisode(m_pipisodes[0]);
+            }
 
             for (int i = 0; i < m_pipisodes.Count; ++i)
             {
@@ -101,6 +109,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
         ScoreInfo.Instance.SetScoreType(m_currentPipisode ["pipisode_title"].ToString());
+
+        PipisodeInfo.Instance.SetCurrentPipisode(m_currentPipisode);
 
         GameManager.Instance.StartGames();
     }
