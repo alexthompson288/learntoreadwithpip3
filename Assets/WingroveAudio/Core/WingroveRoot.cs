@@ -283,13 +283,14 @@ namespace WingroveAudio
 
         public void PostEventCL(string eventName, List<ActiveCue> cuesIn, List<ActiveCue> cuesOut)
         {
-            D.Log("PostEventCL(): " + eventName);
+            //D.Log("PostEventCL(): " + eventName);
 #if UNITY_EDITOR            
             LogEvent(eventName, null);
 #endif
             List<BaseEventReceiveAction> listOfReceivers = null;
             if (m_eventReceivers.TryGetValue(eventName, out listOfReceivers))
             {
+                /*
                 if(listOfReceivers != null)
                 {
                     D.Log("Found " + listOfReceivers.Count + " receivers");
@@ -298,27 +299,53 @@ namespace WingroveAudio
                 {
                     D.Log("listOfReceivers is null");
                 }
+                */
 
                 foreach (BaseEventReceiveAction evr in listOfReceivers)
                 {
                     evr.PerformAction(eventName, cuesIn, cuesOut);
                 }
             }
+            /*
             else
             {
                 D.Log("Could not find event: " + eventName);
+            }
+            */
+        }
+
+        bool m_hasFailed = false;
+
+        public bool hasFailed
+        {
+            get
+            {
+                return m_hasFailed;
+            }
+        }
+
+        int m_numTryClaims = 0;
+        public int numTryClaims
+        {
+            get
+            {
+                return m_numTryClaims;
             }
         }
 
         public AudioSourcePoolItem TryClaimPoolSource(ActiveCue cue)
         {
+            ++m_numTryClaims;
+            //D.Log(System.String.Format("WingroveRoot.TryClaimPoolSource()- m_numUnlinks: {0}, m_numTryClaims: {1}", m_numUnlinks, m_numTryClaims));
             AudioSourcePoolItem bestSteal = null;
             int lowestImportance = cue.GetImportance();
             float quietestSimilarImportance = 1.0f;
+
             foreach (AudioSourcePoolItem aspi in m_audioSourcePool)
             {
                 if (aspi.m_user == null)
                 {
+                    //D.Log(System.String.Format("Found unused audio source. cue - {0}, lowest - {1}", cue.GetImportance(), lowestImportance));
                     aspi.m_user = cue;
                     return aspi;
                 }
@@ -328,6 +355,7 @@ namespace WingroveAudio
                     {
                         if (aspi.m_user.GetImportance() < lowestImportance)
                         {
+                            //D.Log(System.String.Format("STEALING with greater importance: cue - {0}, lowest - {1}, aspi - {2}", cue.GetImportance(), lowestImportance, aspi.m_user.GetImportance()));
                             lowestImportance = aspi.m_user.GetImportance();
                             bestSteal = aspi;
                         }
@@ -336,8 +364,13 @@ namespace WingroveAudio
                     {
                         if (aspi.m_user.GetTheoreticalVolume() < quietestSimilarImportance)
                         {
+                            //D.Log("STEALING with equal importance");
                             quietestSimilarImportance = aspi.m_user.GetTheoreticalVolume();
                             bestSteal = aspi;
+                        }
+                        else
+                        {
+                            //D.Log(System.String.Format("aspi.m_user.GetTheorticalVolume {0} >= quietestSimilarImportance {1}", aspi.m_user.GetTheoreticalVolume(), quietestSimilarImportance));
                         }
                     }
                 }
@@ -348,23 +381,76 @@ namespace WingroveAudio
                 bestSteal.m_user = cue;
                 return bestSteal;
             }
+            else
+            {
+                m_hasFailed = true;
+                //D.LogError(System.String.Format("COULD NOT STEAL AUDIO SOURCE - numUnlinks {0}, numTryClaims: {1}, Time.time: {2}", m_numUnlinks, m_numTryClaims, Time.time));
+                /*
+                D.Log(System.String.Format("m_audioSourcePool.Count: {0}", m_audioSourcePool.Count));
+                D.Log(System.String.Format("Importances: cue - {0}, lowest - {1}", cue.GetImportance(), lowestImportance));
+                D.Log("Log audioSourcePool importances > 0");
+                foreach(AudioSourcePoolItem a in m_audioSourcePool)
+                {
+                    if(a.m_user.GetImportance() > 0)
+                    {
+                        D.Log(a.m_user.GetImportance());
+                    }
+                }
+                */
+            }
+            
             return null;
+        }
+
+
+
+        int m_numUnlinks = 0;
+        public int numUnlinks
+        {
+            get
+            {
+                return m_numUnlinks;
+            }
         }
 
         public void UnlinkSource(AudioSourcePoolItem item)
         {
-            //item.m_audioSource.Stop();
-            //item.m_audioSource.enabled = false;
-            //item.m_audioSource.clip = null;
-            // flush test
-            GameObject go = item.m_audioSource.gameObject;
-            Destroy(item.m_audioSource);
-            item.m_audioSource = go.AddComponent<AudioSource>();
-            item.m_audioSource.enabled = false;
-            item.m_audioSource.rolloffMode = m_defaultRolloffMode;
-            item.m_audioSource.maxDistance = m_defaultMaxDistance;
-            item.m_audioSource.minDistance = m_defaultMinDistance;
-            item.m_user = null;
+            try
+            {
+                //D.Log(System.String.Format("WingroveRoot.UnlinkSource(): numUnlinks {0}, numTryClaims: {1}, hasFailed: {2}", m_numUnlinks, m_numTryClaims, m_hasFailed));
+                //item.m_audioSource.Stop();
+                //item.m_audioSource.enabled = false;
+                //item.m_audioSource.clip = null;
+                // flush test
+
+                GameObject go = item.m_audioSource.gameObject;
+                Destroy(item.m_audioSource);
+                item.m_audioSource = go.AddComponent<AudioSource>();
+                item.m_audioSource.enabled = false;
+                item.m_audioSource.rolloffMode = m_defaultRolloffMode;
+                item.m_audioSource.maxDistance = m_defaultMaxDistance;
+                item.m_audioSource.minDistance = m_defaultMinDistance;
+                item.m_user = null;
+
+                ++m_numUnlinks;
+
+                /*
+                int numFree = 0;
+                foreach(AudioSourcePoolItem aspi in m_audioSourcePool)
+                {
+                    if(aspi.m_user == null)
+                    {
+                        ++numFree;
+                    }
+                }
+                
+                D.Log("Free ASPIs: " + numFree);
+                */
+            }
+            catch
+            {
+                D.LogError("FAILED: WingroveRoot.UnlinkSource()");
+            }
         }
 
         public string dbStringUtil(float amt)
@@ -478,4 +564,51 @@ namespace WingroveAudio
         }
     }
 
+    /*
+        public AudioSourcePoolItem TryClaimPoolSource(ActiveCue cue)
+        {
+            D.Log("WingroveRoot.TryClaimPoolSource(" + cue + ")");
+            AudioSourcePoolItem bestSteal = null;
+            int lowestImportance = cue.GetImportance();
+            float quietestSimilarImportance = 1.0f;
+            foreach (AudioSourcePoolItem aspi in m_audioSourcePool)
+            {
+                if (aspi.m_user == null)
+                {
+                    D.Log("Found unused audio source");
+                    aspi.m_user = cue;
+                    return aspi;
+                }
+                else
+                {
+                    if (aspi.m_user.GetImportance() < cue.GetImportance())
+                    {
+                        if (aspi.m_user.GetImportance() < lowestImportance)
+                        {
+                            lowestImportance = aspi.m_user.GetImportance();
+                            bestSteal = aspi;
+                        }
+                    }
+                    else if (aspi.m_user.GetImportance() == lowestImportance)
+                    {
+                        if (aspi.m_user.GetTheoreticalVolume() < quietestSimilarImportance)
+                        {
+                            quietestSimilarImportance = aspi.m_user.GetTheoreticalVolume();
+                            bestSteal = aspi;
+                        }
+                    }
+                }
+            }
+            if (bestSteal != null)
+            {
+                D.Log("Stealing audio source");
+                bestSteal.m_user.Virtualise();
+                bestSteal.m_user = cue;
+                return bestSteal;
+            }
+
+            D.Log("Could not find audio source");
+            return null;
+        }
+        */
 }

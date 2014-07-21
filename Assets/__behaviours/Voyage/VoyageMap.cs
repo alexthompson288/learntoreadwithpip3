@@ -80,7 +80,7 @@ public class VoyageMap : MonoBehaviour
 
     IEnumerator Start()
     {
-        D.Log("VoyageMap.Start()");
+        //D.Log("VoyageMap.Start()");
 
         m_locationNameAudioSource.Play();
 
@@ -116,7 +116,7 @@ public class VoyageMap : MonoBehaviour
 
         DataRow module = DataHelpers.GetModule(m_color);
         string dataType = module != null ? module ["modulereward"].ToString() : "Custom";
-        D.Log("module dataType: " + dataType);
+        //D.Log("module dataType: " + dataType);
 
         DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number");
         foreach (DataRow session in sessionsTable.Rows)
@@ -130,7 +130,7 @@ public class VoyageMap : MonoBehaviour
         
         if (m_pipAnim == null)
         {
-            D.Log("Spawning Pip");
+            //D.Log("Spawning Pip");
             Transform pipParent = VoyageCoordinator.Instance.GetPipParent();
             m_pipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, pipParent).GetComponent<PipAnim>() as PipAnim;
             
@@ -140,7 +140,7 @@ public class VoyageMap : MonoBehaviour
         }
         else
         {
-            D.Log("Found Pip");
+            //D.Log("Found Pip");
             m_pipAnim.MoveToPos(m_pipLocation.position);
             //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
         }
@@ -149,7 +149,7 @@ public class VoyageMap : MonoBehaviour
 
     IEnumerator PlayDelayedAnimation(SimpleSpriteAnim anim, float delay)
     {
-        D.Log(anim.transform.parent.name + " delay: " + delay);
+        //D.Log(anim.transform.parent.name + " delay: " + delay);
 
         yield return new WaitForSeconds(delay);
 

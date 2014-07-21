@@ -45,6 +45,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
 	{	
+        /*
 		string enviro = EnviroManager.Instance.GetEnvironment().ToString();
 		SplatRatEnviro ratEnviro = Resources.Load<SplatRatEnviro>(System.String.Format("SplatRat/{0}_SplatRat", enviro));
 
@@ -64,6 +65,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		{
 			D.LogError("ratEnviro is null");
 		}
+        */
 
         if (GetNumPlayers() == 2)
         {
@@ -92,8 +94,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		List<DataRow> lettersPool = DataHelpers.GetPhonemes();
 
-		D.Log("lettersPool.Count: " + lettersPool.Count);
-
 
         foreach (DataRow myPh in lettersPool)
         {
@@ -102,8 +102,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
                             myPh["phoneme"],
                             myPh["mneumonic"].ToString().Replace(" ", "_"));
 			
-			D.Log("phoneme: " + myPh["phoneme"]);
-
             m_phonemeImages[myPh] = (Texture2D)Resources.Load(imageFilename);
 
             string audioFilname = string.Format("{0}",
@@ -183,7 +181,6 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		for(int index = 0; index < numPlayers; ++index)
 		{
-			D.Log("Looping to display");
             bool playBenny = index == 0;
             StartCoroutine(m_gamePlayers[index].SetUpBenny(m_currentLetterData, playBenny));
 			StartCoroutine(m_gamePlayers[index].DisplayLargeBlackboard(m_phonemeImages[m_currentLetterData], m_currentLetter, m_currentLetter));

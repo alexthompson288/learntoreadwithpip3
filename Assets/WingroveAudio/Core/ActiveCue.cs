@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace WingroveAudio
 {
-
     public class ActiveCue : MonoBehaviour
     {
         public enum CueState
@@ -37,6 +36,8 @@ namespace WingroveAudio
         {
             if (m_currentAudioSource != null)
             {
+                D.Log("Unlinking from OnDestroy()");
+                m_hasUnlinked = true;
                 WingroveRoot.Instance.UnlinkSource(m_currentAudioSource);
                 m_currentAudioSource = null;
             }
@@ -77,6 +78,8 @@ namespace WingroveAudio
         private bool m_rmsRequested;
         private bool m_hasStartedEver = false;
 
+        bool m_hasFailed = false;
+
         void Update()
         {
             bool queueEnableAndPlay = false;
@@ -85,14 +88,21 @@ namespace WingroveAudio
                 // don't bother stealing if we're going to be silent anyway...                
                 if (GetTheoreticalVolume() > 0)
                 {
+                    //D.Log("ActiveCue.Update(): Finding audio source");
+                    //D.Log(System.String.Format("m_audioClipSource.clip.samples: {0}", m_audioClipSource.GetAudioClip().samples));
                     m_currentAudioSource = WingroveRoot.Instance.TryClaimPoolSource(this);
+
+                    if(m_currentAudioSource == null)
+                    {
+                        m_hasFailed = true;
+                    }
                 }
                 if (m_currentAudioSource != null)
                 {
                     m_currentAudioSource.m_audioSource.clip = m_audioClipSource.GetAudioClip();
                     if (!m_isPaused)
                     {
-                        D.Log("Setting queueEnableAndPlay to true");
+                        //D.Log("Setting queueEnableAndPlay to true");
                         m_currentAudioSource.m_audioSource.loop = m_audioClipSource.GetLooping();
                         queueEnableAndPlay = true;
                     }
@@ -113,6 +123,7 @@ namespace WingroveAudio
                             }
                             else
                             {
+                                ++m_numInternal1;
                                 StopInternal();
                             }
                         }
@@ -149,6 +160,7 @@ namespace WingroveAudio
                         if (m_fadeT <= 0)
                         {
                             m_fadeT = 0.0f;
+                            ++m_numInternal2;
                             StopInternal();
                             // early return!!!!
                             return;
@@ -160,8 +172,13 @@ namespace WingroveAudio
                 {
                     if (m_currentPosition > m_audioClipSource.GetAudioClip().samples - 1000)
                     {
+                        ++m_numInternal3;
                         StopInternal();
                         return;
+                    }
+                    else
+                    {
+                        D.Log(System.String.Format("NO_CALL {0} - currentPosition: {1}, samples-1000: {2}", gameObject.name, m_currentPosition, m_audioClipSource.GetAudioClip().samples - 1000));
                     }
                 }
             }
@@ -170,7 +187,7 @@ namespace WingroveAudio
 
             if (queueEnableAndPlay)
             {
-                D.Log("ActiveCue.Update(): queueEnableAndPlay");
+                D.Log("ActiveCue.Update(): if(queueEnableAndPlay)");
                 if (m_currentAudioSource != null)
                 {
                     m_currentAudioSource.m_audioSource.enabled = true;
@@ -200,21 +217,23 @@ namespace WingroveAudio
                     if ((m_hasDSPStartTime) && (m_dspStartTime > AudioSettings.dspTime))
                     {
                         m_currentAudioSource.m_audioSource.timeSamples = m_currentPosition = 0;
-                        D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.PlayScheduled(" + m_dspStartTime + ")");
+                        //D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.PlayScheduled(" + m_dspStartTime + ")");
                         m_currentAudioSource.m_audioSource.PlayScheduled(m_dspStartTime);
                     }
                     else
                     {
-                        D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.Play()");
-                        D.Log("m_currentAudioSource.m_audioSource.clip: " + m_currentAudioSource.m_audioSource.clip);
+                        //D.Log("ActiveCue.Update(): m_currentAudioSource.m_audioSource.Play()");
+                        //D.Log("m_currentAudioSource.m_audioSource.clip: " + m_currentAudioSource.m_audioSource.clip);
                         m_currentAudioSource.m_audioSource.Play();
                     }
                 }
+                /*
                 else
                 {
                     D.Log("MISSING AUDIO SOURCE");
                     D.LogError("ActiveCue.Update(): m_currentAudioSource == null");
                 }
+                */
             }
 
             m_hasStartedEver = true;
@@ -326,31 +345,31 @@ namespace WingroveAudio
 
         public void Play(float fade)
         {
-            D.Log("ActiveCue.Play(" + fade + ")");
+            //D.Log("ActiveCue.Play(" + fade + ")");
             m_currentPosition = 0;
-            D.Log("m_currentAudioSource: " + m_currentAudioSource);
+            //D.Log("m_currentAudioSource: " + m_currentAudioSource);
             if (m_currentAudioSource != null)
             {
                 m_currentAudioSource.m_audioSource.timeSamples = 0;
             }
             if (fade == 0.0f)
             {
-                D.Log("fade == 0.0f");
+                //D.Log("fade == 0.0f");
                 m_currentState = CueState.Playing;
             }
             else
             {
-                D.Log("fade != 0.0f");
+                //D.Log("fade != 0.0f");
                 m_currentState = CueState.PlayingFadeIn;
                 m_fadeSpeed = 1.0f / fade;
             }
 
-            D.Log("m_currentState: " + m_currentState);
+            //D.Log("m_currentState: " + m_currentState);
         }
 
         public void Play(float fade, double dspStartTime)
         {
-            D.Log(System.String.Format("ActiveCue.Play({0}, {1})", fade, dspStartTime));
+            //D.Log(System.String.Format("ActiveCue.Play({0}, {1})", fade, dspStartTime));
             m_currentPosition = 0;
             m_hasDSPStartTime = true;
             m_dspStartTime = dspStartTime;
@@ -411,9 +430,10 @@ namespace WingroveAudio
 
         public void Stop(float fade)
         {
+            //D.Log("ActiveCue.Stop()");
             if (fade == 0.0f)
             {
-                StopInternal();
+                StopInternal(true);
             }
             else
             {
@@ -422,25 +442,97 @@ namespace WingroveAudio
             }
         }
 
-        void StopInternal()
+        static int m_numStopInternalOrigin = 0;
+        static int m_numStopExternalOrigin = 0;
+
+        static int m_numInternal1 = 0;
+        static int m_numInternal2 = 0;
+        static int m_numInternal3 = 0;
+
+        void StopInternal(bool externalOrigin = false)
         {
+            if (externalOrigin)
+            {
+                ++m_numStopExternalOrigin;
+            }
+            else
+            {
+                ++m_numStopInternalOrigin;
+            }
+
+            //D.Log(System.String.Format("ActiveCue.StopInternal() - numStopInternalOrigin: {0}, numStopExternalOrigin: {1}, Root.numUnlinks: {2}, Root.numTryClaims: {3}", 
+                                       //m_numStopInternalOrigin, m_numStopExternalOrigin, WingroveRoot.Instance.numUnlinks, WingroveRoot.Instance.numTryClaims));
+
+            //D.Log(System.String.Format("InternalCalls: {0}, {1}, {2}", m_numInternal1, m_numInternal2, m_numInternal3));
+
+            //D.Log("ActiveCue.StopInternal(): " + WingroveRoot.Instance.hasFailed);
             Unlink();
         }
 
+        bool m_hasUnlinked = false;
+
+        static int m_numHasAudioSource = 0;
+        static int m_numNoHasAudioSource = 0;
+
         public void Unlink()
         {
-            if (m_currentAudioSource != null)
+            try
             {
-                WingroveRoot.Instance.UnlinkSource(m_currentAudioSource);
-                m_currentAudioSource = null;
+                //D.Log(System.String.Format("ActiveCue.Unlink() - Cue.hasFailed: {0}, Cue.hasUnlinked: {1}, Root.hasFailed: {2}, m_currentAudioSource != null: {3} , IMPOSSIBLE: {4}", 
+                                           //m_hasFailed, m_hasUnlinked, WingroveRoot.Instance.hasFailed, m_currentAudioSource != null, (!m_hasFailed && !m_hasUnlinked && m_currentAudioSource == null)));
+
+                if(!m_hasFailed && !m_hasUnlinked && m_currentAudioSource == null && !WingroveRoot.Instance.hasFailed)
+                {
+                    D.Log("IMPOSSIBLE");
+                }
+
+                if(m_currentAudioSource != null)
+                {
+                    ++m_numHasAudioSource;
+                }
+                else
+                {
+                    ++m_numNoHasAudioSource;
+                }
+
+                //D.Log(System.String.Format("ActiveCue.Unlink() - hasAudioSource: {0}, numHas: {1}, numNoHas: {2}, Cue.hasFailed: {3}, Root.hasFailed: {4}", 
+                                           //m_currentAudioSource != null, m_numHasAudioSource, m_numNoHasAudioSource, m_hasFailed, WingroveRoot.Instance.hasFailed));
+
+                if (m_currentAudioSource != null)
+                {
+                    //D.Log("Unlinking from Unlink()");
+                    m_hasUnlinked = true;
+                    WingroveRoot.Instance.UnlinkSource(m_currentAudioSource);
+                    m_currentAudioSource = null;
+                }
+                GameObject.Destroy(gameObject);
             }
-            GameObject.Destroy(gameObject);
+            catch
+            {
+                D.Log("FAILED: ActiveCue.Unlink()");
+            }
         }
 
         public void Virtualise()
         {
+            //D.Log("ActiveCue.Virtualise()");
+            if(m_currentAudioSource != null)
+            {
+                ++m_numHasAudioSource;
+            }
+            else
+            {
+                ++m_numNoHasAudioSource;
+            }
+            
+            D.Log(System.String.Format("ActiveCue.Virtualise() - hasAudioSource: {0}, numHas: {1}, numNoHas: {2}, Cue.hasFailed: {3}, Root.hasFailed: {4}", 
+                                       m_currentAudioSource != null, m_numHasAudioSource, m_numNoHasAudioSource, m_hasFailed, WingroveRoot.Instance.hasFailed));
+            
             if (m_currentAudioSource != null)
             {
+                D.Log("Unlinking from Virtualise()");
+
+                m_hasUnlinked = true;
                 WingroveRoot.Instance.UnlinkSource(m_currentAudioSource);
                 m_currentAudioSource = null;
             }
@@ -465,7 +557,7 @@ namespace WingroveAudio
             {
                 if (m_currentAudioSource != null)
                 {
-                    D.Log("ActiveCue.Unpause(): m_currentAudioSource.m_audioSource.Play()");
+                    //D.Log("ActiveCue.Unpause(): m_currentAudioSource.m_audioSource.Play()");
                     m_currentAudioSource.m_audioSource.Play();
                 }
             }

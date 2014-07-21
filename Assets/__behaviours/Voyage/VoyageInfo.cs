@@ -43,10 +43,12 @@ public class VoyageInfo : Singleton<VoyageInfo>
     
     public void CreateBookmark(int moduleId, int sessionId, int sectionId)
     {
+        /*
         D.Log("CREATING BOOKMARK");
         D.Log("moduleId: " + moduleId);
         D.Log("sessionId: " + sessionId);
         D.Log("sectionId: " + sectionId);
+        */
 
         m_bookmark = new Bookmark(moduleId, sessionId, sectionId);
         GameManager.Instance.CompletedAll += OnCompleteGames;
