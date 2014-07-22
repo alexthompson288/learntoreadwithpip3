@@ -56,12 +56,6 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes WHERE publishable='t' ORDER BY order_number");
         m_pipisodes = dt.Rows;
 
-        D.Log("Found " + m_pipisodes.Count + " pipisodes");
-        foreach (DataRow pipisode in m_pipisodes)
-        {
-            D.Log(pipisode["pipisode_title"].ToString());
-        }
-
         if (m_pipisodes.Count > 0)
         {
             if(PipisodeInfo.Instance.HasBookmark())
@@ -127,10 +121,7 @@ public class PipisodeMenuCoordinator : MonoBehaviour
         // Labels
         if (m_currentPipisode["pipisode_title"] != null)
         {
-            D.Log("Chose Pipisode: " + m_currentPipisode["pipisode_title"].ToString());
-            
             m_titleLabel.text = pipisode["pipisode_title"].ToString();
-
             NGUIHelpers.MaxLabelWidth(m_titleLabel, 866);
         }
 

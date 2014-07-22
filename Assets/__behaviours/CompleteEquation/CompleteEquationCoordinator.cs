@@ -154,6 +154,16 @@ public class CompleteEquationCoordinator : GameCoordinator
 
     protected override IEnumerator CompleteGame()
     {
+        float timeTaken = Time.time - m_startTime;
+        
+        float twoStarPerQuestion = 8;
+        float threeStarPerQuestion = 4;
+        
+        int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+        
+        // Game ends when player reaches targetScore
+        ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
+
         yield return StartCoroutine(m_scoreKeeper.On());
         GameManager.Instance.CompleteGame();
     }

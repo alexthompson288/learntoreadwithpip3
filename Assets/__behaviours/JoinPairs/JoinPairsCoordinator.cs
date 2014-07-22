@@ -309,8 +309,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             float timeTaken = Time.time - m_startTime;
 
-            float twoStarPerQuestion = 14;
-            float threeStarPerQuestion = 20;
+            float twoStarPerQuestion = 20;
+            float threeStarPerQuestion = 14;
             
             int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
 

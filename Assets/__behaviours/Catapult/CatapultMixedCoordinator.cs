@@ -31,6 +31,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     private bool m_targetsShowPicture;
     [SerializeField]
     private ImageBlackboard m_blackboard;
+    [SerializeField]
+    private CatapultBehaviour m_catapult;
    
     float m_startTime;
     
@@ -255,6 +257,8 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
+        m_catapult.Off();
+
         float timeTaken = Time.time - m_startTime;
 
         float twoStarPerQuestion = 4f;

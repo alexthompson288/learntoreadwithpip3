@@ -31,6 +31,12 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
     private Transform[] m_lineEnds;
     [SerializeField]
     private bool m_lineRendererUseWorld;
+    [SerializeField]
+    private GameObject m_moveable;
+    [SerializeField]
+    private Transform m_moveableOffLocation;
+    [SerializeField]
+    private Transform m_ballLaunchParent;
 
 
 	List<CatapultAmmo> m_spawnedBalls = new List<CatapultAmmo>();
@@ -87,6 +93,13 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
         }
 
         SetLineRenderersPos(m_lineEndParent.position);
+
+#if UNITY_EDITOR
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            Off();
+        }
+#endif
     }
 
     void SetLineRenderersPos(Vector3 pos)
@@ -117,8 +130,11 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		else 
 		{
             //D.Log("LAUNCH");
+            ball.transform.parent = m_ballLaunchParent;
+
             ball.OnLaunch();
-            StartCoroutine(ball.CheckForExit(m_ballCentre, m_pullRange.y * 1.01f));
+            //StartCoroutine(ball.CheckForExit(m_ballCentre, m_pullRange.y * 1.01f));
+            ResetLineRendererPos();
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
 
@@ -158,6 +174,29 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
         m_spawnedBalls.Add(newBall.GetComponent<CatapultAmmo>() as CatapultAmmo);
         
         m_currentBall = newBall.GetComponent<CatapultAmmo>() as CatapultAmmo;
+    }
+
+    public void Off()
+    {
+        if (m_currentBall != null)
+        {
+            m_currentBall.StopAllCoroutines();
+            Destroy(m_currentBall.gameObject);
+        }
+
+        Color lineColor = new Color(0, 0, 0, 0);
+        for (int i = 0; i < m_lineRenderers.Length; ++i)
+        {
+            m_lineRenderers[i].SetColors(lineColor,lineColor);
+        }
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", m_moveableOffLocation);
+        tweenArgs.Add("time", 0.5f);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
+        iTween.MoveTo(m_moveable, tweenArgs);
     }
 
 
