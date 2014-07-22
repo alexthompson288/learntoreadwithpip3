@@ -237,7 +237,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	{
 		SessionInformation.Instance.SetWinner(winningIndex);
 
-		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+        yield return new WaitForSeconds(0.5f);
 
 		GameManager.Instance.CompleteGame();		
 	}

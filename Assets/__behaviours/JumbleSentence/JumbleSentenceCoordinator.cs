@@ -212,9 +212,9 @@ public class JumbleSentenceCoordinator : GameCoordinator
         
         ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
 
-        //yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(CelebrationCoordinator.Instance.ExplodeLetters());
+        yield return StartCoroutine(m_scoreKeeper.On());
 
         GameManager.Instance.CompleteGame();
     }

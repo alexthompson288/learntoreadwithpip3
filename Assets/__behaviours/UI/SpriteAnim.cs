@@ -155,16 +155,8 @@ public class SpriteAnim : MonoBehaviour
     // Update is called once per frame
     void Update () 
     {
-        if (!IsPlaying())
-        {
-            //D.Log("m_playAnim: " + m_playAnim);
-            //D.Log("m_currentAnimation: " + m_currentAnimation);
-            //D.Log("m_availableAnimations.Length: " + m_availableAnimations.Length);
-        }
-
         if (IsPlaying())
         {
-
             AnimDetails ad = m_availableAnimations[m_currentAnimation];
 
             m_currentT += Time.deltaTime * ad.m_fps;
@@ -217,17 +209,6 @@ public class SpriteAnim : MonoBehaviour
                         }
                     }
                 }
-
-                /*
-                if(ad.m_isReverse)
-                {
-                    --m_currentFrame;
-                }
-                else
-                {
-                    ++m_currentFrame;
-                }
-                */
             }
         }
     }

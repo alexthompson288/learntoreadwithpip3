@@ -114,6 +114,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnPressLogin(PipButton button)
     {
+        m_emailInput.text = m_emailInput.text.ToLower();
+
         StartCoroutine(OnPressLoginCo());
     }
 

@@ -213,7 +213,7 @@ public class SplatGameCoordinator : Singleton<SplatGameCoordinator>
 
 	IEnumerator FinishGameCo()
 	{
-		yield return StartCoroutine(CelebrationCoordinator.Instance.Trumpet());
+		yield return new WaitForSeconds(0.5f);
 
 		GameManager.Instance.CompleteGame();
 	}

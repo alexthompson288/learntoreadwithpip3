@@ -43,7 +43,7 @@ public class NavMenu : Singleton<NavMenu>
         {
             moveable.gameObject.SetActive(true);
         }
-        
+
         #if UNITY_STANDALONE
         if(m_pipisodesButton != null)
         {
@@ -60,6 +60,8 @@ public class NavMenu : Singleton<NavMenu>
         {
             m_callButton.SetActive(false);
         }
+
+        StartCoroutine("Disable");
     }
     
     public void HideCallButton()
