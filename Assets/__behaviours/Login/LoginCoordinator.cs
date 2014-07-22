@@ -53,7 +53,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
             m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
-            m_pipSpriteAnim = newPip.GetComponentInChildren<SpriteAnim>() as SpriteAnim;
+            m_pipSpriteAnim = m_pipAnim.GetAnim() as SpriteAnim;
             
             yield return new WaitForSeconds(0.8f);
             

@@ -3,6 +3,19 @@ using System.Collections;
 
 public class PipAnim : Collector
 {
+    [SerializeField]
+    private SpriteAnim m_popAnim;
+
+    public SpriteAnim GetPopAnim()
+    {
+        return m_popAnim;
+    }
+
+    public void DisablePop()
+    {
+        m_popAnim.gameObject.SetActive(false);
+    }
+
     public override void StartAnim()
     {
         m_anim.PlayAnimation("THUMBS_UP");

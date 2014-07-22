@@ -26,4 +26,9 @@ public class Collector : MonoBehaviour
     {
         m_anim.Stop();
     }
+
+    public SpriteAnim GetAnim()
+    {
+        return m_anim;
+    }
 }
