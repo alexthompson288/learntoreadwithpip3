@@ -12,11 +12,11 @@ public class PlayDebugAudio : MonoBehaviour
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.75f);
 
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
+        //WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(PlayAudio());
 
