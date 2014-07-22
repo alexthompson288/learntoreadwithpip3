@@ -28,16 +28,22 @@ public class PipColorWidgets : MonoBehaviour
 
     void RefreshWidgets()
     {
-        Color col = ColorInfo.GetColor(m_color);
-        foreach (UIWidget widget in m_widgets)
+        if (m_widgets != null)
         {
-            widget.color = col;
+            Color col = ColorInfo.GetColor(m_color);
+            for (int i = 0; i < m_widgets.Length; ++i)
+            {
+                m_widgets [i].color = col;
+            }
         }
-        
-        string colString = ColorInfo.GetColorString(m_color);
-        foreach (UILabel label in m_labels)
+
+        if (m_labels != null)
         {
-            label.text = colString;
+            string colString = ColorInfo.GetColorString(m_color);
+            for (int i = 0; i < m_labels.Length; ++i)
+            {
+                m_labels [i].text = colString;
+            }
         }
     }
 

@@ -33,16 +33,6 @@ public class GameManager : Singleton<GameManager>
         m_activityType = myActivityType;
     }
 
-    /*
-    public static IEnumerator WaitForInstance()
-    {
-        while (GameManager.Instance == null)
-        {
-            yield return null;
-        }
-    }
-    */
-
     void Start()
     {
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
@@ -57,24 +47,20 @@ public class GameManager : Singleton<GameManager>
 
     void PlayNextGame()
     {
-        //D.Log("GameManager.PlayNextGame()");
+        D.Log("GameManager.PlayNextGame()");
 
         m_state = State.StartGame;
 
-        //D.Log("Num Scenes: " + m_gameNames.Count);
-
-        //D.Log("m_gameNames.Count: " + m_gameNames.Count);
+        D.Log("NumGames: " + m_gameNames.Count);
 
         m_currentGameName = m_gameNames.Dequeue();
 
-       // D.Log("m_currentGameName: " + m_currentGameName);
+        D.Log("m_currentGameName: " + m_currentGameName);
 
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
         if (currentGame != null && currentGame["labeltext"] != null)
         {
-            //string audioEvent = "NAV_" + currentGame ["labeltext"].ToString().ToUpper().Replace(" ", "_").Replace("!", "").Replace("?", "");
-            //WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
             ResourcesAudio.Instance.PlayFromResources(currentGame["labeltext"].ToString());
         }
 
@@ -106,9 +92,9 @@ public class GameManager : Singleton<GameManager>
 
     public void CompleteGame()
     {
-        //D.Log("GameManager.CompleteGame()");
+        D.Log("GameManager.CompleteGame()");
 
-        //D.Log(System.String.Format("{0} scenes remaining", m_gameNames.Count));
+        D.Log(System.String.Format("GamesRemaining: {0}", m_gameNames.Count));
 
         if (m_gameNames.Count == 0)
         {
