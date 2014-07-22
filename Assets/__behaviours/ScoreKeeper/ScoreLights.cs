@@ -33,7 +33,6 @@ public class ScoreLights : ScoreKeeper
         m_scoreLabel.text = m_score.ToString();
     }
 
-
     public override void SetTargetScore(int targetScore)
     {
         base.SetTargetScore(targetScore);
@@ -46,11 +45,6 @@ public class ScoreLights : ScoreKeeper
 
         Vector3 lightLocalPos = (-m_lightDelta * m_targetScore / 2f) + (m_lightDelta / 2f);
 
-        if (m_targetScore % 2 == 1)
-        {
-            //lightLocalPos += (m_lightDelta / 2f);
-        }
-
         for (int i = 0; i < targetScore; ++i)
         {
             GameObject newLight = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_lightPrefab, m_centreTransform);
@@ -58,28 +52,13 @@ public class ScoreLights : ScoreKeeper
             lightLocalPos += m_lightDelta;
             m_spawnedLights.Add(newLight);
         }
-
-        /*
-        int divisor = m_targetScore > 1 ? m_targetScore - 1 : m_targetScore;
-        Vector3 delta = (m_highTransform.transform.localPosition - m_lowTransform.transform.localPosition) / divisor;
-
-        D.Log("delta: " + delta);
-
-        for (int index = 0; index < targetScore; ++index)
-        {
-            GameObject newLight = SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_lightPrefab, m_lowTransform);
-            newLight.transform.localPosition = delta * index;
-            m_spawnedLights.Add(newLight);
-        }
-        */
     }
-
 
     public override void UpdateScore(int delta)
     {
         if (m_markerIndex < m_targetScore)
         {
-            m_spawnedLights[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta == 0 ? "light_red" : "light_green";
+            m_spawnedLights[m_markerIndex].GetComponentInChildren<UISprite>().spriteName = delta > 0 ? "light_green" : "light_red";
         }
 
         ++m_markerIndex;
@@ -91,8 +70,44 @@ public class ScoreLights : ScoreKeeper
         PlayAudio(delta);
     }
 
+    public override IEnumerator On()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+
+        float tweenDuration = 0.3f;
+
+        foreach (GameObject light in m_spawnedLights)
+        {
+            iTween.ScaleTo(light, Vector3.one * 1.3f, tweenDuration);
+            light.GetComponent<RotateConstantly>().enabled = true;
+        }
+
+        yield return new WaitForSeconds(2f);
+    }
+
     public override bool HasCompleted()
     {
         return m_numAnswered >= m_targetScore;
     }
+
+#if UNITY_EDITOR
+    void Update ()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            StartCoroutine(On());
+        }
+        
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            UpdateScore(-1);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            UpdateScore(1);
+        }
+    }
+#endif
 }
