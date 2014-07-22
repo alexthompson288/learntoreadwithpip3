@@ -21,7 +21,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
     [SerializeField]
     private TweenOnOffBehaviour m_bennyTween;
     [SerializeField]
-    private SimpleSpriteAnim m_bennyAnim;
+    private SpriteAnim m_bennyAnim;
     [SerializeField]
     private UISprite m_bennySprite;
     [SerializeField]
@@ -43,7 +43,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        m_nextButton.SingleClicked += OnNextButtonClick;
+        //m_nextButton.SingleClicked += OnNextButtonClick;
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -67,7 +67,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
                 newButton.GetComponent<ClickEvent>().SingleClicked += OnButtonClick;
                 newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
                 newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
-                
+
+                /*
                 if(VoyageInfo.Instance.GetSessionBackground(sessionId) == m_spriteNames[i])
                 {
                     m_currentRotateBehaviour = newButton.GetComponent<RotateConstantly>() as RotateConstantly;
@@ -75,6 +76,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
                     
                     m_collectableBackground.spriteName = m_spriteNames[i];
                 }
+                */
             }
 
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + VoyageInfo.Instance.currentModuleId);
@@ -129,21 +131,22 @@ public class SessionCompleteCoordinator : MonoBehaviour
         m_pipAnimManager.PlayAnimation("THUMBS_UP");
 	}
 
+    /*
     void OnNextButtonClick(ClickEvent click)
     {
         StartCoroutine(CompleteGame());
     }
+    */
 
     IEnumerator CompleteGame()
     {
+        yield return new WaitForSeconds(0.25f);
+
         m_bennySprite.depth = 15;
 
         m_bennyTween.On();
 
-        float largeScaleDuration = 0.5f;
-
-        //iTween.ScaleTo(m_collectable, Vector3.one * 1.2f, largeScaleDuration);
-        iTween.ShakePosition(m_collectable, Vector3.one * 0.1f, m_bennyTween.GetDuration());
+        iTween.ScaleTo(m_collectable, Vector3.one * 1.1f, m_bennyTween.GetDuration());
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_DISAPPEAR");
@@ -165,7 +168,6 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         iTween.ScaleTo(m_collectable, Vector3.zero, smallScaleDuration);
         iTween.MoveTo(m_collectable, m_bennyCollectionLocation.position, smallScaleDuration);
-
 
         yield return new WaitForSeconds(smallScaleDuration);
 
@@ -194,10 +196,11 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         if (VoyageInfo.Instance.hasBookmark)
         {
-            //D.Log("Setting Background: " + VoyageInfo.Instance.currentSessionId + " - " + click.GetString());
             VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
         }
 
-        m_nextButtonTween.On();
+        StartCoroutine(CompleteGame());
+
+        //m_nextButtonTween.On();
     }
 }
