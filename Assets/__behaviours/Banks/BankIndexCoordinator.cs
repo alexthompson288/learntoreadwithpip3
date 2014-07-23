@@ -44,7 +44,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     PipButton m_currentButton = null;
 
-    Vector3 m_gridStartPosition;
+    Vector3 m_defaultGridPanelStartPosition;
+    Vector4 m_defaultGridPanelStartClipRange;
 
     string m_dataType;
     public string GetDataType()
@@ -66,9 +67,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     {
         m_defaultGridPanel.alpha = 0;
 
-        m_gridStartPosition = m_defaultGrid.transform.localPosition;
-
-        D.Log("gridStartPos: " + m_gridStartPosition);
+        m_defaultGridPanelStartPosition = m_defaultGridPanel.transform.localPosition;
+        m_defaultGridPanelStartClipRange = m_defaultGridPanel.clipRange;
 
         m_clearButton.Unpressing += ClearAnswers;
         m_testButton.Unpressing += OnClickTestButton;
@@ -206,7 +206,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             Destroy(m_defaultGrid.transform.GetChild(i).gameObject);
         }
         
-        m_defaultGrid.transform.localPosition = m_gridStartPosition;
+        m_defaultGridPanel.transform.localPosition = m_defaultGridPanelStartPosition;
+        m_defaultGridPanel.clipRange = m_defaultGridPanelStartClipRange;
 
         GameObject prefab = m_dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
 
