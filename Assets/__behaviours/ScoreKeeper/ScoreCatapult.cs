@@ -140,7 +140,7 @@ public class ScoreCatapult : ScoreKeeper
         
         float scaleTweenDuration = 0.2f;
         TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
-        TweenScale.Begin(m_explosionTroll, scaleTweenDuration, Vector3.one * 1.5f);
+        TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
         yield return new WaitForSeconds(scaleTweenDuration);
         m_explosionTroll.SetActive(false);
         Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
