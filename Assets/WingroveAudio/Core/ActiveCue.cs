@@ -126,7 +126,14 @@ namespace WingroveAudio
                     int lastPosition = m_currentPosition;
                     m_currentPosition = m_currentAudioSource.m_audioSource.timeSamples;
 
+                    /*
                     if(!m_audioClipSource.IsPlaying() || m_currentPosition < lastPosition)
+                    {
+                        m_currentPosition = m_audioClipSource.GetAudioClip().samples;
+                    }
+                    */
+
+                    if(!m_currentAudioSource.m_audioSource.isPlaying)
                     {
                         m_currentPosition = m_audioClipSource.GetAudioClip().samples;
                     }

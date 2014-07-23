@@ -129,7 +129,14 @@ public class JumbleSentenceCoordinator : GameCoordinator
         {
             if(!m_audioSource.isPlaying)
             {
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + StringHelpers.Edit(widget.labelText) + "'");
+                string word = StringHelpers.Edit(widget.labelText);
+
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + word + "'");
+                if(dt.Rows.Count == 0)
+                {
+                    dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='" + word.ToLower() + "'");
+                }
+
                 if(dt.Rows.Count > 0)
                 {
                     PlayShortAudio(dt.Rows[0]);
