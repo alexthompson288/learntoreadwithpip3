@@ -188,7 +188,11 @@ public class GameWidget : MonoBehaviour
 
     void OnPress(bool pressed)
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent (pressed ? m_pressedAudio : m_unpressedAudio);
+        string audioEventName = pressed ? m_pressedAudio : m_unpressedAudio;
+        if (!System.String.IsNullOrEmpty(audioEventName))
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent(audioEventName);
+        }
 
         if (pressed)
         {

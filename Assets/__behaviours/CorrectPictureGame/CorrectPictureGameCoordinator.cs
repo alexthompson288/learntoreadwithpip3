@@ -225,7 +225,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     IEnumerator StartIncorrect()
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_MINOR");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
         yield return new WaitForSeconds(0.5f);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("PRESS_BLUE_BUTTONS");

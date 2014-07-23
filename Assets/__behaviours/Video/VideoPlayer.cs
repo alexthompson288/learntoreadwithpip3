@@ -237,9 +237,13 @@ public class VideoPlayer : MonoBehaviour
             {
                 D.Log("error: " + m_www.error);
 
-                string errorMessage = "Check your internet connection";
+                string errorMessage = "Oops!\nSomething went wrong\nTry again later";
 
-                if(m_www.error.Contains("403"))
+                if(m_www.error.Contains("Could not resolve host"))
+                {
+                    errorMessage = "Check your internet connection";
+                }
+                else if(m_www.error.Contains("403"))
                 {
                     errorMessage = "Oops!\nFile not found";
                 }

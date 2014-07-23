@@ -243,16 +243,13 @@ namespace WingroveAudio
             return cue;
         }
 
-        static int m_numCuesSpawned = 0;
-
         public ActiveCue Play(ActiveCue cue, float fade, GameObject target)
         {
             if (m_instanceLimiter == null || m_instanceLimiter.CanPlay(target))
             {
                 if ((cue == null) || (m_retriggerOnSameObjectBehaviour == RetriggerOnSameObject.PlayAnother))
                 {  
-                    ++m_numCuesSpawned;
-                    GameObject newCue = new GameObject(System.String.Format("Cue{0}", m_numCuesSpawned));
+                    GameObject newCue = new GameObject("Cue");
                     cue = newCue.AddComponent<ActiveCue>();
                     cue.Initialise(gameObject, target);
                     m_currentActiveCues.Add(cue);

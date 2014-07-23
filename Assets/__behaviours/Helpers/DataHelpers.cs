@@ -282,7 +282,7 @@ public static class DataHelpers
             case "data_words":
                 if(data["word"] != null)
                 {
-                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString());
+                    clip = LoaderHelpers.LoadAudioForWord(data["word"].ToString().ToLower());
                 }
                 break;
             case "numbers":

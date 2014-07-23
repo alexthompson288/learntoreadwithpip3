@@ -49,6 +49,8 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 15);
 
+        m_startTime = Time.time;
+
         StartCoroutine(SpawnTargets());
         StartCoroutine(AskQuestion());
 	}

@@ -45,6 +45,8 @@ public class CompleteEquationCoordinator : GameCoordinator
 
         if (m_dataPool.Count > 0)
         {
+            m_startTime = Time.time;
+
             AskQuestion();
         } 
         else

@@ -23,6 +23,8 @@ public class SplineFollower : MonoBehaviour
 
     private float m_currentTime;
 
+    bool m_isOn = false;
+
     
     public void SetSpeedModifier(float newModifier)
     {
@@ -99,6 +101,14 @@ public class SplineFollower : MonoBehaviour
     void Start ()
     {
         if (m_startOn && m_paths.Length > 0)
+        {
+            StartCoroutine(On());
+        }
+    }
+
+    void OnEnable()
+    {
+        if (m_isOn)
         {
             StartCoroutine(On());
         }
@@ -183,6 +193,8 @@ public class SplineFollower : MonoBehaviour
     {
         if (m_pathIndex < m_paths.Length)
         {
+            m_isOn = true;
+
             Path path = m_paths [m_pathIndex];
             Spline spline = path.m_spline;
 
@@ -262,5 +274,6 @@ public class SplineFollower : MonoBehaviour
     public void Stop()
     {
         StopAllCoroutines();
+        m_isOn = false;
     }
 }

@@ -253,7 +253,10 @@ namespace WingroveAudio
 
         public void PostEvent(string eventName)
         {
-            PostEventCL(eventName, (List<ActiveCue>)null, null);
+            if (!BonoboAudio.Instance.TryPlay(eventName))
+            {
+                PostEventCL(eventName, (List<ActiveCue>)null, null);
+            }
         }
 
         public void PostEventCL(string eventName, List<ActiveCue> cuesIn)

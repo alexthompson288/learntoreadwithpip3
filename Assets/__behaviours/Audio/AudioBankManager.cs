@@ -6,7 +6,6 @@ public class AudioBankManager : Singleton<AudioBankManager> {
     [SerializeField]
     private AudioBank[] m_audioBanks;
 
-
     public AudioClip GetAudioClip(string name)
     {
         AudioClip found = null;

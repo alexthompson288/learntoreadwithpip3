@@ -83,6 +83,9 @@ public class NumberSequenceCoordinator : GameCoordinator
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHOO_CHOO");
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRAIN_CHUGA_CHUGA");
             yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
+            m_startTime = Time.time;
+
             StartCoroutine(AskQuestion());
         }
         else

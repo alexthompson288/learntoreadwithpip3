@@ -15,9 +15,9 @@ public class VoyageMapButton : MonoBehaviour
     [SerializeField]
     private ClickEvent m_click;
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return StartCoroutine(GameManager.WaitForInstance());
+        //yield return StartCoroutine(GameManager.WaitForInstance());
 
         m_click.SingleClicked += SingleClicked;
 
