@@ -75,8 +75,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         NavMenu.Instance.HideCallButton();
 
-        D.Log("gameName: " + DataHelpers.GetGameName());
-
         string defaultDataType = Application.loadedLevelName == "NewBankWords" ? "words" : "phonemes";
         m_dataType = DataHelpers.GameOrDefault(defaultDataType);
 
@@ -234,12 +232,10 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
  
         if (data.Count == 0)
         {
-            D.Log("No Data!");
             m_noDataSign.On();
         }
         else if(m_noDataSign.IsOn())
         {
-            D.Log("Dismiss no data sign");
             m_noDataSign.Off();
         }
 
@@ -254,8 +250,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             m_spawnedDataClicks.Add(click);
         }
 
-        //D.Log("data.Count: " + data.Count);
-        
         yield return new WaitForSeconds(0.1f);
         
         m_defaultGrid.Reposition();
@@ -283,7 +277,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             if(bankButton != null)
             {
                 ClickEvent click = bankButton.GetComponent<ClickEvent>() as ClickEvent;
-                D.Log("clickString: " + click.GetString());
                 OnMoveToShow(click.GetData(), click.GetString());
                 BankCamera.Instance.MoveToShow();
             }
@@ -323,7 +316,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
             if(foundLegal)
             {
-                D.Log("clickString: " + click.GetString());
                 OnMoveToShow(click.GetData(), click.GetString());
                 BankCamera.Instance.MoveToShow();
             }
