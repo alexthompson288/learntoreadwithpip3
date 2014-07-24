@@ -76,6 +76,7 @@ public class JoinPairsPlayer : GamePlayer
         JoinableLineDraw[] joinables = new JoinableLineDraw[2];
         for (int i = 0; i < joinables.Length && i < m_spawnedJoinables.Count; ++i)
         {
+            m_spawnedJoinables[i].collider.enabled = false;
             joinables[i] = m_spawnedJoinables[i].GetComponent<JoinableLineDraw>() as JoinableLineDraw;
         }
 
@@ -203,6 +204,29 @@ public class JoinPairsPlayer : GamePlayer
 
     void OnJoinablePressed(JoinableLineDraw joinable, bool pressed)
     {
+        if (pressed && m_currentJoinable == null)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BUTTON_PRESS_SCALE");
+
+            m_currentJoinable = joinable;
+            m_currentJoinable.Tint(Color.gray);
+
+            m_currentJoinable.CreateLine();
+        } 
+        else if(m_currentJoinable == joinable)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BUTTON_UNPRESS_SCALE");
+
+            m_currentJoinable.CheckForJoin();
+
+            m_currentJoinable.Tint(Color.white);
+            m_currentJoinable = null;
+        }
+    }
+
+    /*
+    void OnJoinablePressed(JoinableLineDraw joinable, bool pressed)
+    {
         if (pressed)
         {
             m_currentJoinable = joinable;
@@ -214,6 +238,7 @@ public class JoinPairsPlayer : GamePlayer
             m_currentJoinable = null;
         }
     }
+    */
 
     void OnJoin(JoinableLineDraw a, JoinableLineDraw b)
     {

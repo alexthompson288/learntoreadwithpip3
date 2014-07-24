@@ -114,40 +114,46 @@ public class ScorePip : ScoreKeeper
 
     public override IEnumerator On()
     {
-        m_popAnimManager.StopRandom();
-        
-        m_popSplineFollower.ChangePath("WIN");
-        
-        //m_pipAnim.StopRandom();
-        
-        m_pipAnim.AnimFinished -= OnScoreAnimFinish;
-        m_pipAnim.AnimFinished += OnJumpAnimFinish;
-        
-        m_pipAnim.PlayAnimation("JUMP");
-
-        yield return new WaitForSeconds(0.22f);
-
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YIPPIDYPOP");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
-        
-        while (!m_hasFinishedJumpAnim)
+        if (!m_hasSwitchedOn)
         {
-            yield return null;
+            m_hasSwitchedOn = true;
+
+            m_popAnimManager.StopRandom();
+            
+            m_popSplineFollower.ChangePath("WIN");
+            
+            //m_pipAnim.StopRandom();
+            
+            m_pipAnim.AnimFinished -= OnScoreAnimFinish;
+            m_pipAnim.AnimFinished += OnJumpAnimFinish;
+            
+            m_pipAnim.PlayAnimation("JUMP");
+
+            yield return new WaitForSeconds(0.22f);
+
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YIPPIDYPOP");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+            
+            while (!m_hasFinishedJumpAnim)
+            {
+                yield return null;
+            }
+            
+            yield return new WaitForSeconds(0.3f);
+            
+            Hashtable tweenArgs = new Hashtable();
+            tweenArgs.Add("speed", 400);
+            tweenArgs.Add("easetype", iTween.EaseType.linear);
+            tweenArgs.Add("position", new Vector3(m_pipAnim.transform.localPosition.x + 500, m_pipAnim.transform.localPosition.y));
+            tweenArgs.Add("islocal", true);
+            
+            iTween.MoveTo(m_pipAnim.gameObject, tweenArgs);  
+            
+            m_pipAnim.PlayAnimation("WALK");
+            
+            yield return new WaitForSeconds(1.5f);
         }
-        
-        yield return new WaitForSeconds(0.3f);
-        
-        Hashtable tweenArgs = new Hashtable();
-        tweenArgs.Add("speed", 400);
-        tweenArgs.Add("easetype", iTween.EaseType.linear);
-        tweenArgs.Add("position", new Vector3(m_pipAnim.transform.localPosition.x + 500, m_pipAnim.transform.localPosition.y));
-        tweenArgs.Add("islocal", true);
-        
-        iTween.MoveTo(m_pipAnim.gameObject, tweenArgs);  
-        
-        m_pipAnim.PlayAnimation("WALK");
-        
-        yield return new WaitForSeconds(1.5f);
+        yield break;
     }
     
     void OnScoreAnimFinish(SpriteAnim anim, string animName)

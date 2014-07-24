@@ -72,18 +72,25 @@ public class ScoreLights : ScoreKeeper
 
     public override IEnumerator On()
     {
-        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
-
-        float tweenDuration = 0.3f;
-
-        foreach (GameObject light in m_spawnedLights)
+        if (!m_hasSwitchedOn)
         {
-            iTween.ScaleTo(light, Vector3.one * 1.3f, tweenDuration);
-            light.GetComponent<RotateConstantly>().enabled = true;
+            m_hasSwitchedOn = true;
+
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+
+            float tweenDuration = 0.3f;
+
+            foreach (GameObject light in m_spawnedLights)
+            {
+                iTween.ScaleTo(light, Vector3.one * 1.3f, tweenDuration);
+                light.GetComponent<RotateConstantly>().enabled = true;
+            }
+
+            yield return new WaitForSeconds(2f);
         }
 
-        yield return new WaitForSeconds(2f);
+        yield break;
     }
 
     public override bool HasCompleted()

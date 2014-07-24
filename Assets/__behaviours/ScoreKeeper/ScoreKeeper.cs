@@ -13,6 +13,8 @@ public class ScoreKeeper : MonoBehaviour
     protected int m_score = 0;
     protected int m_targetScore;
 
+    protected bool m_hasSwitchedOn = false;
+
     protected void PlayAudio(int delta)
     {
         List<string> eventList = delta > 0 ? m_correctAudio : m_incorrectAudio;

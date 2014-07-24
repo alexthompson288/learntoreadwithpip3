@@ -136,7 +136,7 @@ public static class LoginHelpers
 		//D.Log ("LoginHelpers.GetUserState()");
 		string userResponse = GetUser(accessToken);
 
-        Debug.Log("IsUserLegal.userResponse: " + userResponse);
+        //D.Log("IsUserLegal.userResponse: " + userResponse);
 		
 		if (!userResponse.Contains("error"))
         {

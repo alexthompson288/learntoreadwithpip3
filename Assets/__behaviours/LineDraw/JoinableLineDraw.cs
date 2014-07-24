@@ -89,6 +89,34 @@ public class JoinableLineDraw : LineDraw
     protected override void OnPress(bool pressed)
     {
         base.OnPress(pressed);
+        
+        if (JoinablePressed != null)
+        {
+            JoinablePressed(this, pressed);
+        }
+    }
+
+    public void CheckForJoin()
+    {
+        Ray camPos = camera.ScreenPointToRay(new Vector3(input.pos.x, input.pos.y, 0));
+        
+        RaycastHit hit = new RaycastHit();
+        if (Physics.Raycast(camPos, out hit, 1 << gameObject.layer))
+        {
+            GameObject other = hit.collider.gameObject;
+            if (JoinableJoined != null && other.GetComponent<JoinableLineDraw>() != null)
+            {
+                JoinableJoined(this, other.GetComponent<JoinableLineDraw>());
+            }
+        }
+        
+        LineDrawManager.Instance.DestroyLine(this);
+    }
+
+    /*
+    protected override void OnPress(bool pressed)
+    {
+        base.OnPress(pressed);
 
         if (JoinablePressed != null)
         {
@@ -119,6 +147,7 @@ public class JoinableLineDraw : LineDraw
             LineDrawManager.Instance.DestroyLine(this);
         }
     }
+    */
 
     void OnClick()
     {

@@ -175,8 +175,10 @@ public class LoginInfo : Singleton<LoginInfo>
                 {
                     //D.Log("HTTP EXCEPTION: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
                     LoginCoordinator.SetInfoText(ex, false);
-                } else
+                } 
+                else
                 {
+                    // If they have no internet connection then the user is legal (N.B. We still check for token validity below)
                     //D.Log("LEGAL WEB EXCEPTION");
                     isUserLegal = true;
                 }

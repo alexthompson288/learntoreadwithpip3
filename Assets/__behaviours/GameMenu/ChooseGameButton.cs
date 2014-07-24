@@ -73,13 +73,16 @@ public class ChooseGameButton : MonoBehaviour
     {
         Debug.Log("TweenScoreStars()");
         int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
-        int startIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
+        //int startIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
+
+        D.Log("numNewStars: " + numNewStars);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
         List<GameObject> newStars = new List<GameObject>();
 
-        for(int i = startIndex; i < startIndex + numNewStars && i < m_starSprites.Length; ++i)
+        //for(int i = startIndex; i < startIndex + numNewStars && i < m_starSprites.Length; ++i)
+        for(int i = 0; i < numNewStars; ++i)
         {
             newStars.Add(Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(starPrefab, starSpawnGrid.transform, true));
         }
@@ -88,10 +91,13 @@ public class ChooseGameButton : MonoBehaviour
 
         NGUIHelpers.PositionGridHorizontal(starSpawnGrid);
 
-        for (int i = 0; i < newStars.Count && i < m_starSprites.Length; ++i)
+        int oldStarIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
+        D.Log("oldStarIndex: " + oldStarIndex);
+
+        for (int newStarIndex = 0; newStarIndex < newStars.Count && oldStarIndex < m_starSprites.Length; ++newStarIndex, ++oldStarIndex)
         {
-            newStars[i].transform.parent = m_starSprites[i].transform.parent;
-            StartCoroutine(TweenStar(newStars[i], m_starSprites[i].transform, i == startIndex));
+            newStars[newStarIndex].transform.parent = m_starSprites[oldStarIndex].transform.parent;
+            StartCoroutine(TweenStar(newStars[newStarIndex], m_starSprites[oldStarIndex].transform, newStarIndex == 0));
         }
     }
 

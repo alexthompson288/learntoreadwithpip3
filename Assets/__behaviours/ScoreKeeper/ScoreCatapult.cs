@@ -88,70 +88,77 @@ public class ScoreCatapult : ScoreKeeper
 
     public override IEnumerator On()
     {
-        while (!Mathf.Approximately(m_rigidbody.transform.position.y, m_target.position.y) && (m_rigidbody.transform.position.y >= m_target.position.y))
+        if (!m_hasSwitchedOn)
         {
-            yield return null;
-        } 
-        
-        //D.Log("LAUNCH!!!");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
-        m_hasLaunched = true;
-        iTween.Stop(m_rigidbody.gameObject);
-        m_rigidbody.isKinematic = false;
-        m_rigidbody.AddForce(m_rigidbody.transform.TransformDirection(m_launchForce), ForceMode.VelocityChange);
+            m_hasSwitchedOn = true;
 
-        m_hand.spriteName = NGUIHelpers.GetLinkedSpriteName(m_hand.spriteName);
+            while (!Mathf.Approximately(m_rigidbody.transform.position.y, m_target.position.y) && (m_rigidbody.transform.position.y >= m_target.position.y))
+            {
+                yield return null;
+            } 
+            
+            //D.Log("LAUNCH!!!");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
+            m_hasLaunched = true;
+            iTween.Stop(m_rigidbody.gameObject);
+            m_rigidbody.isKinematic = false;
+            m_rigidbody.AddForce(m_rigidbody.transform.TransformDirection(m_launchForce), ForceMode.VelocityChange);
 
-        yield return new WaitForSeconds(1f);
+            m_hand.spriteName = NGUIHelpers.GetLinkedSpriteName(m_hand.spriteName);
 
-        m_catapultTroll.color = new Color(0, 0, 0, 0);
+            yield return new WaitForSeconds(1f);
 
-        m_explosionTroll.SetActive(true);
-        
-        float range = 150f;
-        float minX = m_explosionLetterParent.transform.localPosition.x - range;
-        float maxX = m_explosionLetterParent.transform.localPosition.x + range;
-        
-        float minY = m_explosionLetterParent.transform.localPosition.y - range;
-        float maxY = m_explosionLetterParent.transform.localPosition.y + range;
-        
-        m_explosionLetterParent.transform.parent.gameObject.SetActive(true);
-        m_explosionLetterParent.transform.localScale = Vector3.zero;
-        
-        float dropTweenDuration = 4.8f;
-        
-        Hashtable dropTweenVar = new Hashtable();
-        dropTweenVar.Add("position", m_dropFromPosition);
-        dropTweenVar.Add("time", dropTweenDuration);
-        dropTweenVar.Add("easetype", iTween.EaseType.linear);
-        iTween.MoveFrom(m_explosionTroll, dropTweenVar);
-        iTween.MoveFrom(m_explosionLetterParent, dropTweenVar);
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BOMB_WHISTLE");
+            m_catapultTroll.color = new Color(0, 0, 0, 0);
 
-        yield return new WaitForSeconds(dropTweenDuration);
+            m_explosionTroll.SetActive(true);
+            
+            float range = 150f;
+            float minX = m_explosionLetterParent.transform.localPosition.x - range;
+            float maxX = m_explosionLetterParent.transform.localPosition.x + range;
+            
+            float minY = m_explosionLetterParent.transform.localPosition.y - range;
+            float maxY = m_explosionLetterParent.transform.localPosition.y + range;
+            
+            m_explosionLetterParent.transform.parent.gameObject.SetActive(true);
+            m_explosionLetterParent.transform.localScale = Vector3.zero;
+            
+            float dropTweenDuration = 4.8f;
+            
+            Hashtable dropTweenVar = new Hashtable();
+            dropTweenVar.Add("position", m_dropFromPosition);
+            dropTweenVar.Add("time", dropTweenDuration);
+            dropTweenVar.Add("easetype", iTween.EaseType.linear);
+            iTween.MoveFrom(m_explosionTroll, dropTweenVar);
+            iTween.MoveFrom(m_explosionLetterParent, dropTweenVar);
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BOMB_WHISTLE");
 
-        //D.Log("SPAWNING");
-        for(int i = 0; i < 80; ++i)
-        {
-            GameObject newExplosionLetter = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_explosionLetterPrefab, m_explosionLetterParent.transform);
-            newExplosionLetter.transform.localPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), newExplosionLetter.transform.localPosition.z);
+            yield return new WaitForSeconds(dropTweenDuration);
+
+            //D.Log("SPAWNING");
+            for (int i = 0; i < 80; ++i)
+            {
+                GameObject newExplosionLetter = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_explosionLetterPrefab, m_explosionLetterParent.transform);
+                newExplosionLetter.transform.localPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), newExplosionLetter.transform.localPosition.z);
+            }
+            
+            float scaleTweenDuration = 0.2f;
+            TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
+            TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
+            yield return new WaitForSeconds(scaleTweenDuration);
+            m_explosionTroll.SetActive(false);
+            Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
+            foreach (Rigidbody letter in explosionLetters)
+            {
+                letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
+            }
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
+            
+            yield return new WaitForSeconds(3f);
         }
-        
-        float scaleTweenDuration = 0.2f;
-        TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
-        TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
-        yield return new WaitForSeconds(scaleTweenDuration);
-        m_explosionTroll.SetActive(false);
-        Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
-        foreach(Rigidbody letter in explosionLetters)
-        {
-            letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
-        }
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
-        
-        yield return new WaitForSeconds(3f);
+
+        yield break;
     }
 
     void TweenRigidbody()

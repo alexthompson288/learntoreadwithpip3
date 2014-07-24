@@ -207,9 +207,9 @@ public class GameDataBridge : Singleton<GameDataBridge>
             }
         }
         
-        #if UNITY_IPHONE
+#if UNITY_IPHONE
         iPhone.SetNoBackupFlag(cmsDbPath);
-        #endif
+#endif
         
         m_cmsDb.Open(cmsDbPath);
         

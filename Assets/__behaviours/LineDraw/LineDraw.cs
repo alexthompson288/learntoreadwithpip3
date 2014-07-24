@@ -115,7 +115,7 @@ public class LineDraw : MonoBehaviour
         }
     }
 
-    protected void CreateLine()
+    public void CreateLine()
     {
         LineDrawManager.Instance.CreateLine(this, m_material, m_startColor, m_endColor);
 

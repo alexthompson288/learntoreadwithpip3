@@ -22,6 +22,8 @@ public class FlySwatPlayer : GamePlayer
 
     List<GameWidget> m_spawnedWidgets = new List<GameWidget>();
 
+    bool m_hasFinished = false;
+
     public override void SelectCharacter(int characterIndex)
     {
         //D.Log("SelectCharacter");
@@ -140,25 +142,27 @@ public class FlySwatPlayer : GamePlayer
 
     void OnSwatFly(GameWidget widget)
     {
-        if (widget.data.GetId() == FlySwatCoordinator.Instance.GetCurrentId())
+        if (!m_hasFinished)
         {
-            StartCoroutine(OnCorrect(widget));
-        } 
-        else
-        {
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
-            m_scoreKeeper.UpdateScore(-1);
+            if (widget.data.GetId() == FlySwatCoordinator.Instance.GetCurrentId())
+            {
+                StartCoroutine(OnCorrect(widget));
+            } else
+            {
+                //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+                WingroveAudio.WingroveRoot.Instance.PostEvent("TROLL_EXHALE");
+                m_scoreKeeper.UpdateScore(-1);
 
-            FlySwatCoordinator.Instance.PlayAudio();
+                FlySwatCoordinator.Instance.PlayAudio();
 
-            StopCoroutine("HideDataDisplayDelay");
-            ShowDataDisplay(FlySwatCoordinator.Instance.GetDataType(), FlySwatCoordinator.Instance.GetCurrentData());
-            StartCoroutine("HideDataDisplayDelay");
+                StopCoroutine("HideDataDisplayDelay");
+                ShowDataDisplay(FlySwatCoordinator.Instance.GetDataType(), FlySwatCoordinator.Instance.GetCurrentData());
+                StartCoroutine("HideDataDisplayDelay");
 
-            widget.EnableCollider(false);
-            widget.Shake();
-            widget.TintGray();
+                widget.EnableCollider(false);
+                widget.Shake();
+                widget.TintGray();
+            }
         }
     }
 
@@ -180,6 +184,7 @@ public class FlySwatPlayer : GamePlayer
 
         if (m_scoreKeeper.HasCompleted())
         {
+            m_hasFinished = true;
             StopGame();
             FlySwatCoordinator.Instance.OnPlayerFinish(m_playerIndex);
             yield return StartCoroutine(m_scoreKeeper.On());
