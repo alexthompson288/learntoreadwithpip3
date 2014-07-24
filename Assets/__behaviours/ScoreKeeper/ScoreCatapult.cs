@@ -93,7 +93,7 @@ public class ScoreCatapult : ScoreKeeper
             yield return null;
         } 
         
-        D.Log("LAUNCH!!!");
+        //D.Log("LAUNCH!!!");
         WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
         m_hasLaunched = true;
         iTween.Stop(m_rigidbody.gameObject);
@@ -131,7 +131,7 @@ public class ScoreCatapult : ScoreKeeper
 
         yield return new WaitForSeconds(dropTweenDuration);
 
-        D.Log("SPAWNING");
+        //D.Log("SPAWNING");
         for(int i = 0; i < 80; ++i)
         {
             GameObject newExplosionLetter = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_explosionLetterPrefab, m_explosionLetterParent.transform);
@@ -156,7 +156,7 @@ public class ScoreCatapult : ScoreKeeper
 
     void TweenRigidbody()
     {
-        D.Log("ScoreCatapault Tween");
+        //D.Log("ScoreCatapault Tween");
 
         Vector3 targetPos = m_origin.position + (m_target.position - m_origin.position).normalized * m_pointDistance * m_score;
 
@@ -173,11 +173,11 @@ public class ScoreCatapult : ScoreKeeper
     
     public void ReleaseLineEnd()
     {
-        D.Log("ReleaseLineEnd()");
+        //D.Log("ReleaseLineEnd()");
 
         if (m_hasLaunched)
         {
-            D.Log("Releasing");
+            //D.Log("Releasing");
 
             Hashtable tweenArgs = new Hashtable();
             

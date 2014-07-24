@@ -98,7 +98,7 @@ public static class DataHelpers
         return array;
 
         /*
-        D.Log(data [columnName].ToString());
+        //D.Log(data [columnName].ToString());
         string pattern = "[^ ]+";
         Regex rgx = new Regex(pattern);
         MatchCollection mc = rgx.Matches(data[columnName].ToString());
@@ -111,7 +111,7 @@ public static class DataHelpers
 
         foreach (string item in items)
         {
-            D.Log(item);
+            //D.Log(item);
         }
 
         return items;  
@@ -543,7 +543,7 @@ public static class DataHelpers
         
         if (dataPool.Count == 0)
         {
-            D.LogWarning("Defaulting to all correctsentences");
+            //D.LogWarning("Defaulting to all correctsentences");
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
         }
@@ -612,7 +612,7 @@ public static class DataHelpers
         
         if(dataPool.Count == 0)
         {
-            D.LogWarning("Defaulting to Pink Phonemes");
+            //D.LogWarning("Defaulting to Pink Phonemes");
             dataPool = GetModulePhonemes(GetModuleId(ColorInfo.PipColor.Pink));
         }
         
@@ -875,7 +875,7 @@ public static class DataHelpers
     /*
     public static List<DataRow> GetNumbers()
     {
-        D.Log("DataHelpers.GetNumbers()"); 
+        //D.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
 
         int[] boundaryValues = new int[2];
@@ -893,7 +893,7 @@ public static class DataHelpers
             boundaryValues[1] = 10;
         }
 
-        D.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
+        //D.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
 
         Array.Sort(boundaryValues);
 
@@ -1160,7 +1160,7 @@ public static class DataHelpers
                     } 
                     catch
                     {
-                        D.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
+                        //D.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
                     }
                 }
             }

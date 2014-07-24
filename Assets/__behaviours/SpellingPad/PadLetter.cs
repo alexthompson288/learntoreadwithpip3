@@ -90,7 +90,7 @@ public class PadLetter : MonoBehaviour
         {
             m_other = other;
         }
-        D.Log("Enter - m_other: " + m_other);
+        //D.Log("Enter - m_other: " + m_other);
     }
     
     void OnTriggerExit(Collider other)
@@ -99,7 +99,7 @@ public class PadLetter : MonoBehaviour
         {
             m_other = null;
         }
-        D.Log("Exit - m_other: " + m_other);
+        //D.Log("Exit - m_other: " + m_other);
     }
 
     public float GetWidth()

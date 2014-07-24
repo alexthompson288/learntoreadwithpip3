@@ -25,11 +25,11 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 	{
 		if(Input.GetKeyDown(KeyCode.Q))
 		{
-			D.Log("GAME NAMES");
+			//D.Log("GAME NAMES");
 			List<string> gameNames = LessonInfo.Instance.GetGames();
 			for(int i = 0; i < gameNames.Count; ++i)
 			{
-				D.Log(i + ": " + gameNames[i]);
+				//D.Log(i + ": " + gameNames[i]);
 			}
 		}
 	}
@@ -37,7 +37,7 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
     // TODO: Store an OrderedDictionary of sceneName,dbGameName and pass that to LessonInfo
 	public void OnClickSelectable(Texture2D tex, string gameSceneName)
 	{
-		D.Log("Clicked selectable");
+		//D.Log("Clicked selectable");
 		if(m_currentIndex < m_selectedGames.Count)
 		{
 			m_selectedGames[m_currentIndex].SetTexture(tex);
@@ -47,7 +47,7 @@ public class LessonGameCoordinator : Singleton<LessonGameCoordinator>
 
 			while(m_currentIndex < m_selectedGames.Count && m_selectedGames[m_currentIndex].HasGame())
 			{
-				D.Log("Incrementing through already selected");
+				//D.Log("Incrementing through already selected");
 				++m_currentIndex;
 			}
 

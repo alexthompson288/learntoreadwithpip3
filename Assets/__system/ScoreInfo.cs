@@ -80,7 +80,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 #if UNITY_EDITOR
         if(m_overwrite)
         {
-            D.Log("OVERWRITING SCOREINFO");
+            //D.Log("OVERWRITING SCOREINFO");
 
             string[] users = UserInfo.Instance.GetUserNames();
 
@@ -213,7 +213,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
                 if (newStars > oldStars 
                     || (newStars == oldStars && (newTracker.GetTime() < oldTracker.GetTime() || (newTracker.GetProportionalScore() > oldTracker.GetProportionalScore())))) 
                 {
-                    D.Log("NEW HIGH SCORE");
+                    //D.Log("NEW HIGH SCORE");
                     m_scoreTrackers.Remove(oldTracker);
                     m_scoreTrackers.Add(newTracker);
 
@@ -334,9 +334,9 @@ public class ScoreInfo : Singleton<ScoreInfo>
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
 
-        D.Log("ScoreInfo.Save: " + System.String.Format("ScoreInfo_{0}", userName));
+        //D.Log("ScoreInfo.Save: " + System.String.Format("ScoreInfo_{0}", userName));
 
-        D.Log("SAVING DATA: " + m_scoreTrackers.Count);
+        //D.Log("SAVING DATA: " + m_scoreTrackers.Count);
 
         bw.Write(m_scoreTrackers.Count);
         foreach (ScoreTracker tracker in m_scoreTrackers)

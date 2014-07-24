@@ -10,14 +10,16 @@ public class LoginInfo : Singleton<LoginInfo>
     // Debugging Methods
     public void MakeExpirationYesterday()
     {
+        //D.Log("LoginInfo.MakeExpirationYesterday()");
         DateTime expirationDate = DateTime.Now.AddDays(-1);
         m_expirationDate = expirationDate.ToString(LoginHelpers.dateTimeFormat);
-        D.Log("NewExpirationDate: " + m_expirationDate);
+        //D.Log("NewExpirationDate: " + m_expirationDate);
         Save();
     }
 
     public void Overwrite()
     {
+        //D.Log("LoginInfo.Overwrite()");
         m_email = "";
         m_password = "";
         m_accessToken = "";
@@ -50,8 +52,9 @@ public class LoginInfo : Singleton<LoginInfo>
         return m_attemptLogin;
     }
 
-    void OnApplicationQuit()
+    void OnApplicationPause()
     {
+        //D.Log("LoginInfo.OnApplicationPause()");
         m_hasExited = true;
     }
 
@@ -90,11 +93,12 @@ public class LoginInfo : Singleton<LoginInfo>
             AttemptLogin();
         }
 
-        InvokeRepeating("CheckForLogin", 30, 30);
+        InvokeRepeating("CheckForLogin", 10, 10);
     }
 
     void CheckForLogin()
     {
+        //D.Log("LoginInfo.CheckForLogin(): " + m_hasExited);
         if (m_hasExited)
         {
             AttemptLogin();
@@ -103,12 +107,12 @@ public class LoginInfo : Singleton<LoginInfo>
     
     void AttemptLogin()
     {
-        D.Log("ATTEMPTING LOGIN");
+        //D.Log("ATTEMPTING LOGIN");
         m_hasExited = false;
         
         if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
         {
-            D.Log("TRYING TO UPDATE TOKEN");
+            //D.Log("TRYING TO UPDATE TOKEN");
             try
             {
                 string tokenResponse = LoginHelpers.RequestToken(m_email, m_password);
@@ -118,23 +122,24 @@ public class LoginInfo : Singleton<LoginInfo>
                     m_accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
                     m_expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
                     
-                    D.Log("Got new token: " + m_expirationDate);
+                    //D.Log("Got new token: " + m_expirationDate);
                 }
             }
             catch(WebException ex)
             {
+                //D.LogError("Could not get token: WebException");
                 if(ex.Response is System.Net.HttpWebResponse)
                 {
-                    D.Log((ex.Response as HttpWebResponse).StatusCode);
+                    //D.Log((ex.Response as HttpWebResponse).StatusCode);
                 }
             }
             catch
             {
-                D.LogError("Could not get token using saved login details");
+                //D.LogError("Could not get token using saved login details");
             }
         }
 
-
+        //D.Log("CHECKING EXPIRATION DATE");
         DateTime expirationDate;
         try
         {
@@ -142,7 +147,7 @@ public class LoginInfo : Singleton<LoginInfo>
         } 
         catch
         {
-            D.Log("CATCHING EXPIRATION DATE");
+            //D.Log("CATCHING EXPIRATION DATE");
             expirationDate = DateTime.Now.AddDays(-2);
         }
         
@@ -152,42 +157,42 @@ public class LoginInfo : Singleton<LoginInfo>
         // Only check user if we actually have a token 
         if (!System.String.IsNullOrEmpty(m_accessToken))
         {
-            D.Log("FOUND TOKEN - CHECK USER");
+            //D.Log("FOUND TOKEN - CHECK USER");
 
             try
             {
                 isUserLegal = LoginHelpers.IsUserLegal(m_accessToken);
-                D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
+                //D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
             } 
             catch (LoginException ex)
             {
-                D.Log("USER_EXCEPTION: " + ex.exceptionType);
+                //D.Log("USER_EXCEPTION: " + ex.exceptionType);
                 LoginCoordinator.SetInfoText(ex);
             } 
             catch (WebException ex)
             {
                 if (ex.Response is System.Net.HttpWebResponse)
                 {
-                    D.Log("HTTP EXCEPTION: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                    //D.Log("HTTP EXCEPTION: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
                     LoginCoordinator.SetInfoText(ex, false);
                 } else
                 {
-                    D.Log("LEGAL WEB EXCEPTION");
+                    //D.Log("LEGAL WEB EXCEPTION");
                     isUserLegal = true;
                 }
             }
         }
         else
         {
-            D.Log("NO TOKEN - CANNOT CHECK USER");
+            //D.Log("NO TOKEN - CANNOT CHECK USER");
         }
         
         if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
         {
-            D.Log("FAIL");
-            D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
-            D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
-            D.Log("isUserLegal: " + isUserLegal);
+            //D.Log("FAIL - MUST LOGIN");
+            //D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
+            //D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
+            //D.Log("isUserLegal: " + isUserLegal);
 
             if (Application.loadedLevelName != m_loginSceneName)
             {

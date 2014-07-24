@@ -25,17 +25,17 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
     IEnumerator Start()
     {
-		D.Log("PictureGameCoordinator.Start()");
+		//D.Log("PictureGameCoordinator.Start()");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         UnityEngine.Random.seed = DateTime.Now.Millisecond;
 
 		m_dataRows = DataHelpers.GetWords();
 
-		D.Log("There are " + m_dataRows.Count + " words");
+		//D.Log("There are " + m_dataRows.Count + " words");
         foreach (DataRow word in m_dataRows)
         {
-            D.Log(word["word"].ToString());
+            //D.Log(word["word"].ToString());
         }
 
         if (GetNumPlayers() == 2)
@@ -108,12 +108,12 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 			yield return new WaitForSeconds(3.5f);
 		}
 
-		D.Log("m_gamePlayers.Length: " + m_gamePlayers.Length);
-		D.Log("numPlayers: " + numPlayers);
+		//D.Log("m_gamePlayers.Length: " + m_gamePlayers.Length);
+		//D.Log("numPlayers: " + numPlayers);
 
         for (int index = 0; index < numPlayers; ++index)
         {
-			D.Log("m_gamePlayers[" + index + "]" + m_gamePlayers[index]);
+			//D.Log("m_gamePlayers[" + index + "]" + m_gamePlayers[index]);
             m_gamePlayers[index].StartGame();
         }
 

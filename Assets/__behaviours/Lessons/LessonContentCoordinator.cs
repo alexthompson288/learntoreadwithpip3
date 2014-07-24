@@ -136,7 +136,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 		if(dt.Rows.Count > 0)
 		{
 			List<DataRow> data = DataHelpers.GetSetData(dt.Rows[0], m_setAttribute, m_contentAttribute);
-			D.Log(String.Format("Found {0} stories", data.Count));
+			//D.Log(String.Format("Found {0} stories", data.Count));
 			
 			for(int i = 0; i < data.Count; ++i)
 			{
@@ -256,11 +256,11 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		int storyId = System.Convert.ToInt32(clickBehaviour.GetData()["id"]);
 
-		D.Log("Clicked story " + storyId);
+		//D.Log("Clicked story " + storyId);
 
 		bool addStory = !LessonInfo.Instance.HasData(storyId, "stories"); // If LessonInfo does not have the story then we will add it
 
-		D.Log("addStory: " + addStory);
+		//D.Log("addStory: " + addStory);
 
 		// Clear all story data and set the sprites to deselect color. Only one story can be saved at a time
 		LessonInfo.Instance.ClearData("stories"); // m_dataType should be stories, but I hard coded the datatype to be safe
@@ -273,7 +273,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 		if(addStory)
 		{
-			D.Log("Adding story");
+			//D.Log("Adding story");
 			LessonInfo.Instance.AddData(storyId, "stories");
 			clickBehaviour.GetComponentInChildren<UISprite>().color = m_selectColor;
 		}
@@ -283,7 +283,7 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 
 
 		string output = stories.Count > 0 ? stories[0]["id"].ToString() : "No lesson story";
-		D.Log(output);
+		//D.Log(output);
 	}
 
 	void OnClickContent(ClickEvent clickBehaviour)
@@ -319,22 +319,22 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		List<DataRow> selectedData = LessonInfo.Instance.GetData(m_dataType);
 
-		D.Log("LOG DATA");
+		//D.Log("LOG DATA");
 
 		DataRow target = LessonInfo.Instance.GetTargetData(m_dataType);
 
 		if(target != null)
 		{
-			D.Log("Target: " + target["phoneme"].ToString());
+			//D.Log("Target: " + target["phoneme"].ToString());
 		}
 		else
 		{
-			D.Log("Target: null");
+			//D.Log("Target: null");
 		}
 
 		foreach(DataRow datum in selectedData)
 		{
-			D.Log(datum["phoneme"].ToString());
+			//D.Log(datum["phoneme"].ToString());
 		}
 	}
 

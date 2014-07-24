@@ -150,7 +150,7 @@ public class OldGameMenuCoordinator : MonoBehaviour
             // Get and set all the data associated with the color
             int moduleId = DataHelpers.GetModuleId(pipColor);
 
-            D.Log("moduleId: " + moduleId);
+            //D.Log("moduleId: " + moduleId);
             
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
             GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));

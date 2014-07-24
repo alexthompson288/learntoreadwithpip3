@@ -129,7 +129,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
                         if (phonemeString.Contains("-"))
     					{
-    						//D.Log(myPh["phoneme"].ToString() + " contains \"-\"");
+    						////D.Log(myPh["phoneme"].ToString() + " contains \"-\"");
                             pbi.m_displayString = phonemeString[0].ToString();
     						PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
                             pbi2.m_phonemeData = myPh;
@@ -296,7 +296,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	public void SayShowSequential()
 	{
-		D.Log("SpellingPadBehaviour.SayShowSequential()");
+		//D.Log("SpellingPadBehaviour.SayShowSequential()");
         foreach(PadLetter letter in m_spawnedLetters)
 		{
             if(letter.state == PadLetter.State.Unanswered)
@@ -345,17 +345,17 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
 
 	public PadLetter CheckLetters(string letter, Collider draggable)
 	{
-        //D.Log("Checking for: " + phoneme);
+        ////D.Log("Checking for: " + phoneme);
 
 		foreach(PadLetter padLetter in m_spawnedLetters)
 		{
             if(draggable == padLetter.GetOther())
             {
-                //D.Log("Collider is inside " + padLetter.GetLetter());
+                ////D.Log("Collider is inside " + padLetter.GetLetter());
             }
             else if(padLetter.GetOther() != null)
             {
-                //D.Log("PadPhoneme has different: " + padLetter.GetLetter());
+                ////D.Log("PadPhoneme has different: " + padLetter.GetLetter());
             }
 
             if(draggable == padLetter.GetOther() && letter == padLetter.GetLetter())

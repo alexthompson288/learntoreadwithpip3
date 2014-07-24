@@ -83,7 +83,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
 
         /*
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + Convert.ToInt32(m_session["id"]));
-        D.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, Convert.ToInt32(m_session["id"])));
+        //D.Log(String.Format("Found {0} sections for id {1}", dt.Rows.Count, Convert.ToInt32(m_session["id"])));
 
         for(int i = 0; i < m_gameButtons.Length; ++i)
         {
@@ -108,7 +108,7 @@ public class VoyageSessionBoard : Singleton<VoyageSessionBoard>
         numButtons += foundPipisode ? 1 : 0;
         numButtons += foundStory ? 1 : 0;
 
-        D.Log("Num Buttons: " + numButtons);
+        //D.Log("Num Buttons: " + numButtons);
 
         float horizontalOffset = 255;
 

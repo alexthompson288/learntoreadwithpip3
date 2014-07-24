@@ -65,7 +65,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			Resources.UnloadUnusedAssets();
 		}
 
-		D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
+		//D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 		if(m_maxSpawn > m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		{
 			m_maxSpawn = m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()];

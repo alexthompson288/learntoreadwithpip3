@@ -18,13 +18,13 @@ public class GameLinker : Singleton<GameLinker>
         //path = path.Replace("Assets", ""); // Application.dataPath has "Assets" appended and GetAssetPath has "Assets" prepended, we need to remove one of these 
         //path += UnityEditor.AssetDatabase.GetAssetPath(m_gameNameFile);
         //string path = Application.dataPath + m_relativePath;
-        //D.Log("CSV Path: " + path);
+        ////D.Log("CSV Path: " + path);
 
         string path = Application.streamingAssetsPath + m_filename;
 
         using (CsvFileReader reader = new CsvFileReader(path))
         {
-            D.Log("Reading CSV");
+            //D.Log("Reading CSV");
             CsvRow row = new CsvRow();
             while (reader.ReadRow(row))
             {
@@ -50,11 +50,11 @@ public class GameLinker : Singleton<GameLinker>
 
     void LogGameNames()
     {
-        D.Log("LOG GAME NAMES");
+        //D.Log("LOG GAME NAMES");
 
         foreach (KeyValuePair<string, string> kvp in m_gameNames)
         {
-            D.Log(kvp.Key + " - " + kvp.Value);
+            //D.Log(kvp.Key + " - " + kvp.Value);
         }
     }
 	

@@ -169,7 +169,7 @@ public class PipesCoordinator : GameCoordinator
 
     void OnPressSubmit(PipButton button)
     {
-        D.Log("Tracking:" + m_triggerTracker.GetNumTrackedObjects());
+        //D.Log("Tracking:" + m_triggerTracker.GetNumTrackedObjects());
 
         if (m_triggerTracker.GetNumTrackedObjects() == m_currentData.GetInt("value"))
         {

@@ -129,7 +129,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 		} 
 		else 
 		{
-            //D.Log("LAUNCH");
+            ////D.Log("LAUNCH");
             ball.transform.parent = m_ballLaunchParent;
 
             ball.OnLaunch();
@@ -155,7 +155,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
     {
         m_currentBall = null;
 
-        //D.Log("ResetLineRendererPos");
+        ////D.Log("ResetLineRendererPos");
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("position", m_ballCentre);
         tweenArgs.Add("speed", 3);
@@ -168,7 +168,7 @@ public class CatapultBehaviour : Singleton<CatapultBehaviour>
 
     void SpawnBall()
     {
-        //D.Log("SpawnBall");
+        ////D.Log("SpawnBall");
         GameObject newBall = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_cannonBallPrefab, m_ballCentre);
         newBall.GetComponent<CatapultAmmo>().SetUp(this);
         m_spawnedBalls.Add(newBall.GetComponent<CatapultAmmo>() as CatapultAmmo);

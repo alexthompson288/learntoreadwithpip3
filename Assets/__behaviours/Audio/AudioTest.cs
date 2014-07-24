@@ -9,7 +9,7 @@ public class AudioTest : MonoBehaviour
     {
 	    if (Input.GetKeyDown(KeyCode.S))
         {
-            D.Log("Calling SPARKLE_2");
+            //D.Log("Calling SPARKLE_2");
             WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         }
 	}

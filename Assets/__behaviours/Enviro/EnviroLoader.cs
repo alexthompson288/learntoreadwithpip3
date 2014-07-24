@@ -37,7 +37,7 @@ public class EnviroLoader : Singleton<EnviroLoader>
 		}
 		else
 		{
-			D.LogError("m_genericEnviro is null");
+			//D.LogError("m_genericEnviro is null");
 		}
 	}
 	

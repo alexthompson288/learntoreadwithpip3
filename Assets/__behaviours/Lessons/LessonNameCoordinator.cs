@@ -14,7 +14,7 @@ public class LessonNameCoordinator : Singleton<LessonNameCoordinator>
 
 	public void OnInputFinish()
 	{
-		D.Log("OnInputFinish()");
+		//D.Log("OnInputFinish()");
 		LessonInfo.Instance.SetName(m_label.text);
 	}
 }

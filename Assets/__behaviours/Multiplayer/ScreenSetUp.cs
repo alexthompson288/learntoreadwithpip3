@@ -39,7 +39,7 @@ public class ScreenSetUp : MonoBehaviour
 			twoPlayer = false;
 		}
 
-        //D.Log("ScreenSetUp - twoPlayer: " + twoPlayer);
+        ////D.Log("ScreenSetUp - twoPlayer: " + twoPlayer);
 		
         if (twoPlayer)
         {

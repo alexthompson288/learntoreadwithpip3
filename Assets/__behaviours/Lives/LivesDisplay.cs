@@ -38,7 +38,7 @@ public class LivesDisplay : MonoBehaviour {
         }
         while ((numLives < m_currentLifeIcons.Count)&&(m_currentLifeIcons.Count>0))
         {
-			D.Log("About to tween off");
+			//D.Log("About to tween off");
                 m_currentLifeIcons[m_currentLifeIcons.Count - 1].GetComponent<TweenOnOffBehaviour>().Off();
                 m_currentLifeIcons.RemoveAt(m_currentLifeIcons.Count - 1);            
         }
