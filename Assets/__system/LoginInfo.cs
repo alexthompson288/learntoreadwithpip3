@@ -49,7 +49,6 @@ public class LoginInfo : Singleton<LoginInfo>
     {
         return m_attemptLogin;
     }
-    
 
     void OnApplicationQuit()
     {
@@ -90,15 +89,16 @@ public class LoginInfo : Singleton<LoginInfo>
         {
             AttemptLogin();
         }
+
+        InvokeRepeating("CheckForLogin", 30, 30);
     }
 
-    void OnLevelWasLoaded()
+    void CheckForLogin()
     {
-        D.Log("AAAAA: OnLevelWasLoaded()");
         if (m_hasExited)
         {
             AttemptLogin();
-        }     
+        } 
     }
     
     void AttemptLogin()

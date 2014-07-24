@@ -24,14 +24,22 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     private UIPanel m_loginPanel;
     [SerializeField]
     private UIPanel m_successPanel;
+    [SerializeField]
+    private GameObject m_loginButtonParent;
 
     static string m_infoText = "Login";
 
     private PipAnim m_pipAnim;
     private SpriteAnim m_pipSpriteAnim;
 
+    bool m_hasEnteredEmail = false;
+    bool m_hasEnteredPassword = false;
+
     void Awake()
     {
+        m_emailInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterEmail"));
+        m_passwordInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterPassword"));
+
         m_loginPanel.alpha = 1;
         m_successPanel.alpha = 0;
 
@@ -43,6 +51,30 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
+    }
+
+    void OnEnterEmail()
+    {
+        m_hasEnteredEmail = true;
+
+        m_emailInput.text = m_emailInput.text.ToLower();
+
+        if (m_hasEnteredPassword)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
+            iTween.ScaleTo(m_loginButtonParent, Vector3.one * 1.25f, 0.2f);
+        }
+    }
+
+    void OnEnterPassword()
+    {
+        m_hasEnteredPassword = true;
+
+        if (m_hasEnteredEmail)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
+            iTween.ScaleTo(m_loginButtonParent, Vector3.one * 1.25f, 0.2f);
+        }
     }
 
     IEnumerator Start()
@@ -116,7 +148,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         m_emailInput.text = m_emailInput.text.ToLower();
 
-        StartCoroutine(OnPressLoginCo());
+        if (m_hasEnteredEmail && m_hasEnteredPassword)
+        {
+            StartCoroutine(OnPressLoginCo());
+        }
+        else
+        {
+            m_infoLabel.text = "Please enter your login details";
+        }
     }
 
     IEnumerator OnPressLoginCo()
