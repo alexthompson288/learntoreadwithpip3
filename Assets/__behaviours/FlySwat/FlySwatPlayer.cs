@@ -24,6 +24,8 @@ public class FlySwatPlayer : GamePlayer
 
     bool m_hasFinished = false;
 
+    bool m_canSwat = true;
+
     public override void SelectCharacter(int characterIndex)
     {
         //D.Log("SelectCharacter");
@@ -142,8 +144,11 @@ public class FlySwatPlayer : GamePlayer
 
     void OnSwatFly(GameWidget widget)
     {
-        if (!m_hasFinished)
+        if (m_canSwat && !m_hasFinished)
         {
+            m_canSwat = false;
+            StartCoroutine(ResetCanSwat());
+
             if (widget.data.GetId() == FlySwatCoordinator.Instance.GetCurrentId())
             {
                 StartCoroutine(OnCorrect(widget));
@@ -164,6 +169,12 @@ public class FlySwatPlayer : GamePlayer
                 widget.TintGray();
             }
         }
+    }
+
+    IEnumerator ResetCanSwat()
+    {
+        yield return new WaitForSeconds(0.2f);
+        m_canSwat = true;
     }
 
     IEnumerator OnCorrect(GameWidget widget)

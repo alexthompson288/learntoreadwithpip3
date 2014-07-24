@@ -19,6 +19,8 @@ public class ThrobGUIElement : MonoBehaviour {
 	private Vector3 m_targetScale;
 	
 	EventDelegate m_eventDelegate;
+
+    bool m_isOn = false;
 	
 	void Awake()
 	{
@@ -43,19 +45,26 @@ public class ThrobGUIElement : MonoBehaviour {
 
 	public void On()
 	{
-		if(m_tweenBehaviour == null)
-		{
-			m_tweenBehaviour = GetComponent<TweenScale>() as TweenScale;
-		}
+        if (!m_isOn)
+        {
+            m_isOn = true;
 
-		m_targetScale = (Random.Range(0, 2) == 0) ? m_minScale : m_maxScale;
-		TweenScale.Begin(gameObject, Random.Range(m_minDuration, m_maxDuration), m_targetScale);
+            if (m_tweenBehaviour == null)
+            {
+                m_tweenBehaviour = GetComponent<TweenScale>() as TweenScale;
+            }
 
-		m_tweenBehaviour.onFinished.Add(m_eventDelegate);
+            m_targetScale = (Random.Range(0, 2) == 0) ? m_minScale : m_maxScale;
+            TweenScale.Begin(gameObject, Random.Range(m_minDuration, m_maxDuration), m_targetScale);
+
+            m_tweenBehaviour.onFinished.Add(m_eventDelegate);
+        }
 	}
 
 	public void Off(bool tweenToDefault = true)
 	{
+        m_isOn = false;
+
 		if(m_tweenBehaviour == null)
 		{
 			m_tweenBehaviour = GetComponent<TweenScale>() as TweenScale;

@@ -39,6 +39,8 @@ public class PipesCoordinator : GameCoordinator
     private Transform m_submitButtonParentLocation;
     [SerializeField]
     private UILabel m_triggerCounter;
+    [SerializeField]
+    private ThrobGUIElement m_throbBehaviour;
 
     List<GameObject> m_spawnedRbs = new List<GameObject>();
 
@@ -76,6 +78,15 @@ public class PipesCoordinator : GameCoordinator
         int numTrackedObjects = m_triggerTracker.GetNumTrackedObjects();
         m_triggerCounter.text = numTrackedObjects.ToString();
         DataAudio.Instance.PlayNumber(numTrackedObjects);
+
+        if (numTrackedObjects == m_currentData.GetInt("value"))
+        {
+            m_throbBehaviour.On();
+        }
+        else
+        {
+            m_throbBehaviour.Off();
+        }
     }
 
     void OnRigidbodyDestroy(FillJarFruit rb)
@@ -113,6 +124,11 @@ public class PipesCoordinator : GameCoordinator
 
         m_triggerTracker.Entered += OnTriggerTrackerUpdate;
         m_triggerTracker.Exited += OnTriggerTrackerUpdate;
+
+        if (m_triggerTracker.GetNumTrackedObjects() == m_currentData.GetInt("value"))
+        {
+            m_throbBehaviour.On();
+        }
     }
 
     void OnPressAdd(PipButton button)
@@ -170,6 +186,8 @@ public class PipesCoordinator : GameCoordinator
     void OnPressSubmit(PipButton button)
     {
         //D.Log("Tracking:" + m_triggerTracker.GetNumTrackedObjects());
+
+        m_throbBehaviour.Off();
 
         if (m_triggerTracker.GetNumTrackedObjects() == m_currentData.GetInt("value"))
         {
