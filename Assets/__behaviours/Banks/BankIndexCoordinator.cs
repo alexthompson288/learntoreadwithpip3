@@ -44,9 +44,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     PipButton m_currentButton = null;
 
-    Vector3 m_defaultGridPanelStartPosition;
-    Vector4 m_defaultGridPanelStartClipRange;
-
     string m_dataType;
     public string GetDataType()
     {
@@ -66,9 +63,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     IEnumerator Start()
     {
         m_defaultGridPanel.alpha = 0;
-
-        m_defaultGridPanelStartPosition = m_defaultGridPanel.transform.localPosition;
-        m_defaultGridPanelStartClipRange = m_defaultGridPanel.clipRange;
 
         m_clearButton.Unpressing += ClearAnswers;
         m_testButton.Unpressing += OnClickTestButton;
@@ -185,7 +179,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             m_spawnedDataClicks.Clear();
 
             m_currentButton = button;
-            //StartCoroutine(MoveCurrentColorSprite(button));
+
             StartCoroutine(ChangeColorCo(button.pipColor));
         }
     }
@@ -203,9 +197,6 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         {
             Destroy(m_defaultGrid.transform.GetChild(i).gameObject);
         }
-        
-        m_defaultGridPanel.transform.localPosition = m_defaultGridPanelStartPosition;
-        m_defaultGridPanel.clipRange = m_defaultGridPanelStartClipRange;
 
         GameObject prefab = m_dataType == "phonemes" ? m_phonemePrefab : m_wordPrefab;
 
@@ -253,6 +244,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         yield return new WaitForSeconds(0.1f);
         
         m_defaultGrid.Reposition();
+
+        m_defaultDraggablePanel.ResetPosition();
 
         yield return new WaitForSeconds(0.1f);
 

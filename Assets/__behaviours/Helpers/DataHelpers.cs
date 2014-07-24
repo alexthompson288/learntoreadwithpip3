@@ -474,15 +474,36 @@ public static class DataHelpers
     // Reading
     public static List<DataRow> GetModulePhonemes(int moduleId)
     {
+        List<DataRow> modulePhonemes = new List<DataRow>();
+
         if (moduleId != -1)
         {
-            return GetModuleData(moduleId, "setphonemes", "phonemes");
+            SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
+
+            DataTable setsTable = db.ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
+
+            foreach(DataRow set in setsTable.Rows)
+            {
+                string[] phonemeIds = GetArray(set, "setphonemes");
+
+                foreach(string phonemeId in phonemeIds)
+                {
+                    DataTable phonemesTable = db.ExecuteQuery(String.Format("select * from phonemes WHERE id='{0}' AND completed='t'", phonemeId)); 
+
+                    if(phonemesTable.Rows.Count > 0)
+                    {
+                        modulePhonemes.Add(phonemesTable.Rows[0]);
+                    }
+                } 
+            }
         } 
         else
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE completed='t'");
-            return dt.Rows;
+            modulePhonemes = dt.Rows;
         }
+
+        return modulePhonemes;
     }
     
     public static List<DataRow> GetModuleWords(int moduleId)
@@ -1113,7 +1134,8 @@ public static class DataHelpers
     }
     
     // TODO: Delete when not needed
-    public static List<DataRow> GetSetData(int setNum, string columnName, string tableName)
+
+    public static List<DataRow> DeprecatedGetSetData(int setNum, string columnName, string tableName)
     {
         List<DataRow> dataList = new List<DataRow>();
         
@@ -1150,8 +1172,9 @@ public static class DataHelpers
         }       
         else       
         {         
-            return GetSetData(++setNum, columnName, tableName);       
+            return DeprecatedGetSetData(++setNum, columnName, tableName);       
         }
     }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
