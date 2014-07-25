@@ -189,9 +189,11 @@ public class CatapultMixedCoordinator : MonoBehaviour
         DataRow targetData = IsDataMixed() ? FindRandomCorrect() : m_currentData;
         if (UnityEngine.Random.Range(0f, 1f) > m_probabilityTargetIsCorrect && m_dataPool.Count > 1)
         {
-            while (IsDataCorrect(targetData))
+            int safetyCounter = 0;
+            while (IsDataCorrect(targetData) && safetyCounter < 150)
             {
                 targetData = m_dataPool [UnityEngine.Random.Range(0, m_dataPool.Count)];
+                ++safetyCounter;
             }
         }
         
