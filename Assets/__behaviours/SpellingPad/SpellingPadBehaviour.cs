@@ -358,7 +358,7 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
                 ////D.Log("PadPhoneme has different: " + padLetter.GetLetter());
             }
 
-            if(draggable == padLetter.GetOther() && letter == padLetter.GetLetter())
+            if(draggable == padLetter.GetOther() && letter.ToLower() == padLetter.GetLetter().ToLower())
 			{
                 return padLetter;
 			}
