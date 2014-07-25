@@ -98,10 +98,12 @@ public class SessionCompleteCoordinator : MonoBehaviour
                         }
                     }
                 }
+                /*
                 else
                 {
                     hasSetIcon = true;
                 }
+                */
             }
         } 
 

@@ -19,20 +19,6 @@ public class GameManager : Singleton<GameManager>
         m_programme = myProgramme;
     }
 
-    string m_activityType = "";
-    public static string activityType
-    {
-        get
-        {
-            return Instance.m_activityType;
-        }
-    }
-
-    public void SetActivityType(string myActivityType)
-    {
-        m_activityType = myActivityType;
-    }
-
     void Start()
     {
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
@@ -76,7 +62,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    void Reset()
+    public void Reset()
     {
         m_state = State.Sleep;
 

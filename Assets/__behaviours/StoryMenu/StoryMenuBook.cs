@@ -22,6 +22,12 @@ public class StoryMenuBook : MonoBehaviour
     {
         m_data = dataRow;
         m_storyPicture.mainTexture = DataHelpers.GetPicture(m_data);
+
+        if (m_storyPicture.mainTexture == null)
+        {
+            //D.Log(
+        }
+
         m_dragPanelContents.draggablePanel = draggablePanel;
     }
 

@@ -116,7 +116,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                 }
             }
 
-            if(numDisabled >= m_colorButtons.Length - 1)
+            if(numDisabled >= m_colorButtons.Length - 1 || !StoryInfo.Instance.GetShowText())
             {
                 m_changeColorButton.gameObject.SetActive(false);
             }
@@ -211,6 +211,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             m_currentColor = ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower();
             //SetTextAttribute(ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower());
+
+            ClearText();
+            UpdatePage();
         }
     }
 

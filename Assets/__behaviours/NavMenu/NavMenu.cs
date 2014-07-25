@@ -32,7 +32,6 @@ public class NavMenu : Singleton<NavMenu>
         Buy
     }
 
-
     void Awake()
     {
         GameObject newPipAnim = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipAnimPrefab, m_pipAnimLocation);
@@ -44,14 +43,14 @@ public class NavMenu : Singleton<NavMenu>
             moveable.gameObject.SetActive(true);
         }
 
-        #if UNITY_STANDALONE
+#if UNITY_STANDALONE
         if(m_pipisodesButton != null)
         {
             m_pipisodesButton.SetActive(false);
             m_gamesButton.localPosition = new Vector3(-120, m_gamesButton.localPosition.y, m_gamesButton.localPosition.z);
             m_storiesButton.localPosition = new Vector3(120, m_storiesButton.localPosition.y, m_storiesButton.localPosition.z);
         }
-        #endif
+#endif
     }
     
     void Start()

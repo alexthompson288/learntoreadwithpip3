@@ -38,7 +38,7 @@ public class Analytics : Singleton<Analytics>
 
             m_email = LoginInfo.Instance.GetEmail();
             m_childName = UserInfo.Instance.GetCurrentUserName();
-            m_activityType = GameManager.activityType;
+            //m_activityType = GameManager.activityType;
             m_activityName = GameManager.Instance.currentGameName;
             m_timeStarted = DateTime.Now.ToString(Analytics.Instance.m_dateTimeString);
         }

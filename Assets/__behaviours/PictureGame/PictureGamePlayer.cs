@@ -123,6 +123,8 @@ public class PictureGamePlayer : GamePlayer
 
 		//D.Log("m_maxSpawn: " + m_maxSpawn);
 
+        m_targetScore = Mathf.Min(m_targetScore, m_remainingWords.Count);
+
         m_scoreKeeper.SetTargetScore(m_targetScore);
         
         ShowNextQuestion();
@@ -174,11 +176,16 @@ public class PictureGamePlayer : GamePlayer
             
             ShowNextQuestion();
         }
+        /*
         else if(m_remainingWords.Count == 0)
         {
             SessionInformation.SetDefaultPlayerVar();
+
+            yield return StartCoroutine(m_scoreKeeper.On());
+
             GameManager.Instance.CompleteGame();
         }
+        */
 
         yield break;
     }
@@ -224,6 +231,12 @@ public class PictureGamePlayer : GamePlayer
                 PipPadBehaviour.Instance.SayAll(1.5f);
             }
         }
+    }
+
+    public IEnumerator ActivateScoreKeeper()
+    {
+        yield return StartCoroutine(m_scoreKeeper.On());
+        D.Log("Player returning");
     }
 
     public bool HasFinished()

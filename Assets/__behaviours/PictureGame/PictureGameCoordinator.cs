@@ -175,11 +175,14 @@ public class PictureGameCoordinator : Singleton<PictureGameCoordinator>
 
 	IEnumerator FinishGame(int winningIndex)
 	{
-		yield return null;
+        yield return null;
 
 		if (winningIndex != -1)
 		{
-			SessionInformation.SetDefaultPlayerVar();
+            SessionInformation.SetDefaultPlayerVar();
+
+            yield return StartCoroutine(m_gamePlayers[winningIndex].ActivateScoreKeeper());
+
 			GameManager.Instance.CompleteGame();
 		}
 		else

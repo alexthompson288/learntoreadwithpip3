@@ -132,6 +132,7 @@ public class JoinPairsPlayer : GamePlayer
         
         int pairsToShowAtOnce = m_isDrawingDemo ? 1 : JoinPairsCoordinator.Instance.GetPairsToShowAtOnce();
         pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, m_locators.Length / 2);
+        pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, JoinPairsCoordinator.Instance.dataPool.Count);
 
         //D.Log("Created dataPool");
 

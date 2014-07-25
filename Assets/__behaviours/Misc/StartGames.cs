@@ -8,6 +8,7 @@ public class StartGames : MonoBehaviour
 
 	void OnClick()
     {
+        GameManager.Instance.Reset();
         GameManager.Instance.AddGames(m_gameNames);
         GameManager.Instance.StartGames();
     }
