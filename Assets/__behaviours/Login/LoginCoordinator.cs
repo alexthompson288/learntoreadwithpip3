@@ -13,6 +13,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     [SerializeField]
     private PipButton m_loginButton;
     [SerializeField]
+    private UILabel m_loginButtonLabel;
+    [SerializeField]
     private UILabel m_infoLabel;
     [SerializeField]
     private GameObject m_pipPrefab;
@@ -154,6 +156,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         else if(m_hasEnteredEmail && m_hasEnteredPassword)
         {
+            m_infoLabel.text = "Logging in...";
+            m_loginButtonLabel.text = "Logging in...";
             StartCoroutine(OnPressLoginCo());
         }
         else
@@ -164,6 +168,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     IEnumerator OnPressLoginCo()
     {
+        yield return null;
+
         string tokenResponse = "";
 
         try
@@ -205,6 +211,8 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             {
                 SetInfoText(ex);
             }
+
+            m_loginButtonLabel.text = "Login";
 
             if (isUserLegal)
             {

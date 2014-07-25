@@ -54,8 +54,8 @@ public static class LoginHelpers
         }
     }
 
-    //static string m_url = "http://learnwithpip.com/api/v1/";
-	static string m_url = "http://learnwithpip-staging.herokuapp.com/api/v1/";
+    static string m_url = "http://learnwithpip.com/api/v1/";
+	//static string m_url = "http://learnwithpip-staging.herokuapp.com/api/v1/";
 	
 	static string m_tokenRequest = "tokens";
 	static string m_userRequest = "users/me";

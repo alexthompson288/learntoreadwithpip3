@@ -224,7 +224,7 @@ public static class DataHelpers
             case "pipisodes":
                 if(data["image_filename"] != null)
                 {
-                    tex = Resources.Load<Texture2D>(String.Format("Pictures/{0}", data["image_filename"]));
+                    tex = Resources.Load<Texture2D>(String.Format("Images/mnemonics_images_png_250/{0}", data["image_filename"]));
                 }
                 break;
             default:
@@ -678,32 +678,59 @@ public static class DataHelpers
         
         return dataPool;
     }
+
+    public static List<DataRow> OnlyOrderedPhonemes(List<DataRow> words)
+    {
+        List<DataRow> legalWords = new List<DataRow>();
+        foreach (DataRow word in words)
+        {
+            if(HasOrderedPhonemes(word))
+            {
+                legalWords.Add(word);
+            }
+        }
+
+        return legalWords;
+    }
     
     public static DataRow GetOnsetPhoneme(DataRow word)
     {
         string[] phonemeIds = GetOrderedPhonemeIdStrings(word);
-        foreach(string id in phonemeIds)
+
+        if (phonemeIds != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
-            if(dt.Rows.Count > 0)
+            foreach (string id in phonemeIds)
             {
-                return dt.Rows[0];
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
+                if (dt.Rows.Count > 0)
+                {
+                    return dt.Rows [0];
+                }
             }
         }
         
         return null;
     }
-    
+
+    public static bool HasOrderedPhonemes(DataRow word)
+    {
+        return GetArray(word, "ordered_phonemes") != null;
+    }
+
     public static List<DataRow> GetOrderedPhonemes(DataRow word)
     {
         List<DataRow> phonemes = new List<DataRow>();
         string[] phonemeIds = GetArray(word, "ordered_phonemes");
-        foreach(string id in phonemeIds)
+
+        if (phonemeIds != null)
         {
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
-            if(dt.Rows.Count > 0)
+            foreach (string id in phonemeIds)
             {
-                phonemes.Add(dt.Rows[0]);
+                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE id='" + id + "'");
+                if (dt.Rows.Count > 0)
+                {
+                    phonemes.Add(dt.Rows [0]);
+                }
             }
         }
         
@@ -811,6 +838,8 @@ public static class DataHelpers
         {
             onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)));
         }
+
+        D.Log("Found extra " + onsetWords.Count + " onsetWords");
 
         numToFind = Mathf.Min(numToFind, onsetWords.Count);
 

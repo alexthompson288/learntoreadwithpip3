@@ -57,11 +57,11 @@ public class SpriteAnim : MonoBehaviour
     bool m_isWaiting = false;
     string m_waitingAnimationName;
 
-    bool m_isWaitingToPlayRandom = false;
+    bool m_isWaitingToPlay = false;
 
     void OnEnable()
     {
-        if (m_isWaitingToPlayRandom)
+        if (m_isWaitingToPlay)
         {
             StartCoroutine("PlayRandom");
         }
@@ -91,23 +91,23 @@ public class SpriteAnim : MonoBehaviour
     {
         StopAllCoroutines();
         m_playAnim = false;
-        m_isWaitingToPlayRandom = false;
+        m_isWaitingToPlay = false;
     }
 
     public void StopRandom()
     {
         //StopAllCoroutines();
         StopCoroutine("PlayRandom");
-        m_isWaitingToPlayRandom = false;
+        m_isWaitingToPlay = false;
     }
 
     IEnumerator PlayRandom()
     {
-        m_isWaitingToPlayRandom = true;
+        m_isWaitingToPlay = true;
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(m_randomDelayRange.x, m_randomDelayRange.y));
 
-        m_isWaitingToPlayRandom = false;
+        m_isWaitingToPlay = false;
 
         if (m_randomAnimationNames.Count > 0)
         {
@@ -166,7 +166,12 @@ public class SpriteAnim : MonoBehaviour
 
     IEnumerator PlaySequencedAnimation(AnimDetails ad)
     {
+        m_isWaitingToPlay = true;
+
         yield return new WaitForSeconds(ad.m_sequenceDelay);
+
+        m_isWaitingToPlay = false;
+
         PlayAnimation(ad.m_sequencedAnimation, false);
     }
 

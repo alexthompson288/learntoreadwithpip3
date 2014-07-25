@@ -72,7 +72,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
                 m_targetsShowPicture = game["picture_game"].ToString() == "t";
             }
         }
-        
+
         m_dataDisplay.SetShowPicture(!m_targetsShowPicture);
 
         if (System.String.IsNullOrEmpty(m_dataType))
@@ -85,6 +85,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         if (IsDataMixed())
         {
             m_dataPool.AddRange(DataHelpers.GetNonReadableWords());
+            m_dataPool = DataHelpers.OnlyOrderedPhonemes(m_dataPool);
         }
 
         m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
@@ -105,7 +106,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
         {
             yield return null;
         }
-        
+
         if (m_dataPool.Count > 0)
         {
             if(IsDataMixed())
@@ -123,6 +124,17 @@ public class CatapultMixedCoordinator : MonoBehaviour
                     m_dataPool.AddRange(DataHelpers.GetOnsetWords(m_currentData, 3, true));
                     m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
                 }
+
+                while(!DataHelpers.HasOnsetWords(m_currentData, m_dataPool))
+                {
+                    DataRow randomWord = m_dataPool[UnityEngine.Random.Range(0, m_dataPool.Count)];
+                    m_currentData = DataHelpers.GetOnsetPhoneme(randomWord);
+
+                    m_dataPool.AddRange(DataHelpers.GetOnsetWords(m_currentData, 3, true));
+                    m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
+
+                    yield return null;
+                }
             }
             else
             {
@@ -132,7 +144,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
             string currentDataType = m_dataType == "phonemes" || IsDataMixed() ? "phonemes" : "words";
             m_dataDisplay.On(currentDataType, m_currentData);
 
-            
             InitializeTargets(targets);
             
             PlayShortAudio(m_currentData);
@@ -147,8 +158,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     void InitializeTargets(Target[] targets)
     {
-        //D.Log("targets.Length: " + targets.Length);
-
         for(int i = 0; i < targets.Length; ++i)
         {
             targets[i].TargetHit += OnTargetHit;
@@ -178,7 +187,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
     void SetTargetData(Target target)
     {
         DataRow targetData = IsDataMixed() ? FindRandomCorrect() : m_currentData;
-        if (UnityEngine.Random.Range(0f, 1f) > m_probabilityTargetIsCorrect)
+        if (UnityEngine.Random.Range(0f, 1f) > m_probabilityTargetIsCorrect && m_dataPool.Count > 1)
         {
             while (IsDataCorrect(targetData))
             {

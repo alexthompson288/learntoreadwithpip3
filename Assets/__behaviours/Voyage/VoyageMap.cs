@@ -127,6 +127,8 @@ public class VoyageMap : MonoBehaviour
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////
         yield return null;
+
+        m_sessionButtonGrid.Reposition();
         
         if (m_pipAnim == null)
         {
