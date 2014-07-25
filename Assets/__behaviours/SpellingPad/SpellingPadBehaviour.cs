@@ -73,6 +73,8 @@ public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour>
         CollectionHelpers.DestroyObjects(m_spawnedPhonemes);
 		
 		m_editedWord = word.Replace("!", "").Replace(".", "").Replace(",", "").Replace(";", "").ToLower();
+
+        //m_editedWord = StringHelpers.Edit(word).ToLower();
 		
 		SqliteDatabase database = GameDataBridge.Instance.GetDatabase();
 		DataTable dt = database.ExecuteQuery("select * from words where word='" + m_editedWord + "'");

@@ -116,7 +116,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         if ((ex.Response is System.Net.HttpWebResponse))
         {
-            ////D.Log("StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+            D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
             switch ((ex.Response as System.Net.HttpWebResponse).StatusCode)
             {
                 // Unauthorized status code can happen for 2 reasons: 1. Incorrect username/password 2. No access token
@@ -132,6 +132,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         else
         {
+            D.Log("Not HTTP - Exception: " + ex.Message);
             SetInfoText("Check your internet connection");
         }
     }
@@ -183,17 +184,16 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         bool hasToken = tokenResponse.Contains(LoginHelpers.accessPrefix) && tokenResponse.Contains(LoginHelpers.expirationPrefix);
         
-        ////D.Log("hasToken: " + hasToken);
-        ////D.Log("RESPONSE_CONTENT");
-        ////D.Log(tokenResponse);
+        D.Log("hasToken: " + hasToken);
+        D.Log("RESPONSE_CONTENT: " + tokenResponse);
        
         if (hasToken)
         {
             string accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
-            ////D.Log("ACCESS_TOKEN: " + accessToken);
+            D.Log("ACCESS_TOKEN: " + accessToken);
             
             string expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
-            ////D.Log("EXPIRATION_DATE: " + expirationDate);
+            D.Log("EXPIRATION_DATE: " + expirationDate);
             
             LoginInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
 
@@ -202,12 +202,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             try
             {
                 isUserLegal = LoginHelpers.IsUserLegal(accessToken);
-            } 
-            catch (WebException ex)
+            } catch (WebException ex)
             {
                 SetInfoText(ex, false);
-            } 
-            catch (LoginException ex)
+            } catch (LoginException ex)
             {
                 SetInfoText(ex);
             }

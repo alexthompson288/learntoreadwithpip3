@@ -679,6 +679,33 @@ public static class DataHelpers
         return dataPool;
     }
 
+    public static List<DataRow> OnlyAlphaChars(List<DataRow> words)
+    {
+        List<DataRow> legalWords = new List<DataRow>();
+        foreach (DataRow word in words)
+        {
+            bool wordIsLegal = true;
+
+            if(word["word"] != null)
+            {
+                foreach(char c in word["word"].ToString())
+                {
+                    if(!Char.IsLetter(c))
+                    {
+                        wordIsLegal = false;
+                    }
+                }
+            }
+
+            if(wordIsLegal)
+            {
+                legalWords.Add(word);
+            }
+        }
+        
+        return legalWords;
+    }
+
     public static List<DataRow> OnlyOrderedPhonemes(List<DataRow> words)
     {
         List<DataRow> legalWords = new List<DataRow>();
@@ -839,7 +866,7 @@ public static class DataHelpers
             onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)));
         }
 
-        D.Log("Found extra " + onsetWords.Count + " onsetWords");
+        //D.Log("Found extra " + onsetWords.Count + " onsetWords");
 
         numToFind = Mathf.Min(numToFind, onsetWords.Count);
 

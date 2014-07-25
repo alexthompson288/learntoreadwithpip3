@@ -55,10 +55,18 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         m_wordsPool = m_useNonsenseWords ? DataHelpers.GetSillywords() : DataHelpers.GetWords();
 
-        // TODO: Delete. Only used for debugging tricky words
-#if UNITY_EDITOR
-        //m_wordsPool = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE tricky='t'").Rows;
-#endif
+        /*
+        #if UNITY_EDITOR
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='ping-pong'");
+        if(dt.Rows.Count > 0)
+        {
+            m_wordsPool = dt.Rows;
+        }
+        #endif
+        */
+
+        m_wordsPool = DataHelpers.OnlyAlphaChars(m_wordsPool);
+
 
         if(m_targetScore > m_wordsPool.Count)
         {
@@ -108,12 +116,13 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     IEnumerator SpawnQuestion ()
     {
         m_currentWord = m_wordsPool[Random.Range(0, m_wordsPool.Count)];
-  
+
         m_wordsPool.Remove(m_currentWord);
 
         m_dataDisplay.On("words", m_currentWord);
   
-        string word = m_currentWord ["word"].ToString();
+        string word = m_currentWord ["word"].ToString().ToLower();
+        //string word = StringHelpers.Edit(m_currentWord ["word"].ToString()).ToLower();
 
         for (int i = 0; i < word.Length; ++i)
         {
