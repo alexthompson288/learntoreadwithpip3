@@ -15,6 +15,7 @@ public class LocalVideoPlayer : MonoBehaviour
 
     public void PlayVideo()
     {
+# if UNITY_IPHONE || UNITY_ANDROID
         if (m_path.Length > 0 && m_filename.Length > 0)
         {
             char pathLast = m_path [m_path.Length - 1];
@@ -27,5 +28,6 @@ public class LocalVideoPlayer : MonoBehaviour
         }
         
         Handheld.PlayFullScreenMovie(m_path + m_filename);
+#endif
     }
 }

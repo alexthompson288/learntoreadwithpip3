@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StandaloneExitApp : MonoBehaviour 
+public class ExitAppOnEsc : MonoBehaviour 
 {
 #if UNITY_STANDALONE
     void Update()

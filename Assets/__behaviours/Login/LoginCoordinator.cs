@@ -39,6 +39,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void Awake()
     {
+#if UNITY_STANDALONE
+        m_loginButtonParent.transform.localScale = Vector3.one * 1.25f;
+#endif
+
         m_emailInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterEmail"));
         m_passwordInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterPassword"));
 
@@ -155,6 +159,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
         }
+#if UNITY_STANDALONE
+        else
+        {
+            m_infoLabel.text = "Logging in...";
+            m_loginButtonLabel.text = "Logging in...";
+            StartCoroutine(OnPressLoginCo());
+        }
+#else
         else if(m_hasEnteredEmail && m_hasEnteredPassword)
         {
             m_infoLabel.text = "Logging in...";
@@ -165,6 +177,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             m_infoLabel.text = "Please enter your login details";
         }
+#endif
     }
 
     IEnumerator OnPressLoginCo()
@@ -210,8 +223,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
                 SetInfoText(ex);
             }
 
-            m_loginButtonLabel.text = "Login";
-
             if (isUserLegal)
             {
                 float panelTweenDuration = 0.25f;
@@ -231,5 +242,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
                 TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
             }
         } 
+
+        m_loginButtonLabel.text = "Login";
     }
 }
