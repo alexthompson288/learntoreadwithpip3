@@ -315,6 +315,18 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		Go.addTween(tween);
         tween.setOnCompleteHandler(c => FinishedIntro());
 	}
+
+    public void ChangeToDefaultLevel()
+    {
+        if (GameManager.programme == "Reading1")
+        {
+            ChangeLevel("NewVoyage", false);
+        }
+        else
+        {
+            ChangeLevel("NewNumberGameMenu", false);
+        }
+    }
 	
 	// TODO: Deprecate this function and find a better way of making sure that the Challenge Menu stays on the stack or gets put back on the stack when you leave it
 	public void PushToStack(string sceneName)
