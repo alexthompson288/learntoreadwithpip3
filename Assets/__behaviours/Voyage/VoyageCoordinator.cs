@@ -203,6 +203,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     // Should not be necessary, but when maps are destroyed they briefly flash at a very large scale. Possible Unity bug
     void MakeHierarchyPanelsInvisible(GameObject parent)
     {
+        /*
         parent.GetComponent<UIPanel>().alpha = 0; 
         
         UIPanel[] childPanels = parent.GetComponentsInChildren<UIPanel>() as UIPanel[];
@@ -210,6 +211,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             panel.alpha = 0;
         }
+        */
     }
 
     void InstantiateModuleMap(int mapIndex)

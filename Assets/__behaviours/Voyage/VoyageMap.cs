@@ -13,10 +13,6 @@ public class VoyageMap : MonoBehaviour
     [SerializeField]
     private ColorInfo.PipColor m_color;
     [SerializeField]
-    private GameObject m_medalPrefab;
-    [SerializeField]
-    private Transform m_medalParent;
-    [SerializeField]
     private GameObject m_sessionButtonPrefab;
     [SerializeField]
     private UIGrid m_sessionButtonGrid;
@@ -26,28 +22,6 @@ public class VoyageMap : MonoBehaviour
     private GameObject m_pipPrefab;
     [SerializeField]
     private Transform m_pipLocation;
-
-#if UNITY_EDITOR
-    [SerializeField]
-    private Transform m_testLocation;
-
-    void Update()
-    {
-        if (m_testLocation != null)
-        {
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                m_pipAnim.MoveToPos(m_pipLocation.position);
-                //StartCoroutine(m_pipAnim.MoveToPosCo(m_pipLocation.position));
-            } 
-            else if (Input.GetKeyDown(KeyCode.G))
-            {
-                m_pipAnim.MoveToPos(m_testLocation.position);
-                //StartCoroutine(m_pipAnim.MoveToPosCo(m_testLocation.position));
-            }
-        }
-    }
-#endif
 
     static PipAnim m_pipAnim;
 
