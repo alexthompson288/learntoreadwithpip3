@@ -97,7 +97,7 @@ public class ScoreCatapult : ScoreKeeper
                 yield return null;
             } 
             
-            D.Log("LAUNCH!!!");
+            //D.Log("LAUNCH!!!");
             WingroveAudio.WingroveRoot.Instance.PostEvent("CANNON_PLACEHOLDER_LAUNCH");
             m_hasLaunched = true;
             iTween.Stop(m_rigidbody.gameObject);
@@ -160,7 +160,7 @@ public class ScoreCatapult : ScoreKeeper
 
         yield break;
 
-        D.Log("ScoreCatapult Returning");
+        //D.Log("ScoreCatapult Returning");
     }
 
     void TweenRigidbody()

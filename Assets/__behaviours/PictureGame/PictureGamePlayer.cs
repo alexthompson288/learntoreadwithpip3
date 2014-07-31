@@ -236,7 +236,7 @@ public class PictureGamePlayer : GamePlayer
     public IEnumerator ActivateScoreKeeper()
     {
         yield return StartCoroutine(m_scoreKeeper.On());
-        D.Log("Player returning");
+        //D.Log("Player returning");
     }
 
     public bool HasFinished()
