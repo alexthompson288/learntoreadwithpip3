@@ -148,26 +148,18 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 			DataRow letterData = m_lettersPool[Random.Range(0, m_lettersPool.Count)];
 			lettersToSpawn[letterData["phoneme"].ToString()] = letterData;
 		}
-		
-		List<Transform> locators = new List<Transform>(m_locators);
-		while(locators.Count > m_numSpawn)
-		{
-			int removeIndex = Random.Range(0, locators.Count);
-			////D.Log("removeIndex: " + removeIndex);
-			////D.Log("name: " + locators[removeIndex].name);
-			locators.RemoveAt(removeIndex);
-		}
+		  
+        CollectionHelpers.Shuffle(m_locators);
 		
 		int i = 0;
 		foreach(KeyValuePair<string, DataRow> kvp in lettersToSpawn)
 		{
-			GameObject newLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggableLabelPrefab, locators[i]);
+            GameObject newLetter = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_draggableLabelPrefab, m_locators[i]);
 			++i;
 			
 			DraggableLabel draggable = newLetter.GetComponent<DraggableLabel>() as DraggableLabel;
 			draggable.SetUp(kvp.Key, m_graphemeAudio[kvp.Value]);
 			draggable.OnRelease += OnDraggableRelease;
-            //draggable.SetCanDrag(false);
             draggable.OnNoDragClick += OnDraggableRelease;
 			m_spawnedDraggables.Add(draggable);
 		}
@@ -175,30 +167,19 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 	
 	void OnDraggableRelease(DraggableLabel draggable)
 	{
-		//if(draggable.transform.position.x < m_trollBoundary.position.x)
-		//{
-            //UserStats.Activity.IncrementNumAnswers();
-
-			if(draggable.GetText() == m_currentLetterData["phoneme"].ToString())
-			{
-				StartCoroutine(OnCorrectAnswer(draggable));
-			}
-			else
-			{
-                //UserStats.Activity.AddIncorrectPhoneme(m_currentLetterData);
-
-				PlayLetterSound(m_currentLetterData);
-				
-				m_blackBoard.ShowImage(m_phonemeImages[m_currentLetterData], 
-					m_currentLetterData["phoneme"].ToString(), m_currentLetterData["phoneme"].ToString());
-			
-				draggable.TweenToStartPos();
-			}
-		//}
-		//else
-		//{
-			//draggable.TweenToStartPos(); 
-		//}
+        if(draggable.GetText() == m_currentLetterData["phoneme"].ToString())
+        {
+            StartCoroutine(OnCorrectAnswer(draggable));
+        }
+        else
+        {
+            PlayLetterSound(m_currentLetterData);
+            
+            m_blackBoard.ShowImage(m_phonemeImages[m_currentLetterData], 
+                                   m_currentLetterData["phoneme"].ToString(), m_currentLetterData["phoneme"].ToString());
+            
+            draggable.TweenToStartPos();
+        }
 	}
 	
 	IEnumerator OnCorrectAnswer(DraggableLabel draggable)

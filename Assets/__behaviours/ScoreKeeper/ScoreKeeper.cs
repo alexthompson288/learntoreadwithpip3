@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class ScoreKeeper : MonoBehaviour 
 {
     [SerializeField]
+    private bool m_scoreCannotBeGreaterThanTarget = true;
+    [SerializeField]
     private List<string> m_correctAudio = new List<string>();
     [SerializeField]
     private List<string> m_incorrectAudio = new List<string>();
@@ -54,7 +56,11 @@ public class ScoreKeeper : MonoBehaviour
     {
         ++ m_numAnswered;
         m_score += delta;
-        m_score = Mathf.Clamp(m_score, 0, m_targetScore);
+
+        if (m_scoreCannotBeGreaterThanTarget)
+        {
+            m_score = Mathf.Clamp(m_score, 0, m_targetScore);
+        }
     }
 
     public virtual void PlayIncorrectAnimation() {}
