@@ -258,6 +258,9 @@ public static class DataHelpers
             case "numbers":
                 spriteName = "digit_" + data["value"].ToString();
                 break;
+            case "shapes":
+                spriteName = String.Format("{0}", data["name"].ToString());
+                break;
             default:
                 break;
         }

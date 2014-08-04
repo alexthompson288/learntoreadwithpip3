@@ -23,7 +23,7 @@ public class JoinableLineDraw : LineDraw
     [SerializeField]
     private JoinableType m_joinableType;
     [SerializeField]
-    private UISprite[] m_numberSprites;
+    private UISprite[] m_sprites;
     [SerializeField]
     private string[] m_spriteNames;
     [SerializeField]
@@ -65,6 +65,8 @@ public class JoinableLineDraw : LineDraw
         if (m_joinableType == JoinableType.Picture)
         {
             m_pictureTexture.mainTexture = DataHelpers.GetPicture(m_data);
+            //string shapeName = DataHelpers.GetSpriteName(m_data);
+            //m_sprites[0].spriteName = NGUIHelpers.GetRandomSpriteName(m_sprites[0].atlas, shapeName);
         } 
         else if (m_joinableType == JoinableType.Text)
         {
@@ -73,15 +75,15 @@ public class JoinableLineDraw : LineDraw
         } 
         else
         {
-            System.Array.Sort(m_numberSprites, CollectionHelpers.LocalLeftToRight_TopToBottom);
+            System.Array.Sort(m_sprites, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
             string spriteName = m_spriteNames[Random.Range(0, m_spriteNames.Length)];
 
             int value = System.Convert.ToInt32(myData["value"]);
-            for(int i = 0; i < m_numberSprites.Length; ++i)
+            for(int i = 0; i < m_sprites.Length; ++i)
             {
-                m_numberSprites[i].spriteName = spriteName;
-                m_numberSprites[i].gameObject.SetActive(i < value);
+                m_sprites[i].spriteName = spriteName;
+                m_sprites[i].gameObject.SetActive(i < value);
             }
         }
     }

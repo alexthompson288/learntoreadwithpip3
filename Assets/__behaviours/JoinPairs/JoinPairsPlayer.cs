@@ -97,7 +97,6 @@ public class JoinPairsPlayer : GamePlayer
     {
         m_scoreKeeper.SetTargetScore(targetScore);
 
-
         if (dataType == "numbers")
         {
             m_firstPrefab = JoinPairsCoordinator.Instance.numberPrefab;

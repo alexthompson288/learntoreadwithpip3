@@ -97,4 +97,20 @@ public static class NGUIHelpers
         grid.transform.localPosition = new Vector3(offset + -(grid.transform.childCount - 1) * grid.cellWidth / 2 * grid.transform.localScale.x,
                                                    grid.transform.localPosition.y, grid.transform.localPosition.z);
     }
+
+    public static string GetRandomSpriteName(UIAtlas atlas, string nameMatch = null)
+    {
+        BetterList<string> sprites = new BetterList<string>();
+
+        if (String.IsNullOrEmpty(nameMatch))
+        {
+            sprites = atlas.GetListOfSprites();
+        }
+        else
+        {
+            sprites = atlas.GetListOfSprites(nameMatch);
+        }
+
+        return sprites.size > 0 ? sprites[UnityEngine.Random.Range(0, sprites.size)] : "";
+    }
 }

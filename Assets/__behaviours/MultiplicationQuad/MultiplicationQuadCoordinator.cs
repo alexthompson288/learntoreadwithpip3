@@ -2,31 +2,36 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ToyShopCoordinator : Singleton<ToyShopCoordinator> 
+public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordinator> 
 {
     [SerializeField]
-    private ToyShopPlayer[] m_gamePlayers;
+    private MulitiplicationQuadPlayer[] m_gamePlayers;
+    [SerializeField]
+    private GameObject m_pointPrefab;
     [SerializeField]
     private float m_timeLimit;
     [SerializeField]
-    private int m_numToysToSpawn;
-    [SerializeField]
-    private GameObject m_toyPrefab;
+    private bool m_questionsAreShared;
     [SerializeField]
     private GameObject m_sideBarCameraPrefab;
     [SerializeField]
-    private int[] m_coinValues;
+    private int m_maxNumLines = 12;
 
     List<DataRow> m_numberPool = new List<DataRow>();
 
-    IEnumerator Start()
+    int GetNumPlayers()
+    {
+        return SessionInformation.Instance.GetNumPlayers();
+    }
+
+    IEnumerator Start ()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_numberPool = DataHelpers.GetNumbers();
-
         int numPlayers = GetNumPlayers();
 
+        m_questionsAreShared = m_questionsAreShared && numPlayers == 2;
+        
         if (numPlayers == 1)
         {
             CharacterSelectionParent.DisableAll();
@@ -40,7 +45,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-          
+            
             while (true)
             {
                 bool allSelected = true;
@@ -70,64 +75,47 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-
+        
         D.Log("Starting game");
-
+        
         for (int i = 0; i < numPlayers; ++i)
         {
             m_gamePlayers[i].StartGame(i == 0);
         }
     }
 
-    public void CharacterSelected(int characterIndex)
+    public void OnCorrectAnswer(MulitiplicationQuadPlayer correctPlayer)
     {
-        for (int index = 0; index < GetNumPlayers(); ++index)
+        if (m_questionsAreShared && GetNumPlayers() == 2)
         {
-            m_gamePlayers[index].HideCharacter(characterIndex);
+            for(int i = 0; i < GetNumPlayers(); ++i)
+            {
+                m_gamePlayers[i].ClearQuestion();
+            }
+        }
+        else
+        {
+            correctPlayer.ClearQuestion();
         }
     }
 
-    public void CompleteGame()
+    public bool AreQuestionsShared()
     {
-        StartCoroutine(CompleteGameCo());
+        return m_questionsAreShared;
     }
 
-    IEnumerator CompleteGameCo()
+    public int GetMaxNumLines()
     {
-        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
-
-        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
-
-        GameManager.Instance.CompleteGame();
+        return m_maxNumLines;
     }
 
-    public int GetRandomValue()
+    public GameObject GetPointPrefab()
     {
-        return m_numberPool [Random.Range(0, m_numberPool.Count)].GetInt("value");
-    }
-
-    public GameObject GetToyPrefab()
-    {
-        return m_toyPrefab;
+        return m_pointPrefab;
     }
 
     public float GetTimeLimit()
     {
         return m_timeLimit;
-    }
-
-    public int GetNumToysToSpawn()
-    {
-        return m_numToysToSpawn;
-    }
-
-    public int[] GetCoinValues()
-    {
-        return m_coinValues;
-    }
-    
-    int GetNumPlayers()
-    {
-        return SessionInformation.Instance.GetNumPlayers();
     }
 }

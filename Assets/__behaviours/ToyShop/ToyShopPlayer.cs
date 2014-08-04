@@ -80,7 +80,7 @@ public class ToyShopPlayer : GamePlayer
             m_coinStacks[i].SetValue(m_coinValues[i]);
         }
 
-        m_timer.SetTimeRemaing(ToyShopCoordinator.Instance.GetTimeAllowed());
+        m_timer.SetTimeRemaing(ToyShopCoordinator.Instance.GetTimeLimit());
 
         if (subscribeToTimer)
         {
