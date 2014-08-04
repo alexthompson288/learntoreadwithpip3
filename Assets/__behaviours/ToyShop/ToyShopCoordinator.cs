@@ -25,7 +25,9 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
         m_numberPool = DataHelpers.GetNumbers();
 
-        if (GetNumPlayers() == 1)
+        int numPlayers = GetNumPlayers();
+
+        if (numPlayers == 1)
         {
             CharacterSelectionParent.DisableAll();
             SessionInformation.SetDefaultPlayerVar();
@@ -38,9 +40,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-
-            int numPlayers = GetNumPlayers();
-            
+          
             while (true)
             {
                 bool allSelected = true;
@@ -73,7 +73,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
         D.Log("Starting game");
 
-        for (int i = 0; i < m_gamePlayers.Length; ++i)
+        for (int i = 0; i < numPlayers; ++i)
         {
             m_gamePlayers[i].StartGame(i == 0);
         }

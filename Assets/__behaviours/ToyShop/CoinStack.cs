@@ -48,7 +48,7 @@ public class CoinStack : MonoBehaviour
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
             WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
-            GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_stackablePrefab, m_stackableGrid.transform);
+            GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_stackablePrefab, m_stackableGrid.transform);
             newStackableCoin.GetComponent<UISprite>().spriteName = m_coinSprite.spriteName;
             newStackableCoin.GetComponent<ClickEvent>().SingleClicked += OnClickRemoveButton;
             m_stackableGrid.Reposition();

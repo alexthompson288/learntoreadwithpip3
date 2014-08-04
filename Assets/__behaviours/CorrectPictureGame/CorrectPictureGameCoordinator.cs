@@ -30,6 +30,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     DataRow m_currentWordData = null;
 
+    bool m_hasAnsweredCorrectly = false;
+
     // Use this for initialization
     IEnumerator Start()
     {
@@ -92,6 +94,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     IEnumerator ShowNextQuestion()
     {
         yield return new WaitForSeconds(1.5f);
+
+        m_hasAnsweredCorrectly = false;
 
         m_gotIncorrect = false;
         string selectedWord = null;
@@ -203,23 +207,26 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     public void WordClicked(int index, ImageBlackboard clickedBlackboard)
     {
         //UserStats.Activity.IncrementNumAnswers();
-        if(m_currentWordData["word"].ToString().ToLower() == clickedBlackboard.GetImageName().Replace("_", "").ToLower())
+        if (!m_hasAnsweredCorrectly)
         {
-            StopAllCoroutines();
-            StartCoroutine(OnCorrectClick());
-        }
-        else
-        {
-            if(m_currentWordData != null)
+            if (m_currentWordData ["word"].ToString().ToLower() == clickedBlackboard.GetImageName().Replace("_", "").ToLower())
             {
-                //UserStats.Activity.AddIncorrectWord(m_currentWordData);
-            }
+                m_hasAnsweredCorrectly = true;
+                StopAllCoroutines();
+                StartCoroutine(OnCorrectClick());
+            } else
+            {
+                if (m_currentWordData != null)
+                {
+                    //UserStats.Activity.AddIncorrectWord(m_currentWordData);
+                }
 
-            m_gotIncorrect = true;
-            m_characterToPopTroll.PopCharacter();
-            clickedBlackboard.ShakeFade();
-            StopAllCoroutines();
-            StartCoroutine(StartIncorrect());
+                m_gotIncorrect = true;
+                m_characterToPopTroll.PopCharacter();
+                clickedBlackboard.ShakeFade();
+                StopAllCoroutines();
+                StartCoroutine(StartIncorrect());
+            }
         }
     }
 
