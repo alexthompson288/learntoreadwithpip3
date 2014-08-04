@@ -20,11 +20,15 @@ public class ToyShopPlayer : GamePlayer
     [SerializeField]
     private TweenOnOffBehaviour m_priceTagTweenBehaviour;
     [SerializeField]
+    private Transform m_priceTag;
+    [SerializeField]
     private UILabel m_priceLabel;
     [SerializeField]
     private Transform m_shoppingTrolley;
     [SerializeField]
     private Transform m_toyBuyLocation;
+    [SerializeField]
+    private TweenOnOffBehaviour m_coinStackTweenBehaviour;
 
     GameObject m_currentToy = null;
 
@@ -43,7 +47,8 @@ public class ToyShopPlayer : GamePlayer
         {
             cs.DeactivatePress(false);
         }
-        FlySwatCoordinator.Instance.CharacterSelected(characterIndex);
+
+        ToyShopCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
     public IEnumerator PlayTrafficLights()
@@ -51,9 +56,19 @@ public class ToyShopPlayer : GamePlayer
         yield return StartCoroutine(m_trafficLights.On());
     }
 
+    void Update()
+    {
+        if (m_currentToy != null)
+        {
+            m_priceTag.position = m_currentToy.transform.position;
+        }
+    }
+
     public void StartGame(bool subscribeToTimer)
     {
         D.Log("ToyShopPlayer.StartGame()");
+        m_coinStackTweenBehaviour.On();
+
         m_goButton.Unpressing += OnUnpressGoButton;
 
         System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
@@ -83,29 +98,32 @@ public class ToyShopPlayer : GamePlayer
         GameObject toyPrefab = ToyShopCoordinator.Instance.GetToyPrefab();
         int numToSpawn = Mathf.Min(ToyShopCoordinator.Instance.GetNumToysToSpawn(), m_locators.Length);
 
-        D.Log("SpawnToys(): " + numToSpawn);
-        
         for(int i = 0; i < numToSpawn; ++i)
         {
             GameObject newToy = SpawningHelpers.InstantiateUnderWithIdentityTransforms(toyPrefab, m_locators[i], true);
-            newToy.GetComponent<GameWidget>().SetUpBackground();
-            newToy.GetComponent<GameWidget>().Unpressing += OnToySelect;
+            GameWidget widgetBehaviour = newToy.GetComponent<GameWidget>() as GameWidget;
+            widgetBehaviour.EnableDrag(false);
+            widgetBehaviour.SetUpBackground();
+            widgetBehaviour.Unpressing += OnToySelect;
             m_spawnedToys.Add(newToy);
         }
     }
 
     void OnToyDeselect(GameWidget widget)
     {
-        m_priceTagTweenBehaviour.Off();
+        iTween.ScaleTo(m_priceTag.gameObject, Vector3.zero, 0.25f);
 
         iTween.ScaleTo(m_currentToy, Vector3.one, 0.25f);
 
         widget.TweenToPos(widget.transform.parent.position);
 
-        widget.EnableDrag(true);
-
         widget.Unpressing -= OnToyDeselect;
         widget.Unpressing += OnToySelect;
+
+        foreach (GameObject toy in m_spawnedToys)
+        {
+            toy.GetComponentInChildren<WobbleGUIElement>().enabled = true;
+        }
 
         m_canChooseToy = true;
 
@@ -120,8 +138,6 @@ public class ToyShopPlayer : GamePlayer
 
             widget.Unpressing -= OnToySelect;
             widget.Unpressing += OnToyDeselect;
-
-            widget.EnableDrag(false);
 
             m_currentToy = widget.gameObject;
 
@@ -150,8 +166,8 @@ public class ToyShopPlayer : GamePlayer
             }
 
             m_priceLabel.text = priceString;
-
-            m_priceTagTweenBehaviour.On();
+            iTween.ScaleTo(m_priceTag.gameObject, Vector3.one, tweenDuration);
+            //m_priceTagTweenBehaviour.On();
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
         }
     }
@@ -179,8 +195,10 @@ public class ToyShopPlayer : GamePlayer
             GameObject toyPrefab = ToyShopCoordinator.Instance.GetToyPrefab();
 
             GameObject newToy = SpawningHelpers.InstantiateUnderWithIdentityTransforms(toyPrefab, emptyLocator, true);
-            newToy.GetComponent<GameWidget>().SetUpBackground();
-            newToy.GetComponent<GameWidget>().Unpressing += OnToySelect;
+            GameWidget widgetBehaviour = newToy.GetComponent<GameWidget>() as GameWidget;
+            widgetBehaviour.EnableDrag(false);
+            widgetBehaviour.SetUpBackground();
+            widgetBehaviour.Unpressing += OnToySelect;
             m_spawnedToys.Add(newToy);
 
             m_currentToy.transform.parent = m_shoppingTrolley;
@@ -190,7 +208,8 @@ public class ToyShopPlayer : GamePlayer
             m_currentToy.GetComponent<GameWidget>().TweenToPos(m_shoppingTrolley.position);
             iTween.ScaleTo(m_currentToy, Vector3.one * 0.5f, tweenDuration);
 
-            m_priceTagTweenBehaviour.Off();
+            //m_priceTagTweenBehaviour.Off();
+            iTween.ScaleTo(m_priceTag.gameObject, Vector3.zero, 0.25f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
 
             if(m_spawnedToys.Count == 0)

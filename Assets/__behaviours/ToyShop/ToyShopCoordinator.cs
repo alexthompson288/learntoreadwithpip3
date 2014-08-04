@@ -79,6 +79,14 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
         }
     }
 
+    public void CharacterSelected(int characterIndex)
+    {
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
+        }
+    }
+
     public void CompleteGame()
     {
         StartCoroutine(CompleteGameCo());

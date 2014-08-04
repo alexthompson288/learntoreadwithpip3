@@ -16,15 +16,12 @@ public class CoinStack : MonoBehaviour
     private int m_maxCoins = 10;
     [SerializeField]
     private ClickEvent m_addButton;
-    [SerializeField]
-    private ClickEvent m_removeButton;
 
     string m_stackableSpriteName;
 
     void Awake()
     {
         m_addButton.SingleClicked += OnClickAddButton;
-        m_removeButton.SingleClicked += OnClickRemoveButton;
     }
 
     public int GetStackedValue()
@@ -52,7 +49,8 @@ public class CoinStack : MonoBehaviour
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
             WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
             GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_stackablePrefab, m_stackableGrid.transform);
-            newStackableCoin.GetComponent<UISprite>().spriteName = m_stackableSpriteName;
+            newStackableCoin.GetComponent<UISprite>().spriteName = m_coinSprite.spriteName;
+            newStackableCoin.GetComponent<ClickEvent>().SingleClicked += OnClickRemoveButton;
             m_stackableGrid.Reposition();
         }
     }
