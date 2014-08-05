@@ -2,22 +2,32 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CoinStack : MonoBehaviour 
+public class UnitStack : MonoBehaviour 
 {
     [SerializeField]
     private int m_value;
     [SerializeField]
-    private UISprite m_coinSprite;
+    private UISprite m_background;
     [SerializeField]
     private UIGrid m_stackableGrid;
     [SerializeField]
     private GameObject m_stackablePrefab;
     [SerializeField]
-    private int m_maxCoins = 10;
+    private int m_maxStacks = 10;
     [SerializeField]
     private ClickEvent m_addButton;
+    [SerializeField]
+    private ValueSpriteName[] m_valueSpriteNames;
 
     string m_stackableSpriteName;
+
+    [System.Serializable]
+    class ValueSpriteName
+    {
+        public int m_value;
+        public string m_spriteName;
+        public string m_stackableSpriteName;
+    }
 
     void Awake()
     {
@@ -33,23 +43,28 @@ public class CoinStack : MonoBehaviour
     {
         m_value = myValue;
 
-        m_coinSprite.spriteName = System.String.Format("coin{0}", m_value.ToString());
-        m_stackableSpriteName = System.String.Format("coin_stack{0}", m_value.ToString());
+        ValueSpriteName correctUnit = System.Array.Find(m_valueSpriteNames, x => x.m_value == m_value);
+
+        if (correctUnit != null)
+        {
+            m_background.spriteName = correctUnit.m_spriteName;
+            m_stackableSpriteName = correctUnit.m_stackableSpriteName;
+        }
     }
 
     void OnClickAddButton(ClickEvent click)
     {
-        AddCoin();
+        AddStack();
     }
 
-    void AddCoin()
+    void AddStack()
     {
-        if (m_stackableGrid.transform.childCount < m_maxCoins)
+        if (m_stackableGrid.transform.childCount < m_maxStacks)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
             WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
             GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_stackablePrefab, m_stackableGrid.transform);
-            newStackableCoin.GetComponent<UISprite>().spriteName = m_coinSprite.spriteName;
+            newStackableCoin.GetComponent<UISprite>().spriteName = m_stackableSpriteName;
             newStackableCoin.GetComponent<ClickEvent>().SingleClicked += OnClickRemoveButton;
             m_stackableGrid.Reposition();
         }
@@ -57,10 +72,10 @@ public class CoinStack : MonoBehaviour
 
     void OnClickRemoveButton(ClickEvent click)
     {
-        RemoveCoin();
+        RemoveStack();
     }
 
-    void RemoveCoin()
+    void RemoveStack()
     {
         if (m_stackableGrid.transform.childCount > 0)
         {

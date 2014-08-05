@@ -16,6 +16,8 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     private GameObject m_sideBarCameraPrefab;
     [SerializeField]
     private int m_maxNumLines = 12;
+    [SerializeField]
+    private bool m_excludePrimeNumbers = false;
 
     List<DataRow> m_numberPool = new List<DataRow>();
 
@@ -27,6 +29,8 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     IEnumerator Start ()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
+        m_numberPool = DataHelpers.GetNumbers();
 
         int numPlayers = GetNumPlayers();
 
@@ -75,28 +79,72 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-        
-        D.Log("Starting game");
+
+        DataRow sharedData = GetRandomData();
         
         for (int i = 0; i < numPlayers; ++i)
         {
+            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+            m_gamePlayers[i].SetCurrentData(currentData);
+
             m_gamePlayers[i].StartGame(i == 0);
+        }
+    }
+
+    public void CharacterSelected(int characterIndex)
+    {
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
         }
     }
 
     public void OnCorrectAnswer(MulitiplicationQuadPlayer correctPlayer)
     {
+        DataRow currentData = GetRandomData();
+
         if (m_questionsAreShared && GetNumPlayers() == 2)
         {
             for(int i = 0; i < GetNumPlayers(); ++i)
             {
-                m_gamePlayers[i].ClearQuestion();
+                m_gamePlayers[i].SetCurrentData(currentData);
+                StartCoroutine(m_gamePlayers[i].ClearQuestion());
             }
         }
         else
         {
-            correctPlayer.ClearQuestion();
+            correctPlayer.SetCurrentData(currentData);
+            StartCoroutine(correctPlayer.ClearQuestion());
         }
+    }
+
+    public void CompleteGame()
+    {
+        StartCoroutine(CompleteGameCo());
+    }
+    
+    IEnumerator CompleteGameCo()
+    {
+        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
+        
+        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
+        
+        GameManager.Instance.CompleteGame();
+    }
+
+    DataRow GetRandomData()
+    {
+        DataRow data = m_numberPool [Random.Range(0, m_numberPool.Count - 1)];
+
+        if (m_excludePrimeNumbers)
+        {
+            while (MathHelpers.IsPrime(data.GetInt("value")))
+            {
+                data = m_numberPool [Random.Range(0, m_numberPool.Count - 1)];
+            }
+        }
+
+        return data;
     }
 
     public bool AreQuestionsShared()

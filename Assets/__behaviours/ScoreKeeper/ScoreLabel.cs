@@ -16,7 +16,6 @@ public class ScoreLabel : ScoreKeeper
     public override void UpdateScore(int delta = 1)
     {
         base.UpdateScore(delta);
-        D.Log("score: " + m_score);
 
         SetLabelText();
     }

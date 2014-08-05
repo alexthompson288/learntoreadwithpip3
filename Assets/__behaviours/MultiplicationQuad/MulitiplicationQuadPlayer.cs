@@ -19,13 +19,33 @@ public class MulitiplicationQuadPlayer : GamePlayer
     private PipButton[] m_rowButtons;
     [SerializeField]
     private PipButton[] m_columnButtons;
+    [SerializeField]
+    private UILabel m_rowLabel;
+    [SerializeField]
+    private UILabel m_columnLabel;
 
-    int m_numRows;
-    int m_numColumns;
+    int m_numRows = 1;
+    int m_numColumns = 1;
+
+    DataRow m_currentData = null;
 
     public IEnumerator PlayTrafficLights()
     {
         yield return StartCoroutine(m_trafficLights.On());
+    }
+
+    public override void SelectCharacter(int characterIndex)
+    {
+        //D.Log("SelectCharacter");
+        SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
+        m_selectedCharacter = characterIndex;
+        //D.Log("m_selectedCharacter: " + m_selectedCharacter);
+        foreach (CharacterSelection cs in m_characterSelections)
+        {
+            cs.DeactivatePress(false);
+        }
+
+        MultiplicationQuadCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
     public void StartGame(bool subscribeToTimer)
@@ -46,16 +66,24 @@ public class MulitiplicationQuadPlayer : GamePlayer
         
         if (subscribeToTimer)
         {
-            D.Log("Subscribing to timer");
             m_timer.Finished += OnTimerFinish;
         }
         
         m_timer.On();
+
+        RefreshLines();
+
+        AskQuestion();
+    }
+
+    public void SetCurrentData(DataRow myCurrentData)
+    {
+        m_currentData = myCurrentData;
     }
 
     void AskQuestion()
     {
-
+        m_dataDisplay.On(m_currentData);
     }
 
     void OnUnpressColumnButton(PipButton button)
@@ -63,7 +91,7 @@ public class MulitiplicationQuadPlayer : GamePlayer
         int lastNumColumns = m_numColumns;
 
         m_numColumns += button.GetInt();
-        m_numColumns = Mathf.Clamp(m_numColumns, 0, MultiplicationQuadCoordinator.Instance.GetMaxNumLines());
+        m_numColumns = Mathf.Clamp(m_numColumns, 1, MultiplicationQuadCoordinator.Instance.GetMaxNumLines());
 
         if (m_numColumns != lastNumColumns)
         {
@@ -76,7 +104,7 @@ public class MulitiplicationQuadPlayer : GamePlayer
         int lastNumRows = m_numRows;
 
         m_numRows += button.GetInt();
-        m_numRows = Mathf.Clamp(m_numRows, 0, MultiplicationQuadCoordinator.Instance.GetMaxNumLines());
+        m_numRows = Mathf.Clamp(m_numRows, 1, MultiplicationQuadCoordinator.Instance.GetMaxNumLines());
 
         if (m_numRows != lastNumRows)
         {
@@ -88,40 +116,80 @@ public class MulitiplicationQuadPlayer : GamePlayer
     {
         m_grid.maxPerLine = m_numRows;
 
-        int numToSpawn = (m_numRows * m_numColumns) - m_grid.transform.childCount;
+        int delta = (m_numRows * m_numColumns) - m_grid.transform.childCount;
 
-        if (numToSpawn > 0 && m_grid.transform)
+        if (delta > 0)
         {
             GameObject pointPrefab = MultiplicationQuadCoordinator.Instance.GetPointPrefab();
 
-            for(int i = 0; i < numToSpawn; ++i)
+            for(int i = 0; i < delta; ++i)
             {
                 Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(pointPrefab, m_grid.transform);
             }
         }
-        else if (numToSpawn < 0)
+        else if (delta < 0)
         {
-            while(m_grid.transform.childCount > numToSpawn && m_grid.transform.childCount > 0)
+            int numToDestroy = Mathf.Min(Mathf.Abs(delta), m_grid.transform.childCount);
+            for(int i = 0; i < numToDestroy; ++i)
             {
-                GameObject pointToDestroy = m_grid.transform.GetChild(0);
+                GameObject pointToDestroy = m_grid.transform.GetChild(m_grid.transform.childCount - i - 1).gameObject;
                 Destroy(pointToDestroy);
             }
         }
 
         m_grid.Reposition();
+
+
+        m_rowLabel.text = m_numRows.ToString();
+        m_columnLabel.text = m_numColumns.ToString();
     }
 
-    public void ClearQuestion()
+    public IEnumerator ClearQuestion ()
     {
+        m_dataDisplay.Off();
 
+        /*
+        int numToDestroy = m_grid.transform.childCount;
+        for (int i = 0; i < numToDestroy; ++i)
+        {
+            GameObject pointToDestroy = m_grid.transform.GetChild(i).gameObject;
+            Destroy(pointToDestroy);
+        }
+        */
+        m_numRows = 1;
+        m_numColumns = 1;
+        RefreshLines();
+
+        yield return new WaitForSeconds(0.25f);
+
+        AskQuestion();
     }
 
-    void OnUnpressGoButton(PipButton button)
+    void OnUnpressGoButton (PipButton button)
     {
-
+        if (m_grid.transform.childCount == m_currentData.GetInt("value"))
+        {
+            m_scoreKeeper.UpdateScore(1);
+            MultiplicationQuadCoordinator.Instance.OnCorrectAnswer(this);
+        }
+        else
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+        }
     }
 
-    void OnTimerFinish(Timer timer)
+    void OnTimerFinish (Timer timer)
     {
+        MultiplicationQuadCoordinator.Instance.CompleteGame();
+    }
+
+    public IEnumerator CelebrateVictory()
+    {
+        yield return StartCoroutine(m_scoreKeeper.On());
+    }
+
+    public int GetScore()
+    {
+        return m_scoreKeeper.GetScore();
     }
 }

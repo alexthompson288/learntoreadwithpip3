@@ -14,7 +14,7 @@ public class ToyShopPlayer : GamePlayer
     [SerializeField]
     private TrafficLights m_trafficLights;
     [SerializeField]
-    private CoinStack[] m_coinStacks;
+    private UnitStack[] m_coinStacks;
     [SerializeField]
     private PipButton m_goButton;
     [SerializeField]
@@ -73,11 +73,11 @@ public class ToyShopPlayer : GamePlayer
 
         System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
 
-        int[] m_coinValues = ToyShopCoordinator.Instance.GetCoinValues();
+        int[] coinValues = new int[] {1, 2, 5, 10, 20, 50, 100};
 
-        for (int i = 0; i < m_coinStacks.Length && i < m_coinValues.Length; ++i)
+        for (int i = 0; i < m_coinStacks.Length && i < coinValues.Length; ++i)
         {
-            m_coinStacks[i].SetValue(m_coinValues[i]);
+            m_coinStacks[i].SetValue(coinValues[i]);
         }
 
         m_timer.SetTimeRemaing(ToyShopCoordinator.Instance.GetTimeLimit());
@@ -175,7 +175,7 @@ public class ToyShopPlayer : GamePlayer
     void OnUnpressGoButton(PipButton button)
     {
         int amountPaid = 0;
-        foreach (CoinStack stack in m_coinStacks)
+        foreach (UnitStack stack in m_coinStacks)
         {
             amountPaid += stack.GetStackedValue();
         }
@@ -217,7 +217,7 @@ public class ToyShopPlayer : GamePlayer
                 SpawnToys();
             }
 
-            foreach(CoinStack stack in m_coinStacks)
+            foreach(UnitStack stack in m_coinStacks)
             {
                 stack.ClearStack();
             }

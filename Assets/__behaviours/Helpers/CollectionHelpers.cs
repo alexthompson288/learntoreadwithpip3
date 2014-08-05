@@ -98,6 +98,16 @@ public class CollectionHelpers
         return a.localPosition.x.CompareTo(b.localPosition.x);
     }
 
+    public static int LocalRightToLeft(MonoBehaviour a, MonoBehaviour b)
+    {
+        return LocalRightToLeft(a.transform, b.transform);
+    }
+    
+    public static int LocalRightToLeft(Transform a, Transform b)
+    {
+        return b.localPosition.x.CompareTo(a.localPosition.x);
+    }
+
     public static int TopToBottom(MonoBehaviour a, MonoBehaviour b)
     {
         return TopToBottom(a.transform, b.transform);
