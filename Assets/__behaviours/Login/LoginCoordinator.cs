@@ -99,7 +99,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         else
         {
-            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+            TransitionScreen.Instance.ChangeToDefaultLevel();
         }
     }
 
@@ -157,7 +157,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         if (m_emailInput.text == "pipoffline" && m_passwordInput.text == "pipoffline")
         {
-            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+            TransitionScreen.Instance.ChangeToDefaultLevel();
         }
 #if UNITY_STANDALONE
         else
@@ -239,7 +239,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
                 SetInfoText("Login");
                 
-                TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+                TransitionScreen.Instance.ChangeToDefaultLevel();
             }
         } 
 

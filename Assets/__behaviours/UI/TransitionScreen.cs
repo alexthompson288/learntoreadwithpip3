@@ -157,6 +157,12 @@ public class TransitionScreen : Singleton<TransitionScreen>
         }
     }
 
+    public void ChangeToDefaultLevel()
+    {
+        string levelName = GameManager.programme == "Reading1" ? "NewVoyage" : "NewNumberGameMenu";
+        ChangeLevel(levelName, false);
+    }
+
 	public void ChangeLevel(string level, bool addToStack)
 	{
         //D.Log("TransitionScreen.ChangeLevel(" + level + ")");

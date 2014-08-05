@@ -88,7 +88,7 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
     void OnClickDone(PipButton button)
     {
-        TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
+        TransitionScreen.Instance.ChangeToDefaultLevel();
     }
 
     IEnumerator ResetDraggablePanelPosition()
