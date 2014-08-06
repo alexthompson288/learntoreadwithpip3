@@ -101,7 +101,7 @@ public class ScorePotion : ScoreKeeper
         }
         else if(Input.GetKeyDown(KeyCode.I))
         {
-            StartCoroutine(On());
+            StartCoroutine(Celebrate());
         }
     }
 #endif

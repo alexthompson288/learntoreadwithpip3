@@ -118,6 +118,11 @@ public class CollectionHelpers
         return b.position.y.CompareTo(a.position.y);
     }
 
+    public static int LocalTopToBottom(GameObject a, GameObject b)
+    {
+        return LocalTopToBottom(a.transform, b.transform);
+    }
+
     public static int LocalTopToBottom(MonoBehaviour a, MonoBehaviour b)
     {
         return LocalTopToBottom(a.transform, b.transform);

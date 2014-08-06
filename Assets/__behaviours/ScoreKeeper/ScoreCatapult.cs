@@ -86,7 +86,7 @@ public class ScoreCatapult : ScoreKeeper
         }
     }
 
-    public override IEnumerator On()
+    public override IEnumerator Celebrate()
     {
         if (!m_hasSwitchedOn)
         {
@@ -239,7 +239,7 @@ public class ScoreCatapult : ScoreKeeper
         }
         else if(Input.GetKeyDown(KeyCode.I))
         {
-            StartCoroutine(On());
+            StartCoroutine(Celebrate());
         }
         #endif
     }

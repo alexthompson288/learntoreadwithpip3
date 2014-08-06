@@ -269,7 +269,7 @@ public class PipesCoordinator : GameCoordinator
         // Game ends when player reaches targetScore
         ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
 
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
         GameManager.Instance.CompleteGame();
     }

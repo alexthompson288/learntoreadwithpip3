@@ -185,7 +185,7 @@ public class MulitiplicationQuadPlayer : GamePlayer
 
     public IEnumerator CelebrateVictory()
     {
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 
     public int GetScore()

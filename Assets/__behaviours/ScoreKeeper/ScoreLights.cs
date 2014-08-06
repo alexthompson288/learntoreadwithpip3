@@ -70,7 +70,7 @@ public class ScoreLights : ScoreKeeper
         PlayAudio(delta);
     }
 
-    public override IEnumerator On()
+    public override IEnumerator Celebrate()
     {
         if (!m_hasSwitchedOn)
         {
@@ -103,7 +103,7 @@ public class ScoreLights : ScoreKeeper
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            StartCoroutine(On());
+            StartCoroutine(Celebrate());
         }
         
         if (Input.GetKeyDown(KeyCode.O))

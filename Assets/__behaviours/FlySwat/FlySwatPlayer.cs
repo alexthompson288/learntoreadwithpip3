@@ -198,7 +198,7 @@ public class FlySwatPlayer : GamePlayer
             m_hasFinished = true;
             StopGame();
             FlySwatCoordinator.Instance.OnPlayerFinish(m_playerIndex);
-            yield return StartCoroutine(m_scoreKeeper.On());
+            yield return StartCoroutine(m_scoreKeeper.Celebrate());
             FlySwatCoordinator.Instance.OnWinningPlayerCompleteSequence();
         }
 

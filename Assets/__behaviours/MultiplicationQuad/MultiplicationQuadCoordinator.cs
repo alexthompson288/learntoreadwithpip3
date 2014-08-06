@@ -31,6 +31,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_numberPool = DataHelpers.GetNumbers();
+        m_numberPool = DataHelpers.OnlyLowNumbers(m_numberPool, 144);
 
         int numPlayers = GetNumPlayers();
 

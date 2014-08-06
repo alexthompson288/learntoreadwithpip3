@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class ScoreKeeper : MonoBehaviour 
 {
+    public delegate void ScoreKeeperEventHandler (ScoreKeeper keeper);
+    public event ScoreKeeperEventHandler Completed;
+
     [SerializeField]
     private bool m_scoreCannotBeGreaterThanTarget = true;
     [SerializeField]
@@ -67,7 +70,7 @@ public class ScoreKeeper : MonoBehaviour
 
     public virtual IEnumerator UpdateScore(GameObject targetGo, int delta = 1) { yield return null; }
 
-    public virtual IEnumerator On() { yield return null; }
+    public virtual IEnumerator Celebrate() { yield return null; }
 
     public virtual bool HasCompleted() 
     {
@@ -78,5 +81,13 @@ public class ScoreKeeper : MonoBehaviour
     public int GetScore()
     {
         return m_score;
+    }
+
+    protected void InvokeCompleted()
+    {
+        if (Completed != null)
+        {
+            Completed(this);
+        }
     }
 }

@@ -7,7 +7,7 @@ public class PlaceValuePlayer : GamePlayer
     [SerializeField]
     private Timer m_timer;
     [SerializeField]
-    private ScoreKeeper m_scoreKeeper;
+    private ScoreHealth m_scoreKeeper;
     [SerializeField]
     private TrafficLights m_trafficLights;
     [SerializeField]
@@ -15,9 +15,9 @@ public class PlaceValuePlayer : GamePlayer
     [SerializeField]
     private UnitStack[] m_stacks;
     [SerializeField]
-    private UILabel[] m_row1Labels;
+    private GameObject[] m_questionLabelParents;
     [SerializeField]
-    private UILabel[] m_row2Labels;
+    private GameObject m_additionLabel;
 
     List<DataRow> m_currentDataPool = new List<DataRow>();
 
@@ -28,14 +28,14 @@ public class PlaceValuePlayer : GamePlayer
 
     public void StartGame(bool subscribeToTimer)
     {
-        System.Array.Sort(m_row1Labels, CollectionHelpers.LocalRightToLeft);
-        System.Array.Sort(m_row2Labels, CollectionHelpers.LocalRightToLeft);
+        // Sort m_numberLabels from top to bottom
+        System.Array.Sort(m_questionLabelParents, CollectionHelpers.LocalTopToBottom);
 
-        D.Log("ToyShopPlayer.StartGame()");
+        D.Log("PlaceValuePlayer.StartGame()");
         
         m_goButton.Unpressing += OnUnpressGoButton;
         
-        System.Array.Sort(m_stacks, CollectionHelpers.LocalLeftToRight);
+        System.Array.Sort(m_stacks, CollectionHelpers.LocalRightToLeft);
         
         int[] stackValues = new int[] {1, 10, 100, 1000};
         
@@ -43,7 +43,11 @@ public class PlaceValuePlayer : GamePlayer
         {
             m_stacks[i].SetValue(stackValues[i]);
         }
-        
+
+        m_scoreKeeper.StartTimer();
+        m_scoreKeeper.Completed += OnScoreKeeperComplete;
+
+        /*
         m_timer.SetTimeRemaing(PlaceValueCoordinator.Instance.GetTimeLimit());
         
         if (subscribeToTimer)
@@ -53,11 +57,42 @@ public class PlaceValuePlayer : GamePlayer
         }
         
         m_timer.On();
+        */
+
+        AskQuestion();
     }
 
     void AskQuestion()
     {
+        m_additionLabel.SetActive(m_currentDataPool.Count > 1);
 
+        for(int i = 0;i < m_questionLabelParents.Length; ++i)
+        {
+            if(i < m_currentDataPool.Count)
+            {
+                m_questionLabelParents[i].SetActive(true);
+
+                string value = m_currentDataPool[i]["value"].ToString();
+                value = StringHelpers.Reverse(value);
+
+                UILabel[] labels = m_questionLabelParents[i].GetComponentsInChildren<UILabel>() as UILabel[];
+                System.Array.Sort(labels, CollectionHelpers.LocalRightToLeft);
+
+                for(int j = 0;j < labels.Length; ++j)
+                {
+                    labels[j].enabled = j < value.Length;
+
+                    if(j < value.Length)
+                    {
+                        labels[j].text = value[j].ToString();
+                    }
+                }
+            }
+            else
+            {
+                m_questionLabelParents[i].SetActive(false);
+            }
+        }
     }
 
     void OnUnpressGoButton(PipButton button)
@@ -70,18 +105,36 @@ public class PlaceValuePlayer : GamePlayer
 
         if (totalStackValue == PlaceValueCoordinator.Instance.GetDataTotal(m_currentDataPool))
         {
-
+            m_scoreKeeper.UpdateScore(1);
+            PlaceValueCoordinator.Instance.OnCorrectAnswer(this);
         }
+        else
+        {
+            m_scoreKeeper.UpdateScore(-1);
+            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+        }
+    }
+
+    void OnScoreKeeperComplete(ScoreKeeper keeper)
+    {
+        PlaceValueCoordinator.Instance.CompleteGame();
     }
 
     void OnTimerFinish(Timer timer)
     {
-
+        PlaceValueCoordinator.Instance.CompleteGame();
     }
 
     public IEnumerator ClearQuestion()
     {
-        yield return null;
+        foreach (UnitStack stack in m_stacks)
+        {
+            stack.ClearStack();
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        AskQuestion();
     }
 
     public void SetCurrentDataPool(List<DataRow> myCurrentDataPool)
@@ -91,7 +144,7 @@ public class PlaceValuePlayer : GamePlayer
 
     public IEnumerator CelebrateVictory()
     {
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 
     public int GetScore()

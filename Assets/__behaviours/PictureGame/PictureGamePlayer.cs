@@ -181,7 +181,7 @@ public class PictureGamePlayer : GamePlayer
         {
             SessionInformation.SetDefaultPlayerVar();
 
-            yield return StartCoroutine(m_scoreKeeper.On());
+            yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
             GameManager.Instance.CompleteGame();
         }
@@ -235,7 +235,7 @@ public class PictureGamePlayer : GamePlayer
 
     public IEnumerator ActivateScoreKeeper()
     {
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
         //D.Log("Player returning");
     }
 

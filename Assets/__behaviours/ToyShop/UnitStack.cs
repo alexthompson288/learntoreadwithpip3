@@ -18,6 +18,14 @@ public class UnitStack : MonoBehaviour
     private ClickEvent m_addButton;
     [SerializeField]
     private ValueSpriteName[] m_valueSpriteNames;
+    [SerializeField]
+    private UILabel m_label;
+    [SerializeField]
+    private bool m_labelShowsStackedValue;
+    [SerializeField]
+    private string[] m_addAudioEvents;
+    [SerializeField]
+    private string[] m_removeAudioEvents;
 
     string m_stackableSpriteName;
 
@@ -61,13 +69,18 @@ public class UnitStack : MonoBehaviour
     {
         if (m_stackableGrid.transform.childCount < m_maxStacks)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
-            WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+            foreach(string audioEvent in m_addAudioEvents)
+            {
+                WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+            }
+
             GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_stackablePrefab, m_stackableGrid.transform);
             newStackableCoin.GetComponent<UISprite>().spriteName = m_stackableSpriteName;
             newStackableCoin.GetComponent<ClickEvent>().SingleClicked += OnClickRemoveButton;
             m_stackableGrid.Reposition();
         }
+
+        StartCoroutine(RefreshLabel());
     }
 
     void OnClickRemoveButton(ClickEvent click)
@@ -79,10 +92,16 @@ public class UnitStack : MonoBehaviour
     {
         if (m_stackableGrid.transform.childCount > 0)
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_DISAPPEAR");
+            foreach(string audioEvent in m_addAudioEvents)
+            {
+                WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
+            }
+
             Destroy(m_stackableGrid.transform.GetChild(m_stackableGrid.transform.childCount - 1).gameObject);
             m_stackableGrid.Reposition();
         }
+
+        StartCoroutine(RefreshLabel());
     }
 
     public void ClearStack()
@@ -97,5 +116,18 @@ public class UnitStack : MonoBehaviour
         CollectionHelpers.DestroyObjects(stackables);
 
         m_stackableGrid.Reposition();
+
+        StartCoroutine(RefreshLabel());
+    }
+
+    IEnumerator RefreshLabel()
+    {
+        yield return null;
+
+        if (m_label != null)
+        {
+            string labelText = m_labelShowsStackedValue ? GetStackedValue().ToString() : m_stackableGrid.transform.childCount.ToString();
+            m_label.text = labelText;
+        }
     }
 }

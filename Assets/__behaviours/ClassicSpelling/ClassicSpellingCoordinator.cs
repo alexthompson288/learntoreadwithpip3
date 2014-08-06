@@ -168,7 +168,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         //D.Log("WAIT FOR SCOREKEEPER");
 
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
         //D.Log("SET DEFAULT");
 

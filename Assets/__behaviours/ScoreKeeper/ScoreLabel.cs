@@ -25,7 +25,7 @@ public class ScoreLabel : ScoreKeeper
         m_label.text = m_targetScore > 0 ? System.String.Format("{0} / {1}", m_score, m_targetScore) : m_score.ToString();
     }
 
-    public override IEnumerator On()
+    public override IEnumerator Celebrate()
     {
         WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
 

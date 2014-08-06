@@ -221,7 +221,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
         GameManager.Instance.CompleteGame();
     }

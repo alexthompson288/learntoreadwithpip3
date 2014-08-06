@@ -233,7 +233,7 @@ public class ToyShopPlayer : GamePlayer
 
     public IEnumerator CelebrateVictory()
     {
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 
     void OnTimerFinish(Timer timer)

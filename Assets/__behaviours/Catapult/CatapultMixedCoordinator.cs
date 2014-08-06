@@ -279,7 +279,7 @@ public class CatapultMixedCoordinator : MonoBehaviour
 
         ScoreInfo.Instance.NewScore(timeTaken, m_scoreKeeper.GetScore(), m_targetScore, stars);
 
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
         GameManager.Instance.CompleteGame();
     }

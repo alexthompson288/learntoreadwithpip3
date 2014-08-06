@@ -318,6 +318,6 @@ public class JoinPairsPlayer : GamePlayer
             CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
         }
 
-        yield return StartCoroutine(m_scoreKeeper.On());
+        yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 }
