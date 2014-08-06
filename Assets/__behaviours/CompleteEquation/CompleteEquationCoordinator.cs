@@ -1,172 +1,196 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Wingrove;
 
-public class CompleteEquationCoordinator : GameCoordinator 
+public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator>
 {
+    [SerializeField]
+    private CompleteEquationPlayer[] m_gamePlayers;
     [SerializeField]
     private GameObject m_answerPrefab;
     [SerializeField]
     private GameObject m_equationPartPrefab;
     [SerializeField]
-    private Transform[] m_answerLocators;
+    private GameObject m_sideBarCameraPrefab;
     [SerializeField]
-    private Transform[] m_equationPartLocators;
+    private bool m_questionsAreShared;
     [SerializeField]
-    private Transform m_operationLocator;
+    private int m_numAnswersToSpawn = 3;
     [SerializeField]
-    private float m_probabilityCurrentIsInteger;
-    [SerializeField]
-    private int m_numAnswersSpawn = 3;
+    private AudioSource m_audioSource;
 
-    List<GameWidget> m_spawnedEquationParts = new List<GameWidget>();
-    List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
-
-    List<DataRow> m_operators = new List<DataRow>();
-
-    int m_missingIndex = 0;
+    List<DataRow> m_numberPool = new List<DataRow>();
+    
+    int GetNumPlayers()
+    {
+        return SessionInformation.Instance.GetNumPlayers();
+    }
 
     IEnumerator Start()
     {
-        m_scoreKeeper.SetTargetScore(m_targetScore);
-
-        m_numAnswersSpawn = Mathf.Min(m_numAnswersSpawn, m_answerLocators.Length);
-
-        System.Array.Sort(m_equationPartLocators, CollectionHelpers.LeftToRight);
-
-        m_probabilityCurrentIsInteger = Mathf.Clamp01(m_probabilityCurrentIsInteger);
-
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-        m_dataPool = DataHelpers.GetNumbers();
-
-        m_operators = DataHelpers.GetArithmeticOperators();
-
-        if (m_dataPool.Count > 0)
+        
+        m_numberPool = DataHelpers.GetNumbers();
+        
+        m_numberPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+        
+        int numPlayers = GetNumPlayers();
+        
+        if (numPlayers == 1)
         {
-            m_startTime = Time.time;
-
-            AskQuestion();
-        } 
+            CharacterSelectionParent.DisableAll();
+            SessionInformation.SetDefaultPlayerVar();
+        }
         else
         {
-            StartCoroutine(CompleteGame());
+            GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
+            sideBarCamera.transform.parent = m_gamePlayers[0].transform;
+            sideBarCamera.transform.localScale = Vector3.one;
+            
+            yield return new WaitForSeconds(0.5f);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+            
+            while (true)
+            {
+                bool allSelected = true;
+                for (int index = 0; index < numPlayers; ++index)
+                {
+                    if (!m_gamePlayers [index].HasSelectedCharacter())
+                    {
+                        allSelected = false;
+                    }
+                }
+                
+                if (allSelected)
+                {
+                    break;
+                }
+                
+                yield return null;
+            }
+            
+            yield return new WaitForSeconds(0.8f);
+            
+            for (int index = 0; index < numPlayers; ++index)
+            {
+                m_gamePlayers [index].HideAll();
+            }
+            
+            StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
+            yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
+        }
+        
+        D.Log("Starting game");
+        
+        Equation sharedData = GetRandomEquation();
+        
+        for (int i = 0; i < numPlayers; ++i)
+        {
+            Equation currentData = m_questionsAreShared ? sharedData : GetRandomEquation();
+            m_gamePlayers[i].SetEquation(currentData);
+            
+            m_gamePlayers[i].StartGame(i == 0);
         }
     }
 
-    void AskQuestion()
+    public void OnCorrectAnswer(CompleteEquationPlayer correctPlayer)
     {
-        DataRow sum = DataHelpers.GetLegalSum(m_dataPool);
-
-        List<DataRow> equationParts = DataHelpers.GetLegalAdditionLHS(sum, m_dataPool);
-        equationParts.Add(sum); // Add sum last because it needs to go on RHS and m_equationPartLocators are sorted from left to right
-
-        m_missingIndex = Random.Range(0, equationParts.Count);
-
-        m_currentData = equationParts [m_missingIndex];
-
-        for (int i = 0; i < equationParts.Count && i < m_equationPartLocators.Length; ++i)
+        Equation equationData = GetRandomEquation();
+        
+        if (m_questionsAreShared && GetNumPlayers() == 2)
         {
-            if(i != m_missingIndex)
+            for(int i = 0; i < GetNumPlayers(); ++i)
             {
-                GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_equationPartLocators[i], true);
-
-                GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
-                widget.SetUp(equationParts[i]);
-                widget.FadeBackground(true, true);
-                widget.SetPressedAudio("");
-                widget.EnableDrag(false);
-                widget.GetComponentInChildren<WobbleGUIElement>().enabled = false;
-                widget.Unpressing += OnClickEquationPart;
-                m_spawnedEquationParts.Add(widget);
+                m_gamePlayers[i].SetEquation(equationData);
+                StartCoroutine(m_gamePlayers[i].ClearQuestion());
             }
         }
-
-        HashSet<DataRow> answers = new HashSet<DataRow>();
-        answers.Add(m_currentData);
-        while (answers.Count < m_numAnswersSpawn)
-        {
-            answers.Add(GetRandomData());
-        }
-
-        CollectionHelpers.Shuffle(m_answerLocators);
-
-        int locatorIndex = 0;
-        foreach(DataRow answer in answers)
-        {
-            GameObject newGo = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_equationPartPrefab, m_answerLocators[locatorIndex], true);
-            
-            GameWidget widget = newGo.GetComponent<GameWidget>() as GameWidget;
-            widget.SetUp(answer);
-            widget.Unpressing += OnAnswer;
-            m_spawnedAnswers.Add(widget);
-
-            ++locatorIndex;
-        }
-    }
-
-    void OnAnswer(GameWidget widget)
-    {
-        if (widget.data == m_currentData)
-        {
-            widget.TweenToPos(m_equationPartLocators[m_missingIndex].position);
-
-            widget.FadeBackground(true);
-
-            ++m_score;
-            m_scoreKeeper.UpdateScore();
-
-            StartCoroutine(ClearQuestion());
-        }
         else
         {
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            widget.TweenToStartPos();
-            widget.TintGray();
+            correctPlayer.SetEquation(equationData);
+            StartCoroutine(correctPlayer.ClearQuestion());
         }
     }
 
-    IEnumerator ClearQuestion()
+    public void OnLevelUp()
     {
-        yield return new WaitForSeconds(1f);
 
-        CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
-        CollectionHelpers.DestroyObjects(m_spawnedEquationParts, true);
-
-        if (m_scoreKeeper.HasCompleted())
-        {
-            StartCoroutine(CompleteGame());
-        }
-        else
-        {
-            AskQuestion();
-        }
     }
 
-    void OnClickEquationPart(GameWidget widget)
+    public void CompleteGame()
     {
-        AudioClip clip = LoaderHelpers.LoadAudioForNumber(widget.data);
-        if(clip != null)
+        StartCoroutine(CompleteGameCo());
+    }
+
+    IEnumerator CompleteGameCo()
+    {
+        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
+        
+        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
+        
+        GameManager.Instance.CompleteGame();
+    }
+
+    public void PlayAudio(DataRow data)
+    {
+        AudioClip clip = LoaderHelpers.LoadAudioForNumber(data);
+        if (clip != null)
         {
             m_audioSource.clip = clip;
             m_audioSource.Play();
         }
     }
-
-    protected override IEnumerator CompleteGame()
+    
+    public void CharacterSelected(int characterIndex)
     {
-        float timeTaken = Time.time - m_startTime;
-        
-        float twoStarPerQuestion = 8;
-        float threeStarPerQuestion = 4;
-        
-        int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
-        
-        // Game ends when player reaches targetScore
-        ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
+        }
+    }
 
-        yield return StartCoroutine(m_scoreKeeper.Celebrate());
-        GameManager.Instance.CompleteGame();
+    public class Equation
+    {
+        public List<DataRow> m_equationParts = new List<DataRow>();
+        public int m_missingIndex;
+
+        public Equation(List<DataRow> myEquationParts, int myMissingIndex)
+        {
+            m_equationParts = myEquationParts;
+            m_missingIndex = myMissingIndex;
+        }
+    }
+
+    public DataRow GetRandomData()
+    {
+        return m_numberPool [Random.Range(0, m_numberPool.Count)];
+    }
+
+    Equation GetRandomEquation()
+    {
+        DataRow sum = DataHelpers.GetLegalSum(m_numberPool);
+        
+        List<DataRow> equationParts = DataHelpers.GetLegalAdditionLHS(sum, m_numberPool);
+        equationParts.Add(sum); // Add sum last because it needs to go on RHS and m_equationPartLocators are sorted from left to right
+        
+        //int missingIndex = Random.Range(0, equationParts.Count);
+        int missingIndex = 2;
+
+        return new Equation(equationParts, missingIndex);
+    }
+
+    public GameObject GetAnswerPrefab()
+    {
+        return m_answerPrefab;
+    }
+
+    public GameObject GetEquationPartPrefab()
+    {
+        return m_equationPartPrefab;
+    }
+
+    public int GetNumAnswersToSpawn()
+    {
+        return m_numAnswersToSpawn;
     }
 }

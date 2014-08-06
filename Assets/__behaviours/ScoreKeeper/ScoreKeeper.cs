@@ -8,7 +8,7 @@ public class ScoreKeeper : MonoBehaviour
     public event ScoreKeeperEventHandler Completed;
 
     [SerializeField]
-    private bool m_scoreCannotBeGreaterThanTarget = true;
+    private bool m_clampScore = true;
     [SerializeField]
     private List<string> m_correctAudio = new List<string>();
     [SerializeField]
@@ -60,7 +60,7 @@ public class ScoreKeeper : MonoBehaviour
         ++ m_numAnswered;
         m_score += delta;
 
-        if (m_scoreCannotBeGreaterThanTarget)
+        if (m_clampScore)
         {
             m_score = Mathf.Clamp(m_score, 0, m_targetScore);
         }

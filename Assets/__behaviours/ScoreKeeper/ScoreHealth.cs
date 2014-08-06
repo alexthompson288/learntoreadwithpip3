@@ -33,6 +33,12 @@ public class ScoreHealth : ScoreKeeper
     private ScoreHealth m_opponentKeeper;
     [SerializeField]
     private GameObject m_debuggingLevelUpGo;
+    [SerializeField]
+    private string[] m_characterIconNames;
+    [SerializeField]
+    private UISprite m_characterSprite;
+    [SerializeField]
+    private UISprite m_opponentCharacterSprite;
 
     float m_health;
 
@@ -44,14 +50,39 @@ public class ScoreHealth : ScoreKeeper
         }
     }
 
+    public void SetCharacterIcon(int characterIndex)
+    {
+        m_characterSprite.gameObject.SetActive(true);
+        m_characterSprite.spriteName = m_characterIconNames [characterIndex];
+
+        if (m_opponentKeeper != null)
+        {
+            m_opponentKeeper.SetOpponentCharacterIcon(characterIndex);
+        }
+    }
+
+    void SetOpponentCharacterIcon(int opponentCharacterIndex)
+    {
+        m_opponentCharacterSprite.gameObject.SetActive(true);
+        m_opponentCharacterSprite.spriteName = m_characterIconNames [opponentCharacterIndex];
+    }
+
     void Start()
     {
+        m_characterSprite.gameObject.SetActive(false);
+        m_opponentCharacterSprite.gameObject.SetActive(false);
+
         m_debuggingLevelUpGo.SetActive(false);
 
         int numPlayers = SessionInformation.Instance.GetNumPlayers();
 
         m_multiplayerParent.SetActive(numPlayers == 2);
         m_scoreLabel.gameObject.SetActive(numPlayers == 1);
+
+        if (numPlayers == 1)
+        {
+            m_opponentKeeper = null;
+        }
 
         m_health = m_startHealth;
 
@@ -62,7 +93,12 @@ public class ScoreHealth : ScoreKeeper
 
     public override void UpdateScore(int delta = 1)
     {
-        base.UpdateScore(delta);
+        ++ m_numAnswered;
+
+        if (delta > 0)
+        {
+            m_score += delta;
+        }
 
         m_scoreLabel.text = m_score.ToString();
         
@@ -79,23 +115,45 @@ public class ScoreHealth : ScoreKeeper
 
         if (Mathf.Approximately(m_health, m_maxHealth))
         {
-            m_healthLostPerSecond = StringHelpers.Evalf(System.String.Format(m_levelUpFormula, m_healthLostPerSecond));
-            if(LevelledUp != null)
-            {
-                LevelledUp(this);
-            }
-
-            m_debuggingLevelUpGo.SetActive(true);
-            StartCoroutine(DisableDebugLevelUpGo());
+            StartCoroutine(LevelUp());
         }
 
         RefreshBar(true);
+
+        if (delta > 0 && m_opponentKeeper != null)
+        {
+            m_opponentKeeper.UpdateScore(-delta);
+        }
     }
 
-    IEnumerator DisableDebugLevelUpGo()
+    IEnumerator LevelUp()
     {
+        //yield return new WaitForSeconds(0.75f);
+
+        if (SessionInformation.Instance.GetNumPlayers() == 1)
+        {
+            m_healthLostPerSecond = StringHelpers.Evalf(System.String.Format(m_levelUpFormula, m_healthLostPerSecond));
+            m_health = m_startHealth;
+        }
+        
+        if(LevelledUp != null)
+        {
+            LevelledUp(this);
+        }
+        
+        m_debuggingLevelUpGo.SetActive(true);
         yield return new WaitForSeconds(0.5f);
         m_debuggingLevelUpGo.SetActive(false);
+    }
+
+    public void SetLevelUpFormula(string myLevelUpFormula)
+    {
+        m_levelUpFormula = myLevelUpFormula;
+    }
+
+    public void SetHealthLostPerSecond(float myHealthLostPerSecond)
+    {
+        m_healthLostPerSecond = myHealthLostPerSecond;
     }
 
     public void StartTimer()
@@ -133,10 +191,12 @@ public class ScoreHealth : ScoreKeeper
 
         int barMoveAmount = targetBarHeight - m_healthBar.height;
 
+        /*
         if (clampMoveDistance && Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
         {
             barMoveAmount = m_maxPixelsMovePerFrame * barMoveAmount / Mathf.Abs(barMoveAmount);
         }
+        */
 
         m_healthBar.height += barMoveAmount;
 
