@@ -141,10 +141,10 @@ public class GameMenuCoordinator : MonoBehaviour
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
             
             // Get and set all the data associated with the color
-            int moduleId = DataHelpers.GetModuleId(pipColor);
-            
             if(GameManager.Instance.programme.Contains("Reading"))
             {
+                int moduleId = DataHelpers.GetModuleId(pipColor);
+
                 GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
                 GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
                 GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
