@@ -20,6 +20,9 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     private AudioSource m_audioSource;
 
     List<DataRow> m_numberPool = new List<DataRow>();
+
+    float m_timeStarted;
+    float m_timeEnded;
     
     int GetNumPlayers()
     {
@@ -28,11 +31,15 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     IEnumerator Start()
     {
+        D.Log("CompleteEquationCoordinator.Start()");
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_numberPool = DataHelpers.GetNumbers();
         
         m_numberPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+
+        D.Log("m_numberPool.Count: " + m_numberPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -83,7 +90,9 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
         D.Log("Starting game");
         
         Equation sharedData = GetRandomEquation();
-        
+
+        m_timeStarted = Time.time;
+
         for (int i = 0; i < numPlayers; ++i)
         {
             Equation currentData = m_questionsAreShared ? sharedData : GetRandomEquation();
@@ -128,6 +137,11 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public void CompleteGame()
     {
+        if (GetNumPlayers() == 1)
+        {
+            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+        }
+
         StartCoroutine(CompleteGameCo());
     }
 

@@ -26,7 +26,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     bool m_hasClickedGameButton = false;
 
-    void Awake()
+    void Start()
     {
         if (GameManager.Instance.programme == "Reading2")
         {
@@ -59,7 +59,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     }
 
     int m_numPlayers = 1;
-    DataRow m_game;
+    string m_gameName;
     ColorInfo.PipColor m_pipColor;
 
     void StartGame()
@@ -68,7 +68,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         PlusScoreInfo.Instance.SetScoreType(m_scoreType);
 
         GameManager.Instance.SetCurrentColor(m_pipColor);
-        GameManager.Instance.AddGame(m_game);
+        GameManager.Instance.AddGame(m_gameName);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
         bool isMaths = Mathf.Approximately(m_camera.transform.position.x, m_mathsParent.position.x);
@@ -101,27 +101,22 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     {
         if(!m_hasClickedGameButton)
         {
-            DataRow game = DataHelpers.GetGame(button.GetGameName());
+            m_hasClickedGameButton = true;
 
-            if(game != null)
+            m_gameName = button.GetGameName();
+
+            m_numPlayers = button.GetNumPlayers();
+            SessionInformation.Instance.SetNumPlayers(m_numPlayers);
+
+            if(m_numPlayers == 1)
             {
-                m_hasClickedGameButton = true;
-
-                m_numPlayers = button.GetNumPlayers();
-                SessionInformation.Instance.SetNumPlayers(m_numPlayers);
-
-                m_game = game;
-
-                if(m_numPlayers == 1)
-                {
-                    m_pipColor = ColorInfo.PipColor.Turquoise;
-                    StartGame();
-                }
-                else
-                {
-                    m_colorChoiceTweenBehaviour.On();
-                }
+                m_pipColor = ColorInfo.PipColor.Turquoise;
+                StartGame();
             }
+            else
+            {
+                m_colorChoiceTweenBehaviour.On();
+            }    
         }
     }
 

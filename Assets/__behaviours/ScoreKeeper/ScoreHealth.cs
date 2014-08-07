@@ -56,6 +56,7 @@ public class ScoreHealth : ScoreKeeper
 #if UNITY_EDITOR
     int m_level = 0;
 
+    /*
     void OnGUI()
     {
         GUILayout.Label("");
@@ -70,6 +71,7 @@ public class ScoreHealth : ScoreKeeper
         GUILayout.Label(System.String.Format("Height: {0}", m_healthBar.height));
         GUILayout.Label(System.String.Format("StartHeight: {0}", m_startHeight));
     }
+    */
 #endif
 
     public int barHeight

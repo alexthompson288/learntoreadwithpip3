@@ -30,6 +30,13 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+#if UNITY_EDITOR
+    void OnGUI()
+    {
+        GUILayout.Label("CurrentColor: " + m_currentColor);
+    }
+#endif
+
     public void SetCurrentColor(ColorInfo.PipColor myCurrentColor)
     {
         m_currentColor = myCurrentColor;
@@ -64,6 +71,8 @@ public class GameManager : Singleton<GameManager>
 
         m_currentGameName = m_gameNames.Dequeue();
 
+        D.Log("NextGame: " + m_currentGameName);
+
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
         if (currentGame != null && currentGame["labeltext"] != null)
@@ -75,6 +84,7 @@ public class GameManager : Singleton<GameManager>
 
         if (!System.String.IsNullOrEmpty(sceneName))
         {
+            D.Log("SceneName: " + sceneName);
             TransitionScreen.Instance.ChangeLevel(sceneName, true);
         } 
         else

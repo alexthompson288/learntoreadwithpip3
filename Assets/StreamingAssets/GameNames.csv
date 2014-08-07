@@ -25,4 +25,8 @@ NewFlySwat
 NewBankLetters,PhonemeBank,AlphabetBank
 NewBankWords,WordBank,KeywordBank
 NewPipesNumbers
-NewCorrectCaptions, NewCorrectCaptionsWords
+NewCorrectCaptions,NewCorrectCaptionsWords
+NewMultiplicationQuadNumbers
+NewToyShopNumbers
+NewPlaceValueNumbers
+NewCompleteEquationNumbers

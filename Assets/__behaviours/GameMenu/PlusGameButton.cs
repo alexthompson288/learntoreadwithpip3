@@ -9,18 +9,21 @@ public class PlusGameButton : MonoBehaviour
     [SerializeField]
     private string m_gameName;
     [SerializeField]
-    private int m_numPlayers;
+    private int m_numPlayers = 1;
+    [SerializeField]
+    private UILabel m_gameLabel;
     [SerializeField]
     private GameObject m_scoreLabelParent;
     [SerializeField]
     private UILabel m_scoreLabel;
     [SerializeField]
-    private ColorBadge[] m_colorBadges; 
+    private ColorBadge[] m_colorBadges;
 
     [System.Serializable]
     class ColorBadge
     {
         public UISprite m_sprite;
+        public GameObject m_lockedSprite;
         public ColorInfo.PipColor m_pipColor;
     }
 
@@ -32,39 +35,53 @@ public class PlusGameButton : MonoBehaviour
         }
     }
 
-    void Start()
+    IEnumerator Start()
     {
         bool isUnlocking = PlusScoreInfo.Instance.HasNewHighScoreTracker() && m_gameName == PlusScoreInfo.Instance.GetNewTrackerGame();
 
         // High Scores
-        if (isUnlocking && PlusScoreInfo.Instance.HasNewHighScore())
+        if (m_scoreLabel != null)
         {
-            StartCoroutine(UnlockHighScore());
-        }
+            if (isUnlocking && PlusScoreInfo.Instance.HasNewHighScore())
+            {
+                StartCoroutine(UnlockHighScore());
+            }
 
-        m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+            m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+        }
 
         // Color Badges
-        ColorBadge newMaxColorBadge = null;
-
-        if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
+        if (m_colorBadges != null && m_colorBadges.Length > 0)
         {
-            newMaxColorBadge = System.Array.Find(m_colorBadges, x => (int)x.m_pipColor == PlusScoreInfo.Instance.GetNewTrackerMaxColor());
+            ColorBadge newMaxColorBadge = null;
+
+            if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
+            {
+                D.Log("Finding new max color badge: " + PlusScoreInfo.Instance.GetNewTrackerMaxColor());
+                newMaxColorBadge = System.Array.Find(m_colorBadges, x => (int)x.m_pipColor == PlusScoreInfo.Instance.GetNewTrackerMaxColor());
+                D.Log("newMaxColorBadge: " + newMaxColorBadge);
+            }
+
+            ColorInfo.PipColor maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
+
+            foreach (ColorBadge colorBadge in m_colorBadges)
+            {
+                if (colorBadge == newMaxColorBadge)
+                {
+                    D.Log("Unlocking color badge");
+                    StartCoroutine(UnlockColorBadge(colorBadge));
+                } 
+                else if ((int)colorBadge.m_pipColor <= (int)maxColor)
+                {
+                    colorBadge.m_lockedSprite.SetActive(false);
+                } 
+            }
         }
 
-        ColorInfo.PipColor maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        foreach (ColorBadge colorBadge in m_colorBadges)
-        {
-            if(colorBadge == newMaxColorBadge)
-            {
-                StartCoroutine(UnlockColorBadge(colorBadge));
-            }
-            else if(colorBadge.m_pipColor < maxColor)
-            {
-                colorBadge.m_sprite.color = Color.white;
-            }
-        }
+        DataRow game = DataHelpers.GetGame(m_gameName);
+        m_gameLabel.text = game != null ? DataHelpers.GetLabelText(game) : m_gameName;
     }
 
     // TODO
@@ -78,7 +95,8 @@ public class PlusGameButton : MonoBehaviour
         GameObject go = colorBadge.m_sprite.gameObject;
         float tweenDuration = 0.3f;
 
-        TweenColor.Begin(go, tweenDuration, Color.white);
+        //TweenColor.Begin(go, tweenDuration, Color.white);
+        TweenAlpha.Begin(colorBadge.m_lockedSprite, tweenDuration, 0);
 
         iTween.RotateBy(go, new Vector3(0, 0, 360), tweenDuration);
 
