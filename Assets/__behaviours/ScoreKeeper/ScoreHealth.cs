@@ -67,6 +67,8 @@ public class ScoreHealth : ScoreKeeper
         GUILayout.Label("");
         GUILayout.Label(System.String.Format("Level: {0}", m_level));
         GUILayout.Label(System.String.Format("Health: {0} / {1}", m_health, m_maxHealth));
+        GUILayout.Label(System.String.Format("Height: {0}", m_healthBar.height));
+        GUILayout.Label(System.String.Format("StartHeight: {0}", m_startHeight));
     }
 #endif
 
@@ -115,6 +117,8 @@ public class ScoreHealth : ScoreKeeper
         m_health = m_startHealth;
 
         m_scoreLabel.text = m_score.ToString();
+
+        RefreshHealthBar(false);
 
         m_startHeight = m_healthBar.height;
     }
@@ -187,16 +191,18 @@ public class ScoreHealth : ScoreKeeper
 
         yield return new WaitForSeconds(0.25f);
 
+        m_health = Mathf.Min(m_health, m_startHealth);
+
+        while (m_healthBar.height > m_startHeight)
+        {
+            yield return null;
+        }
+
         D.Log("Reset");
 
         m_state = State.Timer;
 
         m_debuggingLevelUpGo.SetActive(false);
-
-        if (numPlayers == 1)
-        {
-            m_health = Mathf.Min(m_health, m_startHealth);
-        }
     }
 
     public void SetLevelUpFormula(string myLevelUpFormula)
@@ -228,17 +234,22 @@ public class ScoreHealth : ScoreKeeper
             }
         }
 
+        RefreshHealthBar();
+    }
+
+    void RefreshHealthBar(bool clampMovement = true)
+    {
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
-
+        
         int barMoveAmount = targetBarHeight - m_healthBar.height;
-
-        if (Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
+        
+        if (clampMovement && Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
         {
             barMoveAmount = m_maxPixelsMovePerFrame * barMoveAmount / Mathf.Abs(barMoveAmount);
         }
-
+        
         m_healthBar.height += barMoveAmount;
-
+        
         if (m_opponentKeeper != null)
         {
             m_multiplayerBar.height = m_opponentKeeper.barHeight;

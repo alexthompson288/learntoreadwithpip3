@@ -91,6 +91,8 @@ public class GameManager : Singleton<GameManager>
         m_targetData.Clear();
         m_gameNames.Clear();
 
+        m_currentColor = ColorInfo.PipColor.Pink;
+
         m_currentGameName = "";
         m_returnScene = "";
 

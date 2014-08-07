@@ -156,14 +156,6 @@ public class GameMenuCoordinator : MonoBehaviour
             }
             else if(GameManager.Instance.programme.Contains("Maths"))
             {
-                /*
-                DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId + " ORDER BY number DESC");
-                if (sessionsTable.Rows.Count > 0)
-                {
-                    int highestNumber = sessionsTable.Rows[0]["highest_number"] != null ? sessionsTable.Rows[0].GetInt("highest_number") : 10;
-                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(1, highestNumber));
-                }
-                */
                 DataSetters.AddModuleNumbers(m_currentColorButton.pipColor);
             }
             
