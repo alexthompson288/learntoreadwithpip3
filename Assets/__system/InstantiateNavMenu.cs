@@ -13,7 +13,7 @@ public class InstantiateNavMenu : MonoBehaviour
     {
         GameObject prefabToInstantiate = null;
 
-        switch (GameManager.programme)
+        switch (GameManager.Instance.programme)
         {
             case "Reading1":
                 prefabToInstantiate = m_readingMenu;

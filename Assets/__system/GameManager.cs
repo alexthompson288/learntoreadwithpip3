@@ -6,7 +6,7 @@ using System.Linq;
 public class GameManager : Singleton<GameManager> 
 {
     string m_programme = "Reading1";
-    public static string programme
+    public string programme
     {
         get
         {
@@ -17,6 +17,33 @@ public class GameManager : Singleton<GameManager>
     public void SetProgramme(string myProgramme)
     {
         m_programme = myProgramme;
+    }
+
+    ColorInfo.PipColor m_maxColor = ColorInfo.PipColor.White;
+
+    ColorInfo.PipColor m_currentColor;
+    public ColorInfo.PipColor currentColor
+    {
+        get
+        {
+            return m_currentColor;
+        }
+    }
+
+    public void SetCurrentColor(ColorInfo.PipColor myCurrentColor)
+    {
+        m_currentColor = myCurrentColor;
+    }
+
+    public bool IncrementCurrentColor()
+    {
+        if (m_currentColor < m_maxColor)
+        {
+            m_currentColor = (ColorInfo.PipColor)(m_currentColor + 1);
+            return true;
+        }
+
+        return false;
     }
 
     void Start()
@@ -33,15 +60,9 @@ public class GameManager : Singleton<GameManager>
 
     void PlayNextGame()
     {
-        //D.Log("GameManager.PlayNextGame()");
-
         m_state = State.StartGame;
 
-        //D.Log("NumGames: " + m_gameNames.Count);
-
         m_currentGameName = m_gameNames.Dequeue();
-
-        //D.Log("m_currentGameName: " + m_currentGameName);
 
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
@@ -78,10 +99,6 @@ public class GameManager : Singleton<GameManager>
 
     public void CompleteGame()
     {
-        //D.Log("GameManager.CompleteGame()");
-
-        //D.Log(System.String.Format("GamesRemaining: {0}", m_gameNames.Count));
-
         if (m_gameNames.Count == 0)
         {
             string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;

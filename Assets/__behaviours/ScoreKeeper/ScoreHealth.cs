@@ -39,8 +39,36 @@ public class ScoreHealth : ScoreKeeper
     private UISprite m_characterSprite;
     [SerializeField]
     private UISprite m_opponentCharacterSprite;
+    [SerializeField]
+    private State m_state;
 
     float m_health;
+
+    int m_startHeight;
+
+    enum State
+    {
+        Sleep,
+        Timer,
+        LevellingUp
+    }
+
+#if UNITY_EDITOR
+    int m_level = 0;
+
+    void OnGUI()
+    {
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label("");
+        GUILayout.Label(System.String.Format("Level: {0}", m_level));
+        GUILayout.Label(System.String.Format("Health: {0} / {1}", m_health, m_maxHealth));
+    }
+#endif
 
     public int barHeight
     {
@@ -67,7 +95,7 @@ public class ScoreHealth : ScoreKeeper
         m_opponentCharacterSprite.spriteName = m_characterIconNames [opponentCharacterIndex];
     }
 
-    void Start()
+    void Start ()
     {
         m_characterSprite.gameObject.SetActive(false);
         m_opponentCharacterSprite.gameObject.SetActive(false);
@@ -88,11 +116,16 @@ public class ScoreHealth : ScoreKeeper
 
         m_scoreLabel.text = m_score.ToString();
 
-        RefreshBar(false);
+        m_startHeight = m_healthBar.height;
     }
 
     public override void UpdateScore(int delta = 1)
     {
+        if (m_state == State.LevellingUp)
+        {
+            m_state = State.Timer;
+        }
+
         ++ m_numAnswered;
 
         if (delta > 0)
@@ -115,10 +148,12 @@ public class ScoreHealth : ScoreKeeper
 
         if (Mathf.Approximately(m_health, m_maxHealth))
         {
+#if UNITY_EDITOR
+            ++m_level;
+#endif
+            m_state = State.LevellingUp;
             StartCoroutine(LevelUp());
         }
-
-        RefreshBar(true);
 
         if (delta > 0 && m_opponentKeeper != null)
         {
@@ -130,10 +165,11 @@ public class ScoreHealth : ScoreKeeper
     {
         //yield return new WaitForSeconds(0.75f);
 
-        if (SessionInformation.Instance.GetNumPlayers() == 1)
+        int numPlayers = SessionInformation.Instance.GetNumPlayers();
+
+        if (numPlayers == 1)
         {
             m_healthLostPerSecond = StringHelpers.Evalf(System.String.Format(m_levelUpFormula, m_healthLostPerSecond));
-            m_health = m_startHealth;
         }
         
         if(LevelledUp != null)
@@ -142,8 +178,25 @@ public class ScoreHealth : ScoreKeeper
         }
         
         m_debuggingLevelUpGo.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+
+
+        while (m_healthBar.height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.25f);
+
+        D.Log("Reset");
+
+        m_state = State.Timer;
+
         m_debuggingLevelUpGo.SetActive(false);
+
+        if (numPlayers == 1)
+        {
+            m_health = Mathf.Min(m_health, m_startHealth);
+        }
     }
 
     public void SetLevelUpFormula(string myLevelUpFormula)
@@ -158,45 +211,31 @@ public class ScoreHealth : ScoreKeeper
 
     public void StartTimer()
     {
-        StartCoroutine("StartTimerCo");
+        m_state = State.Timer;
     }
 
-    IEnumerator StartTimerCo()
+    void Update()
     {
-        while (true)
+        if (m_state == State.Timer)
         {
             m_health -= Time.deltaTime * m_healthLostPerSecond;
             m_health = Mathf.Clamp(m_health, 0, m_maxHealth);
-
-            RefreshBar(true);
             
             if(m_health <= 0)
             {
                 InvokeCompleted();
-                StopCoroutine("StartTimerCo");
+                m_state = State.Sleep;
             }
-            
-            yield return null;
         }
-    }
-    
-    public void PauseTimer()
-    {
-        StopCoroutine("StartTimerCo");
-    }
 
-    void RefreshBar(bool clampMoveDistance)
-    {
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
 
         int barMoveAmount = targetBarHeight - m_healthBar.height;
 
-        /*
-        if (clampMoveDistance && Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
+        if (Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
         {
             barMoveAmount = m_maxPixelsMovePerFrame * barMoveAmount / Mathf.Abs(barMoveAmount);
         }
-        */
 
         m_healthBar.height += barMoveAmount;
 

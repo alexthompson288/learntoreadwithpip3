@@ -108,6 +108,21 @@ public class CompleteEquationPlayer : GamePlayer
         }
     }
 
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            GameWidget widget = m_spawnedAnswers.Find(x => x.data == m_currentData);
+
+            if(widget != null)
+            {
+                OnAnswer(widget);
+            }
+        }
+    }
+#endif
+
     void OnAnswer(GameWidget widget)
     {
         if (widget.data == m_currentData)

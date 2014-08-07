@@ -45,7 +45,7 @@ public static class DataHelpers
         DataRow module = null;
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery(System.String.Format("select * from programmodules WHERE colour='{0}' AND programmename='{1}'", 
-                                                                                               ColorInfo.GetColorString(pipColor), GameManager.programme));
+                                                                                               ColorInfo.GetColorString(pipColor), GameManager.Instance.programme));
         
         if (dt.Rows.Count > 0)
         {
@@ -883,6 +883,46 @@ public static class DataHelpers
     }
 
     // Maths
+    public static int GetHighestModuleNumber(ColorInfo.PipColor pipColor)
+    {
+        switch (pipColor)
+        {
+            case ColorInfo.PipColor.Pink:
+                return 10;
+                break;
+            case ColorInfo.PipColor.Red:
+                return 20;
+                break;
+            case ColorInfo.PipColor.Yellow:
+                return 30;
+                break;
+            case ColorInfo.PipColor.Blue:
+                return 50;
+                break;
+            case ColorInfo.PipColor.Green:
+                return 100;
+                break;
+            case ColorInfo.PipColor.Orange:
+                return 150;
+                break;
+            case ColorInfo.PipColor.Turquoise:
+                return 500;
+                break;
+            case ColorInfo.PipColor.Purple:
+                return 1000;
+                break;
+            case ColorInfo.PipColor.Gold:
+                return 2000;
+                break;
+            case ColorInfo.PipColor.White:
+                return 9999;
+                break;
+            default:
+                return 10;
+                break;
+        }
+    }
+
     public static List<string> GetNumberSpriteNames(DataRow data)
     {
         List<string> spriteNames = new List<string>();

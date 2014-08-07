@@ -118,28 +118,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         m_movingCamera.transform.position = m_moduleMapLocation.position;
                         InstantiateModuleMap(i);
                         hasSpawnedModuleMap = true;
-
-                        // If we have not completed the current session then call the SessionBoard
-                        /*
-                        if(!VoyageInfo.Instance.HasCompletedSession(VoyageInfo.Instance.currentSessionId))
-                        {
-                            //D.Log("Session Not Complete");
-
-                            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id=" + VoyageInfo.Instance.currentSessionId);
-                            if(dt.Rows.Count > 0)
-                            {
-                                VoyageSessionBoard.Instance.On(dt.Rows[0]);
-                            }
-                            else
-                            {
-                                //D.LogError("Could not find sessions with id: " + VoyageInfo.Instance.currentSessionId);
-                            }
-                        }
-                        else
-                        {
-                            //D.Log("Session Complete");
-                        }
-                        */
                     }
                 }
             } 
@@ -317,8 +295,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
         VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, 0);
 
-        ////D.Log("sessionId: " + m_sessionId);
-
         DataTable sectionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + m_sessionId);
 
         if (sectionsTable.Rows.Count > 0)
@@ -339,97 +315,97 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
             
             // Set data
-            int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
-
-            ////D.Log("previousModuleId: " + previousModuleId);
-            
             SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
-            
-            // Phonemes
-            DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
-            if(dt.Rows.Count > 0)
+
+            if(GameManager.Instance.programme.Contains("Reading"))
             {
-                List<DataRow> phonemePool = dt.Rows;
+                int previousModuleId = DataHelpers.GetPreviousModuleId(m_currentModuleMap.color);
                 
-                if(phonemePool.Count < m_minimumDataCount)
+                // Phonemes
+                DataTable dt = db.ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + m_sessionId);
+                if(dt.Rows.Count > 0)
                 {
-                    ////D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
-
-                    int extraModuleId = previousModuleId;
-
-                    while(phonemePool.Count < m_minimumDataCount && extraModuleId > 0)
+                    List<DataRow> phonemePool = dt.Rows;
+                    
+                    if(phonemePool.Count < m_minimumDataCount)
                     {
-                        AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(extraModuleId));
-                        --extraModuleId;
+                        ////D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
+
+                        int extraModuleId = previousModuleId;
+
+                        while(phonemePool.Count < m_minimumDataCount && extraModuleId > 0)
+                        {
+                            AddExtraData(phonemePool, DataHelpers.GetModulePhonemes(extraModuleId));
+                            --extraModuleId;
+                        }
                     }
+
+                    ////D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
+                    
+                    GameManager.Instance.AddData("phonemes", phonemePool);
+                    GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
                 }
-
-                ////D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
                 
-                GameManager.Instance.AddData("phonemes", phonemePool);
-                GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x["is_target_phoneme"] != null && x["is_target_phoneme"].ToString() == "t"));
-            }
-            
-            // Words/Keywords
-            dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
-            if(dt.Rows.Count > 0)
-            {
-                // Words
-                List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
-                
-                if(words.Count < m_minimumDataCount)
+                // Words/Keywords
+                dt = db.ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id WHERE programsession_id=" + m_sessionId);
+                if(dt.Rows.Count > 0)
                 {
-                    ////D.Log("Adding extra words: " + words.Count + "/" + m_minimumDataCount);
-
-                    int extraModuleId = previousModuleId;
-
-                    while(words.Count < m_minimumDataCount && extraModuleId > 0)
+                    // Words
+                    List<DataRow> words = dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "f"));
+                    
+                    if(words.Count < m_minimumDataCount)
                     {
-                        AddExtraData(words, DataHelpers.GetModuleWords(extraModuleId));
-                        --extraModuleId;
+                        ////D.Log("Adding extra words: " + words.Count + "/" + m_minimumDataCount);
+
+                        int extraModuleId = previousModuleId;
+
+                        while(words.Count < m_minimumDataCount && extraModuleId > 0)
+                        {
+                            AddExtraData(words, DataHelpers.GetModuleWords(extraModuleId));
+                            --extraModuleId;
+                        }
+                        
+                    }
+
+                    ////D.Log("WORD_POOL.COUNT: " + words.Count);
+                    
+                    GameManager.Instance.AddData("words", words);
+                    GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+                    
+                    
+                    // Keywords
+                    List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
+                    
+                    if(keywords.Count < m_minimumDataCount)
+                    {
+                        int extraModuleId = previousModuleId;
+
+                        while(keywords.Count < m_minimumDataCount && extraModuleId > 0)
+                        {
+                            AddExtraData(keywords, DataHelpers.GetModuleKeywords(extraModuleId));
+                            --extraModuleId;
+                        }
                     }
                     
-                }
-
-                ////D.Log("WORD_POOL.COUNT: " + words.Count);
-                
-                GameManager.Instance.AddData("words", words);
-                GameManager.Instance.AddTargetData("words", words.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
-                
-                
-                // Keywords
-                List<DataRow> keywords = dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["nondecodeable"] != null && word["nondecodeable"].ToString() == "t"));
-                
-                if(keywords.Count < m_minimumDataCount)
-                {
-                    int extraModuleId = previousModuleId;
-
-                    while(keywords.Count < m_minimumDataCount && extraModuleId > 0)
-                    {
-                        AddExtraData(keywords, DataHelpers.GetModuleKeywords(extraModuleId));
-                        --extraModuleId;
-                    }
+                    GameManager.Instance.AddData("keywords", keywords);
+                    GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
                 }
                 
-                GameManager.Instance.AddData("keywords", keywords);
-                GameManager.Instance.AddTargetData("keywords", keywords.FindAll(x => x["is_target_word"] != null && x["is_target_word"].ToString() == "t"));
+                // Quiz Questions and Captions
+                dt = db.ExecuteQuery("select * from datasentences WHERE programsession_id=" + m_sessionId);
+                
+                GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
+                GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
             }
-            
-            // Quiz Questions and Captions
-            dt = db.ExecuteQuery("select * from datasentences WHERE programsession_id=" + m_sessionId);
-            
-            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t"));
-            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x["quiz"] != null && x["quiz"].ToString() == "t"));
-
-            // Numbers
-            DataTable sessionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id=" + m_sessionId);
-            
-            if(sessionsTable.Rows.Count > 0)
+            else if(GameManager.Instance.programme.Contains("Maths"))
             {
-                int highestNumber = sessionsTable.Rows[0]["highest_number"] != null ? sessionsTable.Rows[0].GetInt("highest_number") : 10;
-                GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(1, highestNumber));
-                //GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(1));
-                //GameManager.Instance.AddData("numbers", DataHelpers.CreateNumber(System.Convert.ToInt32(sessionsTable.Rows[0]["highest_number"])));
+                DataTable sessionsTable = db.ExecuteQuery("select * from programsessions WHERE id=" + m_sessionId);
+                
+                if(sessionsTable.Rows.Count > 0)
+                {
+                    int highestNumber = sessionsTable.Rows[0]["highest_number"] != null ? sessionsTable.Rows[0].GetInt("highest_number") : 10;
+                    GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(1, highestNumber));
+                }
             }
 
             ScoreInfo.Instance.SetScoreType(m_sessionId.ToString());

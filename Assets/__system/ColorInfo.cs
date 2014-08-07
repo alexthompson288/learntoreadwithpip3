@@ -6,7 +6,7 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_pink;
     [SerializeField]
-    private Color m_red; // Old (249, 24, 51) // (255, 64, 79)
+    private Color m_red; // Old (249, 24, 51)  // (255, 64, 79)
     [SerializeField]
     private Color m_yellow;
     [SerializeField]
@@ -15,6 +15,12 @@ public class ColorInfo : Singleton<ColorInfo>
     private Color m_green;
     [SerializeField]
     private Color m_orange;
+    [SerializeField]
+    private Color m_turquoise; // (03, 209, 216)
+    [SerializeField]
+    private Color m_purple;
+    [SerializeField]
+    private Color m_gold;
     [SerializeField]
     private Color m_skyBlue;
     [SerializeField]
@@ -28,8 +34,6 @@ public class ColorInfo : Singleton<ColorInfo>
     [SerializeField]
     private Color m_lightBlue;
     [SerializeField]
-    private Color m_turquoise;
-    [SerializeField]
     private Color m_tricky;
     [SerializeField]
     private Color m_highFrequency;
@@ -42,6 +46,9 @@ public class ColorInfo : Singleton<ColorInfo>
         Blue,
         Green,
         Orange,
+        Turquoise,
+        Purple,
+        Gold,
         White,
         SkyBlue,
         DeepPink,
@@ -49,7 +56,6 @@ public class ColorInfo : Singleton<ColorInfo>
         OrangeYellow,
         MetalGrey,
         LightBlue,
-        Turquoise
     }
 
     public class NoColor : System.Exception {}
@@ -77,6 +83,15 @@ public class ColorInfo : Singleton<ColorInfo>
             case PipColor.Orange:
                 return Instance.m_orange;
                 break;
+            case PipColor.Turquoise:
+                return Instance.m_turquoise;
+                break;
+            case PipColor.Purple:
+                return Instance.m_purple;
+                break;
+            case PipColor.Gold:
+                return Instance.m_gold;
+                break;
             case PipColor.White:
                 return Color.white;
                 break;
@@ -97,9 +112,6 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case PipColor.LightBlue:
                 return Instance.m_lightBlue;
-                break;
-            case PipColor.Turquoise:
-                return Instance.m_turquoise;
                 break;
             default:
                 return Color.white;
