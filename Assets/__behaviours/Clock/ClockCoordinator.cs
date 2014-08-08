@@ -26,7 +26,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_timePool = DataHelpers.Times();
+        m_timePool = DataHelpers.GetTimes();
         
         m_timePool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
         
@@ -92,6 +92,25 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         }
     }
 
+    public void OnCorrectAnswer(ClockPlayer correctPlayer)
+    {
+        DataRow currentData = GetRandomData();
+        
+        if (m_questionsAreShared && GetNumPlayers() == 2)
+        {
+            for(int i = 0; i < GetNumPlayers(); ++i)
+            {
+                m_gamePlayers[i].SetCurrentData(currentData);
+                StartCoroutine(m_gamePlayers[i].ClearQuestion());
+            }
+        }
+        else
+        {
+            correctPlayer.SetCurrentData(currentData);
+            StartCoroutine(correctPlayer.ClearQuestion());
+        }
+    }
+
     DataRow GetRandomData()
     {
         return m_timePool [Random.Range(0, m_timePool.Count)];
@@ -103,5 +122,29 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         {
             m_gamePlayers[index].HideCharacter(characterIndex);
         }
+    }
+
+    public void OnLevelUp()
+    {
+        DataSetters.LevelUpTimes(m_timePool);
+    }
+    
+    public void CompleteGame()
+    {
+        if (GetNumPlayers() == 1)
+        {
+            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+        }
+        
+        StartCoroutine(CompleteGameCo());
+    }
+    
+    IEnumerator CompleteGameCo()
+    {
+        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
+        
+        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
+        
+        GameManager.Instance.CompleteGame();
     }
 }

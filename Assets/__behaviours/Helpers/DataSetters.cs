@@ -4,6 +4,26 @@ using System.Collections.Generic;
 
 public static class DataSetters 
 {
+    public static void LevelUpTimes(List<DataRow> timePool)
+    {
+        D.Log("CompleteEquationCoordinator.OnLevelUp()");
+        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        
+        D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
+        
+        if (hasIncremented)
+        {
+            DataSetters.AddModuleTimes(GameManager.Instance.currentColor);
+            timePool = DataHelpers.GetData("numbers");
+        }
+    }
+
+    public static void AddModuleTimes(ColorInfo.PipColor pipColor)
+    {
+        List<DataRow> times = DataHelpers.GetModuleTimes(pipColor);
+        GameManager.Instance.ReplaceData("times", times);
+    }
+
     public static void LevelUpNumbers(List<DataRow> numberPool)
     {
         D.Log("CompleteEquationCoordinator.OnLevelUp()");
@@ -16,12 +36,6 @@ public static class DataSetters
             DataSetters.AddModuleNumbers(GameManager.Instance.currentColor);
             numberPool = DataHelpers.GetData("numbers");
         }
-    }
-
-    public static void AddModuleTimes(ColorInfo.PipColor pipColor)
-    {
-        List<DataRow> times = DataHelpers.GetModuleTimes(pipColor);
-        GameManager.Instance.ReplaceData("times", times);
     }
 
     public static void AddModuleNumbers(ColorInfo.PipColor pipColor)

@@ -930,16 +930,18 @@ public static class DataHelpers
     public static DataRow CreateTime(int time)
     {
         DataRow row = new DataRow();
-        row["tablename"] = "numbers";
+        row["tablename"] = "times";
         row["id"] = time;
 
-        string s = time.ToString();
-        while (s.Length < 4)
+        string timeString = time.ToString();
+        while (timeString.Length < 4)
         {
-            s = s.Insert(0, "0");
+            timeString = timeString.Insert(0, "0");
         }
-        s = s.Insert(2, ":");
-        row ["time"] = s;
+        timeString = timeString.Insert(2, ":");
+
+        row["time"] = timeString;
+        row["datetime"] = DateTime.ParseExact(timeString, "hh:mm", null);
 
         return row;
     }
