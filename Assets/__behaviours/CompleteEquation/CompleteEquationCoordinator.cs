@@ -22,8 +22,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     List<DataRow> m_numberPool = new List<DataRow>();
 
     float m_timeStarted;
-    float m_timeEnded;
-    
+
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
@@ -123,16 +122,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public void OnLevelUp()
     {
-        D.Log("CompleteEquationCoordinator.OnLevelUp()");
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
-
-        D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
-
-        if (hasIncremented)
-        {
-            DataSetters.AddModuleNumbers(GameManager.Instance.currentColor);
-            m_numberPool = DataHelpers.GetData("numbers");
-        }
+        DataSetters.LevelUpNumbers(m_numberPool);
     }
 
     public void CompleteGame()

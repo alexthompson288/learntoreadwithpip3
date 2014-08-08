@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MulitiplicationQuadPlayer : GamePlayer
+public class MultiplicationQuadPlayer : GamePlayer
 {
     [SerializeField]
-    private ScoreKeeper m_scoreKeeper;
+    private ScoreHealth m_scoreKeeper;
     [SerializeField]
     private DataDisplay m_dataDisplay;
     [SerializeField]
     private TrafficLights m_trafficLights;
-    [SerializeField]
-    private Timer m_timer;
     [SerializeField]
     private PipButton m_goButton;
     [SerializeField]
@@ -36,15 +34,14 @@ public class MulitiplicationQuadPlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        //D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        //D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
         }
 
+        m_scoreKeeper.SetCharacterIcon(characterIndex);
         MultiplicationQuadCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
@@ -62,14 +59,9 @@ public class MulitiplicationQuadPlayer : GamePlayer
             m_columnButtons[i].Unpressing += OnUnpressColumnButton;
         }
         
-        m_timer.SetTimeRemaing(MultiplicationQuadCoordinator.Instance.GetTimeLimit());
-        
-        if (subscribeToTimer)
-        {
-            m_timer.Finished += OnTimerFinish;
-        }
-        
-        m_timer.On();
+        m_scoreKeeper.LevelledUp += OnLevelUp;
+        m_scoreKeeper.Completed += OnScoreKeeperComplete;
+        m_scoreKeeper.StartTimer();
 
         RefreshLines();
 
@@ -148,14 +140,6 @@ public class MulitiplicationQuadPlayer : GamePlayer
     {
         m_dataDisplay.Off();
 
-        /*
-        int numToDestroy = m_grid.transform.childCount;
-        for (int i = 0; i < numToDestroy; ++i)
-        {
-            GameObject pointToDestroy = m_grid.transform.GetChild(i).gameObject;
-            Destroy(pointToDestroy);
-        }
-        */
         m_numRows = 1;
         m_numColumns = 1;
         RefreshLines();
@@ -175,10 +159,16 @@ public class MulitiplicationQuadPlayer : GamePlayer
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            m_scoreKeeper.UpdateScore(-1);
         }
     }
 
-    void OnTimerFinish (Timer timer)
+    void OnLevelUp(ScoreKeeper scoreKeeper)
+    {
+        CompleteEquationCoordinator.Instance.OnLevelUp();
+    }
+    
+    void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)
     {
         MultiplicationQuadCoordinator.Instance.CompleteGame();
     }

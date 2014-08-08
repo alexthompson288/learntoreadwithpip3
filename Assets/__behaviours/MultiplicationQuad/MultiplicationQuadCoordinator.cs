@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordinator> 
 {
     [SerializeField]
-    private MulitiplicationQuadPlayer[] m_gamePlayers;
+    private MultiplicationQuadPlayer[] m_gamePlayers;
     [SerializeField]
     private GameObject m_pointPrefab;
     [SerializeField]
@@ -20,6 +20,8 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     private bool m_excludePrimeNumbers = false;
 
     List<DataRow> m_numberPool = new List<DataRow>();
+
+    float m_timeStarted;
 
     int GetNumPlayers()
     {
@@ -82,6 +84,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
 
         DataRow sharedData = GetRandomData();
+        m_timeStarted = Time.time;
         
         for (int i = 0; i < numPlayers; ++i)
         {
@@ -100,7 +103,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
     }
 
-    public void OnCorrectAnswer(MulitiplicationQuadPlayer correctPlayer)
+    public void OnCorrectAnswer(MultiplicationQuadPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData();
 
@@ -119,8 +122,18 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
     }
 
+    public void OnLevelUp()
+    {
+        DataSetters.LevelUpNumbers(m_numberPool);
+    }
+
     public void CompleteGame()
     {
+        if (GetNumPlayers() == 1)
+        {
+            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+        }
+
         StartCoroutine(CompleteGameCo());
     }
     
@@ -137,6 +150,13 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     {
         DataRow data = m_numberPool [Random.Range(0, m_numberPool.Count - 1)];
 
+        // Must be able to get number by multiplying 2 integers from 0-12 inclusive
+        while (!MathHelpers.IsTimesTableNum(data.GetInt("value")))
+        {
+            data = m_numberPool [Random.Range(0, m_numberPool.Count - 1)];
+        }
+
+        // Might still want to exclude prime numbers like 11
         if (m_excludePrimeNumbers)
         {
             while (MathHelpers.IsPrime(data.GetInt("value")))

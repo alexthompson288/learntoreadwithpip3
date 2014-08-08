@@ -20,6 +20,8 @@ public class PlusGameButton : MonoBehaviour
     private UILabel m_scoreLabel;
     [SerializeField]
     private ColorBadge[] m_colorBadges;
+    [SerializeField]
+    private float m_rotateAmount = 20.02f;
 
     [System.Serializable]
     class ColorBadge
@@ -46,10 +48,13 @@ public class PlusGameButton : MonoBehaviour
         {
             if (isUnlocking && PlusScoreInfo.Instance.HasNewHighScore())
             {
+                m_scoreLabel.text = PlusScoreInfo.Instance.GetOldHighScore().ToString();
                 StartCoroutine(UnlockHighScore());
             }
-
-            m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+            else
+            {
+                m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+            }
         }
 
         // Color Badges
@@ -79,6 +84,11 @@ public class PlusGameButton : MonoBehaviour
             }
         }
 
+        if (isUnlocking)
+        {
+            PlusScoreInfo.Instance.ClearUnlockTrackers();
+        }
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         DataRow game = DataHelpers.GetGame(m_gameName);
@@ -92,23 +102,29 @@ public class PlusGameButton : MonoBehaviour
         WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
 
         float tweenDuration = 0.8f;
-        
-        TweenAlpha.Begin(m_scoreLabelParent, tweenDuration, 0);
-        
-        iTween.RotateBy(m_scoreLabelParent, new Vector3(0, 0, 255), tweenDuration);
+
+        iTween.RotateBy(m_scoreLabelParent, new Vector3(0, 0, m_rotateAmount), tweenDuration);
         
         Vector3 originalScale = m_scoreLabelParent.transform.localScale;
         iTween.ScaleTo(m_scoreLabelParent, originalScale * 2f, tweenDuration / 2);
         yield return new WaitForSeconds(tweenDuration / 2);
+        m_scoreLabel.text = PlusScoreInfo.Instance.GetNewScore().ToString();
         iTween.ScaleTo(m_scoreLabelParent, originalScale, tweenDuration / 2);
     }
 
 #if UNITY_EDITOR
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G) && m_colorBadges != null && m_colorBadges.Length > 0)
+        if (m_scoreLabelParent != null)
         {
-            StartCoroutine(UnlockColorBadge(m_colorBadges[0]));
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                StartCoroutine(UnlockHighScore());
+            }
+            else if (Input.GetKeyDown(KeyCode.H))
+            {
+                m_scoreLabelParent.transform.eulerAngles = Vector3.zero;
+            }
         }
     }
 #endif

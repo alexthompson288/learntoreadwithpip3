@@ -51,9 +51,9 @@ public class CompleteEquationPlayer : GamePlayer
     {
         System.Array.Sort(m_equationPartLocators, CollectionHelpers.LocalLeftToRight);
 
-        m_scoreKeeper.StartTimer();
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
+        m_scoreKeeper.StartTimer();
 
         AskQuestion();
     }
@@ -137,6 +137,7 @@ public class CompleteEquationPlayer : GamePlayer
         }
         else
         {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
             widget.TweenToStartPos();
             widget.TintGray();

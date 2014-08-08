@@ -30,13 +30,6 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-#if UNITY_EDITOR
-    void OnGUI()
-    {
-        GUILayout.Label("CurrentColor: " + m_currentColor);
-    }
-#endif
-
     public void SetCurrentColor(ColorInfo.PipColor myCurrentColor)
     {
         m_currentColor = myCurrentColor;
@@ -201,6 +194,12 @@ public class GameManager : Singleton<GameManager>
     Dictionary<DataRow, string> m_data = new Dictionary<DataRow, string>();
     Dictionary<DataRow, string> m_targetData = new Dictionary<DataRow, string>();
 
+    public void ReplaceData(string type, List<DataRow> newData)
+    {
+        PrivateRemoveData(type, m_data);
+        PrivateAddData(type, newData, m_data);
+    }
+
     public void AddData(string type, List<DataRow> newData)
     {
         PrivateAddData(type, newData, m_data);
@@ -223,6 +222,14 @@ public class GameManager : Singleton<GameManager>
         List<DataRow> newTargetData = new List<DataRow>();
         newTargetData.Add(target);
         PrivateAddData(type, newTargetData, m_targetData);
+    }
+
+    void PrivateRemoveData(string type, Dictionary<DataRow, string> data)
+    {
+        foreach (KeyValuePair<DataRow, string> kvp in data.Where(x => x.Value == type).ToList())
+        {
+            data.Remove(kvp.Key);
+        }
     }
 
     void PrivateAddData(string type, List<DataRow> newData, Dictionary<DataRow, string> data)

@@ -127,6 +127,8 @@ public class ScoreHealth : ScoreKeeper
 
     public override void UpdateScore(int delta = 1)
     {
+        PlayAudio(delta);
+
         if (m_state == State.LevellingUp)
         {
             m_state = State.Timer;

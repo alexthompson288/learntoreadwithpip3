@@ -84,6 +84,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         if(isMaths)
         {
             DataSetters.AddModuleNumbers(m_pipColor);
+            DataSetters.AddModuleTimes(m_pipColor);
         }
         else if(GameManager.Instance.programme.Contains("Maths"))
         {

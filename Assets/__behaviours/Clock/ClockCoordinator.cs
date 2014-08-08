@@ -2,31 +2,38 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class ToyShopCoordinator : Singleton<ToyShopCoordinator> 
+public class ClockCoordinator : Singleton<ClockCoordinator>
 {
     [SerializeField]
-    private ToyShopPlayer[] m_gamePlayers;
-    [SerializeField]
-    private float m_timeLimit;
-    [SerializeField]
-    private int m_numToysToSpawn;
-    [SerializeField]
-    private GameObject m_toyPrefab;
+    private ClockPlayer[] m_gamePlayers;
     [SerializeField]
     private GameObject m_sideBarCameraPrefab;
+    [SerializeField]
+    private bool m_questionsAreShared;
 
-    List<DataRow> m_numberPool = new List<DataRow>();
+    List<DataRow> m_timePool = new List<DataRow>();
 
     float m_timeStarted;
 
+    int GetNumPlayers()
+    {
+        return SessionInformation.Instance.GetNumPlayers();
+    }
+
     IEnumerator Start()
     {
+        D.Log("CompleteEquationCoordinator.Start()");
+        
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
-        m_numberPool = DataHelpers.GetNumbers();
-
+        
+        m_timePool = DataHelpers.Times();
+        
+        m_timePool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+        
+        D.Log("m_timePool.Count: " + m_timePool.Count);
+        
         int numPlayers = GetNumPlayers();
-
+        
         if (numPlayers == 1)
         {
             CharacterSelectionParent.DisableAll();
@@ -40,7 +47,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-          
+            
             while (true)
             {
                 bool allSelected = true;
@@ -70,13 +77,24 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-
+        
+        D.Log("Starting game");
+        
+        DataRow sharedData = GetRandomData();
+        
         m_timeStarted = Time.time;
-
+        
         for (int i = 0; i < numPlayers; ++i)
         {
+            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+            m_gamePlayers[i].SetCurrentData(currentData);
             m_gamePlayers[i].StartGame(i == 0);
         }
+    }
+
+    DataRow GetRandomData()
+    {
+        return m_timePool [Random.Range(0, m_timePool.Count)];
     }
 
     public void CharacterSelected(int characterIndex)
@@ -85,54 +103,5 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
         {
             m_gamePlayers[index].HideCharacter(characterIndex);
         }
-    }
-
-    public void CompleteGame()
-    {
-        if (GetNumPlayers() == 1)
-        {
-            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
-        }
-
-        StartCoroutine(CompleteGameCo());
-    }
-
-    IEnumerator CompleteGameCo()
-    {
-        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
-
-        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
-
-        GameManager.Instance.CompleteGame();
-    }
-
-    public void OnLevelUp()
-    {
-        DataSetters.LevelUpNumbers(m_numberPool);
-    }
-
-    public int GetRandomValue()
-    {
-        return m_numberPool [Random.Range(0, m_numberPool.Count)].GetInt("value");
-    }
-
-    public GameObject GetToyPrefab()
-    {
-        return m_toyPrefab;
-    }
-
-    public float GetTimeLimit()
-    {
-        return m_timeLimit;
-    }
-
-    public int GetNumToysToSpawn()
-    {
-        return m_numToysToSpawn;
-    }
-    
-    int GetNumPlayers()
-    {
-        return SessionInformation.Instance.GetNumPlayers();
     }
 }

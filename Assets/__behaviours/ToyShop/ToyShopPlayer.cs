@@ -6,11 +6,9 @@ using Wingrove;
 public class ToyShopPlayer : GamePlayer 
 {
     [SerializeField]
-    private ScoreKeeper m_scoreKeeper;
+    private ScoreHealth m_scoreKeeper;
     [SerializeField]
     private Transform[] m_locators;
-    [SerializeField]
-    private Timer m_timer;
     [SerializeField]
     private TrafficLights m_trafficLights;
     [SerializeField]
@@ -48,6 +46,7 @@ public class ToyShopPlayer : GamePlayer
             cs.DeactivatePress(false);
         }
 
+        m_scoreKeeper.SetCharacterIcon(characterIndex);
         ToyShopCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
@@ -80,15 +79,11 @@ public class ToyShopPlayer : GamePlayer
             m_coinStacks[i].SetValue(coinValues[i]);
         }
 
-        m_timer.SetTimeRemaing(ToyShopCoordinator.Instance.GetTimeLimit());
+        m_scoreKeeper.SetHealthLostPerSecond(1f);
 
-        if (subscribeToTimer)
-        {
-            D.Log("Subscribing to timer");
-            m_timer.Finished += OnTimerFinish;
-        }
-
-        m_timer.On();
+        m_scoreKeeper.StartTimer();
+        m_scoreKeeper.LevelledUp += OnLevelUp;
+        m_scoreKeeper.Completed += OnScoreKeeperComplete;
 
         SpawnToys();
     }
@@ -227,7 +222,7 @@ public class ToyShopPlayer : GamePlayer
         else
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-            //m_currentToy.GetComponent<GameWidget>().TweenToStartPos();
+            m_scoreKeeper.UpdateScore(-1);
         }
     }
 
@@ -236,7 +231,12 @@ public class ToyShopPlayer : GamePlayer
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 
-    void OnTimerFinish(Timer timer)
+    void OnLevelUp(ScoreKeeper scoreKeeper)
+    {
+        ToyShopCoordinator.Instance.OnLevelUp();
+    }
+
+    void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)
     {
         D.Log("ToyShopPlayer.OnTimerFinish()");
         ToyShopCoordinator.Instance.CompleteGame();

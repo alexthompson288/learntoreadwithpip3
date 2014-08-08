@@ -883,6 +883,67 @@ public static class DataHelpers
     }
 
     // Maths
+    public static List<DataRow> GetModuleTimes(ColorInfo.PipColor pipColor)
+    {
+        List<DataRow> times = new List<DataRow>();
+        
+        // 00.00 - 23.59
+        //for (int i = 0; i < 2400; ++i)
+        for(int i = 0; i < 1300; ++i)
+        {
+            if(i % 100 < 60) // Only minutes up to 59 inclusive are allowed
+            {
+                times.Add(CreateTime(i));
+            }
+        }
+
+        if (pipColor < ColorInfo.PipColor.White)
+        {
+            times.RemoveAll(x => x.GetId() % 5 != 0);
+        }
+
+        if (pipColor < ColorInfo.PipColor.Gold)
+        {
+            times.RemoveAll(x => x.GetId() % 10 != 0);
+        }
+
+        if (pipColor < ColorInfo.PipColor.Purple)
+        {
+            times.RemoveAll(x => x.GetId() % 100 % 30 != 0);
+        }
+
+        return times;
+    }
+
+    public static List<DataRow> GetTimes()
+    {
+        List<DataRow> times = GameManager.Instance.GetData("times");
+
+        if (times.Count == 0)
+        {
+            times = GetModuleTimes(ColorInfo.PipColor.Turquoise);
+        }
+
+        return times;
+    }
+
+    public static DataRow CreateTime(int time)
+    {
+        DataRow row = new DataRow();
+        row["tablename"] = "numbers";
+        row["id"] = time;
+
+        string s = time.ToString();
+        while (s.Length < 4)
+        {
+            s = s.Insert(0, "0");
+        }
+        s = s.Insert(2, ":");
+        row ["time"] = s;
+
+        return row;
+    }
+
     public static int GetHighestModuleNumber(ColorInfo.PipColor pipColor)
     {
         switch (pipColor)
