@@ -102,47 +102,52 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
     
     // New High Scores
     ScoreTracker m_newHighScoreTracker = null;
-    int m_previousHighScore;
-    int m_previousMaxColor;
+    ScoreTracker m_oldHighScoreTracker = null;
     
-    public bool HasNewHighScoreTracker()
+    public bool HasUnlockTrackers()
     {
-        return m_newHighScoreTracker != null;
+        return m_newHighScoreTracker != null && m_oldHighScoreTracker != null;
     }
 
     public bool HasNewMaxColor()
     {
-        return HasNewHighScoreTracker() && m_newHighScoreTracker.GetMaxColor() > m_previousMaxColor;
+        return HasUnlockTrackers() && m_newHighScoreTracker.GetMaxColor() > m_oldHighScoreTracker.GetMaxColor();
     }
 
     public bool HasNewHighScore()
     {
-        return HasNewHighScoreTracker() && m_newHighScoreTracker.GetScore() > m_previousHighScore;
+        return HasUnlockTrackers() && m_newHighScoreTracker.GetScore() > m_oldHighScoreTracker.GetScore();
     }
     
-    public string GetNewTrackerGame()
+    public string GetUnlockGame()
     {
         return m_newHighScoreTracker.GetGame();
     }
 
-    public int GetNewTrackerMaxColor()
+    public int GetNewMaxColor()
     {
         return m_newHighScoreTracker.GetMaxColor();
     }
 
-    public int GetNewTrackerScore()
+    public int GetNewScore()
     {
         return m_newHighScoreTracker.GetScore();
     }
     
-    public void RemoveNewHighScore()
+    public int GetOldHighScore()
+    {
+        return m_oldHighScoreTracker.GetScore();
+    }
+
+    public int GetOldMaxColor()
+    {
+        return m_oldHighScoreTracker.GetMaxColor();
+    }
+
+    public void ClearUnlockTrackers()
     {
         m_newHighScoreTracker = null;
-    }
-    
-    public int GetPreviousHighScore()
-    {
-        return m_previousHighScore;
+        m_oldHighScoreTracker = null;
     }
     
     // Standard Score Trackers
@@ -190,7 +195,7 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
                 m_scoreTrackers.Add(newTracker);
                 
                 m_newHighScoreTracker = newTracker;
-                m_previousHighScore = 0;
+                m_oldHighScoreTracker = new ScoreTracker(game, type, 0, 0, 1);
             }
             else 
             {
@@ -205,9 +210,7 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
                     m_scoreTrackers.Add(newTracker);
                     
                     m_newHighScoreTracker = newTracker;
-
-                    m_previousHighScore = oldTracker.GetScore();
-                    m_previousMaxColor = oldTracker.GetMaxColor();
+                    m_oldHighScoreTracker = oldTracker;
                 }
             }
             

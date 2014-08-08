@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class PlusGameButton : MonoBehaviour 
 {
@@ -37,7 +39,7 @@ public class PlusGameButton : MonoBehaviour
 
     IEnumerator Start()
     {
-        bool isUnlocking = PlusScoreInfo.Instance.HasNewHighScoreTracker() && m_gameName == PlusScoreInfo.Instance.GetNewTrackerGame();
+        bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && m_gameName == PlusScoreInfo.Instance.GetUnlockGame();
 
         // High Scores
         if (m_scoreLabel != null)
@@ -53,27 +55,26 @@ public class PlusGameButton : MonoBehaviour
         // Color Badges
         if (m_colorBadges != null && m_colorBadges.Length > 0)
         {
-            ColorBadge newMaxColorBadge = null;
+            List<ColorBadge> unlockedBadges = new List<ColorBadge>();
 
             if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
             {
-                D.Log("Finding new max color badge: " + PlusScoreInfo.Instance.GetNewTrackerMaxColor());
-                newMaxColorBadge = System.Array.Find(m_colorBadges, x => (int)x.m_pipColor == PlusScoreInfo.Instance.GetNewTrackerMaxColor());
-                D.Log("newMaxColorBadge: " + newMaxColorBadge);
+                unlockedBadges = System.Array.FindAll(m_colorBadges, x => (int)x.m_pipColor > PlusScoreInfo.Instance.GetOldMaxColor() 
+                                                      && (int)x.m_pipColor <= PlusScoreInfo.Instance.GetNewMaxColor()).ToList(); 
             }
 
             ColorInfo.PipColor maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
 
-            foreach (ColorBadge colorBadge in m_colorBadges)
+            for (int i = 0; i < m_colorBadges.Length; ++i)
             {
-                if (colorBadge == newMaxColorBadge)
+                if (unlockedBadges.Contains(m_colorBadges[i]))
                 {
                     D.Log("Unlocking color badge");
-                    StartCoroutine(UnlockColorBadge(colorBadge));
+                    StartCoroutine(UnlockColorBadge(m_colorBadges[i]));
                 } 
-                else if ((int)colorBadge.m_pipColor <= (int)maxColor)
+                else if ((int)m_colorBadges[i].m_pipColor <= (int)maxColor)
                 {
-                    colorBadge.m_lockedSprite.SetActive(false);
+                    m_colorBadges[i].m_lockedSprite.SetActive(false);
                 } 
             }
         }
@@ -87,21 +88,44 @@ public class PlusGameButton : MonoBehaviour
     // TODO
     IEnumerator UnlockHighScore()
     {
-        yield return null;
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+        WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YAY");
+
+        float tweenDuration = 0.8f;
+        
+        TweenAlpha.Begin(m_scoreLabelParent, tweenDuration, 0);
+        
+        iTween.RotateBy(m_scoreLabelParent, new Vector3(0, 0, 255), tweenDuration);
+        
+        Vector3 originalScale = m_scoreLabelParent.transform.localScale;
+        iTween.ScaleTo(m_scoreLabelParent, originalScale * 2f, tweenDuration / 2);
+        yield return new WaitForSeconds(tweenDuration / 2);
+        iTween.ScaleTo(m_scoreLabelParent, originalScale, tweenDuration / 2);
     }
+
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.G) && m_colorBadges != null && m_colorBadges.Length > 0)
+        {
+            StartCoroutine(UnlockColorBadge(m_colorBadges[0]));
+        }
+    }
+#endif
 
     IEnumerator UnlockColorBadge(ColorBadge colorBadge)
     {
-        GameObject go = colorBadge.m_sprite.gameObject;
-        float tweenDuration = 0.3f;
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
 
-        //TweenColor.Begin(go, tweenDuration, Color.white);
+        GameObject go = colorBadge.m_sprite.gameObject;
+        float tweenDuration = 0.8f;
+
         TweenAlpha.Begin(colorBadge.m_lockedSprite, tweenDuration, 0);
 
-        iTween.RotateBy(go, new Vector3(0, 0, 360), tweenDuration);
+        iTween.RotateBy(go, new Vector3(0, 0, 255), tweenDuration);
 
         Vector3 originalScale = go.transform.localScale;
-        iTween.ScaleTo(go, originalScale * 1.25f, tweenDuration / 2);
+        iTween.ScaleTo(go, originalScale * 2f, tweenDuration / 2);
         yield return new WaitForSeconds(tweenDuration / 2);
         iTween.ScaleTo(go, originalScale, tweenDuration / 2);
     }
