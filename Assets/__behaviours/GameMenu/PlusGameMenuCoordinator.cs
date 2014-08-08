@@ -36,6 +36,11 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         m_readingButton.Unpressing += OnUnpressReadingButton;
         m_mathsButton.Unpressing += OnUnpressMathsButton;
 
+        foreach (PipButton button in m_chooseColorButtons)
+        {
+            button.Unpressing += OnUnpressChooseColorButton;
+        }
+
         PlusGameButton[] gameButtons = Object.FindObjectsOfType(typeof(PlusGameButton)) as PlusGameButton[];
         foreach (PlusGameButton button in gameButtons)
         {
