@@ -10,6 +10,8 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
     private GameObject m_sideBarCameraPrefab;
     [SerializeField]
     private bool m_questionsAreShared;
+    [SerializeField]
+    private int m_cushion = 1;
 
     List<DataRow> m_timePool = new List<DataRow>();
 
@@ -146,5 +148,10 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
         GameManager.Instance.CompleteGame();
+    }
+
+    public int GetCushion()
+    {
+        return m_cushion;
     }
 }

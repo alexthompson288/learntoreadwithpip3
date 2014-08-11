@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class ClockPlayer : GamePlayer 
 {
@@ -43,7 +44,7 @@ public class ClockPlayer : GamePlayer
 
     public void StartGame(bool subscribeToTimer)
     {
-        m_scoreKeeper.SetHealthLostPerSecond(0.5f);
+        m_scoreKeeper.SetHealthLostPerSecond(1f);
 
         m_goButton.Unpressing += OnPressGoButton;
 
@@ -63,16 +64,23 @@ public class ClockPlayer : GamePlayer
 
     void OnPressGoButton(PipButton button)
     {
-        if (m_clock.GetDateTime() == System.Convert.ToDateTime(m_currentData ["datetime"]))
+        DateTime currentTime = Convert.ToDateTime(m_currentData ["datetime"]);
+        DateTime clockTime = m_clock.GetDateTime();
+        int cushion = ClockCoordinator.Instance.GetCushion();
+
+        if(DateTime.Compare(clockTime.AddMinutes(cushion), currentTime) >= 0 && DateTime.Compare(clockTime.AddMinutes(-cushion), currentTime) <= 0)
         {
+            D.Log("CORRECT");
+            D.Log("Clock: " + clockTime);
+            D.Log("Current: " + currentTime);
             m_scoreKeeper.UpdateScore(1);
             ClockCoordinator.Instance.OnCorrectAnswer(this);
         }
         else
         {
             D.Log("INCORRECT");
-            D.Log("Clock: " + m_clock.GetDateTime());
-            D.Log("Target: " + System.Convert.ToDateTime(m_currentData ["datetime"]));
+            D.Log("Clock: " + clockTime);
+            D.Log("Current: " + currentTime);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }
