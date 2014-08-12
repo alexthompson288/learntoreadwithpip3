@@ -5,7 +5,8 @@ using Wingrove;
 using WingroveAudio;
 using System.Linq;
 
-public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator> {
+public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator> 
+{
 	[SerializeField]
 	private bool m_useSillyWords;
 	[SerializeField]
@@ -26,6 +27,8 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 	private AudioSource m_audioSource;
 	[SerializeField]
 	private Troll m_troll;
+    [SerializeField]
+    private SpellingPadBehaviour m_spellingPad;
 	
 	int m_score;
 	
@@ -99,7 +102,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		
 		//SpeakCurrentWord();
 		
-		SpellingPadBehaviour.Instance.DisplayNewWord(m_currentWord);
+		m_spellingPad.DisplayNewWord(m_currentWord);
 
 		List<Transform> locators = m_locators.ToList();
 
@@ -130,7 +133,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 		}
 		*/
 
-		SpellingPadBehaviour.Instance.SayWholeWord();
+		m_spellingPad.SayWholeWord();
 		
 		yield return null;
 	}
@@ -144,7 +147,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 
 	IEnumerator OnQuestionEnd()
 	{
-		GameObject printedWord = SpellingPadBehaviour.Instance.PrintWord();
+		GameObject printedWord = m_spellingPad.PrintWord();
 		//iTween.MoveTo(printedWord, Vector3.zero, 0.3f);
 		//yield return new WaitForSeconds(0.31f);
 		float burpDelay = m_troll.EatFood(printedWord);
@@ -177,7 +180,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 	void OnRelease(DraggableLabel currentDraggable)
 	{
         /*
-		SpellingPadPhoneme spellingPadPhoneme = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.GetText(), currentDraggable.collider);
+		SpellingPadPhoneme spellingPadPhoneme = m_spellingPad.CheckLetters(currentDraggable.GetText(), currentDraggable.collider);
 
 		if(spellingPadPhoneme != null)
 		{
@@ -206,7 +209,7 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 			{
 				if(m_wrongAnswers >= 3)
 				{
-					SpellingPadBehaviour.Instance.SayShowSequential();
+					m_spellingPad.SayShowSequential();
 				}
 			}
 		}
@@ -221,13 +224,13 @@ public class NonsenseSpellingCoordinator : Singleton<NonsenseSpellingCoordinator
 			switch(m_wrongAnswers)
 			{
 			case 2:
-				SpellingPadBehaviour.Instance.SayShowAll(true);
+				m_spellingPad.SayShowAll(true);
 				break;
 			case 3:
-				SpellingPadBehaviour.Instance.SayShowSequential();
+				m_spellingPad.SayShowSequential();
 				break;
 			default:
-				SpellingPadBehaviour.Instance.SayAll();
+				m_spellingPad.SayAll();
 				break;
 			}
 		}

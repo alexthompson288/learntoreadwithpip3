@@ -12,8 +12,6 @@ public class CorrectCaptionCoordinator : GameCoordinator
     [SerializeField]
     private UITexture m_questionImage;
     [SerializeField]
-    private Transform m_questionImageScale;
-    [SerializeField]
     private GameObject m_questionImageParent;
     [SerializeField]
     private GameObject m_textPrefab;
@@ -21,8 +19,6 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private Transform m_textPosition;
     [SerializeField]
     private UILabel m_questionLabel;
-    [SerializeField]
-    private UISprite m_questionBackground;
     [SerializeField]
     private GameObject m_questionLabelParent;
     [SerializeField]
@@ -37,6 +33,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
     private AudioClip m_wordsInstructions;
     [SerializeField]
     private AudioClip m_captionsInstructions;
+
 
     bool m_hasAnsweredIncorrectly = false;
 
@@ -225,7 +222,6 @@ public class CorrectCaptionCoordinator : GameCoordinator
         }
 
         m_textPosition.localPosition = new Vector3(-length / 2 * m_textPosition.transform.localScale.x, m_textPosition.localPosition.y, m_textPosition.localPosition.z);
-        //m_questionBackground.width = (int)length + 50;
     }
     
     protected override IEnumerator CompleteGame()

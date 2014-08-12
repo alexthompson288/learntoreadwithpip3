@@ -13,7 +13,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
     [SerializeField]
     private int m_cushion = 1;
 
-    List<DataRow> m_timePool = new List<DataRow>();
+    List<DataRow> m_dataPool = new List<DataRow>();
 
     float m_timeStarted;
 
@@ -28,11 +28,11 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_timePool = DataHelpers.GetTimes();
+        m_dataPool = DataHelpers.GetTimes();
         
-        m_timePool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
         
-        D.Log("m_timePool.Count: " + m_timePool.Count);
+        D.Log("m_dataPool.Count: " + m_dataPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -90,7 +90,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         {
             DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
             m_gamePlayers[i].SetCurrentData(currentData);
-            m_gamePlayers[i].StartGame(i == 0);
+            m_gamePlayers[i].StartGame();
         }
     }
 
@@ -115,7 +115,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
 
     DataRow GetRandomData()
     {
-        return m_timePool [Random.Range(0, m_timePool.Count)];
+        return m_dataPool [Random.Range(0, m_dataPool.Count)];
     }
 
     public void CharacterSelected(int characterIndex)
@@ -128,7 +128,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
 
     public void OnLevelUp()
     {
-        DataSetters.LevelUpTimes(m_timePool);
+        m_dataPool = DataSetters.LevelUpTimes();
     }
     
     public void CompleteGame()

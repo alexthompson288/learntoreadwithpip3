@@ -5,7 +5,7 @@ using System;
 public class ClockPlayer : GamePlayer 
 {
     [SerializeField]
-    private ScoreHealth m_scoreKeeper;
+    private PlusScoreKeeper m_scoreKeeper;
     [SerializeField]
     private TrafficLights m_trafficLights;
     [SerializeField]
@@ -42,7 +42,7 @@ public class ClockPlayer : GamePlayer
         ClockCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
-    public void StartGame(bool subscribeToTimer)
+    public void StartGame()
     {
         m_scoreKeeper.SetHealthLostPerSecond(1f);
 

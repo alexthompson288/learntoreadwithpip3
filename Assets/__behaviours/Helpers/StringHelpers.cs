@@ -7,6 +7,14 @@ using System.Collections.Generic;
 
 public class StringHelpers
 {
+    static System.Random m_random = new System.Random();
+
+    public static char GetRandomLetter()
+    {
+        int num = m_random.Next(0, 26); // Zero to 25
+        return (char)('a' + num);
+    }
+
 	public static string Edit (string s, string[] exemptions = null) 
 	{
 		List<string> exemptionList = new List<string>();

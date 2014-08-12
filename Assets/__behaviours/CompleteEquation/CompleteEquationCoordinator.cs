@@ -19,7 +19,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     [SerializeField]
     private AudioSource m_audioSource;
 
-    List<DataRow> m_numberPool = new List<DataRow>();
+    List<DataRow> m_dataPool = new List<DataRow>();
 
     float m_timeStarted;
 
@@ -34,11 +34,11 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_numberPool = DataHelpers.GetNumbers();
+        m_dataPool = DataHelpers.GetNumbers();
         
-        m_numberPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
 
-        D.Log("m_numberPool.Count: " + m_numberPool.Count);
+        D.Log("m_dataPool.Count: " + m_dataPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -122,7 +122,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public void OnLevelUp()
     {
-        DataSetters.LevelUpNumbers(m_numberPool);
+        m_dataPool = DataSetters.LevelUpNumbers();
     }
 
     public void CompleteGame()
@@ -176,14 +176,14 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public DataRow GetRandomData()
     {
-        return m_numberPool [Random.Range(0, m_numberPool.Count)];
+        return m_dataPool [Random.Range(0, m_dataPool.Count)];
     }
 
     Equation GetRandomEquation()
     {
-        DataRow sum = DataHelpers.GetLegalSum(m_numberPool);
+        DataRow sum = DataHelpers.GetLegalSum(m_dataPool);
         
-        List<DataRow> equationParts = DataHelpers.GetLegalAdditionLHS(sum, m_numberPool);
+        List<DataRow> equationParts = DataHelpers.GetLegalAdditionLHS(sum, m_dataPool);
         equationParts.Add(sum); // Add sum last because it needs to go on RHS and m_equationPartLocators are sorted from left to right
         
         //int missingIndex = Random.Range(0, equationParts.Count);

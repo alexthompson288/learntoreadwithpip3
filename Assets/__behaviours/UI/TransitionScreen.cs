@@ -341,5 +341,4 @@ public class TransitionScreen : Singleton<TransitionScreen>
 			//D.Log(sceneName + " is already on back stack");
 		}
 	}
-	
 }

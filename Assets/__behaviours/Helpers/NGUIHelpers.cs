@@ -17,6 +17,15 @@ public static class NGUIHelpers
         }
     }
 
+    public static Vector3 GetLabelSize3(UILabel label)
+    {
+        Vector2 size = label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None);
+        size.x *= label.transform.localScale.x;
+        size.y *= label.transform.localScale.y;
+
+        return new Vector3(size.x, size.y, label.transform.localScale.z);
+    }
+
     public static float GetLabelWidth(UILabel label)
     {
         return label.font.CalculatePrintedSize(label.text, false, UIFont.SymbolStyle.None).x * label.transform.localScale.x;

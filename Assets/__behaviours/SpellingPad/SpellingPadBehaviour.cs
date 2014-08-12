@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using Wingrove;
 
-public class SpellingPadBehaviour : Singleton<SpellingPadBehaviour> 
+public class SpellingPadBehaviour : MonoBehaviour
 {
 	[SerializeField]
 	private GameObject m_phonemePrefab;

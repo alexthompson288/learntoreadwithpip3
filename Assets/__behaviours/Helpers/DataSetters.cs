@@ -4,9 +4,34 @@ using System.Collections.Generic;
 
 public static class DataSetters 
 {
-    public static void LevelUpTimes(List<DataRow> timePool)
+    public static List<DataRow> LevelUpPhonemes()
     {
-        D.Log("CompleteEquationCoordinator.OnLevelUp()");
+        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        
+        if (hasIncremented)
+        {
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+        }
+        
+        return DataHelpers.GetData("phonemes");
+    }
+
+    public static List<DataRow> LevelUpWords()
+    {
+        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+
+        if (hasIncremented)
+        {
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+        }
+
+        return DataHelpers.GetData("words");
+    }
+
+    public static List<DataRow> LevelUpTimes()
+    {
         bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
         
         D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
@@ -14,8 +39,9 @@ public static class DataSetters
         if (hasIncremented)
         {
             DataSetters.AddModuleTimes(GameManager.Instance.currentColor);
-            timePool = DataHelpers.GetData("numbers");
         }
+
+        return DataHelpers.GetData("numbers");
     }
 
     public static void AddModuleTimes(ColorInfo.PipColor pipColor)
@@ -24,24 +50,20 @@ public static class DataSetters
         GameManager.Instance.ReplaceData("times", times);
     }
 
-    public static void LevelUpNumbers(List<DataRow> numberPool)
+    public static List<DataRow> LevelUpNumbers()
     {
-        D.Log("CompleteEquationCoordinator.OnLevelUp()");
         bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
-        
-        D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
-        
+
         if (hasIncremented)
         {
             DataSetters.AddModuleNumbers(GameManager.Instance.currentColor);
-            numberPool = DataHelpers.GetData("numbers");
         }
+
+        return DataHelpers.GetData("numbers");
     }
 
     public static void AddModuleNumbers(ColorInfo.PipColor pipColor)
     {
-        D.Log("DataSetters.AddModuleNumbers()");
-
         int moduleId = DataHelpers.GetModuleId(pipColor);
 
         List<DataRow> existingNumbers = GameManager.Instance.GetData("numbers");
@@ -49,9 +71,6 @@ public static class DataSetters
         
         int previousHighestNumber = existingNumbers.Count == 0 ? -1 : existingNumbers[existingNumbers.Count - 1].GetInt("value");  
         int newHighestNumber = DataHelpers.GetHighestModuleNumber(pipColor);
-
-        D.Log("previousHighest: " + previousHighestNumber);
-        D.Log("newHighest: " + newHighestNumber);
         
         GameManager.Instance.AddData("numbers", DataHelpers.CreateNumbers(previousHighestNumber + 1, newHighestNumber));
     }

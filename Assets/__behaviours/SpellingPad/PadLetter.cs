@@ -5,6 +5,8 @@ public class PadLetter : MonoBehaviour
 {
     [SerializeField]
     private UILabel m_label;
+    [SerializeField]
+    private GameObject m_highlight;
 
     Collider m_other;
 
@@ -71,7 +73,14 @@ public class PadLetter : MonoBehaviour
 
     public void Highlight()
     {
-        
+        StartCoroutine(HighlightCo());
+    }
+
+    IEnumerator HighlightCo()
+    {
+        m_highlight.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        m_highlight.SetActive(false);
     }
 
     public Collider GetOther()

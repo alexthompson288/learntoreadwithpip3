@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ScoreHealth : ScoreKeeper
+public class ScoreHealth : PlusScoreKeeper
 {
-    public event ScoreKeeperEventHandler LevelledUp;
-
     [SerializeField]
     private int m_maxPixelsMovePerFrame;
     [SerializeField]
@@ -12,25 +10,11 @@ public class ScoreHealth : ScoreKeeper
     [SerializeField]
     private Transform m_healthBarTargetLocation;
     [SerializeField]
-    private int m_maxHealth;
-    [SerializeField]
-    private int m_startHealth;
-    [SerializeField]
-    private float m_healthGainedOnCorrect;
-    [SerializeField]
-    private float m_healthLostOnIncorrect;
-    [SerializeField]
-    private float m_healthLostPerSecond;
-    [SerializeField]
-    private string m_levelUpFormula;
-    [SerializeField]
     private UILabel m_scoreLabel;
     [SerializeField]
     private GameObject m_multiplayerParent;
     [SerializeField]
     private UISprite m_multiplayerBar;
-    [SerializeField]
-    private ScoreHealth m_opponentKeeper;
     [SerializeField]
     private GameObject m_debuggingLevelUpGo;
     [SerializeField]
@@ -39,40 +23,10 @@ public class ScoreHealth : ScoreKeeper
     private UISprite m_characterSprite;
     [SerializeField]
     private UISprite m_opponentCharacterSprite;
-    [SerializeField]
-    private State m_state;
-
-    float m_health;
 
     int m_startHeight;
 
-    enum State
-    {
-        Sleep,
-        Timer,
-        LevellingUp
-    }
-
-#if UNITY_EDITOR
-    int m_level = 0;
-
-    /*
-    void OnGUI()
-    {
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label("");
-        GUILayout.Label(System.String.Format("Level: {0}", m_level));
-        GUILayout.Label(System.String.Format("Health: {0} / {1}", m_health, m_maxHealth));
-        GUILayout.Label(System.String.Format("Height: {0}", m_healthBar.height));
-        GUILayout.Label(System.String.Format("StartHeight: {0}", m_startHeight));
-    }
-    */
-#endif
+    ScoreHealth m_opponentScoreHealth;
 
     public int barHeight
     {
@@ -82,21 +36,29 @@ public class ScoreHealth : ScoreKeeper
         }
     }
 
-    public void SetCharacterIcon(int characterIndex)
+    public override void SetCharacterIcon(int characterIndex)
     {
         m_characterSprite.gameObject.SetActive(true);
         m_characterSprite.spriteName = m_characterIconNames [characterIndex];
 
-        if (m_opponentKeeper != null)
+        if (m_opponentScoreHealth != null)
         {
-            m_opponentKeeper.SetOpponentCharacterIcon(characterIndex);
+            m_opponentScoreHealth.SetOpponentCharacterIcon(characterIndex);
         }
     }
 
-    void SetOpponentCharacterIcon(int opponentCharacterIndex)
+    protected override void SetOpponentCharacterIcon(int opponentCharacterIndex)
     {
         m_opponentCharacterSprite.gameObject.SetActive(true);
         m_opponentCharacterSprite.spriteName = m_characterIconNames [opponentCharacterIndex];
+    }
+
+    void Awake()
+    {
+        if (m_opponentKeeper is ScoreHealth)
+        {
+            m_opponentScoreHealth = m_opponentKeeper as ScoreHealth;
+        }
     }
 
     void Start ()
@@ -156,9 +118,6 @@ public class ScoreHealth : ScoreKeeper
 
         if (Mathf.Approximately(m_health, m_maxHealth))
         {
-#if UNITY_EDITOR
-            ++m_level;
-#endif
             m_state = State.LevellingUp;
             StartCoroutine(LevelUp());
         }
@@ -180,10 +139,7 @@ public class ScoreHealth : ScoreKeeper
             m_healthLostPerSecond = StringHelpers.Evalf(System.String.Format(m_levelUpFormula, m_healthLostPerSecond));
         }
         
-        if(LevelledUp != null)
-        {
-            LevelledUp(this);
-        }
+        InvokeLevelledUp();
         
         m_debuggingLevelUpGo.SetActive(true);
 
@@ -207,21 +163,6 @@ public class ScoreHealth : ScoreKeeper
         m_state = State.Timer;
 
         m_debuggingLevelUpGo.SetActive(false);
-    }
-
-    public void SetLevelUpFormula(string myLevelUpFormula)
-    {
-        m_levelUpFormula = myLevelUpFormula;
-    }
-
-    public void SetHealthLostPerSecond(float myHealthLostPerSecond)
-    {
-        m_healthLostPerSecond = myHealthLostPerSecond;
-    }
-
-    public void StartTimer()
-    {
-        m_state = State.Timer;
     }
 
     void Update()
@@ -254,9 +195,9 @@ public class ScoreHealth : ScoreKeeper
         
         m_healthBar.height += barMoveAmount;
         
-        if (m_opponentKeeper != null)
+        if (m_opponentScoreHealth != null)
         {
-            m_multiplayerBar.height = m_opponentKeeper.barHeight;
+            m_multiplayerBar.height = m_opponentScoreHealth.barHeight;
         }
     }
 }

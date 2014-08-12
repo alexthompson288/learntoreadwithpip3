@@ -3,10 +3,20 @@ using System.Collections;
 
 public class PlayWordSpellingButton : MonoBehaviour 
 {
+    [SerializeField]
+    private SpellingPadBehaviour m_spellingPad;
 	[SerializeField]
 	private AudioSource m_audioSource;
 	[SerializeField]
 	private GameObject m_hideObject;
+
+    void Start()
+    {
+        if (m_spellingPad == null)
+        {
+            m_spellingPad = GetComponentInParent<SpellingPadBehaviour>() as SpellingPadBehaviour;
+        }
+    }
 	
 	public void SetWordAudio(string audioFilename)
 	{
@@ -26,7 +36,7 @@ public class PlayWordSpellingButton : MonoBehaviour
 
 	public void SpeakAll()
 	{
-		StartCoroutine(SpellingPadBehaviour.Instance.Segment(m_audioSource.clip.length + 0.15f));
+        StartCoroutine(m_spellingPad.Segment(m_audioSource.clip.length + 0.15f));
 	}
 	
 	public void Speak()
@@ -36,7 +46,7 @@ public class PlayWordSpellingButton : MonoBehaviour
 	
 	IEnumerator PlayWord()
 	{
-		SpellingPadBehaviour.Instance.HighlightWholeWord();
+        m_spellingPad.HighlightWholeWord();
 
 		m_audioSource.Play();
 		while (m_audioSource.isPlaying)

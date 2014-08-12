@@ -2,53 +2,59 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordinator> 
+public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator> 
 {
     [SerializeField]
-    private MultiplicationQuadPlayer[] m_gamePlayers;
-    [SerializeField]
-    private GameObject m_pointPrefab;
-    [SerializeField]
-    private float m_timeLimit;
+    private PlusCorrectWordPlayer[] m_gamePlayers;
     [SerializeField]
     private bool m_questionsAreShared;
     [SerializeField]
-    private GameObject m_sideBarCameraPrefab;
+    private float m_probabilityYesIsCorrect = 0.5f;
     [SerializeField]
-    private int m_maxNumLines = 12;
+    private float m_questionTweenDuration = 0.25f;
     [SerializeField]
-    private bool m_excludePrimeNumbers = false;
+    private Color m_correctColor = Color.green;
+    [SerializeField]
+    private Color m_incorrectColor = Color.red;
+
 
     List<DataRow> m_dataPool = new List<DataRow>();
-
+    
     float m_timeStarted;
 
+    string m_dummyAttribute1 = "dummyword1";
+    string m_dummyAttribute2 = "dummyword2";
+    
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
     }
-
-    IEnumerator Start ()
+    
+    IEnumerator Start()
     {
+        D.Log("PlusCorrectWordCoordinator.Start()");
+        m_probabilityYesIsCorrect = Mathf.Clamp01(m_probabilityYesIsCorrect);
+        
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+        
+        m_dataPool = DataHelpers.GetWords();
+        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
 
-        m_dataPool = DataHelpers.GetNumbers();
-        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
 
+        D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        
         int numPlayers = GetNumPlayers();
-
-        m_questionsAreShared = m_questionsAreShared && numPlayers == 2;
         
         if (numPlayers == 1)
         {
             CharacterSelectionParent.DisableAll();
             SessionInformation.SetDefaultPlayerVar();
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
         }
         else
         {
-            GameObject sideBarCamera = (GameObject)GameObject.Instantiate(m_sideBarCameraPrefab, Vector3.zero, Quaternion.identity);
-            sideBarCamera.transform.parent = m_gamePlayers[0].transform;
-            sideBarCamera.transform.localScale = Vector3.one;
+            SideBarCameraSpawner.Instance.InstantiateSideBarCamera();
             
             yield return new WaitForSeconds(0.5f);
             WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
@@ -82,31 +88,32 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-
-        DataRow sharedData = GetRandomData();
-        m_timeStarted = Time.time;
         
-        for (int i = 0; i < numPlayers; ++i)
+        D.Log("Starting game");
+        
+        if (m_dataPool.Count > 0)
         {
-            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
-            m_gamePlayers[i].SetCurrentData(currentData);
-
-            m_gamePlayers[i].StartGame(i == 0);
+            DataRow sharedData = GetRandomData();
+            
+            m_timeStarted = Time.time;
+            
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+                m_gamePlayers[i].SetCurrentData(currentData);
+                m_gamePlayers[i].StartGame();
+            }
+        }
+        else
+        {
+            StartCoroutine(CompleteGameCo());
         }
     }
 
-    public void CharacterSelected(int characterIndex)
-    {
-        for (int index = 0; index < GetNumPlayers(); ++index)
-        {
-            m_gamePlayers[index].HideCharacter(characterIndex);
-        }
-    }
-
-    public void OnCorrectAnswer(MultiplicationQuadPlayer correctPlayer)
+    public void OnAnswer(PlusCorrectWordPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData();
-
+        
         if (m_questionsAreShared && GetNumPlayers() == 2)
         {
             for(int i = 0; i < GetNumPlayers(); ++i)
@@ -121,19 +128,41 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
             StartCoroutine(correctPlayer.ClearQuestion());
         }
     }
+    
+    DataRow GetRandomData()
+    {
+        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
+
+        m_dataPool.Remove(data);
+
+        if (m_dataPool.Count == 0)
+        {
+            m_dataPool = DataHelpers.GetWords();
+        }
+
+        return data;
+    }
+    
+    public void CharacterSelected(int characterIndex)
+    {
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
+        }
+    }
 
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpNumbers();
+        m_dataPool = DataSetters.LevelUpWords();
     }
-
+    
     public void CompleteGame()
     {
         if (GetNumPlayers() == 1)
         {
             PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
         }
-
+        
         StartCoroutine(CompleteGameCo());
     }
     
@@ -146,45 +175,33 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         GameManager.Instance.CompleteGame();
     }
 
-    DataRow GetRandomData()
+    public float GetProbabilityYesIsCorrect()
     {
-        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-
-        // Must be able to get number by multiplying 2 integers from 0-12 inclusive
-        while (!MathHelpers.IsTimesTableNum(data.GetInt("value")))
-        {
-            data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-        }
-
-        // Might still want to exclude prime numbers like 11
-        if (m_excludePrimeNumbers)
-        {
-            while (MathHelpers.IsPrime(data.GetInt("value")))
-            {
-                data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-            }
-        }
-
-        return data;
+        return m_probabilityYesIsCorrect;
     }
 
-    public bool AreQuestionsShared()
+    public float GetQuestionTweenDuration()
     {
-        return m_questionsAreShared;
+        return m_questionTweenDuration;
     }
 
-    public int GetMaxNumLines()
+    public string GetDummyAttribute1()
     {
-        return m_maxNumLines;
+        return m_dummyAttribute1;
     }
 
-    public GameObject GetPointPrefab()
+    public string GetDummyAttribute2()
     {
-        return m_pointPrefab;
+        return m_dummyAttribute2;
     }
 
-    public float GetTimeLimit()
+    public Color GetCorrectColor()
     {
-        return m_timeLimit;
+        return m_correctColor;
+    }
+
+    public Color GetIncorrectColor()
+    {
+        return m_incorrectColor;
     }
 }

@@ -15,7 +15,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     [SerializeField]
     private GameObject m_sideBarCameraPrefab;
 
-    List<DataRow> m_numberPool = new List<DataRow>();
+    List<DataRow> m_dataPool = new List<DataRow>();
 
     float m_timeStarted;
 
@@ -23,7 +23,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_numberPool = DataHelpers.GetNumbers();
+        m_dataPool = DataHelpers.GetNumbers();
 
         int numPlayers = GetNumPlayers();
 
@@ -108,12 +108,12 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
     public void OnLevelUp()
     {
-        DataSetters.LevelUpNumbers(m_numberPool);
+        m_dataPool = DataSetters.LevelUpNumbers();
     }
 
     public int GetRandomValue()
     {
-        return m_numberPool [Random.Range(0, m_numberPool.Count)].GetInt("value");
+        return m_dataPool [Random.Range(0, m_dataPool.Count)].GetInt("value");
     }
 
     public GameObject GetToyPrefab()

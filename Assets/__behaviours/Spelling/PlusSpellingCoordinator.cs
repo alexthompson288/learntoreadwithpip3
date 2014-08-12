@@ -2,42 +2,39 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordinator> 
+public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
 {
-    [SerializeField]
-    private MultiplicationQuadPlayer[] m_gamePlayers;
-    [SerializeField]
-    private GameObject m_pointPrefab;
-    [SerializeField]
-    private float m_timeLimit;
     [SerializeField]
     private bool m_questionsAreShared;
     [SerializeField]
+    private bool m_useNonsenseWords;
+    [SerializeField]
+    private int m_numLettersToSpawn = 15;
+    [SerializeField]
+    private PlusSpellingPlayer[] m_gamePlayers;
+    [SerializeField]
     private GameObject m_sideBarCameraPrefab;
     [SerializeField]
-    private int m_maxNumLines = 12;
-    [SerializeField]
-    private bool m_excludePrimeNumbers = false;
-
-    List<DataRow> m_dataPool = new List<DataRow>();
+    private GameObject m_draggablePrefab;
 
     float m_timeStarted;
+
+    List<DataRow> m_wordPool = new List<DataRow>();
 
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
     }
 
-    IEnumerator Start ()
+    IEnumerator Start()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_dataPool = DataHelpers.GetNumbers();
-        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+        m_wordPool = DataHelpers.GetWords();
 
+        D.Log("m_wordPool.Count: " + m_wordPool.Count);
+        
         int numPlayers = GetNumPlayers();
-
-        m_questionsAreShared = m_questionsAreShared && numPlayers == 2;
         
         if (numPlayers == 1)
         {
@@ -82,31 +79,25 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-
-        DataRow sharedData = GetRandomData();
+        
+        D.Log("Starting game");
+        
+        DataRow sharedData = GetRandomWord();
+        
         m_timeStarted = Time.time;
         
         for (int i = 0; i < numPlayers; ++i)
         {
-            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomWord();
             m_gamePlayers[i].SetCurrentData(currentData);
-
-            m_gamePlayers[i].StartGame(i == 0);
+            m_gamePlayers[i].StartGame();
         }
     }
 
-    public void CharacterSelected(int characterIndex)
+    public void OnCorrectAnswer(PlusSpellingPlayer correctPlayer)
     {
-        for (int index = 0; index < GetNumPlayers(); ++index)
-        {
-            m_gamePlayers[index].HideCharacter(characterIndex);
-        }
-    }
-
-    public void OnCorrectAnswer(MultiplicationQuadPlayer correctPlayer)
-    {
-        DataRow currentData = GetRandomData();
-
+        DataRow currentData = GetRandomWord();
+        
         if (m_questionsAreShared && GetNumPlayers() == 2)
         {
             for(int i = 0; i < GetNumPlayers(); ++i)
@@ -122,21 +113,42 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
     }
 
-    public void OnLevelUp()
+    public void CharacterSelected(int characterIndex)
     {
-        m_dataPool = DataSetters.LevelUpNumbers();
+        for (int index = 0; index < GetNumPlayers(); ++index)
+        {
+            m_gamePlayers[index].HideCharacter(characterIndex);
+        }
     }
 
+    DataRow GetRandomWord()
+    {
+        DataRow data = m_wordPool [Random.Range(0, m_wordPool.Count)];
+
+        m_wordPool.Remove(data);
+        if (m_wordPool.Count == 0)
+        {
+            m_wordPool = DataHelpers.GetWords();
+        }
+
+        return data;
+    }
+
+    public void OnLevelUp()
+    {
+        m_wordPool = DataSetters.LevelUpWords();
+    }
+    
     public void CompleteGame()
     {
         if (GetNumPlayers() == 1)
         {
             PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
         }
-
+        
         StartCoroutine(CompleteGameCo());
     }
-    
+
     IEnumerator CompleteGameCo()
     {
         int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
@@ -146,45 +158,18 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         GameManager.Instance.CompleteGame();
     }
 
-    DataRow GetRandomData()
+    public GameObject GetDraggablePrefab()
     {
-        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-
-        // Must be able to get number by multiplying 2 integers from 0-12 inclusive
-        while (!MathHelpers.IsTimesTableNum(data.GetInt("value")))
-        {
-            data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-        }
-
-        // Might still want to exclude prime numbers like 11
-        if (m_excludePrimeNumbers)
-        {
-            while (MathHelpers.IsPrime(data.GetInt("value")))
-            {
-                data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
-            }
-        }
-
-        return data;
+        return m_draggablePrefab;
     }
 
-    public bool AreQuestionsShared()
+    public int GetNumLettersToSpawn()
     {
-        return m_questionsAreShared;
+        return m_numLettersToSpawn;
     }
 
-    public int GetMaxNumLines()
+    public bool CanPlayAudio()
     {
-        return m_maxNumLines;
-    }
-
-    public GameObject GetPointPrefab()
-    {
-        return m_pointPrefab;
-    }
-
-    public float GetTimeLimit()
-    {
-        return m_timeLimit;
+        return SessionInformation.Instance.GetNumPlayers() == 2 || m_questionsAreShared;
     }
 }

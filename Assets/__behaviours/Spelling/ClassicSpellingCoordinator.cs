@@ -25,6 +25,8 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     private AudioSource m_audioSource;
     [SerializeField]
     private AudioClip m_instructions;
+	[SerializeField]
+	private SpellingPadBehaviour m_spellingPad;
 
     float m_startTime;
     
@@ -131,7 +133,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         
         m_targetCorrectLetters = word.Length;
         
-        SpellingPadBehaviour.Instance.DisplayNewWord(word);
+        m_spellingPad.DisplayNewWord(word);
         
         List<Transform> locators = m_locators.ToList();
         
@@ -148,7 +150,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             m_draggables.Add(newDraggable);
         }
         
-        SpellingPadBehaviour.Instance.SayWholeWord();
+        m_spellingPad.SayWholeWord();
 
         yield return null;
     }
@@ -181,7 +183,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
     
     IEnumerator OnQuestionEnd()
     {
-        SpellingPadBehaviour.Instance.SayWholeWord();
+        m_spellingPad.SayWholeWord();
 
         yield return new WaitForSeconds(0.8f);
 
@@ -218,7 +220,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
         currentDraggable.ChangeBackgroundState(true);
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPLAT_MUSHROOM");
 
-        PadLetter padLetter = SpellingPadBehaviour.Instance.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
+        PadLetter padLetter = m_spellingPad.CheckLetters(currentDraggable.labelText, currentDraggable.collider);
 
         ////D.Log("first attempt: " + padLetter);
 
@@ -246,7 +248,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
             if(padLetter == null)
             {
-                padLetter = SpellingPadBehaviour.Instance.GetFirstUnansweredPhoneme();
+                padLetter = m_spellingPad.GetFirstUnansweredPhoneme();
                 ////D.Log("second attempt: " + padLetter);
             }
 
@@ -283,7 +285,7 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             {
                 if(m_wrongAnswers >= 3)
                 {
-                    SpellingPadBehaviour.Instance.SayShowSequential();
+                    m_spellingPad.SayShowSequential();
                 }
             }
         }
@@ -301,13 +303,13 @@ public class ClassicSpellingCoordinator : MonoBehaviour
             switch(m_wrongAnswers)
             {
                 case 2:
-                    SpellingPadBehaviour.Instance.SayShowAll(true);
+                    m_spellingPad.SayShowAll(true);
                     break;
                 case 3:
-                    SpellingPadBehaviour.Instance.SayShowSequential();
+                    m_spellingPad.SayShowSequential();
                     break;
                 default:
-                    SpellingPadBehaviour.Instance.SayAll();
+                    m_spellingPad.SayAll();
                     break;
             }
         }

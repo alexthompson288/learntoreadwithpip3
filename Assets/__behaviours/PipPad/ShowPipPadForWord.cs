@@ -25,25 +25,30 @@ public class ShowPipPadForWord : MonoBehaviour {
         bc.center = new Vector3(wordSize.x / 2, bc.center.y, bc.center.z);
 
 		m_editedWord = word.Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", "");
-		Vector3 spriteSize = GetComponent<UILabel>().font.CalculatePrintedSize(m_editedWord, false, UIFont.SymbolStyle.None);
-		m_sprite.width = (int)spriteSize.x;
-		m_sprite.height = (int)spriteSize.y;
+
+        if (m_sprite != null)
+        {
+            m_sprite.width = (int)wordSize.x;
+            m_sprite.height = (int)wordSize.y;
+        }
 
 		m_showPad = showPad;
     }
 
 	public void Highlight(bool decodeable)
 	{
-		m_sprite.enabled = true;
+        if (m_sprite != null)
+        {
+            m_sprite.enabled = true;
 
-		if(decodeable)
-		{
-			m_sprite.color = m_decodeableColor;
-		}
-		else
-		{
-			m_sprite.color = m_nonDecodeableColor;
-		}
+            if (decodeable)
+            {
+                m_sprite.color = m_decodeableColor;
+            } else
+            {
+                m_sprite.color = m_nonDecodeableColor;
+            }
+        }
 	}
 
     void OnClick()
@@ -52,7 +57,7 @@ public class ShowPipPadForWord : MonoBehaviour {
 		{
         	PipPadBehaviour.Instance.Show(m_word.ToLower(), true);
 		}
-		else
+		else if(m_audioSource != null)
 		{
 			m_audioSource.clip = LoaderHelpers.LoadAudioForWord(m_editedWord);
 			m_audioSource.Play();
