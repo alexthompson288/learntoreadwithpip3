@@ -14,7 +14,9 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     [SerializeField]
     private PipButton m_mathsButton;
     [SerializeField]
-    private TweenOnOffBehaviour m_colorChoiceTweenBehaviour;
+    private GameObject m_chooseColorMoveable;
+    [SerializeField]
+    private ClickEvent m_chooseColorBackCollider;
     [SerializeField]
     private PipButton[] m_chooseColorButtons;
 
@@ -28,6 +30,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     void Start()
     {
+        m_chooseColorBackCollider.SingleClicked += OnClickChooseColorBackCollider;
+
         if (GameManager.Instance.programme == "Reading2")
         {
             m_camera.transform.position = m_readingParent.position;
@@ -121,9 +125,28 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             }
             else
             {
-                m_colorChoiceTweenBehaviour.On();
+                //m_colorChoiceTweenBehaviour.On();
+                Hashtable tweenArgs = new Hashtable();
+                tweenArgs.Add("position", Vector3.zero);
+                tweenArgs.Add("time", 0.25f);
+                tweenArgs.Add("islocal", true);
+
+                iTween.MoveTo(m_chooseColorMoveable, tweenArgs);
             }    
         }
+    }
+
+    void OnClickChooseColorBackCollider(ClickEvent click)
+    {
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", new Vector3(0, -875f, 0));
+        tweenArgs.Add("time", 0.2f);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+        tweenArgs.Add("islocal", true);
+        
+        iTween.MoveTo(m_chooseColorMoveable, tweenArgs);
+
+        m_hasClickedGameButton = false;
     }
 
     void OnUnpressChooseColorButton(PipButton button)

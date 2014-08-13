@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator> 
+public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator> 
 {
     [SerializeField]
-    private PlusCorrectWordPlayer[] m_gamePlayers;
+    private CorrectWordPlayer[] m_gamePlayers;
     [SerializeField]
     private bool m_questionsAreShared;
     [SerializeField]
@@ -107,7 +107,7 @@ public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator>
         }
     }
 
-    public void OnAnswer(PlusCorrectWordPlayer correctPlayer)
+    public void OnAnswer(CorrectWordPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData();
         

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlusCorrectWordPlayer : PlusGamePlayer 
+public class CorrectWordPlayer : PlusGamePlayer 
 {
     [SerializeField]
     private GameObject m_questionParent;
@@ -43,7 +43,7 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
     {
         base.SelectCharacter(characterIndex);
 
-        PlusCorrectWordCoordinator.Instance.CharacterSelected(characterIndex);
+        CorrectWordCoordinator.Instance.CharacterSelected(characterIndex);
     }
 
     public void StartGame()
@@ -78,10 +78,10 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
 
         Color[] colors = new Color[2];
 
-        if (Random.Range(0f, 1f) > PlusCorrectWordCoordinator.Instance.GetProbabilityYesIsCorrect())
+        if (Random.Range(0f, 1f) > CorrectWordCoordinator.Instance.GetProbabilityYesIsCorrect())
         {
-            string dummy1 = PlusCorrectWordCoordinator.Instance.GetDummyAttribute1();
-            string dummy2 = PlusCorrectWordCoordinator.Instance.GetDummyAttribute2();
+            string dummy1 = CorrectWordCoordinator.Instance.GetDummyAttribute1();
+            string dummy2 = CorrectWordCoordinator.Instance.GetDummyAttribute2();
 
             string dummyAttribute = Random.Range(0, 2) == 0 ? dummy1 : dummy2;
             if (m_currentData [dummyAttribute] == null)
@@ -91,13 +91,13 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
 
             word = m_currentData [dummyAttribute].ToString();
 
-            colors [0] = PlusCorrectWordCoordinator.Instance.GetIncorrectColor();
-            colors [1] = PlusCorrectWordCoordinator.Instance.GetCorrectColor();
+            colors [0] = CorrectWordCoordinator.Instance.GetIncorrectColor();
+            colors [1] = CorrectWordCoordinator.Instance.GetCorrectColor();
         } 
         else
         {
-            colors [0] = PlusCorrectWordCoordinator.Instance.GetCorrectColor();
-            colors [1] = PlusCorrectWordCoordinator.Instance.GetIncorrectColor();
+            colors [0] = CorrectWordCoordinator.Instance.GetCorrectColor();
+            colors [1] = CorrectWordCoordinator.Instance.GetIncorrectColor();
         }
 
         for (int i = 0; i < m_questionLabels.Length && i < colors.Length; ++i)
@@ -150,7 +150,7 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
 
         if (!yesIsCorrect)
         {
-            float tweenDuration = PlusCorrectWordCoordinator.Instance.GetQuestionTweenDuration();
+            float tweenDuration = CorrectWordCoordinator.Instance.GetQuestionTweenDuration();
             iTween.MoveTo(m_questionLabels[1], m_questionLabelLocationOn.position, tweenDuration);
             yield return new WaitForSeconds(tweenDuration / 3);
             iTween.MoveTo(m_questionLabels[0], m_questionLabelLocationRightOff.position, tweenDuration);
@@ -169,12 +169,12 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
 
         yield return new WaitForSeconds(delay);
         
-        PlusCorrectWordCoordinator.Instance.OnAnswer(this);
+        CorrectWordCoordinator.Instance.OnAnswer(this);
     }
     
     void TweenQuestionParents(Vector3 newScale)
     {
-        iTween.ScaleTo(m_questionImageParent, newScale, PlusCorrectWordCoordinator.Instance.GetQuestionTweenDuration());
+        iTween.ScaleTo(m_questionImageParent, newScale, CorrectWordCoordinator.Instance.GetQuestionTweenDuration());
 
         string audioString = Mathf.Approximately(newScale.x, 0) ? "SOMETHING_APPEAR" : "SOMETHING_DISAPPEAR";
         WingroveAudio.WingroveRoot.Instance.PostEvent(audioString);
@@ -186,18 +186,18 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
 
         TweenQuestionParents(Vector3.zero);
         
-        yield return new WaitForSeconds(PlusCorrectWordCoordinator.Instance.GetQuestionTweenDuration());
+        yield return new WaitForSeconds(CorrectWordCoordinator.Instance.GetQuestionTweenDuration());
         
         AskQuestion();
     }
 
     void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)
     {
-        PlusCorrectWordCoordinator.Instance.CompleteGame();
+        CorrectWordCoordinator.Instance.CompleteGame();
     }
     
     void OnLevelUp(ScoreKeeper scoreKeeper)
     {
-        PlusCorrectWordCoordinator.Instance.OnLevelUp();
+        CorrectWordCoordinator.Instance.OnLevelUp();
     }
 }

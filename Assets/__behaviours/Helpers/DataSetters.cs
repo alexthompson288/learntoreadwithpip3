@@ -4,6 +4,34 @@ using System.Collections.Generic;
 
 public static class DataSetters 
 {
+    public static List<DataRow> LevelUpCorrectCaptions()
+    {
+        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        
+        if (hasIncremented)
+        {
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+        }
+        
+        return DataHelpers.GetData("correctcaptions");
+    }
+
+    public static List<DataRow> LevelUpQuizQuestions()
+    {
+        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        
+        if (hasIncremented)
+        {
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
+        }
+
+        return DataHelpers.GetData("quizquestions");
+    }
+
     public static List<DataRow> LevelUpPhonemes()
     {
         bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
