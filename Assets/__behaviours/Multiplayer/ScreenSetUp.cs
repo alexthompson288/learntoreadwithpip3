@@ -25,8 +25,8 @@ public class ScreenSetUp : MonoBehaviour
     private bool m_adjustFor43;
 
 	// Use this for initialization
-	void Awake() 
-    //void Start()
+	//void Awake() 
+    void Start()
     {
 		bool twoPlayer;
 		

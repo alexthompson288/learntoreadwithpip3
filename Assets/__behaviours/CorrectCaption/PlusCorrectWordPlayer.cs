@@ -50,20 +50,22 @@ public class PlusCorrectWordPlayer : PlusGamePlayer
     {
         m_yesButton.SingleClicked += OnAnswer;
         m_noButton.SingleClicked += OnAnswer;
-
+        
         m_scoreKeeper.SetHealthLostPerSecond(1f);
-
+        
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
         m_scoreKeeper.StartTimer();
         
-        AskQuestion();
+        m_questionParent.GetComponent<TweenOnOffBehaviour>().On();
+        
+        AskQuestion();    
     }
-    
+
     void AskQuestion()
     {
-        m_questionLabels[0].transform.position = m_questionLabelLocationOn.position;
-        m_questionLabels[1].transform.position = m_questionLabelLocationLeftOff.position;
+        m_questionLabels[0].transform.localPosition = m_questionLabelLocationOn.localPosition;
+        m_questionLabels[1].transform.localPosition = m_questionLabelLocationLeftOff.localPosition;
 
         Texture2D tex = DataHelpers.GetPicture(m_currentData);
         m_questionImage.mainTexture = tex;

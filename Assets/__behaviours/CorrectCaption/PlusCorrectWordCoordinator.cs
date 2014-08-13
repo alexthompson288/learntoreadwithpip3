@@ -32,7 +32,6 @@ public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator>
     
     IEnumerator Start()
     {
-        D.Log("PlusCorrectWordCoordinator.Start()");
         m_probabilityYesIsCorrect = Mathf.Clamp01(m_probabilityYesIsCorrect);
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
@@ -42,8 +41,6 @@ public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator>
 
         m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
 
-        D.Log("m_dataPool.Count: " + m_dataPool.Count);
-        
         int numPlayers = GetNumPlayers();
         
         if (numPlayers == 1)
@@ -154,6 +151,7 @@ public class PlusCorrectWordCoordinator : Singleton<PlusCorrectWordCoordinator>
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpWords();
+        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
     }
     
     public void CompleteGame()
