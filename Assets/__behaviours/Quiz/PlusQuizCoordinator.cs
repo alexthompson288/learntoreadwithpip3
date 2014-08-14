@@ -94,7 +94,7 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 		}
 	}
 	
-	public void OnAnswer(PlusQuizPlayer player)
+	public void OnCorrectAnswer(PlusQuizPlayer correctPlayer)
 	{
 		DataRow currentData = GetRandomData();
 		
@@ -108,8 +108,8 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 		}
 		else
 		{
-            player.SetCurrentData(currentData);
-            StartCoroutine(player.ClearQuestion());
+            correctPlayer.SetCurrentData(currentData);
+            StartCoroutine(correctPlayer.ClearQuestion());
 		}
 	}
 	

@@ -29,6 +29,12 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     {
         return SessionInformation.Instance.GetNumPlayers();
     }
+
+    void RemoveIllegalData()
+    {
+        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
+        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
+    }
     
     IEnumerator Start()
     {
@@ -37,9 +43,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_dataPool = DataHelpers.GetWords();
-        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
-
-        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
+        RemoveIllegalData();
 
         int numPlayers = GetNumPlayers();
         
@@ -151,7 +155,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpWords();
-        m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
+        RemoveIllegalData();
     }
     
     public void CompleteGame()

@@ -31,6 +31,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         m_wordPool = DataHelpers.GetWords();
+        m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
 
         D.Log("m_wordPool.Count: " + m_wordPool.Count);
         
@@ -129,6 +130,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
         if (m_wordPool.Count == 0)
         {
             m_wordPool = DataHelpers.GetWords();
+            m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
         }
 
         return data;
@@ -137,6 +139,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     public void OnLevelUp()
     {
         m_wordPool = DataSetters.LevelUpWords();
+        m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
     }
     
     public void CompleteGame()

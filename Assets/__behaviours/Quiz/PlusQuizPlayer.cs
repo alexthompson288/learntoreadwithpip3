@@ -17,6 +17,10 @@ public class PlusQuizPlayer : PlusGamePlayer
     private GameObject m_answerLabelPrefab;
     [SerializeField]
     private Transform[] m_locators;
+    [SerializeField]
+    private GameObject m_questionPictureShakable;
+    [SerializeField]
+    private GameObject m_questionLabelShakable;
 
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
 
@@ -29,9 +33,7 @@ public class PlusQuizPlayer : PlusGamePlayer
     Vector3 m_labelBeforePos;
     
     float m_widgetOffDistance = 2000;
-    
-    bool m_hasAnswered = false;
-	
+    	
 	public void SetCurrentData(DataRow myCurrentData)
 	{
 		m_currentData = myCurrentData;
@@ -72,8 +74,6 @@ public class PlusQuizPlayer : PlusGamePlayer
 	
 	IEnumerator AskQuestion()
 	{
-        m_hasAnswered = false;
-        
         m_questionPictureParent.transform.localPosition = m_pictureBeforePos;
         m_questionLabelParent.transform.localPosition = m_labelBeforePos;
 
@@ -137,18 +137,44 @@ public class PlusQuizPlayer : PlusGamePlayer
         }
 	}
 
-    void OnAnswer(GameWidget answer)
+#if UNITY_EDITOR
+    void Update()
     {
-        if (!m_hasAnswered)
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            m_hasAnswered = true;
-            
-            bool isCorrect = (answer == null || answer.labelText == m_currentData ["correctanswer"].ToString());
-            
-            int scoreDelta = isCorrect ? 1 : -1;
-            m_scoreKeeper.UpdateScore(scoreDelta);
-            
-            PlusQuizCoordinator.Instance.OnAnswer(this);
+            foreach(GameWidget widget in m_spawnedAnswers)
+            {
+                if(widget.labelText == m_currentData ["correctanswer"].ToString())
+                {
+                    OnAnswer(widget);
+                    break;
+                }
+            }
+        }
+    }
+#endif
+
+    void OnAnswer(GameWidget widget)
+    {
+        bool isCorrect = (widget == null || widget.labelText == m_currentData ["correctanswer"].ToString());
+        
+        int scoreDelta = isCorrect ? 1 : -1;
+        m_scoreKeeper.UpdateScore(scoreDelta);
+        
+        if (isCorrect)
+        {
+            PlusQuizCoordinator.Instance.OnCorrectAnswer(this);
+        }
+        else
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+            Vector3 shakeAmount = Vector3.one * 0.2f;
+            float shakeDuration = 0.25f;
+            iTween.ShakePosition(m_questionLabelShakable, shakeAmount, shakeDuration);
+            iTween.ShakePosition(m_questionPictureShakable, shakeAmount, shakeDuration);
+            widget.Shake();
+            widget.TintGray();
+            widget.EnableCollider(false);
         }
     }
 	

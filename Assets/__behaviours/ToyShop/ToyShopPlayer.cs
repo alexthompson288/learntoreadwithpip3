@@ -66,7 +66,10 @@ public class ToyShopPlayer : GamePlayer
     public void StartGame(bool subscribeToTimer)
     {
         D.Log("ToyShopPlayer.StartGame()");
-        m_coinStackTweenBehaviour.On();
+        if (m_coinStackTweenBehaviour != null)
+        {
+            m_coinStackTweenBehaviour.On();
+        }
 
         m_goButton.Unpressing += OnUnpressGoButton;
 

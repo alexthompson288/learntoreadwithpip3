@@ -16,17 +16,29 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private UISprite m_multiplayerBar;
     [SerializeField]
-    private GameObject m_debuggingLevelUpGo;
-    [SerializeField]
     private string[] m_characterIconNames;
     [SerializeField]
     private UISprite m_characterSprite;
     [SerializeField]
     private UISprite m_opponentCharacterSprite;
+    [SerializeField]
+    private GameObject m_levelUpTweener;
+
+    Transform m_levelUpOnLocation;
 
     int m_startHeight;
 
     ScoreHealth m_opponentScoreHealth;
+
+    Vector3 m_levelUpOffLocalPosition
+    {
+        get
+        {
+            Vector3 pos = m_levelUpOnLocation.localPosition;
+            pos.x += 500f;
+            return pos;
+        }
+    }
 
     public int barHeight
     {
@@ -59,14 +71,18 @@ public class ScoreHealth : PlusScoreKeeper
         {
             m_opponentScoreHealth = m_opponentKeeper as ScoreHealth;
         }
+
+        m_levelUpOnLocation = new GameObject("LevelUpOnLocation").transform;
+        m_levelUpOnLocation.parent = transform;
+        m_levelUpOnLocation.position = m_levelUpTweener.transform.position;
+
+        m_levelUpTweener.transform.localPosition = m_levelUpOffLocalPosition;
     }
 
     void Start ()
     {
         m_characterSprite.gameObject.SetActive(false);
         m_opponentCharacterSprite.gameObject.SetActive(false);
-
-        m_debuggingLevelUpGo.SetActive(false);
 
         int numPlayers = SessionInformation.Instance.GetNumPlayers();
 
@@ -130,8 +146,6 @@ public class ScoreHealth : PlusScoreKeeper
 
     IEnumerator LevelUp()
     {
-        //yield return new WaitForSeconds(0.75f);
-
         int numPlayers = SessionInformation.Instance.GetNumPlayers();
 
         if (numPlayers == 1)
@@ -141,7 +155,15 @@ public class ScoreHealth : PlusScoreKeeper
         
         InvokeLevelledUp();
         
-        m_debuggingLevelUpGo.SetActive(true);
+        Hashtable onTweenArgs = new Hashtable();
+        onTweenArgs.Add("position", m_levelUpOnLocation);
+        onTweenArgs.Add("time", 0.5f);
+        onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
+        iTween.MoveTo(m_levelUpTweener, onTweenArgs);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
 
         while (m_healthBar.height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
@@ -162,7 +184,14 @@ public class ScoreHealth : PlusScoreKeeper
 
         m_state = State.Timer;
 
-        m_debuggingLevelUpGo.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+
+        Hashtable offTweenArgs = new Hashtable();
+        offTweenArgs.Add("position", m_levelUpOffLocalPosition);
+        offTweenArgs.Add("time", 0.15f);
+        offTweenArgs.Add("easetype", iTween.EaseType.linear);
+        offTweenArgs.Add("islocal", true);
+        iTween.MoveTo(m_levelUpTweener, offTweenArgs);
     }
 
     void Update()

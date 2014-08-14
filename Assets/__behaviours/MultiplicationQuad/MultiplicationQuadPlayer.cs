@@ -165,7 +165,7 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     void OnLevelUp(ScoreKeeper scoreKeeper)
     {
-        CompleteEquationCoordinator.Instance.OnLevelUp();
+        MultiplicationQuadCoordinator.Instance.OnLevelUp();
     }
     
     void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)

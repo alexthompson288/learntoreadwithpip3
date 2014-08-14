@@ -69,7 +69,7 @@ public static class DataSetters
             DataSetters.AddModuleTimes(GameManager.Instance.currentColor);
         }
 
-        return DataHelpers.GetData("numbers");
+        return DataHelpers.GetData("times");
     }
 
     public static void AddModuleTimes(ColorInfo.PipColor pipColor)

@@ -199,6 +199,7 @@ public class PlusSpellingPlayer : GamePlayer
 
     public IEnumerator ClearQuestion()
     {
+        m_wrongAnswers = 0;
         m_correctLetters = 0;
         m_currentLetters.Clear();
         CollectionHelpers.DestroyObjects(m_spawnedDraggables, true);
