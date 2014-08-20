@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2014 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -96,11 +96,11 @@ public class UISavedOption : MonoBehaviour
 	/// Save the selection.
 	/// </summary>
 
-	void SaveSelection () { PlayerPrefs.SetString(key, UIPopupList.current.value); }
+	public void SaveSelection () { PlayerPrefs.SetString(key, UIPopupList.current.value); }
 
 	/// <summary>
 	/// Save the state.
 	/// </summary>
 
-	void SaveState () { PlayerPrefs.SetInt(key, UIToggle.current.value ? 1 : 0); }
+	public void SaveState () { PlayerPrefs.SetInt(key, UIToggle.current.value ? 1 : 0); }
 }
