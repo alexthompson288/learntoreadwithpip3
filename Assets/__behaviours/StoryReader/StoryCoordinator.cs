@@ -47,12 +47,11 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     int m_numPages;
     int m_currentPage;
 
-    string m_currentColor;
     string m_currentTextAttribute
     {
         get
         {
-            return "text_" + m_currentColor;
+            return "text_" + ColorInfo.GetColorString(GameManager.Instance.currentColor).ToLower();
         }
     }
 
@@ -82,9 +81,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        ColorInfo.PipColor startPipColor = StoryInfo.Instance.GetStartPipColor();
-
-        m_currentColor = ColorInfo.GetColorString(startPipColor).ToLower();
+        ColorInfo.PipColor startPipColor = GameManager.Instance.currentColor;
 
         DataRow story = DataHelpers.GetStory();
 
@@ -209,8 +206,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             m_currentColorButton = button;
 
-            m_currentColor = ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower();
-            //SetTextAttribute(ColorInfo.GetColorString(m_currentColorButton.pipColor).ToLower());
+            GameManager.Instance.SetCurrentColor(m_currentColorButton.pipColor);
+ 
 
             ClearText();
             UpdatePage();
@@ -249,7 +246,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         if (storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
-            string audioFileName = storyPage ["audio"] != null ? System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), m_currentColor) : null;
+            string audioFileName = storyPage ["audio"] != null ? 
+                System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), ColorInfo.GetColorString(GameManager.Instance.currentColor)) 
+                    : null;
             //D.Log("audioFileName: " + audioFileName);
 
             m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
@@ -289,6 +288,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 #endif
 
         string textToDisplay = originalText;
+
+        ColorInfo.PipColor currentColor = GameManager.Instance.currentColor;
+        bool isPipPadAllowed = (currentColor != ColorInfo.PipColor.Green && currentColor != ColorInfo.PipColor.Orange);
 
         while (true)
         {
@@ -387,14 +389,22 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                     }
                     
                     ShowPipPadForWord showPipPadForWord = newWordInstance.GetComponent<ShowPipPadForWord>() as ShowPipPadForWord;
-                    bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
-                    
-                    showPipPadForWord.SetUp(newWord, wordSize, true);
-                    
-                    // Highlight if word is on the decode list
-                    if (isOnDecodeList)
+
+                    if(isPipPadAllowed)
                     {
-                        showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
+                        bool isOnDecodeList = m_decodeList.Contains(newWord.ToLower().Replace(".", "").Replace(",", "").Replace(" ", "").Replace("?", ""));
+                        
+                        showPipPadForWord.SetUp(newWord, wordSize, true);
+                        
+                        // Highlight if word is on the decode list
+                        if (isOnDecodeList)
+                        {
+                            showPipPadForWord.Highlight(storyType == "Classic"); // If "Classic" the word is decodeable, otherwise it is non-decodeable
+                        }
+                    }
+                    else
+                    {
+                        Destroy(showPipPadForWord);
                     }
                 }
             }

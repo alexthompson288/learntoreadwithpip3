@@ -159,7 +159,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 	public void ChangeLevel(string level, bool addToStack)
 	{
-        //D.Log("TransitionScreen.ChangeLevel(" + level + ")");
+        D.Log("TransitionScreen.ChangeLevel(" + level + ")");
 		int stackCount = m_backStack.Count;
 		
 		if(stackCount > 0)

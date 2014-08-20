@@ -52,17 +52,6 @@ public class StoryInfo : Singleton<StoryInfo>
         return m_bookmark != null ? m_bookmark.GetPipColor() : ColorInfo.PipColor.Pink;
     }
 
-    ColorInfo.PipColor m_startPipColor = ColorInfo.PipColor.Pink;
-    
-    public void SetStartPipColor(ColorInfo.PipColor startPipColor)
-    {
-        m_startPipColor = startPipColor;
-    }
-    
-    public ColorInfo.PipColor GetStartPipColor()
-    {
-        return m_startPipColor;
-    }
     
     bool m_showText = true;
 
@@ -84,7 +73,6 @@ public class StoryInfo : Singleton<StoryInfo>
     void OnGameCancel()
     {
         GameManager.Instance.CompletedAll -= OnGameComplete;
-        m_startPipColor = ColorInfo.PipColor.Pink;
 
         if(Application.loadedLevelName != "NewStoryMenu")
         {
@@ -95,7 +83,6 @@ public class StoryInfo : Singleton<StoryInfo>
     void OnGameComplete()
     {
         GameManager.Instance.CompletedAll -= OnGameComplete;
-        m_startPipColor = ColorInfo.PipColor.Pink;
     }
 
     public void SubscribeGameComplete()

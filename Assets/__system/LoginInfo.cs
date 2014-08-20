@@ -91,9 +91,8 @@ public class LoginInfo : Singleton<LoginInfo>
         if (m_attemptLogin)
         {
             AttemptLogin();
+            InvokeRepeating("CheckForLogin", 10, 10);
         }
-
-        InvokeRepeating("CheckForLogin", 10, 10);
     }
 
     void CheckForLogin()
