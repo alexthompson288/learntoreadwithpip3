@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2013 Tasharen Entertainment
+// Copyright © 2011-2014 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -45,9 +45,10 @@ public class UIStretch : MonoBehaviour
 
 	/// <summary>
 	/// Whether the operation will occur only once and the script will then be disabled.
+	/// Screen size changes will still cause the script's logic to execute.
 	/// </summary>
 
-	public bool runOnlyOnce = false;
+	public bool runOnlyOnce = true;
 
 	/// <summary>
 	/// Relative-to-target size.
@@ -79,8 +80,9 @@ public class UIStretch : MonoBehaviour
 	UIRoot mRoot;
 	Animation mAnim;
 	Rect mRect;
+	bool mStarted = false;
 
-	void OnEnable ()
+	void Awake ()
 	{
 		mAnim = animation;
 		mRect = new Rect();
@@ -88,7 +90,13 @@ public class UIStretch : MonoBehaviour
 		mWidget = GetComponent<UIWidget>();
 		mSprite = GetComponent<UISprite>();
 		mPanel = GetComponent<UIPanel>();
+
+		UICamera.onScreenResize += ScreenSizeChanged;
 	}
+
+	void OnDestroy () { UICamera.onScreenResize -= ScreenSizeChanged; }
+
+	void ScreenSizeChanged () { if (mStarted && runOnlyOnce) Update(); }
 
 	void Start ()
 	{
@@ -97,13 +105,16 @@ public class UIStretch : MonoBehaviour
 			container = widgetContainer.gameObject;
 			widgetContainer = null;
 #if UNITY_EDITOR
-			UnityEditor.EditorUtility.SetDirty(this);
+			NGUITools.SetDirty(this);
 #endif
 		}
 
 		if (uiCamera == null) uiCamera = NGUITools.FindCameraForLayer(gameObject.layer);
 		mRoot = NGUITools.FindInParents<UIRoot>(gameObject);
+		
 		Update();
+		
+		mStarted = true;
 	}
 
 	void Update ()
@@ -140,11 +151,11 @@ public class UIStretch : MonoBehaviour
 				else
 				{
 					// Panel has clipping -- use it as the mRect
-					Vector4 pos = pc.clipRange;
-					mRect.x = pos.x - (pos.z * 0.5f);
-					mRect.y = pos.y - (pos.w * 0.5f);
-					mRect.width = pos.z;
-					mRect.height = pos.w;
+					Vector4 cr = pc.finalClipRegion;
+					mRect.x = cr.x - (cr.z * 0.5f);
+					mRect.y = cr.y - (cr.w * 0.5f);
+					mRect.width = cr.z;
+					mRect.height = cr.w;
 				}
 			}
 			else if (container != null)
@@ -260,15 +271,15 @@ public class UIStretch : MonoBehaviour
 			}
 			else if (mPanel != null)
 			{
-				Vector4 cr = mPanel.clipRange;
+				Vector4 cr = mPanel.baseClipRegion;
 
 				if (style != Style.Vertical)
 					cr.z = size.x - borderPadding.x;
 				
 				if (style != Style.Horizontal)
 					cr.w = size.y - borderPadding.y;
-				
-				mPanel.clipRange = cr;
+
+				mPanel.baseClipRegion = cr;
 				size = Vector3.one;
 			}
 			else
@@ -283,7 +294,7 @@ public class UIStretch : MonoBehaviour
 			if (mTrans.localScale != size)
 				mTrans.localScale = size;
 
-			if (runOnlyOnce && Application.isPlaying) Destroy(this);
+			if (runOnlyOnce && Application.isPlaying) enabled = false;
 		}
 	}
 }
