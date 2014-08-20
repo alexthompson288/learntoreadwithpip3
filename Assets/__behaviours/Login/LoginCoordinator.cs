@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Net;
 using WingroveAudio;
+using System.Collections.Generic;
 
 public class LoginCoordinator : Singleton<LoginCoordinator> 
 {
@@ -23,12 +24,26 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     [SerializeField]
     private Transform m_pipOnLocation;
     [SerializeField]
-    private UIPanel m_loginPanel;
+    private UIPanel m_loginRegisterPanel;
     [SerializeField]
     private UIPanel m_successPanel;
     [SerializeField]
     private GameObject m_loginButtonParent;
-
+    [SerializeField]
+    private PipButton m_callLoginButton;
+    [SerializeField]
+    private PipButton m_callRegisterButton;
+    [SerializeField]
+    private TweenBehaviour m_registerTweenBehaviour;
+    [SerializeField]
+    private UILabel m_registerNameLabel;
+    [SerializeField]
+    private UILabel m_registerEmailLabel;
+    [SerializeField]
+    private UILabel[] m_registerPasswordLabels;
+    [SerializeField]
+    private PipButton m_registerButton;
+ 
     static string m_infoText = "Login";
 
     private PipAnim m_pipAnim;
@@ -46,7 +61,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_emailInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterEmail"));
         m_passwordInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterPassword"));
 
-        m_loginPanel.alpha = 1;
+        m_loginRegisterPanel.alpha = 1;
         m_successPanel.alpha = 0;
 
         if (!Application.isEditor)
@@ -57,6 +72,10 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
+
+        m_callRegisterButton.Unpressing += OnUnpressCallRegisterButton;
+        m_callLoginButton.Unpressing += OnUnpressCallLoginButton;
+        m_registerButton.Unpressing += OnUnpressRegisterButton;
     }
 
     void OnEnterEmail()
@@ -80,6 +99,55 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
             iTween.ScaleTo(m_loginButtonParent, Vector3.one * 1.25f, 0.2f);
+        }
+    }
+
+    void OnUnpressCallRegisterButton(PipButton button)
+    {
+        m_infoLabel.text = "Register";
+        m_registerTweenBehaviour.Off();
+    }
+
+    void OnUnpressCallLoginButton(PipButton button)
+    {
+        m_infoLabel.text = "Login";
+        m_registerTweenBehaviour.On();
+    }
+
+    void OnUnpressRegisterButton(PipButton button)
+    {
+        Debug.Log("LoginCoordinator.OnUnpressRegisterButton()");
+        HashSet<string> passwords = new HashSet<string>();
+
+        foreach (UILabel label in m_registerPasswordLabels)
+        {
+            passwords.Add(label.text);
+        }
+
+        if (passwords.Count == 1)
+        {
+            try
+            {
+                string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
+                Debug.Log("REGISTER SUCCESS");
+                Debug.Log(responseContent);
+            }
+            catch(WebException ex)
+            {
+                Debug.Log("REGISTER FAIL");
+                if ((ex.Response is System.Net.HttpWebResponse))
+                {
+                    D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                }
+                else
+                {
+                    D.Log("Not HTTP - Exception: " + ex.Message);
+                }
+            }
+        }
+        else
+        {
+            m_infoLabel.text = "Invalid password";
         }
     }
 
@@ -228,7 +296,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             if (isUserLegal)
             {
                 float panelTweenDuration = 0.25f;
-                TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
+                TweenAlpha.Begin(m_loginRegisterPanel.gameObject, panelTweenDuration, 0);
                 TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
                 
                 m_pipSpriteAnim.PlayAnimation("JUMP");

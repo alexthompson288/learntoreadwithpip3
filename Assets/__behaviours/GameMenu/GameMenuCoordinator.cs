@@ -125,8 +125,17 @@ public class GameMenuCoordinator : MonoBehaviour
     void OnPressGameButton(PipButton button)
     {
         DataRow game = DataHelpers.GetGame(button.GetString());
+
+        if (game != null)
+        {
+            GameManager.Instance.AddGame(game);
+        }
+        else
+        {
+            GameManager.Instance.AddGame(button.GetString());
+        }
         
-        if (game != null && m_currentColorButton != null)
+        if (m_currentColorButton != null)
         {
             ChooseGameButton chooseGameButton = button.GetComponent<ChooseGameButton>() as ChooseGameButton;
             int numPlayers = chooseGameButton != null ? chooseGameButton.GetNumPlayers() : 1;
@@ -135,9 +144,6 @@ public class GameMenuCoordinator : MonoBehaviour
             ColorInfo.PipColor pipColor = m_currentColorButton.pipColor;
 
             GameManager.Instance.SetCurrentColor(pipColor);
-            
-            GameManager.Instance.AddGame(game);
-            
             GameManager.Instance.SetReturnScene(Application.loadedLevelName);
             
             // Get and set all the data associated with the color

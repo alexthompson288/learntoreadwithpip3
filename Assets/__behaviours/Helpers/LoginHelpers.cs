@@ -57,8 +57,9 @@ public static class LoginHelpers
     static string m_url = "http://www.learnwithpip.com/api/v1/";
 	//static string m_url = "http://learnwithpip-staging.herokuapp.com/api/v1/";
 	
-	static string m_tokenRequest = "tokens";
-	static string m_userRequest = "users/me";
+	static string m_tokenExtension = "tokens";
+	static string m_userExtension = "users/me";
+    static string m_registerExtension = "newusers";
 
 	public static string ParseResponse(string responseContent, string prefix, string end)
 	{
@@ -68,6 +69,52 @@ public static class LoginHelpers
 
 		return endIndex != -1 ? info.Substring (0, endIndex) : info;
 	}
+
+    public static string Register(string email, string password, string name)
+    {
+        D.Log("LoginHelpers.Register()");
+        #if UNITY_EDITOR
+        // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
+        //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        #endif
+        
+        var request = System.Net.WebRequest.Create(m_url + m_registerExtension) as System.Net.HttpWebRequest;
+        request.KeepAlive = true;
+        request.Method = "POST";
+        request.ContentType="application/json";
+
+        // email, password, name, password confirmation
+        //byte[] bytfArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
+
+        D.Log("email: " + email);
+        D.Log("password: " + password);
+        D.Log("name: " + name);
+
+        //string byteString = String.Format("{\n    \"email\": \"{0}\",\n    \"password\": \"{1}\",\n    \"name\": \"{2}\",\n    \"password_confirmation\": \"{3}\"\n}", 
+                                          //new object[] { email, password, name, password });
+
+        string byteString = "{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\",\n    \"name\": \"" + name + "\",\n    \"password_confirmation\": \"" + password + "\"\n}";
+
+
+        byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(byteString);
+            
+        Debug.Log(byteString);
+
+
+        request.ContentLength = byteArray.Length;
+        using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
+        
+        
+        string responseContent=null;
+        
+        using (var response = request.GetResponse() as System.Net.HttpWebResponse) {
+            using (var reader = new System.IO.StreamReader(response.GetResponseStream())) {
+                responseContent = reader.ReadToEnd();
+            }
+        }
+
+        return responseContent;
+    }
 	
 	public static string RequestToken(string email, string password)
 	{
@@ -76,18 +123,10 @@ public static class LoginHelpers
 		//System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 		#endif
 		
-		//D.Log(m_url + m_tokenRequest);
-		var request = System.Net.WebRequest.Create(m_url + m_tokenRequest) as System.Net.HttpWebRequest;
+		var request = System.Net.WebRequest.Create(m_url + m_tokenExtension) as System.Net.HttpWebRequest;
 		request.KeepAlive = true;
 		request.Method = "POST";
 		request.ContentType="application/json";
-		
-		#if UNITY_EDITOR
-		//k+1@x8.io / testtest
-		// tom@learnwithpip.com / pip12345
-		//email = "tom@learnwithpip.com";
-		//password = "pip12345";
-		#endif
 		
 		byte[] byteArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
 		request.ContentLength = byteArray.Length;
@@ -112,8 +151,8 @@ public static class LoginHelpers
 		//System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 		#endif
 		
-		//D.Log (m_url + m_userRequest);
-		var request = System.Net.WebRequest.Create(m_url + m_userRequest) as System.Net.HttpWebRequest;
+		//D.Log (m_url + m_userExtension);
+		var request = System.Net.WebRequest.Create(m_url + m_userExtension) as System.Net.HttpWebRequest;
 		request.KeepAlive = true;
 		request.Method = "GET";
 		request.ContentType="application/json";
