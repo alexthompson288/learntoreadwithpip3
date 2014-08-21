@@ -232,15 +232,16 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     {
         //WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
         TweenCamera(m_moduleMapLocation.position);
-        
+
+        StartCoroutine("DestroyWorldMap");
+        StartCoroutine("DestroyNonCurrentModuleMaps");
+        yield break;
+    }
+
+    IEnumerator DestroyNonCurrentModuleMaps()
+    {
         yield return new WaitForSeconds(m_horizontalCameraTweenDuration);
         
-        if (m_worldMap != null)
-        {
-            MakeHierarchyPanelsInvisible(m_worldMap.gameObject);
-            Destroy(m_worldMap);
-        }
-
         VoyageMap[] maps = Object.FindObjectsOfType(typeof(VoyageMap)) as VoyageMap[];
         foreach (VoyageMap map in maps)
         {
@@ -249,6 +250,17 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 MakeHierarchyPanelsInvisible(map.gameObject);
                 Destroy(map.gameObject);
             }
+        }
+    }
+
+    IEnumerator DestroyWorldMap()
+    {
+        yield return new WaitForSeconds(m_horizontalCameraTweenDuration);
+
+        if (m_worldMap != null)
+        {
+            MakeHierarchyPanelsInvisible(m_worldMap.gameObject);
+            Destroy(m_worldMap);
         }
     }
 

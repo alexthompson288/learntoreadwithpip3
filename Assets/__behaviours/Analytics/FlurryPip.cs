@@ -11,8 +11,8 @@ public class FlurryPip : Singleton<FlurryPip>
     string m_devApiKey = "JB23T9C942S2B8P8R742";
     string m_apiKey = "C6CHVND79YBYW3ZBRV54";
 
-    // N.B. Probably skipped GeneralTimed3
-    string m_generalTimedEventName = "GeneralTimed4";
+    // N.B. Probably skipped GeneralTimed3, maybe skipped GeneralTimed5 and 8
+    string m_generalTimedEventName = "GeneralTimed9";
 
     string m_emailAttribute = "email";
     string m_ipAttribute = "ipAddress";
@@ -59,6 +59,7 @@ public class FlurryPip : Singleton<FlurryPip>
     {
         if (m_hasExited)
         {
+            m_hasExited = false;
             D.Log("FlurryPip.CheckForExit() - HAS EXITED");
             StartCoroutine(OnAppOpen());
         } 
@@ -84,14 +85,14 @@ public class FlurryPip : Singleton<FlurryPip>
 
     IEnumerator OnAppOpen()
     {
-        Debug.Log("FlurryPip.OnAppOpen");
+        Debug.Log("FlurryPip.OnAppOpen()");
         if (m_generalSavedParameters.Count > 0)
         {
             Debug.Log("Logging saved parameters");
             LogSaved();
-            // N.B. Probably skipped GeneralSaved3
+            // N.B. Probably skipped GeneralSaved3, maybe skipped GeneralSaved5 and 8
             m_generalSavedParameters["time"] = (Time.time - m_startTime).ToString();
-            FlurryAnalytics.logEventWithParameters("GeneralSaved4", m_generalSavedParameters, false);
+            FlurryAnalytics.logEventWithParameters("GeneralSaved9", m_generalSavedParameters, false);
             m_generalSavedParameters.Clear();
             Save();
         }
