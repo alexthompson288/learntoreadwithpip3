@@ -13,6 +13,6 @@ public class LogWhenClicked : MonoBehaviour
 
 	void OnClick () 
 	{
-		//D.Log(name + " has been clicked");
+		D.Log("Clicked " + name);
 	}
 }

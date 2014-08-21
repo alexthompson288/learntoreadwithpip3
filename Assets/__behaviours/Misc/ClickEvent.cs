@@ -5,6 +5,8 @@ public class ClickEvent : MonoBehaviour
 {
 	public delegate void ClickEventHandler(ClickEvent behaviour); // Pass this script just in case we want to add member variables in the future
     public event ClickEventHandler SingleClicked;
+    public event ClickEventHandler Pressed;
+    public event ClickEventHandler Unpressed;
 	
 	DataRow m_data;
 
@@ -44,8 +46,27 @@ public class ClickEvent : MonoBehaviour
         m_string = s;
     }
 
+    void OnPress(bool isDown)
+    {
+        if (isDown)
+        {
+            if (Pressed != null)
+            {
+                Pressed(this);
+            }
+        }
+        else
+        {
+            if(Unpressed != null)
+            {
+                Unpressed(this);
+            }
+        }
+    }
+
 	void OnClick()
 	{
+        D.Log("Clicked " + name);
         if(SingleClicked != null)
 		{
             SingleClicked(this);

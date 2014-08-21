@@ -75,6 +75,7 @@ public class PerspectiveButton : MonoBehaviour
 
     void OnPress(bool pressed)
     {
+        D.Log(System.String.Format("{0} - PB.OnPress({1})", name, pressed));
         if (pressed)
         {
             StartCoroutine(Press());

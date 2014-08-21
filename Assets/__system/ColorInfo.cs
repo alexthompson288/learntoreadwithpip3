@@ -4,6 +4,8 @@ using System.Collections;
 public class ColorInfo : Singleton<ColorInfo> 
 {
     [SerializeField]
+    private Color m_lilac;
+    [SerializeField]
     private Color m_pink;
     [SerializeField]
     private Color m_red; // Old (249, 24, 51)  // (255, 64, 79)
@@ -40,6 +42,7 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public enum PipColor
     {
+        Lilac,
         Pink,
         Red,
         Yellow,
@@ -65,6 +68,9 @@ public class ColorInfo : Singleton<ColorInfo>
     {
         switch(pipColor)
         {
+            case PipColor.Lilac:
+                return Instance.m_lilac;
+                break;
             case PipColor.Pink:
                 return Instance.m_pink;
                 break;

@@ -8,7 +8,6 @@ public class CallNavMenu : MonoBehaviour
 	[SerializeField]
 	private NavMenu.MenuType m_menuType = NavMenu.MenuType.Main;
 
-
     void Start()
 	{
 		if(m_multiplayerButton && SessionInformation.Instance.GetNumPlayers() < 2)
@@ -17,24 +16,26 @@ public class CallNavMenu : MonoBehaviour
 		}
 	}
 
-	void OnClick () 
+	void OnPress (bool pressed) 
 	{
-        Debug.Log("CallNavMenu.OnClick()");
-		PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
-		
-		if(gameSettings.m_disableNavMenu)
-		{
-			TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
-			if (ts != null)
-			{
-				ts.ChangeLevel(gameSettings.m_startingSceneName, false);
-			}
-		}
-		else
-		{
-            Debug.Log("Calling");
-            NavMenu.Instance.Call(m_menuType);
-		}
-
+        if (!pressed)
+        {
+            //D.Log("CallNavMenu.OnPress(false)");
+            PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
+    		
+            if (gameSettings.m_disableNavMenu)
+            {
+                TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
+                if (ts != null)
+                {
+                    ts.ChangeLevel(gameSettings.m_startingSceneName, false);
+                }
+            } 
+            else
+            {
+                //D.Log("Calling");
+                NavMenu.Instance.Call(m_menuType);
+            }
+        }
 	}
 }
