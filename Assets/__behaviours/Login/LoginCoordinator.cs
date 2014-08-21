@@ -66,7 +66,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         if (!Application.isEditor)
         {
-            m_passwordInput.GetComponent<UIInput>().isPassword = true;
+            //m_passwordInput.GetComponent<UIInput>().isPassword = true;
         }
 
         m_loginButton.Unpressing += OnPressLogin;

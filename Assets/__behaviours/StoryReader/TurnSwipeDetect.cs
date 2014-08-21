@@ -22,11 +22,11 @@ public class TurnSwipeDetect : MonoBehaviour {
                 {
                     if (m_totalDrag.x > 32)
                     {
-                        StoryReaderLogic.Instance.TurnPage(true);
+                        //StoryReaderLogic.Instance.TurnPage(true);
                     }
                     else if (m_totalDrag.x < -32)
                     {
-                        StoryReaderLogic.Instance.TurnPage(false);
+                        //StoryReaderLogic.Instance.TurnPage(false);
                     }
                 }
             }

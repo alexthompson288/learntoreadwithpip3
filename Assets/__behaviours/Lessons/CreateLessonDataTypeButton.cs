@@ -3,6 +3,7 @@ using System.Collections;
 
 public class CreateLessonDataTypeButton : MonoBehaviour 
 {
+    /*
 	[SerializeField]
 	private string m_dataType;
 
@@ -33,4 +34,5 @@ public class CreateLessonDataTypeButton : MonoBehaviour
 
 		m_currentButton.color = LessonContentCoordinator.Instance.GetSelectColor();
 	}
+    */   
 }

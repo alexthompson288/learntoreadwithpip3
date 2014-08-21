@@ -155,7 +155,7 @@ public class PunctuationPlayer : PlusGamePlayer
                     
                     newWordInstance.GetComponent<UILabel>().text = newWord + " ";
                     newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                    Vector3 wordSize = newWordInstance.GetComponent<UILabel>().font.CalculatePrintedSize(newWord + " ", false, UIFont.SymbolStyle.None);
+                    Vector3 wordSize = NGUIText.CalculatePrintedSize(newWord + " ");
                     length += wordSize.x;
                     widestLineWidth = Mathf.Max(widestLineWidth, length);
 

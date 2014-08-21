@@ -93,9 +93,11 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
         TransitionScreen.Instance.ChangeToDefaultLevel();
     }
 
+    /*
     IEnumerator ResetDraggablePanelPosition()
     {
         yield return new WaitForSeconds(0.1f);
         m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
     }
+    */
 }

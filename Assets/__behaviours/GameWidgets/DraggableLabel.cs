@@ -97,7 +97,7 @@ public class DraggableLabel : MonoBehaviour
 		if(changeBackgroundWidth)
 		{
 			////D.Log("Changing bg width");
-			int newWidth = (int)(m_label.font.CalculatePrintedSize(m_label.text, false, UIFont.SymbolStyle.None).x*1.3f);
+			int newWidth = (int)(NGUIText.CalculatePrintedSize(m_label.text).x*1.3f);
 
 			/*
 			if(m_backgroundSprite != null)
