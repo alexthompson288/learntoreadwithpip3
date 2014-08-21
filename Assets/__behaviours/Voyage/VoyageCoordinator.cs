@@ -243,6 +243,8 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             Destroy(maps[i].gameObject);
         }
+
+        m_currentModuleMap = null;
     }
 
     IEnumerator DestroyNonCurrentModuleMaps()
