@@ -9,8 +9,8 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 	private GameObject m_UserMenuButtonPrefab;
 	[SerializeField]
 	private UIGrid m_grid;
-	[SerializeField]
-	private UIDraggablePanel m_draggablePanel;
+	//[SerializeField]
+	//private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private PipButton m_doneButton;
     [SerializeField]
@@ -31,7 +31,8 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 		{
 			//D.Log(kvp.Key + " - " + kvp.Value);
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
-			newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
+			//newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
+            newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value);
 		}
 
 		m_grid.Reposition();
@@ -49,13 +50,14 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
     IEnumerator CreateUserCo(string user, string imageName)
     {
         GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
-        newButton.GetComponent<UserMenuButton>().SetUp(user, imageName, m_draggablePanel);
+        //newButton.GetComponent<UserMenuButton>().SetUp(user, imageName, m_draggablePanel);
+        newButton.GetComponent<UserMenuButton>().SetUp(user, imageName);
         
         m_grid.Reposition();
 
         yield return new WaitForEndOfFrame();
         
-        m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
+        //m_grid.transform.parent.GetComponent<UIDraggablePanel>().ResetPosition();
     }
 
 	public void SelectButton (UserMenuButton button)

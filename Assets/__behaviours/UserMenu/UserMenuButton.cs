@@ -20,7 +20,8 @@ public class UserMenuButton : MonoBehaviour
     string m_spriteNameB;
 
 	// Use this for initialization
-	public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
+	//public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
+    public void SetUp (string userName, string imageName)
 	{
         //D.Log("imageName: " + imageName);
 
@@ -38,7 +39,7 @@ public class UserMenuButton : MonoBehaviour
             UserMenuCoordinator.Instance.SelectButton(this);
         }
 
-		GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;
+		//GetComponent<UIDragPanelContents>().draggablePanel = draggablePanel;
 	}
 
     void OnPress(bool pressed)

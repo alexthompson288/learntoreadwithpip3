@@ -6,6 +6,7 @@ using System;
 
 public class LessonContentCoordinator : Singleton<LessonContentCoordinator> 
 {
+    /*
 	[SerializeField]
 	private GameObject m_storyPrefab;
 	[SerializeField]
@@ -415,4 +416,5 @@ public class LessonContentCoordinator : Singleton<LessonContentCoordinator>
 	{
 		return m_deselectColor;
 	}
+ */   
 }

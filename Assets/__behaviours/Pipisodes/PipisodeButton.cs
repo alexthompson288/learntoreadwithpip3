@@ -7,19 +7,20 @@ public class PipisodeButton : MonoBehaviour
     private UITexture m_pipisodeImage;
     [SerializeField]
     private UISprite m_downloadSprite;
-    [SerializeField]
-    UIDragPanelContents m_dragPanelContents;
+    //[SerializeField]
+    //UIDragPanelContents m_dragPanelContents;
 
     DataRow m_pipisode;
 
 	// Use this for initialization
-	public void SetUp (DataRow pipisode, UIDraggablePanel draggablePanel, VideoPlayer videoPlayer) 
+	//public void SetUp (DataRow pipisode, UIDraggablePanel draggablePanel, VideoPlayer videoPlayer) 
+    public void SetUp (DataRow pipisode, VideoPlayer videoPlayer)
     {
         m_pipisode = pipisode;
 
         m_pipisodeImage.mainTexture = DataHelpers.GetPicture(m_pipisode);
 
-        m_dragPanelContents.draggablePanel = draggablePanel;
+        //m_dragPanelContents.draggablePanel = draggablePanel;
 
         Refresh(videoPlayer);
 

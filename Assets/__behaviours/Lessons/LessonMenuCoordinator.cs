@@ -5,6 +5,7 @@ using Wingrove;
 
 public class LessonMenuCoordinator : MonoBehaviour 
 {
+    /*
 	[SerializeField]
 	private UIGrid m_grid;
 	[SerializeField]
@@ -68,4 +69,5 @@ public class LessonMenuCoordinator : MonoBehaviour
 
         GameManager.Instance.StartGames();
 	}
+ */   
 }

@@ -11,8 +11,8 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
 	TweenOnOffBehaviour m_tweenBehaviour;
 	[SerializeField]
 	UIGrid m_grid;
-	[SerializeField]
-	private UIDraggablePanel m_draggablePanel;
+	//[SerializeField]
+	//private UIDraggablePanel m_draggablePanel;
 	[SerializeField]
 	private UILabel m_inputLabel;
     [SerializeField]
@@ -41,7 +41,8 @@ public class CreateUserCoordinator : Singleton<CreateUserCoordinator>
             GameObject newPicture = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_choosePictureButtonPrefab, m_grid.transform);
             m_spawnedPictures.Add(newPicture);
             
-            newPicture.GetComponent<UserPictureButton>().SetUp(spriteName, m_draggablePanel);
+            //newPicture.GetComponent<UserPictureButton>().SetUp(spriteName, m_draggablePanel);
+            newPicture.GetComponent<UserPictureButton>().SetUp(spriteName);
         }
 
         m_grid.Reposition();

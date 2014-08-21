@@ -3,6 +3,7 @@ using System.Collections;
 
 public class WrapDragPanel : MonoBehaviour
 {
+    /*
     [SerializeField]
     private UIDraggablePanel m_draggablePanel;
 
@@ -45,4 +46,5 @@ public class WrapDragPanel : MonoBehaviour
             }
         }
     }
+    */
 }

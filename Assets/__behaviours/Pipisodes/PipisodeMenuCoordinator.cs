@@ -8,8 +8,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
 {
     [SerializeField]
     private UIGrid m_grid;
-    [SerializeField]
-    private UIDraggablePanel m_draggablePanel;
+    //[SerializeField]
+    //private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private GameObject m_pipisodeButtonPrefab;
     [SerializeField]
@@ -72,7 +72,8 @@ public class PipisodeMenuCoordinator : MonoBehaviour
             {
                 GameObject button = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipisodeButtonPrefab, m_grid.transform);
 
-                button.GetComponent<PipisodeButton>().SetUp(m_pipisodes[i], m_draggablePanel, m_videoPlayer);
+                //button.GetComponent<PipisodeButton>().SetUp(m_pipisodes[i], m_draggablePanel, m_videoPlayer);
+                button.GetComponent<PipisodeButton>().SetUp(m_pipisodes[i], m_videoPlayer);
 
                 button.GetComponent<ClickEvent>().SingleClicked += OnChoosePipisode;
                 button.GetComponent<ClickEvent>().SetData(m_pipisodes[i]);

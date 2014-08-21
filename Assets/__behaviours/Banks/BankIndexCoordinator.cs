@@ -11,8 +11,8 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
     [SerializeField]
     private UIPanel m_defaultGridPanel;
-    [SerializeField]
-    private UIDraggablePanel m_defaultDraggablePanel;
+    //[SerializeField]
+    //private UIDraggablePanel m_defaultDraggablePanel;
     [SerializeField]
     private UIGrid m_defaultGrid;
     [SerializeField]
@@ -116,7 +116,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
             {
                 GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_alphabetLetterPrefab, m_alphabetGrid.transform);
                 newButton.GetComponent<BankButton>().SetUp(m_dataType, i.ToString());
-                newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
+                //newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
                 ClickEvent click = newButton.GetComponent<ClickEvent>() as ClickEvent;
                 click.SetString(i.ToString());
                 click.SingleClicked += OnClickTestButton;
@@ -234,7 +234,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         {
             GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(prefab, m_defaultGrid.transform);
             newButton.GetComponent<BankButton>().SetUp(m_dataType, row);
-            newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
+            //newButton.GetComponent<UIDragPanelContents>().draggablePanel = m_defaultDraggablePanel;
             ClickEvent click = newButton.GetComponent<ClickEvent>() as ClickEvent;
             click.SetData(row);
             click.SingleClicked += OnClickTestButton;
@@ -245,7 +245,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         
         m_defaultGrid.Reposition();
 
-        m_defaultDraggablePanel.ResetPosition();
+        //m_defaultDraggablePanel.ResetPosition();
 
         yield return new WaitForSeconds(0.1f);
 
