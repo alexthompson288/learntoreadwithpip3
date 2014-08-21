@@ -44,7 +44,8 @@ public class LoginInfo : Singleton<LoginInfo>
     string m_expirationDate = "";
     
     string m_loginSceneName = "NewLogin";
-    
+
+    bool m_hasStarted = false;
     bool m_hasExited = false;
 
     public bool GetAttemptLogin()
@@ -54,8 +55,10 @@ public class LoginInfo : Singleton<LoginInfo>
 
     void OnApplicationPause()
     {
-        //D.Log("LoginInfo.OnApplicationPause()");
-        m_hasExited = true;
+        if (m_hasStarted)
+        {
+            m_hasExited = true;
+        }
     }
 
     public void Logout()
@@ -83,6 +86,8 @@ public class LoginInfo : Singleton<LoginInfo>
 
     void Start()
     {
+        m_hasStarted = true;
+
         if (!Debug.isDebugBuild)
         {
             m_attemptLogin = true;

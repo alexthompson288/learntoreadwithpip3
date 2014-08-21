@@ -104,8 +104,9 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnUnpressCallRegisterButton(PipButton button)
     {
-        m_infoLabel.text = "Register";
-        m_registerTweenBehaviour.Off();
+        //m_infoLabel.text = "Register";
+        //m_registerTweenBehaviour.Off();
+        Application.OpenURL("http://www.learnwithpip.com/users/sign_up");
     }
 
     void OnUnpressCallLoginButton(PipButton button)
@@ -235,16 +236,19 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             StartCoroutine(OnPressLoginCo());
         }
 #else
-        else if(m_hasEnteredEmail && m_hasEnteredPassword)
+        //else if(m_hasEnteredEmail && m_hasEnteredPassword)
+        else
         {
             m_infoLabel.text = "Logging in...";
             m_loginButtonLabel.text = "Logging in...";
             StartCoroutine(OnPressLoginCo());
         }
+        /*
         else
         {
             m_infoLabel.text = "Please enter your login details";
         }
+        */
 #endif
     }
 
