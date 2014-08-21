@@ -143,7 +143,7 @@ public class VoyageMap : MonoBehaviour
 
     void OnClickModuleMapButton(ClickEvent click)
     {
-        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color + click.GetInt());
+        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color + click.GetInt(), false);
     }
 
     /*

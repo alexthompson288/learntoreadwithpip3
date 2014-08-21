@@ -80,6 +80,6 @@ public class VoyageMapButton : MonoBehaviour
     IEnumerator UnpressedButtonCo()
     {
         yield return new WaitForSeconds(GetComponentInChildren<PerspectiveButton>().tweenDuration + 0.3f);
-        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color);
+        VoyageCoordinator.Instance.MoveToModuleMap((int)m_color, true);
     }
 }

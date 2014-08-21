@@ -157,39 +157,29 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     public void ReturnToWorldMap()
     {
         InstantiateWorldMap();
-        StartCoroutine(ReturnToWorldMapCo());
+        ReturnToWorldMapCo();
     }
 
-    IEnumerator ReturnToWorldMapCo()
+    void ReturnToWorldMapCo()
     {
         TweenCamera(m_worldMapLocation.position);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("AMBIENCE_STOP");
 
-        yield return new WaitForSeconds(m_horizontalCameraTweenDuration + 0.1f);
-
-        VoyageMap.DestroyPip();
-
-        if (m_currentModuleMap != null) // Defensive check: Should ALWAYS execute
-        {
-            MakeHierarchyPanelsInvisible(m_currentModuleMap.gameObject);
-
-            Destroy(m_currentModuleMap.gameObject);
-        }
+        StopCoroutine("DestroyWorldMap");
+        StartCoroutine("DestroyCurrentModuleMap");
     }
 
-    // Should not be necessary, but when maps are destroyed they briefly flash at a very large scale. Possible Unity bug
-    void MakeHierarchyPanelsInvisible(GameObject parent)
+    IEnumerator DestroyCurrentModuleMap()
     {
-        /*
-        parent.GetComponent<UIPanel>().alpha = 0; 
+        yield return new WaitForSeconds(m_horizontalCameraTweenDuration + 0.1f);
         
-        UIPanel[] childPanels = parent.GetComponentsInChildren<UIPanel>() as UIPanel[];
-        foreach(UIPanel panel in childPanels)
+        VoyageMap.DestroyPip();
+        
+        if (m_currentModuleMap != null) // Defensive check: Should ALWAYS execute
         {
-            panel.alpha = 0;
+            Destroy(m_currentModuleMap.gameObject);
         }
-        */
     }
 
     void InstantiateModuleMap(int mapIndex)
@@ -219,23 +209,40 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         }
     }
 
-    public void MoveToModuleMap(int mapIndex)
+    public void MoveToModuleMap(int mapIndex, bool isMovingFromWorldMap)
     {
         if (FindModuleMapPrefab(mapIndex) != null)
         {
+            if (isMovingFromWorldMap)
+            {
+                DestroyAllModuleMaps();
+            }
+
             InstantiateModuleMap(mapIndex);
-            StartCoroutine(MoveToModuleMapCo());
+            MoveToModuleMapCo(isMovingFromWorldMap);
         }
     }
     
-    IEnumerator MoveToModuleMapCo()
+    void MoveToModuleMapCo(bool isMovingFromWorldMap)
     {
-        //WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
         TweenCamera(m_moduleMapLocation.position);
 
+        StopCoroutine("DestroyCurrentModuleMap");
         StartCoroutine("DestroyWorldMap");
-        StartCoroutine("DestroyNonCurrentModuleMaps");
-        yield break;
+         
+        if (!isMovingFromWorldMap)
+        {
+            StartCoroutine("DestroyNonCurrentModuleMaps");
+        }
+    }
+
+    void DestroyAllModuleMaps()
+    {
+        VoyageMap[] maps = Object.FindObjectsOfType(typeof(VoyageMap)) as VoyageMap[];
+        for (int i = maps.Length - 1; i > -1; --i)
+        {
+            Destroy(maps[i].gameObject);
+        }
     }
 
     IEnumerator DestroyNonCurrentModuleMaps()
@@ -243,12 +250,11 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         yield return new WaitForSeconds(m_horizontalCameraTweenDuration);
         
         VoyageMap[] maps = Object.FindObjectsOfType(typeof(VoyageMap)) as VoyageMap[];
-        foreach (VoyageMap map in maps)
+        for (int i = maps.Length - 1; i > -1; --i)
         {
-            if (map != m_currentModuleMap)
+            if (maps[i] != m_currentModuleMap)
             {
-                MakeHierarchyPanelsInvisible(map.gameObject);
-                Destroy(map.gameObject);
+                Destroy(maps[i].gameObject);
             }
         }
     }
@@ -259,7 +265,6 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
         if (m_worldMap != null)
         {
-            MakeHierarchyPanelsInvisible(m_worldMap.gameObject);
             Destroy(m_worldMap);
         }
     }
