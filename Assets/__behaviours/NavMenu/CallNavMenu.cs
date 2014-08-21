@@ -19,6 +19,7 @@ public class CallNavMenu : MonoBehaviour
 
 	void OnClick () 
 	{
+        Debug.Log("CallNavMenu.OnClick()");
 		PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
 		
 		if(gameSettings.m_disableNavMenu)
@@ -31,6 +32,7 @@ public class CallNavMenu : MonoBehaviour
 		}
 		else
 		{
+            Debug.Log("Calling");
             NavMenu.Instance.Call(m_menuType);
 		}
 

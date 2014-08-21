@@ -71,6 +71,7 @@ public class NavMenu : Singleton<NavMenu>
 
     public void Call(MenuType menuType)
     {
+        Debug.Log("NavMenu.Call()");
         if (menuType == MenuType.Main)
         {
             CallMenu();
