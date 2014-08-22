@@ -6,7 +6,7 @@ using System.Linq;
 public class PlusGameButton : MonoBehaviour 
 {
     public delegate void PlusGameButtonEventHandler (PlusGameButton gameButton);
-    public event PlusGameButtonEventHandler Clicked;
+    public event PlusGameButtonEventHandler Unpressed;
 
     [SerializeField]
     private string m_gameName;
@@ -31,11 +31,11 @@ public class PlusGameButton : MonoBehaviour
         public ColorInfo.PipColor m_pipColor;
     }
 
-    void OnClick()
+    void OnPress(bool isDown)
     {
-        if (Clicked != null)
+        if (!isDown && Unpressed != null)
         {
-            Clicked(this);
+            Unpressed(this);
         }
     }
 
