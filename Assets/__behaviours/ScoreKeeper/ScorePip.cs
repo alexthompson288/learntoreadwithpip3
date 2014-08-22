@@ -27,6 +27,8 @@ public class ScorePip : ScoreKeeper
     private SplineFollower m_popSplineFollower;
     [SerializeField]
     private GameObject m_branchPrefab;
+    [SerializeField]
+    private CharacterPopper m_characterPopper;
     
     float m_pointDistance;
     
@@ -87,6 +89,8 @@ public class ScorePip : ScoreKeeper
         
         UpdatePlatformLevel(delta);
     }
+
+
     
     void UpdatePlatformLevel(int delta)
     {
@@ -130,6 +134,9 @@ public class ScorePip : ScoreKeeper
             m_pipAnim.PlayAnimation("JUMP");
 
             yield return new WaitForSeconds(0.22f);
+
+            m_characterPopper.PopCharacter(0);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
 
             //WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_YIPPIDYPOP");
             WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
@@ -188,6 +195,11 @@ public class ScorePip : ScoreKeeper
         if (Input.GetKeyDown(KeyCode.P))
         {
             UpdateScore(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            m_characterPopper.PopCharacter();
         }
     }
 #endif

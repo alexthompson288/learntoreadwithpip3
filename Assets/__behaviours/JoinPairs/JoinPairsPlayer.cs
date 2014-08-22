@@ -289,9 +289,9 @@ public class JoinPairsPlayer : GamePlayer
         m_score++;
         m_scoreKeeper.UpdateScore();
         
-        if (m_score == JoinPairsCoordinator.Instance.targetScore)
+        if (m_scoreKeeper.HasCompleted())
         {
-            JoinPairsCoordinator.Instance.IncrementNumFinishedPlayers();
+            JoinPairsCoordinator.Instance.OnPlayerFinish(m_playerIndex);
         }
         else
         {
@@ -302,21 +302,24 @@ public class JoinPairsPlayer : GamePlayer
 
     public void DestroyJoinables()
     {
-        foreach(GameObject joinable in m_spawnedJoinables)
+        Debug.Log("Player " + m_playerIndex + ".DestroyJoinables()");
+        for (int i = m_spawnedJoinables.Count - 1; i > -1; --i)
         {
-            if(joinable != null)
+            if(m_spawnedJoinables[i] != null)
             {
-                joinable.GetComponent<JoinableLineDraw>().DestroyJoinable();
+                StartCoroutine(m_spawnedJoinables[i].GetComponent<JoinableLineDraw>().DestroyJoinable());
             }
         }
     }
 
-    public IEnumerator OnWin()
+    public IEnumerator Celebrate()
     {
         if (JoinPairsCoordinator.Instance.GetNumPlayers() == 2)
         {
             CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
         }
+
+        yield return new WaitForSeconds(2f);
 
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }

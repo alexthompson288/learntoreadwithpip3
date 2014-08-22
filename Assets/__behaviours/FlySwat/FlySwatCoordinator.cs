@@ -158,13 +158,6 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         }
     }
 
-    bool winningPlayerHasCompletedSequence = false;
-
-    public void OnWinningPlayerCompleteSequence()
-    {
-        winningPlayerHasCompletedSequence = true;
-    }
-
     IEnumerator CompleteGame()
     {
         if (GetNumPlayers() == 1)
@@ -187,13 +180,12 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         }
         else
         {
+            yield return new WaitForSeconds(0.75f);
             CelebrationCoordinator.Instance.PopCharacter(m_gamePlayers[m_winningIndex].GetSelectedCharacter(), true);
+            yield return new WaitForSeconds(2f);
         }
 
-        while (!winningPlayerHasCompletedSequence)
-        {
-            yield return null;
-        }
+        yield return StartCoroutine(m_gamePlayers [m_winningIndex].Celebrate());
 
         GameManager.Instance.CompleteGame();
     }

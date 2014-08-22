@@ -33,6 +33,8 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
 
     float m_startTime;
 
+    int m_winningIndex = -1;
+
     public string dataType
     {
         get
@@ -248,23 +250,12 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
         {
             m_gamePlayers[index].DestroyJoinables();
         }
-        
-        int winningIndex = -1;
-        
-        for(int index = 0; index < numPlayers; ++index)
-        {
-            if(m_gamePlayers[index].score >= m_targetScore)
-            {
-                winningIndex = index;
-                break;
-            }
-        }
-        
-        SessionInformation.Instance.SetWinner(winningIndex);
+
+        SessionInformation.Instance.SetWinner(m_winningIndex);
 
         yield return new WaitForSeconds(1f);
 
-        yield return StartCoroutine(m_gamePlayers [winningIndex].OnWin());
+        yield return StartCoroutine(m_gamePlayers [m_winningIndex].Celebrate());
         
         CompleteGame();
     }
@@ -303,6 +294,16 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     }
 #endif
 
+    public void OnPlayerFinish(int playerIndex)
+    {
+        if (m_winningIndex == -1)
+        {
+            m_winningIndex = playerIndex;
+        }
+        
+        ++m_numFinishedPlayers;
+    }
+
     void CompleteGame()
     {
         if (GetNumPlayers() == 1)
@@ -329,11 +330,6 @@ public class JoinPairsCoordinator : Singleton<JoinPairsCoordinator>
     public int GetPairsToShowAtOnce()
     {
         return m_pairsToShowAtOnce;
-    }
-
-    public void IncrementNumFinishedPlayers()
-    {
-        ++m_numFinishedPlayers;
     }
 
     public void PlayShortAudio(DataRow data)

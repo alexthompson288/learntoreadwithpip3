@@ -37,6 +37,7 @@ public class ScreenshotManager : MonoBehaviour {
 					
 					if(photoSaved) return false;
 
+
 					
 					yield return new WaitForSeconds(.5f);
 				}

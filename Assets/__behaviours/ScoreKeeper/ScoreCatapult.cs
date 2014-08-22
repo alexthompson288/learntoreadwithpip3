@@ -45,8 +45,10 @@ public class ScoreCatapult : ScoreKeeper
     
     bool m_hasLaunched = false;
     
-    void Start()
+    IEnumerator Start()
     {
+        yield return null; // Wait for a frame so that ScreenSetUp Start method executes first if game is multiplayer
+
         m_explosionTroll.SetActive(false);
 
         m_launchForce.z = 0;
@@ -110,50 +112,22 @@ public class ScoreCatapult : ScoreKeeper
 
             m_catapultTroll.color = new Color(0, 0, 0, 0);
 
-            m_explosionTroll.SetActive(true);
-            
-            float range = 150f;
-            float minX = m_explosionLetterParent.transform.localPosition.x - range;
-            float maxX = m_explosionLetterParent.transform.localPosition.x + range;
-            
-            float minY = m_explosionLetterParent.transform.localPosition.y - range;
-            float maxY = m_explosionLetterParent.transform.localPosition.y + range;
-            
-            m_explosionLetterParent.transform.parent.gameObject.SetActive(true);
-            m_explosionLetterParent.transform.localScale = Vector3.zero;
-            
-            float dropTweenDuration = 4.8f;
-            
-            Hashtable dropTweenVar = new Hashtable();
-            dropTweenVar.Add("position", m_dropFromPosition);
-            dropTweenVar.Add("time", dropTweenDuration);
-            dropTweenVar.Add("easetype", iTween.EaseType.linear);
-            iTween.MoveFrom(m_explosionTroll, dropTweenVar);
-            iTween.MoveFrom(m_explosionLetterParent, dropTweenVar);
-            
-            WingroveAudio.WingroveRoot.Instance.PostEvent("BOMB_WHISTLE");
-
-            yield return new WaitForSeconds(dropTweenDuration);
-
-            //D.Log("SPAWNING");
-            for (int i = 0; i < 80; ++i)
+            if(SessionInformation.Instance.GetNumPlayers() == 1)
             {
-                GameObject newExplosionLetter = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_explosionLetterPrefab, m_explosionLetterParent.transform);
-                newExplosionLetter.transform.localPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), newExplosionLetter.transform.localPosition.z);
+                yield return StartCoroutine(ExplodeTroll());
             }
-            
-            float scaleTweenDuration = 0.2f;
-            TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
-            TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
-            yield return new WaitForSeconds(scaleTweenDuration);
-            m_explosionTroll.SetActive(false);
-            Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
-            foreach (Rigidbody letter in explosionLetters)
+            else
             {
-                letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
+                ScoreCatapult[] scoreCatapults = Object.FindObjectsOfType(typeof(ScoreCatapult)) as ScoreCatapult[];
+                for(int i = 0; i < scoreCatapults.Length; ++i)
+                {
+                    if(scoreCatapults[i] != this)
+                    {
+                        yield return StartCoroutine(scoreCatapults[i].ExplodeTroll());
+                        break;
+                    }
+                }
             }
-            
-            WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
             
             yield return new WaitForSeconds(3f);
         }
@@ -161,6 +135,54 @@ public class ScoreCatapult : ScoreKeeper
         yield break;
 
         //D.Log("ScoreCatapult Returning");
+    }
+
+    IEnumerator ExplodeTroll()
+    {
+        m_explosionTroll.SetActive(true);
+        
+        float range = 150f;
+        float minX = m_explosionLetterParent.transform.localPosition.x - range;
+        float maxX = m_explosionLetterParent.transform.localPosition.x + range;
+        
+        float minY = m_explosionLetterParent.transform.localPosition.y - range;
+        float maxY = m_explosionLetterParent.transform.localPosition.y + range;
+        
+        m_explosionLetterParent.transform.parent.gameObject.SetActive(true);
+        m_explosionLetterParent.transform.localScale = Vector3.zero;
+        
+        float dropTweenDuration = 4.8f;
+        
+        Hashtable dropTweenVar = new Hashtable();
+        dropTweenVar.Add("position", m_dropFromPosition);
+        dropTweenVar.Add("time", dropTweenDuration);
+        dropTweenVar.Add("easetype", iTween.EaseType.linear);
+        iTween.MoveFrom(m_explosionTroll, dropTweenVar);
+        iTween.MoveFrom(m_explosionLetterParent, dropTweenVar);
+        
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BOMB_WHISTLE");
+        
+        yield return new WaitForSeconds(dropTweenDuration);
+        
+        //D.Log("SPAWNING");
+        for (int i = 0; i < 80; ++i)
+        {
+            GameObject newExplosionLetter = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_explosionLetterPrefab, m_explosionLetterParent.transform);
+            newExplosionLetter.transform.localPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), newExplosionLetter.transform.localPosition.z);
+        }
+        
+        float scaleTweenDuration = 0.2f;
+        TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
+        TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
+        yield return new WaitForSeconds(scaleTweenDuration);
+        m_explosionTroll.SetActive(false);
+        Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
+        foreach (Rigidbody letter in explosionLetters)
+        {
+            letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
+        }
+        
+        WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
     }
 
     void TweenRigidbody()
