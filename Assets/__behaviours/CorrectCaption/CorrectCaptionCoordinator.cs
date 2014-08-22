@@ -208,7 +208,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
                 label.text = word + " ";
 
-                Vector3 wordSize = NGUIText.CalculatePrintedSize(word + " ");
+                Vector3 wordSize = NGUIHelpers.GetLabelSize3(label);
 
                 newText.transform.localPosition = new Vector3(length, 0, 0);
 

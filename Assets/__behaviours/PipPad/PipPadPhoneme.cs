@@ -55,11 +55,10 @@ public class PipPadPhoneme : MonoBehaviour
 	        m_texture = (Texture2D)Resources.Load(pbi.m_imageFilename);
 	        m_label.text = pbi.m_displayString;
 	        m_phoneme = pbi.m_fullPhoneme;
-	        m_highlight.width = 
-                (int)(NGUIText.CalculatePrintedSize(m_label.text).x*1.1f);
+	        m_highlight.width = (int)(m_label.printedSize.x*1.1f);
 
-            m_letterCollider.size = new Vector3((NGUIText.CalculatePrintedSize(m_label.text).x*1.1f), m_letterCollider.size.y, m_letterCollider.size.z);
-            m_dragCollider.size = new Vector3((NGUIText.CalculatePrintedSize(m_label.text).x*1.1f), m_dragCollider.size.y, m_dragCollider.size.z);
+            m_letterCollider.size = new Vector3(m_label.printedSize.x*1.1f, m_letterCollider.size.y, m_letterCollider.size.z);
+            m_dragCollider.size = new Vector3(m_label.printedSize.x*1.1f, m_dragCollider.size.y, m_dragCollider.size.z);
 
 	        m_mnemonic = pbi.m_mnemonic;
 	        if (!noButton)

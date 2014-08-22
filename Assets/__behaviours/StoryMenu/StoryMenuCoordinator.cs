@@ -11,8 +11,6 @@ public class StoryMenuCoordinator : MonoBehaviour
     private GameObject m_bookPrefab;
     [SerializeField]
     private UIGrid m_bookGrid;
-    //[SerializeField]
-    //private UIDraggablePanel m_draggablePanel;
     [SerializeField]
     private PipButton m_readButton;
     [SerializeField]
@@ -271,7 +269,6 @@ public class StoryMenuCoordinator : MonoBehaviour
                 bookInstance.name = bookIndex.ToString() + "_Book";
 
                 StoryMenuBook bookBehaviour = bookInstance.GetComponent<StoryMenuBook>() as StoryMenuBook;
-                //bookBehaviour.SetUp(story, m_draggablePanel);
                 bookBehaviour.SetUp(story);
                 bookBehaviour.Clicked += OnPressStoryButton;
                 m_spawnedBooks.Add(bookBehaviour);

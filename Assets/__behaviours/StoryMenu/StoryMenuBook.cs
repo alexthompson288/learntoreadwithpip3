@@ -8,8 +8,6 @@ public class StoryMenuBook : MonoBehaviour
 
     [SerializeField]
     private UITexture m_storyPicture;
-    //[SerializeField]
-    //private UIDragPanelContents m_dragPanelContents;
  
     DataRow m_data;
 
@@ -18,18 +16,10 @@ public class StoryMenuBook : MonoBehaviour
         return m_data;
     }
 
-    //public void SetUp(DataRow dataRow, UIDraggablePanel draggablePanel)
     public void SetUp(DataRow dataRow)
     {
         m_data = dataRow;
         m_storyPicture.mainTexture = DataHelpers.GetPicture(m_data);
-
-        if (m_storyPicture.mainTexture == null)
-        {
-            //D.Log(
-        }
-
-        //m_dragPanelContents.draggablePanel = draggablePanel;
     }
 
     public IEnumerator Off()
@@ -42,9 +32,9 @@ public class StoryMenuBook : MonoBehaviour
         Destroy(gameObject);
     }
 
-    void OnClick()
+    void OnPress(bool isDown)
     {
-        if (Clicked != null)
+        if (!isDown && Clicked != null)
         {
             Clicked(this);
         }

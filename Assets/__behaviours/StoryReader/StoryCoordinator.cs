@@ -275,8 +275,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         m_scaleLabel.transform.localScale = Vector3.one;
 
-        float maxWidth = 900;
-        float maxHeight = 220;
+        //float maxWidth = 900;
+        float maxWidth = 150;
+        float maxHeight = 39;
 
         //D.Log("storyPage: " + storyPage);
         //D.Log("currentAttribute: " + m_currentTextAttribute);
@@ -298,7 +299,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             int checkLength = 1;
             for (int i = 0; i < textToDisplay.Length && lineStartIndex + checkLength < textToDisplay.Length; ++i)
             {
-                //if(m_scaleLabel.font.CalculatePrintedSize(modifiedText.Substring(lineStartIndex, i + 1), false, UIFont.SymbolStyle.None).x * m_scaleLabel.transform.localScale.y)
                 if (NGUIHelpers.GetLabelWidth(m_scaleLabel, textToDisplay.Substring(lineStartIndex, checkLength)) > maxWidth)
                 {
                     //D.Log("END");
@@ -340,6 +340,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                 }
             }
 
+            //Debug.Log("LabelHeight: " + NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay));
             if(NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay) < maxHeight)
             {
                 break;
@@ -375,10 +376,11 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                         m_textPrefab, m_textAnchors [0]);
                     
                     m_textObjects.Add(newWordInstance);
-                    
-                    newWordInstance.GetComponent<UILabel>().text = newWord + " ";
+
+                    UILabel label = newWordInstance.GetComponent<UILabel>() as UILabel;
+                    label.text = newWord + " ";
                     newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                    Vector3 wordSize = NGUIText.CalculatePrintedSize(newWord + " ");
+                    Vector3 wordSize = NGUIHelpers.GetLabelSize3(label);
                     length += wordSize.x;
                     widestLineWidth = Mathf.Max(widestLineWidth, length);
                     

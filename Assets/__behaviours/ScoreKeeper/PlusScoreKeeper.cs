@@ -17,7 +17,7 @@ public class PlusScoreKeeper : ScoreKeeper
     protected float m_healthLostPerSecond;
     [SerializeField]
     protected string m_levelUpFormula;
-    [SerializeField]
+
     protected PlusScoreKeeper m_opponentKeeper;
 
     protected enum State
@@ -35,6 +35,19 @@ public class PlusScoreKeeper : ScoreKeeper
     protected virtual void SetOpponentCharacterIcon(int opponentCharacterIndex){}
     public virtual void SetCharacterIcon(int characterIndex){}
 
+    protected virtual void Awake()
+    {
+        PlusScoreKeeper[] plusScoreKeepers = Object.FindObjectsOfType(typeof(PlusScoreKeeper)) as PlusScoreKeeper[];
+
+        for (int i = 0; i < plusScoreKeepers.Length; ++i)
+        {
+            if(plusScoreKeepers[i] != this)
+            {
+                m_opponentKeeper = plusScoreKeepers[i];
+                break;
+            }
+        }
+    }
 
     public void SetLevelUpFormula(string myLevelUpFormula)
     {

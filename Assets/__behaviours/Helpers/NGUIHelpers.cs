@@ -19,7 +19,7 @@ public static class NGUIHelpers
 
     public static Vector3 GetLabelSize3(UILabel label)
     {
-        Vector2 size = NGUIText.CalculatePrintedSize(label.text);
+        Vector2 size = label.printedSize;
         size.x *= label.transform.localScale.x;
         size.y *= label.transform.localScale.y;
 
@@ -28,22 +28,30 @@ public static class NGUIHelpers
 
     public static float GetLabelWidth(UILabel label)
     {
-        return NGUIText.CalculatePrintedSize(label.text).x * label.transform.localScale.x;
+        return label.printedSize.x;
     }
 
     public static float GetLabelWidth(UILabel label, string text)
     {
-        return NGUIText.CalculatePrintedSize(text).x * label.transform.localScale.x;
+        string originalText = label.text;
+        label.text = text;
+        float width = label.printedSize.x * label.transform.localScale.x;
+        label.text = originalText;
+        return width;
     }
 
     public static float GetLabelHeight(UILabel label)
     {
-        return NGUIText.CalculatePrintedSize(label.text).y * label.transform.localScale.y;
+        return label.printedSize.y;
     }
 
     public static float GetLabelHeight(UILabel label, string text)
     {
-        return NGUIText.CalculatePrintedSize(text).y * label.transform.localScale.y;
+        string originalText = label.text;
+        label.text = text;
+        float height = label.printedSize.y * label.transform.localScale.y;
+        label.text = originalText;
+        return height;
     }
 
     public static void MaxLabelWidth(UILabel label, float maxWidth)

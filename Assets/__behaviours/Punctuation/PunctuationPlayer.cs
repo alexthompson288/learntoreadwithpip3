@@ -152,10 +152,11 @@ public class PunctuationPlayer : PlusGamePlayer
                     GameObject newWordInstance = SpawningHelpers.InstantiateUnderWithIdentityTransforms(textPrefab, m_textPosition);
                     
                     m_spawnedText.Add(newWordInstance);
-                    
-                    newWordInstance.GetComponent<UILabel>().text = newWord + " ";
+
+                    UILabel label = newWordInstance.GetComponent<UILabel>() as UILabel;
+                    label.text = newWord + " ";
                     newWordInstance.transform.localPosition = new Vector3(length, height, 0);
-                    Vector3 wordSize = NGUIText.CalculatePrintedSize(newWord + " ");
+                    Vector3 wordSize = NGUIHelpers.GetLabelSize3(label);
                     length += wordSize.x;
                     widestLineWidth = Mathf.Max(widestLineWidth, length);
 

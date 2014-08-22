@@ -42,7 +42,7 @@ public class ColorInfo : Singleton<ColorInfo>
 
     public enum PipColor
     {
-        Lilac,
+        //Lilac,
         Pink,
         Red,
         Yellow,
@@ -68,9 +68,9 @@ public class ColorInfo : Singleton<ColorInfo>
     {
         switch(pipColor)
         {
-            case PipColor.Lilac:
-                return Instance.m_lilac;
-                break;
+            //case PipColor.Lilac:
+                //return Instance.m_lilac;
+                //break;
             case PipColor.Pink:
                 return Instance.m_pink;
                 break;

@@ -168,7 +168,8 @@ public class GameMenuCoordinator : MonoBehaviour
             ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
             
             GameMenuInfo.Instance.CreateBookmark(pipColor);
-            
+
+            D.Log("Starting games");
             GameManager.Instance.StartGames();
         }
     }

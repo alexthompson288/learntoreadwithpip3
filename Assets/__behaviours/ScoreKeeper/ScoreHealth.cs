@@ -65,8 +65,10 @@ public class ScoreHealth : PlusScoreKeeper
         m_opponentCharacterSprite.spriteName = m_characterIconNames [opponentCharacterIndex];
     }
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (m_opponentKeeper is ScoreHealth)
         {
             m_opponentScoreHealth = m_opponentKeeper as ScoreHealth;
