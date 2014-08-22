@@ -105,6 +105,12 @@ public class ScoreHealth : PlusScoreKeeper
         m_startHeight = m_healthBar.height;
     }
 
+    // TODO
+    public override IEnumerator Celebrate()
+    {
+        yield return new WaitForSeconds(3f);
+    }
+
     public override void UpdateScore(int delta = 1)
     {
         PlayAudio(delta);

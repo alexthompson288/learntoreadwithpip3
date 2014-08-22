@@ -138,7 +138,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     IEnumerator CompleteGameCo()
     {
         int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
-        
+
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
         GameManager.Instance.CompleteGame();

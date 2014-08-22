@@ -181,6 +181,7 @@ public class FlySwatCoordinator : Singleton<FlySwatCoordinator>
         else
         {
             yield return new WaitForSeconds(0.75f);
+            CelebrationCoordinator.Instance.DisplayVictoryLabels(m_winningIndex);
             CelebrationCoordinator.Instance.PopCharacter(m_gamePlayers[m_winningIndex].GetSelectedCharacter(), true);
             yield return new WaitForSeconds(2f);
         }

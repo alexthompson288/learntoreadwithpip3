@@ -231,6 +231,14 @@ public class ToyShopPlayer : GamePlayer
 
     public IEnumerator CelebrateVictory()
     {
+        if (SessionInformation.Instance.GetNumPlayers() == 2)
+        {
+            yield return new WaitForSeconds(0.8f);
+            CelebrationCoordinator.Instance.DisplayVictoryLabels(m_playerIndex);
+            CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
+            yield return new WaitForSeconds(2f);
+        }
+
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
     }
 

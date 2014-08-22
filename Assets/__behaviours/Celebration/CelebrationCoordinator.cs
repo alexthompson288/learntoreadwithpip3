@@ -45,6 +45,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
     private AudioSource m_audioSource;
     [SerializeField]
     private AudioClip[] m_characterWinVocals;
+    [SerializeField]
+    private TweenBehaviour[] m_playerVictoryLabels;
 
 	Vector3 m_textDefaultPos;
 
@@ -52,6 +54,8 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 	void Awake()
 	{
+        System.Array.Sort(m_playerVictoryLabels, CollectionHelpers.LocalLeftToRight);
+
 		for(int i = 0; i < m_cameras.Length; ++i)
 		{
 			m_cameras[i].SetActive(true);
@@ -257,6 +261,15 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 		yield return new WaitForSeconds(3f);
 	}
+
+    public void DisplayVictoryLabels(int winningIndex)
+    {
+        for (int i = 0; i < m_playerVictoryLabels.Length; ++i)
+        {
+            m_playerVictoryLabels[i].GetComponentInChildren<UILabel>().text = i == winningIndex ? "You Win!" : "You Lose";
+            m_playerVictoryLabels[i].On();
+        }
+    }
 
     public void PopCharacter(int characterIndex, bool playAudio)
     {

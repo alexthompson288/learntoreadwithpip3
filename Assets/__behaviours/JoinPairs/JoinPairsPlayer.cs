@@ -316,6 +316,7 @@ public class JoinPairsPlayer : GamePlayer
     {
         if (JoinPairsCoordinator.Instance.GetNumPlayers() == 2)
         {
+            CelebrationCoordinator.Instance.DisplayVictoryLabels(m_playerIndex);
             CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
         }
 
