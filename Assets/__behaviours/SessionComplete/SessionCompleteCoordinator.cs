@@ -64,7 +64,7 @@ public class SessionCompleteCoordinator : MonoBehaviour
             for (int i = 0; i < m_spriteNames.Length; ++i)
             {
                 GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionCompleteButtonPrefab, m_grid.transform);
-                newButton.GetComponent<ClickEvent>().SingleClicked += OnButtonClick;
+                newButton.GetComponent<ClickEvent>().Unpressed += OnButtonClick;
                 newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
                 newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
 
