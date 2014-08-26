@@ -174,7 +174,11 @@ public class ScoreCatapult : ScoreKeeper
         float scaleTweenDuration = 0.2f;
         TweenScale.Begin(m_explosionLetterParent, scaleTweenDuration, Vector3.one);
         TweenScale.Begin(m_explosionTroll, scaleTweenDuration, m_explosionTroll.transform.localScale * 1.5f);
-        yield return new WaitForSeconds(scaleTweenDuration);
+
+        yield return new WaitForSeconds(scaleTweenDuration / 3);
+        WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
+
+
         m_explosionTroll.SetActive(false);
         Rigidbody[] explosionLetters = m_explosionLetterParent.GetComponentsInChildren<Rigidbody>() as Rigidbody[];
         foreach (Rigidbody letter in explosionLetters)
@@ -182,7 +186,7 @@ public class ScoreCatapult : ScoreKeeper
             letter.AddExplosionForce(Random.Range(0.5f, 3f), m_explosionPosition.position, 0, 0, ForceMode.Impulse);
         }
         
-        WingroveAudio.WingroveRoot.Instance.PostEvent("EXPLOSION_1");
+        yield return new WaitForSeconds(scaleTweenDuration * 2 / 3);
     }
 
     void TweenRigidbody()
