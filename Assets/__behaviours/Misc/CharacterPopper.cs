@@ -5,17 +5,26 @@ public class CharacterPopper : MonoBehaviour
 {
     [SerializeField]
     private AnimationClip[] m_anims;
+    [SerializeField]
+    private string[] m_spriteNames;
+    [SerializeField]
+    private UISprite m_sprite;
 
-    public void PopCharacter(int index = -1)
+    public void PopCharacter(int animationIndex = -1, int spriteIndex = -1)
     {
         if (!animation.isPlaying)
         {
-            if(index == -1)
+            if(spriteIndex != -1)
             {
-                index = Random.Range(0, m_anims.Length);
+                m_sprite.spriteName = System.String.Format("{0}_state_b", m_spriteNames[spriteIndex]);
             }
 
-            animation.Play(m_anims[index].name);
+            if(animationIndex == -1)
+            {
+                animationIndex = Random.Range(0, m_anims.Length);
+            }
+
+            animation.Play(m_anims[animationIndex].name);
         }
 		else
 		{

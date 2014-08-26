@@ -266,6 +266,9 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
     {
         for (int i = 0; i < m_playerVictoryLabels.Length; ++i)
         {
+            string animName = i == winningIndex ? "WIN" : "LOSE";
+            m_playerVictoryLabels[i].GetComponentInChildren<SpriteAnim>().PlayAnimation(animName);
+
             m_playerVictoryLabels[i].GetComponentInChildren<UILabel>().text = i == winningIndex ? "You Win!" : "You Lose";
             m_playerVictoryLabels[i].On();
         }

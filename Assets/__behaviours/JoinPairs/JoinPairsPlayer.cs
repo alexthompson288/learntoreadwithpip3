@@ -281,8 +281,7 @@ public class JoinPairsPlayer : GamePlayer
     IEnumerator AddPoint()
     {
         yield return new WaitForSeconds(2.0f);
-
-        m_characterPopper.PopCharacter();
+        m_characterPopper.PopCharacter(-1, m_selectedCharacter);
         
         //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
 
