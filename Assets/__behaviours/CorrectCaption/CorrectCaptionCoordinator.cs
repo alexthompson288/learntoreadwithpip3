@@ -57,7 +57,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
 
 
-        ////D.Log("CorrectCaptionCoordinator.dataType: " + m_dataType);
+        //////D.Log("CorrectCaptionCoordinator.dataType: " + m_dataType);
 
         if (m_dataType == "words")
         {
@@ -73,9 +73,9 @@ public class CorrectCaptionCoordinator : GameCoordinator
         } 
         else
         {
-            ////D.Log("Getting correct captions");
+            //////D.Log("Getting correct captions");
             m_dataPool = DataHelpers.GetCorrectCaptions();
-            ////D.Log("Found " + m_dataPool.Count);
+            //////D.Log("Found " + m_dataPool.Count);
             
             m_goodAttribute = "good_sentence";
             
@@ -99,7 +99,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         DataHelpers.OnlyPictureData(m_dataPool);
 
-        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        //////D.Log("m_dataPool.Count: " + m_dataPool.Count);
 
         ClampTargetScore();
 
@@ -129,7 +129,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
         {
             m_dataPool.Remove(m_currentData);
 
-            ////D.Log("m_currentData: " + m_currentData);
+            //////D.Log("m_currentData: " + m_currentData);
 
             m_hasAnsweredIncorrectly = false;
 
@@ -139,7 +139,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
             // Remove any attributes which current data is missing
             for (int i = m_remainingAttributes.Count - 1; i > -1; --i)
             {
-                ////D.Log(System.String.Format("{0} - {1}", m_currentData[m_goodAttribute], m_remainingAttributes[i]));
+                //////D.Log(System.String.Format("{0} - {1}", m_currentData[m_goodAttribute], m_remainingAttributes[i]));
 
                 if(m_currentData[m_remainingAttributes[i]] == null)
                 {
@@ -166,9 +166,9 @@ public class CorrectCaptionCoordinator : GameCoordinator
             }
             else
             {
-                ////D.LogError("BAD QUESTION");
-                ////D.Log("goodAttribute: " + (m_currentData[m_goodAttribute] != null));
-                ////D.Log("tex: " + tex);
+                //////D.LogError("BAD QUESTION");
+                //////D.Log("goodAttribute: " + (m_currentData[m_goodAttribute] != null));
+                //////D.Log("tex: " + tex);
                 StartCoroutine(AskQuestion());
             }
         }
@@ -230,7 +230,7 @@ public class CorrectCaptionCoordinator : GameCoordinator
 
         ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, ScoreInfo.CalculateScoreStars(m_score, m_targetScore));
 
-        ////D.Log("GameCoordinator.CompleteGame()");
+        //////D.Log("GameCoordinator.CompleteGame()");
         yield return null;
 
         GameManager.Instance.CompleteGame();

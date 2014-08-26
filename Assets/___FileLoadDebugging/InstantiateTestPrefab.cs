@@ -17,7 +17,7 @@ public class InstantiateTestPrefab : MonoBehaviour
         } 
         else
         {
-            //D.Log("MISSING TEST PREFAB");
+            ////D.Log("MISSING TEST PREFAB");
         }
 	}
 }

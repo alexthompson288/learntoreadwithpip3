@@ -39,7 +39,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        //D.Log("TransitionScreen.Start() - " + Application.loadedLevelName);
+        ////D.Log("TransitionScreen.Start() - " + Application.loadedLevelName);
 
 #if UNITY_IPHONE
 		Dictionary<string, string> ep = new Dictionary<string, string>();
@@ -54,7 +54,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
             yield return new WaitForSeconds(0.2f);
             if (m_loadingToScene == null)
             {
-                //D.Log("Moving to default scene; scene to load was null");
+                ////D.Log("Moving to default scene; scene to load was null");
 
 #if UNITY_IPHONE
 				ep = new Dictionary<string, string>();
@@ -66,7 +66,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
             }
 			else
             {
-                //D.Log("Moving to scene " + m_loadingToScene);
+                ////D.Log("Moving to scene " + m_loadingToScene);
 
 #if UNITY_IPHONE
 				ep = new Dictionary<string, string>();
@@ -78,14 +78,14 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 				while(Application.isLoadingLevel)
 				{
-					//D.Log("Loading " + m_loadingToScene);
+					////D.Log("Loading " + m_loadingToScene);
 					yield return null;
 				}
             }
             yield break;
         }
 
-		////D.Log("About to tween transition screen");
+		//////D.Log("About to tween transition screen");
 
         yield return null;
 		Vector3 newPos=new Vector3(1024.0f, 0.0f, 0.0f);
@@ -139,17 +139,17 @@ public class TransitionScreen : Singleton<TransitionScreen>
         {
             if (m_backStack.Count == 0)
             {
-                //D.Log("Back stack empty, going to start menu!");
+                ////D.Log("Back stack empty, going to start menu!");
                 ChangeLevel(null, false);
                 break;
             }
             else
             {
                 string levelName = m_backStack.Pop();
-                //D.Log("Pulled " + levelName + " from back stack!");
+                ////D.Log("Pulled " + levelName + " from back stack!");
                 if (levelName != Application.loadedLevelName)
                 {
-                    //D.Log("Is another scene - let's go!");
+                    ////D.Log("Is another scene - let's go!");
                     ChangeLevel(levelName, false);
                     break;
                 }
@@ -159,13 +159,13 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 	public void ChangeLevel(string level, bool addToStack)
 	{
-        D.Log("TransitionScreen.ChangeLevel(" + level + ")");
+        //D.Log("TransitionScreen.ChangeLevel(" + level + ")");
 		int stackCount = m_backStack.Count;
 		
 		if(stackCount > 0)
 		{
-			////D.Log("stackCount: " + stackCount);
-			////D.Log("stack.Peek(): " + m_backStack.Peek());
+			//////D.Log("stackCount: " + stackCount);
+			//////D.Log("stack.Peek(): " + m_backStack.Peek());
 		}
 		
 		if ( SettingsHolder.Instance != null )
@@ -208,7 +208,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
         {
             //m_backStack.Push(level);
 			m_backStack.Push(Application.loadedLevelName);
-            //D.Log("Adding " + level + " to back stack!");
+            ////D.Log("Adding " + level + " to back stack!");
         }
 
         if (level != null)
@@ -239,7 +239,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	// Reset the cover to the left
 	void LoadNextLevel (string level) 
 	{
-		//D.Log("TransitionScreen.LoadNextLevel(" + level + ") - Now loading empty scene");
+		////D.Log("TransitionScreen.LoadNextLevel(" + level + ") - Now loading empty scene");
         m_loadingToScene = level;
 
         /*
@@ -266,7 +266,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #endif
 
         //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        ////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        //////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
         //Application.LoadLevel(deliberatelyEmptySceneIndex);
 
         Application.LoadLevel(m_emptySceneName);
@@ -275,7 +275,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
     // Reset the cover to the left
     void LoadStartLevel()
     {
-        //D.Log("TransitionScreen.LoadStartLevel()");
+        ////D.Log("TransitionScreen.LoadStartLevel()");
         //m_loadingToScene = null;
 		//m_loadingToScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
 		m_loadingToScene = "NewVoyage";
@@ -287,7 +287,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 #endif
 
         //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        ////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
+        //////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
         //Application.LoadLevel(deliberatelyEmptySceneIndex);
 
         Application.LoadLevel(m_emptySceneName);
@@ -333,12 +333,12 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	{
 		if(m_backStack.Count == 0 || (m_backStack.Count > 0 && m_backStack.Peek() != sceneName))
 		{
-			//D.Log("Pushing: " + sceneName);
+			////D.Log("Pushing: " + sceneName);
 			m_backStack.Push(sceneName);
 		}
 		else
 		{
-			//D.Log(sceneName + " is already on back stack");
+			////D.Log(sceneName + " is already on back stack");
 		}
 	}
 }

@@ -31,7 +31,7 @@ public class PlaceValuePlayer : GamePlayer
         // Sort m_numberLabels from top to bottom
         System.Array.Sort(m_questionLabelParents, CollectionHelpers.LocalTopToBottom);
 
-        D.Log("PlaceValuePlayer.StartGame()");
+        //D.Log("PlaceValuePlayer.StartGame()");
         
         m_goButton.Unpressing += OnUnpressGoButton;
         
@@ -52,7 +52,7 @@ public class PlaceValuePlayer : GamePlayer
         
         if (subscribeToTimer)
         {
-            D.Log("Subscribing to timer");
+            //D.Log("Subscribing to timer");
             m_timer.Finished += OnTimerFinish;
         }
         

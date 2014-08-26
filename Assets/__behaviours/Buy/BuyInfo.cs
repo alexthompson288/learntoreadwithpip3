@@ -98,7 +98,7 @@ public class BuyInfo : Singleton<BuyInfo>
                 }
             }
             
-            ////D.Log("allBooksBought: " + allBooksBought);
+            //////D.Log("allBooksBought: " + allBooksBought);
             
             return allPipisodesBought;
         }
@@ -114,7 +114,7 @@ public class BuyInfo : Singleton<BuyInfo>
     {
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from pipisodes");
 
-        //D.Log(String.Format("Unlocking all {0} pipisodes", dt.Rows.Count));
+        ////D.Log(String.Format("Unlocking all {0} pipisodes", dt.Rows.Count));
 
         foreach(DataRow pipisode in dt.Rows)
         {
@@ -166,7 +166,7 @@ public class BuyInfo : Singleton<BuyInfo>
                 }
             }
             
-            ////D.Log("allBooksBought: " + allBooksBought);
+            //////D.Log("allBooksBought: " + allBooksBought);
             
             return allBooksBought;
         }
@@ -193,12 +193,12 @@ public class BuyInfo : Singleton<BuyInfo>
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories");
         if(dt.Rows.Count > 0)
         {
-            //D.Log("Unlocking all stories. Count " + dt.Rows.Count);
+            ////D.Log("Unlocking all stories. Count " + dt.Rows.Count);
             foreach(DataRow story in dt.Rows)
             {
                 if(story["publishable"] != null && story["publishable"].ToString() == "t")
                 {
-                    //D.Log("Unlocking " + story["id"].ToString() + " - " + story["title"].ToString());
+                    ////D.Log("Unlocking " + story["id"].ToString() + " - " + story["title"].ToString());
                     m_boughtBooks.Add(Convert.ToInt32(story["id"]));
                 }
             }
@@ -215,7 +215,7 @@ public class BuyInfo : Singleton<BuyInfo>
         }
 #endif
         
-        //D.Log(String.Format("IsMapBought({0}) - {1}", mapId, (m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)));
+        ////D.Log(String.Format("IsMapBought({0}) - {1}", mapId, (m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)));
         
         return m_boughtMaps.Contains(mapId) || ((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked;
     }
@@ -247,7 +247,7 @@ public class BuyInfo : Singleton<BuyInfo>
             }
             
             
-            ////D.Log("ALL MAPS BOUGHT: " + allMapsBought);
+            //////D.Log("ALL MAPS BOUGHT: " + allMapsBought);
             
             return allMapsBought;
         }
@@ -261,7 +261,7 @@ public class BuyInfo : Singleton<BuyInfo>
         //FlurryBinding.logEventWithParameters("MapPurchased", ep, false);
 #endif
         
-        //D.Log(String.Format("SetMapPurchased({0})", mapId));
+        ////D.Log(String.Format("SetMapPurchased({0})", mapId));
         m_boughtMaps.Add(mapId);
         Save ();
     }
@@ -315,15 +315,15 @@ public class BuyInfo : Singleton<BuyInfo>
     
     public bool IsEverythingBought()
     {
-        ////D.Log("BuyManager.IsEverythingBought()");
+        //////D.Log("BuyManager.IsEverythingBought()");
         if(((PipGameBuildSettings)(SettingsHolder.Instance.GetSettings())).m_isEverythingUnlocked)
         {
-            ////D.Log("Unlocked in settings");
+            //////D.Log("Unlocked in settings");
             return true;
         }
         else
         {
-            ////D.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
+            //////D.Log("Unlocked from purchases: " + (AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought()));
             return AreAllBooksBought() && AreAllMapsBought() && AreAllGamesBought() && AreAllPipisodesBought();
         }
     }

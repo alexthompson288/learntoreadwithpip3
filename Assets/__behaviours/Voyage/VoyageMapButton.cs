@@ -73,7 +73,7 @@ public class VoyageMapButton : MonoBehaviour
 
     void UnpressedButton(ClickEvent click)
     {
-        ////D.Log("Clicked map: " + m_color + " " + (int)m_color);
+        //////D.Log("Clicked map: " + m_color + " " + (int)m_color);
         StartCoroutine(UnpressedButtonCo());
     }
     

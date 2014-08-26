@@ -90,7 +90,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        D.Log("Starting game");
+        //D.Log("Starting game");
         
         if (m_dataPool.Count > 0)
         {

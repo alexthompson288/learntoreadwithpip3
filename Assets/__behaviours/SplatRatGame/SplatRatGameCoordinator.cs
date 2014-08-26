@@ -51,7 +51,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 		if(ratEnviro != null)
 		{
-			//D.Log("Found ratEnviro");
+			////D.Log("Found ratEnviro");
 			
 			Texture2D frontTex = ratEnviro.GetFrontTex();
 			Texture2D rearTex = ratEnviro.GetRearTex();
@@ -63,7 +63,7 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 		}
 		else
 		{
-			//D.LogError("ratEnviro is null");
+			////D.LogError("ratEnviro is null");
 		}
         */
 

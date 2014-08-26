@@ -42,10 +42,10 @@ public class PictureGamePlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        //D.Log("SelectCharacter");
+        ////D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        //D.Log("m_selectedCharacter: " + m_selectedCharacter);
+        ////D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
@@ -55,7 +55,7 @@ public class PictureGamePlayer : GamePlayer
 
     void ShowNextQuestion()
     {
-        //D.Log("Player ShowNextQuestion()");
+        ////D.Log("Player ShowNextQuestion()");
         
         if (m_remainingWords.Count == 0)
         {
@@ -108,7 +108,7 @@ public class PictureGamePlayer : GamePlayer
         m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
         m_remainingWords.AddRange(m_wordPool);
 
-        //D.Log("wordPool.Count: " + m_wordPool.Count);
+        ////D.Log("wordPool.Count: " + m_wordPool.Count);
 
 		Resources.UnloadUnusedAssets();
 
@@ -121,7 +121,7 @@ public class PictureGamePlayer : GamePlayer
 			GameManager.Instance.CompleteGame();
 		}
 
-		//D.Log("m_maxSpawn: " + m_maxSpawn);
+		////D.Log("m_maxSpawn: " + m_maxSpawn);
 
         m_targetScore = Mathf.Min(m_targetScore, m_remainingWords.Count);
 
@@ -236,7 +236,7 @@ public class PictureGamePlayer : GamePlayer
     public IEnumerator ActivateScoreKeeper()
     {
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
-        //D.Log("Player returning");
+        ////D.Log("Player returning");
     }
 
     public bool HasFinished()

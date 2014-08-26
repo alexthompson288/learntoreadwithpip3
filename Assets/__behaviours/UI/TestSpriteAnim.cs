@@ -14,7 +14,7 @@ public class TestSpriteAnim : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             m_waitForFinish = !m_waitForFinish;
-            //D.Log("TestSpriteAnim.waitForFinish:  " + m_waitForFinish);
+            ////D.Log("TestSpriteAnim.waitForFinish:  " + m_waitForFinish);
         }
 
 	    if (Input.GetKeyDown(KeyCode.J))

@@ -60,11 +60,11 @@ public static class NGUIHelpers
 
         if (width > maxWidth)
         {
-            ////D.Log(label.name + " - width: " + width);
-            ////D.Log("maxWidth: " + maxWidth);
-            ////D.Log("preLocalScale: " + label.transform.localScale);
+            //////D.Log(label.name + " - width: " + width);
+            //////D.Log("maxWidth: " + maxWidth);
+            //////D.Log("preLocalScale: " + label.transform.localScale);
             label.transform.localScale *= (maxWidth / width);
-            ////D.Log("postLocalScale: " + label.transform.localScale);
+            //////D.Log("postLocalScale: " + label.transform.localScale);
         }
     }
 

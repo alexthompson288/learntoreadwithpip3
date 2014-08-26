@@ -72,7 +72,7 @@ public class UserInfo : Singleton<UserInfo>
         }
 
         // Defensive: It should be impossible for this method to be called with a userName not found in the dictionary
-        //D.LogWarning("Could not find user with userName: " + userName);
+        ////D.LogWarning("Could not find user with userName: " + userName);
 
         if (m_users.Count > 0)
         {
@@ -85,17 +85,17 @@ public class UserInfo : Singleton<UserInfo>
     
     public void SetCurrentUser (string userName) 
     {
-        //D.Log("UserInfo.SetCurrentUser(" + userName + ")");
+        ////D.Log("UserInfo.SetCurrentUser(" + userName + ")");
         KeyValuePair<string, string> lastUser = m_currentUser;
 
-        //D.Log("Getting username");
+        ////D.Log("Getting username");
         m_currentUser = GetUser(userName);
-        //D.Log("Found username: " + m_currentUser);
+        ////D.Log("Found username: " + m_currentUser);
 
         // Defensive: This should never execute
         if(m_currentUser.Equals(default(KeyValuePair<string, string>)))
         {
-            //D.LogError("UserInfo.SetCurrentUser() - m_users does not have key " + userName);
+            ////D.LogError("UserInfo.SetCurrentUser() - m_users does not have key " + userName);
             foreach(KeyValuePair<string, string> kvp in m_users)
             {
                 m_currentUser = kvp;
@@ -105,7 +105,7 @@ public class UserInfo : Singleton<UserInfo>
 
         if (m_currentUser.Key != lastUser.Key)
         {
-            //D.Log("User is new");
+            ////D.Log("User is new");
             Save();
             
             if(ChangingUser != null)
@@ -168,7 +168,7 @@ public class UserInfo : Singleton<UserInfo>
                     // Defensive: This should never execute
                     if(m_currentUser.Equals(default(KeyValuePair<string, string>)))
                     {
-                        //D.LogError("UserInfo.Load() - m_users does not have key " + currentUserName);
+                        ////D.LogError("UserInfo.Load() - m_users does not have key " + currentUserName);
                         m_currentUser = m_users.First();
                     }
                 }

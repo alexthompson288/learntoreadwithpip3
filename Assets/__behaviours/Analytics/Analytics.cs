@@ -77,7 +77,7 @@ public class Analytics : Singleton<Analytics>
             }
             catch
             {
-                //D.LogError("Could not convert incorrectDataString into List<int>");
+                ////D.LogError("Could not convert incorrectDataString into List<int>");
             }
 
             m_timeStarted = br.ReadString();
@@ -242,7 +242,7 @@ public class Analytics : Singleton<Analytics>
         
         WWWForm form = new WWWForm();
         
-        ////D.Log("Posting user data: " + m_accountUsername);
+        //////D.Log("Posting user data: " + m_accountUsername);
         
         //form.AddField(modelName + "[account_username]", m_accountUsername);
         //form.AddField(modelName + "[email]", m_userEmail);
@@ -260,17 +260,17 @@ public class Analytics : Singleton<Analytics>
     //void FindIp()
     //{
         //string hostName = Dns.GetHostName();
-        ////D.Log("HostName: " + hostName);
+        //////D.Log("HostName: " + hostName);
         //IPAddress[] ipAddresses = Dns.GetHostAddresses(hostName);
         //foreach (IPAddress address in ipAddresses)
         //{
-           // //D.Log("ip: " + address.ToString());
+           // ////D.Log("ip: " + address.ToString());
         //}
     //}
 
     void FindIp2()
     {
-        //D.Log("ip2: " + Network.player.ipAddress);
+        ////D.Log("ip2: " + Network.player.ipAddress);
     }
     
     IEnumerator FindIpAddress()
@@ -285,7 +285,7 @@ public class Analytics : Singleton<Analytics>
         }
         catch
         {
-            //D.Log("FindIpAddress - catch - after finding");
+            ////D.Log("FindIpAddress - catch - after finding");
             myExtIPWWW = null;
         }
         
@@ -304,13 +304,13 @@ public class Analytics : Singleton<Analytics>
                 
                 myExtIP = myExtIP.Substring(0, myExtIP.IndexOf("<"));
                 
-                //D.Log("ip address: " + myExtIP);
+                ////D.Log("ip address: " + myExtIP);
                 
                 m_ipAddress = myExtIP;
             }
             catch
             {
-                //D.Log("FindIpAddress - catch - after parsing address");
+                ////D.Log("FindIpAddress - catch - after parsing address");
                 m_ipAddress = "";
             }
         }

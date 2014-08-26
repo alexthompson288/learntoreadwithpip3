@@ -33,7 +33,7 @@ public class DataDisplay : MonoBehaviour
 
     public void On(string dataType, DataRow data)
     {
-        D.Log("DataDisplay.On()");
+        //D.Log("DataDisplay.On()");
         m_dataType = dataType;
         m_data = data;
 

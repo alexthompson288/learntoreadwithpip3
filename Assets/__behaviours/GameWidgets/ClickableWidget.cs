@@ -44,22 +44,22 @@ public class ClickableWidget : MonoBehaviour
 			}
 			catch
 			{
-				//D.LogError("SetUp failed");
-				//D.Log("data: " + m_data);
-				//D.Log("id: " + m_data["id"].ToString());
+				////D.LogError("SetUp failed");
+				////D.Log("data: " + m_data);
+				////D.Log("id: " + m_data["id"].ToString());
 				if(m_dataType == "phonemes")
 				{
-					//D.Log("phoneme: " + m_data["phoneme"].ToString());
+					////D.Log("phoneme: " + m_data["phoneme"].ToString());
 				}
 				else
 				{
-					//D.Log("word: " + m_data["word"].ToString());
+					////D.Log("word: " + m_data["word"].ToString());
 				}
 			}
 		}
 		else
 		{
-			//D.LogError("NO DATA!");
+			////D.LogError("NO DATA!");
 		}
 	}
 	

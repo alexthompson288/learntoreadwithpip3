@@ -20,7 +20,7 @@ public class CallNavMenu : MonoBehaviour
 	{
         if (!pressed)
         {
-            //D.Log("CallNavMenu.OnPress(false)");
+            ////D.Log("CallNavMenu.OnPress(false)");
             PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
     		
             if (gameSettings.m_disableNavMenu)
@@ -33,7 +33,7 @@ public class CallNavMenu : MonoBehaviour
             } 
             else
             {
-                //D.Log("Calling");
+                ////D.Log("Calling");
                 NavMenu.Instance.Call(m_menuType);
             }
         }

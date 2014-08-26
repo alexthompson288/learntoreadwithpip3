@@ -33,7 +33,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
         m_wordPool = DataHelpers.GetWords();
         m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
 
-        D.Log("m_wordPool.Count: " + m_wordPool.Count);
+        //D.Log("m_wordPool.Count: " + m_wordPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -81,7 +81,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        D.Log("Starting game");
+        //D.Log("Starting game");
         
         DataRow sharedData = GetRandomWord();
         

@@ -148,7 +148,7 @@ public class BuyManager : Singleton<BuyManager>
         yield return null;
 
         if(m_logProductRequests)
-            //D.Log("PRODUCTLIST: Waiting for db");
+            ////D.Log("PRODUCTLIST: Waiting for db");
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -157,13 +157,13 @@ public class BuyManager : Singleton<BuyManager>
 
 
         if(m_logProductRequests)
-            //D.Log("PRODUCTLIST: Building");
+            ////D.Log("PRODUCTLIST: Building");
 
         string[] productIdentifiers = FindAllProductIdentifiers();
 
 
         if(m_logProductRequests)
-            //D.Log("PRODUCTLIST: Requesting");
+            ////D.Log("PRODUCTLIST: Requesting");
 
         StoreKitBinding.requestProductData(productIdentifiers);
         
@@ -176,16 +176,16 @@ public class BuyManager : Singleton<BuyManager>
         StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
         
         if(m_logProductRequests)
-            //D.Log("PRODUCTLIST: Finished");
+            ////D.Log("PRODUCTLIST: Finished");
 
     }
 
     void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
     {
-        //D.Log("PRODUCTLIST: Received " + productList.Count);
+        ////D.Log("PRODUCTLIST: Received " + productList.Count);
         foreach(StoreKitProduct product in productList)
         {
-            //D.Log(product.productIdentifier);
+            ////D.Log(product.productIdentifier);
         }
         
         m_productListResolved = true;
@@ -193,20 +193,20 @@ public class BuyManager : Singleton<BuyManager>
     
     void StoreKitManager_productListFailedEvent(string s)
     {
-        //D.Log("PRODUCTLIST: Failed");
-        //D.Log("Failed Message: " + s);
+        ////D.Log("PRODUCTLIST: Failed");
+        ////D.Log("Failed Message: " + s);
         
         m_productListResolved = true;
     }
 
 	IEnumerator AttemptPurchase()
 	{
-		//D.Log("BuyManager.AttemptPurchase()");
+		////D.Log("BuyManager.AttemptPurchase()");
 		StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
         StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_purchaseSuccessfulEvent);
 		
-		//D.Log("Attempting purchase on " + m_productIdentifier);
+		////D.Log("Attempting purchase on " + m_productIdentifier);
 		m_purchaseIsResolved = false;
 		StoreKitBinding.purchaseProduct(m_productIdentifier, 1);
 		
@@ -219,7 +219,7 @@ public class BuyManager : Singleton<BuyManager>
 			#if UNITY_EDITOR
 			if (pcTimeOut > 3.0f)
 			{
-				//D.Log("PURCHASE TIMED OUT");
+				////D.Log("PURCHASE TIMED OUT");
 				UnlockOnTimeOut();
 				m_purchaseIsResolved = true;
 			}
@@ -240,7 +240,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
-        //D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
+        ////D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
         
         UnlockProduct(obj.productIdentifier);
         
@@ -249,14 +249,14 @@ public class BuyManager : Singleton<BuyManager>
 
 	void StoreKitManager_purchaseCancelledEvent(string obj)
 	{
-		//D.Log("PURCHASE CANCELLED - " + m_productIdentifier);
-		//D.Log("Cancelled Message: " + obj);
+		////D.Log("PURCHASE CANCELLED - " + m_productIdentifier);
+		////D.Log("Cancelled Message: " + obj);
 		m_purchaseIsResolved = true;
 	}
 
     public IEnumerator RestorePurchases(float restoreTime)
     {
-        //D.Log("RestorePurchases - Opening processes");
+        ////D.Log("RestorePurchases - Opening processes");
         
         StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
         StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
@@ -265,13 +265,13 @@ public class BuyManager : Singleton<BuyManager>
         NGUIHelpers.EnableUICams(false);
         
         // Restore
-        //D.Log("RestorePurchases - Calling restoreCompletedTransactions");
+        ////D.Log("RestorePurchases - Calling restoreCompletedTransactions");
         StoreKitBinding.restoreCompletedTransactions();
         
-        //D.Log("RestorePurchases - Waiting for " + restoreTime);
+        ////D.Log("RestorePurchases - Waiting for " + restoreTime);
         yield return new WaitForSeconds(restoreTime);
         
-        //D.Log("RestorePurchases - Closing processes");
+        ////D.Log("RestorePurchases - Closing processes");
         
         NGUIHelpers.EnableUICams(false);
         
@@ -287,7 +287,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
     {
-        //D.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
+        ////D.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
         
         UnlockProduct(obj.productIdentifier);
     }
@@ -326,7 +326,7 @@ public class BuyManager : Singleton<BuyManager>
         GoogleIAB.init(m_androidPublicKey);
 
         if(m_logProductRequests)
-            //D.Log("QUERYINVENTORY: Waiting for db");
+            ////D.Log("QUERYINVENTORY: Waiting for db");
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
@@ -341,13 +341,13 @@ public class BuyManager : Singleton<BuyManager>
 
 
         if(m_logProductRequests)
-            //D.Log("QUERYINVENTORY: Building");
+            ////D.Log("QUERYINVENTORY: Building");
 
         string[] productIdentifiers = FindAllProductIdentifiers();
 
 
         if(m_logProductRequests)
-            //D.Log("QUERYINVENTORY: Requesting");
+            ////D.Log("QUERYINVENTORY: Requesting");
 
         GoogleIAB.queryInventory(productIdentifiers);
 
@@ -361,7 +361,7 @@ public class BuyManager : Singleton<BuyManager>
         GoogleIABManager.queryInventoryFailedEvent -= new Action<string>(GoogleIAB_queryInventoryFailedEvent);
         
         if(m_logProductRequests)
-            //D.Log("QUERYINVENTORY: Finished");
+            ////D.Log("QUERYINVENTORY: Finished");
     }
 
     void GoogleIAB_billingSupportedEvent()
@@ -372,7 +372,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void GoogleIAB_billingNotSupportedEvent(string message)
     {
-        //D.Log("Billing Unsupported: " + message);
+        ////D.Log("Billing Unsupported: " + message);
 
         m_billingSupported = false;
         ResolveBillingSupport();
@@ -388,11 +388,11 @@ public class BuyManager : Singleton<BuyManager>
 
     void GoogleIAB_queryInventorySucceededEvent(List<GooglePurchase> purchaseList, List<GoogleSkuInfo> infoList)
     {
-        //D.Log("QUERYINVENTORY: SUCCEEDED - " + purchaseList.Count);
+        ////D.Log("QUERYINVENTORY: SUCCEEDED - " + purchaseList.Count);
 
         foreach (GooglePurchase purchase in purchaseList)
         {
-            //D.Log(purchase.productId);
+            ////D.Log(purchase.productId);
         }
 
         m_productListResolved = true;
@@ -400,14 +400,14 @@ public class BuyManager : Singleton<BuyManager>
 
     void GoogleIAB_queryInventoryFailedEvent(string message)
     {
-        //D.Log("QUERYINVENTORY: FAILED - " + message);
+        ////D.Log("QUERYINVENTORY: FAILED - " + message);
 
         m_productListResolved = true;
     }
 
     IEnumerator AttemptPurchase()
     {
-        //D.Log("BuyManager.AttemptPurchase() - supported: " + m_billingSupported);
+        ////D.Log("BuyManager.AttemptPurchase() - supported: " + m_billingSupported);
 
         yield return null;
         if (m_billingSupported)
@@ -417,7 +417,7 @@ public class BuyManager : Singleton<BuyManager>
 
             m_purchaseIsResolved = false;
 
-            //D.Log("Attempting purchase on " + m_productIdentifier);
+            ////D.Log("Attempting purchase on " + m_productIdentifier);
 
             GoogleIAB.purchaseProduct(m_productIdentifier);
 
@@ -430,7 +430,7 @@ public class BuyManager : Singleton<BuyManager>
                 #if UNITY_EDITOR
                 if (pcTimeOut > 3.0f)
                 {
-                    //D.Log("PURCHASE TIMED OUT");
+                    ////D.Log("PURCHASE TIMED OUT");
                     UnlockOnTimeOut();
                     m_purchaseIsResolved = true;
                 }
@@ -451,7 +451,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void GoogleIAB_purchaseSuccessfulEvent(GooglePurchase obj)
     {
-        //D.Log("purchaseSuccessfulEvent: " + obj.productId);
+        ////D.Log("purchaseSuccessfulEvent: " + obj.productId);
         
         UnlockProduct(obj.productId);
         
@@ -460,7 +460,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void GoogleIAB_purchaseFailedEvent(string message)
     {
-        //D.Log("PURCHASE FAILED: " + message);
+        ////D.Log("PURCHASE FAILED: " + message);
 
         m_purchaseIsResolved = true;
     }
@@ -478,7 +478,7 @@ public class BuyManager : Singleton<BuyManager>
 #if UNITY_EDITOR
     void UnlockOnTimeOut()
     {
-        //D.Log("UNLOCKING ON TIMEOUT");
+        ////D.Log("UNLOCKING ON TIMEOUT");
         /*
         switch(m_buyType)
         {
@@ -536,13 +536,13 @@ public class BuyManager : Singleton<BuyManager>
             // Find the map id
             int mapId = Array.IndexOf(m_mapProductIdentifiers, productId);
             
-            //D.Log("mapId: " + mapId);
+            ////D.Log("mapId: " + mapId);
             
             BuyInfo.Instance.SetMapPurchased(mapId);
         }
         else
         {
-            //D.LogError("Product Identifier not recognized: " + productId);
+            ////D.LogError("Product Identifier not recognized: " + productId);
         }
     }
 

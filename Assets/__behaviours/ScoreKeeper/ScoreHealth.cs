@@ -188,7 +188,7 @@ public class ScoreHealth : PlusScoreKeeper
             yield return null;
         }
 
-        D.Log("Reset");
+        //D.Log("Reset");
 
         m_state = State.Timer;
 

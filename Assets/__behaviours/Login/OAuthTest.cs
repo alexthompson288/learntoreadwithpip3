@@ -11,31 +11,31 @@ public class OAuthTest : MonoBehaviour
 
     void Start()
     {
-        //D.Log("OAuthTest.Start()");
+        ////D.Log("OAuthTest.Start()");
 
         if (m_requestToken)
         {
-            //D.Log("Requesting token");
+            ////D.Log("Requesting token");
             RequestToken();
         }
 
         if (m_getUser)
         {
-            //D.Log("Getting user");
+            ////D.Log("Getting user");
             GetUser();
         }
     }
 
     void RequestToken()
     {
-        //D.Log("RequestToken()");
+        ////D.Log("RequestToken()");
 
 #if UNITY_EDITOR
         // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
         System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 #endif
 
-        //D.Log("Creating request");
+        ////D.Log("Creating request");
         var request = System.Net.WebRequest.Create("http://private-281e5-pip.apiary-mock.com/api/v1/token") as System.Net.HttpWebRequest;
         request.KeepAlive = true;
         request.Method = "POST";
@@ -44,7 +44,7 @@ public class OAuthTest : MonoBehaviour
         request.ContentLength = byteArray.Length;
         using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
 
-        //D.Log("Getting response");
+        ////D.Log("Getting response");
         string responseContent=null;
         using (var response = request.GetResponse() as System.Net.HttpWebResponse) {
             using (var reader = new System.IO.StreamReader(response.GetResponseStream())) {
@@ -52,8 +52,8 @@ public class OAuthTest : MonoBehaviour
             }
         }
 
-        //D.Log("RequestToken() - RESPONSE_CONTENT");
-        //D.Log(responseContent);
+        ////D.Log("RequestToken() - RESPONSE_CONTENT");
+        ////D.Log(responseContent);
     }
 
     void GetUser()
@@ -77,7 +77,7 @@ public class OAuthTest : MonoBehaviour
             }
         }
 
-        //D.Log("GetUser() - RESPONSE_CONTENT");
-        //D.Log(responseContent);
+        ////D.Log("GetUser() - RESPONSE_CONTENT");
+        ////D.Log(responseContent);
     }
 }

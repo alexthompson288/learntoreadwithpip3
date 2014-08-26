@@ -40,7 +40,7 @@ public class LessonSelectedGame : MonoBehaviour
 
 	public void On(bool isOn)
 	{
-		////D.Log(name + " On(" + isOn + ")");
+		//////D.Log(name + " On(" + isOn + ")");
 		m_isOn = isOn;
 
 		if(m_isOn)

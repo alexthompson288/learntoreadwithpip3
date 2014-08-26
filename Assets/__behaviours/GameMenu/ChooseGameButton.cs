@@ -71,11 +71,11 @@ public class ChooseGameButton : MonoBehaviour
 
     public void TweenScoreStars(GameObject starPrefab, UIGrid starSpawnGrid)
     {
-        //D.Log("TweenScoreStars()");
+        ////D.Log("TweenScoreStars()");
         int numNewStars = ScoreInfo.Instance.GetNewHighScoreStars() - ScoreInfo.Instance.GetPreviousHighScoreStars();
         //int startIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
 
-        //D.Log("numNewStars: " + numNewStars);
+        ////D.Log("numNewStars: " + numNewStars);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("SOMETHING_APPEAR");
 
@@ -92,7 +92,7 @@ public class ChooseGameButton : MonoBehaviour
         NGUIHelpers.PositionGridHorizontal(starSpawnGrid);
 
         int oldStarIndex = ScoreInfo.Instance.GetPreviousHighScoreStars();
-        //D.Log("oldStarIndex: " + oldStarIndex);
+        ////D.Log("oldStarIndex: " + oldStarIndex);
 
         for (int newStarIndex = 0; newStarIndex < newStars.Count && oldStarIndex < m_starSprites.Length; ++newStarIndex, ++oldStarIndex)
         {

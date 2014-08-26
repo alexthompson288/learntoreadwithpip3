@@ -65,13 +65,13 @@ public class NavMenu : Singleton<NavMenu>
     
     public void HideCallButton()
     {
-        //D.Log("HideCallButton()");
+        ////D.Log("HideCallButton()");
         m_callButton.SetActive(false);
     }
 
     public void Call(MenuType menuType)
     {
-        //D.Log("NavMenu.Call()");
+        ////D.Log("NavMenu.Call()");
         if (menuType == MenuType.Main)
         {
             CallMenu();

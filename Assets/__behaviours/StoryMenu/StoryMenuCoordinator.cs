@@ -281,7 +281,7 @@ public class StoryMenuCoordinator : MonoBehaviour
         if (StoryInfo.Instance.HasBookmark())
         {
             int storyId = StoryInfo.Instance.GetBookmarkStoryId();
-            //D.Log("Finding story with id: " + storyId);
+            ////D.Log("Finding story with id: " + storyId);
             m_currentBookButton = m_spawnedBooks.Find(x => System.Convert.ToInt32(x.GetData()["id"]) == storyId);
             StoryInfo.Instance.DestroyBookmark();
         } 

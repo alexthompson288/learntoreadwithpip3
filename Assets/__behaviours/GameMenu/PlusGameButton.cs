@@ -74,7 +74,7 @@ public class PlusGameButton : MonoBehaviour
             {
                 if (unlockedBadges.Contains(m_colorBadges[i]))
                 {
-                    D.Log("Unlocking color badge");
+                    //D.Log("Unlocking color badge");
                     StartCoroutine(UnlockColorBadge(m_colorBadges[i]));
                 } 
                 else if ((int)m_colorBadges[i].m_pipColor <= (int)maxColor)

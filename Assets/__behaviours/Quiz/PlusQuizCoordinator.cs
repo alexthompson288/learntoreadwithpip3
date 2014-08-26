@@ -26,14 +26,14 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 	
 	IEnumerator Start()
 	{
-		D.Log("PlusQuizCoordinator.Start()");
+		//D.Log("PlusQuizCoordinator.Start()");
 		
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 		
         m_dataPool = DataHelpers.GetQuizQuestions();
         RemoveIllegalData();
 
-		D.Log("m_dataPool.Count: " + m_dataPool.Count);
+		//D.Log("m_dataPool.Count: " + m_dataPool.Count);
 		
 		int numPlayers = GetNumPlayers();
 		
@@ -80,7 +80,7 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 			yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
 		}
 		
-		D.Log("Starting game");
+		//D.Log("Starting game");
 		
 		DataRow sharedData = GetRandomData();
 		
