@@ -6,8 +6,11 @@ public class CreateUserOffButton : MonoBehaviour
 	[SerializeField]
 	private bool m_createUser;
 
-	void OnClick () 
+	void OnPress (bool isDown) 
 	{
-		CreateUserCoordinator.Instance.Off(m_createUser);
+        if (!isDown)
+        {
+            CreateUserCoordinator.Instance.Off(m_createUser);
+        }
 	}
 }

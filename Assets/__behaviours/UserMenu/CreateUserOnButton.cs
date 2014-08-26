@@ -3,8 +3,11 @@ using System.Collections;
 
 public class CreateUserOnButton : MonoBehaviour {
 
-	void OnClick () 
+	void OnPress (bool isDown) 
 	{
-		CreateUserCoordinator.Instance.On();
+        if (!isDown)
+        {
+            CreateUserCoordinator.Instance.On();
+        }
 	}
 }
