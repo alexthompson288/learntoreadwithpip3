@@ -41,6 +41,8 @@ public class PipesCoordinator : GameCoordinator
     private UILabel m_triggerCounter;
     [SerializeField]
     private ThrobGUIElement m_throbBehaviour;
+    [SerializeField]
+    private TweenBehaviour m_moveableGlassTweenBehaviour;
 
     List<GameObject> m_spawnedRbs = new List<GameObject>();
 
@@ -268,6 +270,11 @@ public class PipesCoordinator : GameCoordinator
         
         // Game ends when player reaches targetScore
         ScoreInfo.Instance.NewScore(timeTaken, m_targetScore, m_targetScore, stars);
+
+        m_moveableGlassTweenBehaviour.Off();
+        m_dataDisplay.Off();
+
+        yield return new WaitForSeconds(0.2f);
 
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
 

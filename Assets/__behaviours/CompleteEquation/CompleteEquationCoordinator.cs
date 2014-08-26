@@ -23,6 +23,8 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     float m_timeStarted;
 
+    bool m_hasCompleted = false;
+
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
@@ -127,6 +129,8 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public void CompleteGame()
     {
+        m_hasCompleted = true;
+
         if (GetNumPlayers() == 1)
         {
             PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
@@ -138,6 +142,13 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     IEnumerator CompleteGameCo()
     {
         int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
+
+        for (int i = 0; i < m_gamePlayers.Length; ++i)
+        {
+            m_gamePlayers[i].ClearGame();
+        }
+
+        yield return new WaitForSeconds(0.2f);
 
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
@@ -205,5 +216,10 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     public int GetNumAnswersToSpawn()
     {
         return m_numAnswersToSpawn;
+    }
+
+    public bool HasCompleted()
+    {
+        return m_hasCompleted;
     }
 }

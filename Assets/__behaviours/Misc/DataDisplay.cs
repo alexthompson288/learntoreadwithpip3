@@ -12,7 +12,7 @@ public class DataDisplay : MonoBehaviour
     [SerializeField]
     private bool m_showPicture = true;
     [SerializeField]
-    private TweenOnOffBehaviour m_tweenBehaviour;
+    private TweenBehaviour m_tweenBehaviour;
     [SerializeField]
     private AudioSource m_audioSource;
     [SerializeField]
@@ -33,6 +33,7 @@ public class DataDisplay : MonoBehaviour
 
     public void On(string dataType, DataRow data)
     {
+        D.Log("DataDisplay.On()");
         m_dataType = dataType;
         m_data = data;
 

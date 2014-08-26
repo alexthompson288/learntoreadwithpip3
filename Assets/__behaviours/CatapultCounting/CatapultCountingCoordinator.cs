@@ -51,15 +51,15 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         m_startTime = Time.time;
 
-        StartCoroutine(SpawnTargets());
-        StartCoroutine(AskQuestion());
+        StartCoroutine("SpawnTargets");
+        StartCoroutine("AskQuestion");
 	}
 
     IEnumerator SpawnTargets()
     {
         SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_targetPrefab, m_targetSpawnParent);
         yield return new WaitForSeconds(0.75f);
-        StartCoroutine(SpawnTargets());
+        StartCoroutine("SpawnTargets");
     }
 
     IEnumerator AskQuestion()
@@ -92,7 +92,7 @@ public class CatapultCountingCoordinator : GameCoordinator
         if (numTrackedTargets >= m_currentData.GetInt("value"))
         {
             m_scoreKeeper.UpdateScore();
-            StartCoroutine(ClearQuestion());
+            StartCoroutine("ClearQuestion");
         }
     }
 
@@ -120,17 +120,24 @@ public class CatapultCountingCoordinator : GameCoordinator
 
         if (m_scoreKeeper.HasCompleted())
         {
-            StartCoroutine(CompleteGame());
+            StartCoroutine("CompleteGame");
         }
         else
         {
-            StartCoroutine(AskQuestion());
+            StartCoroutine("AskQuestion");
         }
     }
 
     protected override IEnumerator CompleteGame()
     {
+        StopCoroutine("SpawnTargets");
         m_catapult.Off();
+
+        CatapultCountingTarget[] targets = Object.FindObjectsOfType(typeof(CatapultCountingTarget)) as CatapultCountingTarget[];
+        for(int i = targets.Length - 1; i > -1; --i)
+        {
+            targets[i].Off();
+        }
 
         float timeTaken = Time.time - m_startTime;
         

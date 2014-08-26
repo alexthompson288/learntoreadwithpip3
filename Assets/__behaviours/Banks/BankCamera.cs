@@ -18,7 +18,7 @@ public class BankCamera : Singleton<BankCamera>
     {
         if (m_toIndexButton != null)
         {
-            m_toIndexButton.SingleClicked += OnClickMoveToIndex;
+            m_toIndexButton.Unpressed += OnClickMoveToIndex;
         }
 
         if (m_toShowButton != null)

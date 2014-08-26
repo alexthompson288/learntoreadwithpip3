@@ -13,6 +13,8 @@ public class CompleteEquationPlayer : GamePlayer
     private Transform[] m_answerLocators;
     [SerializeField]
     private Transform[] m_equationPartLocators;
+    [SerializeField]
+    private TweenBehaviour m_equationMoveable;
 
     List<GameWidget> m_spawnedEquationParts = new List<GameWidget>();
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
@@ -158,8 +160,17 @@ public class CompleteEquationPlayer : GamePlayer
         
         CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
         CollectionHelpers.DestroyObjects(m_spawnedEquationParts, true);
-        
-        AskQuestion();
+
+        if (!CompleteEquationCoordinator.Instance.HasCompleted())
+        {
+            AskQuestion();
+        }
+    }
+
+    public void ClearGame()
+    {
+        CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
+        m_equationMoveable.Off();
     }
 
     public IEnumerator CelebrateVictory()
@@ -169,7 +180,7 @@ public class CompleteEquationPlayer : GamePlayer
             yield return new WaitForSeconds(0.8f);
             CelebrationCoordinator.Instance.DisplayVictoryLabels(m_playerIndex);
             CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
         }
 
         yield return StartCoroutine(m_scoreKeeper.Celebrate());

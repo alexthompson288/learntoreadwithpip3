@@ -25,9 +25,12 @@ public class StoryPlayLineButton : MonoBehaviour
         Resources.UnloadUnusedAssets();
     }
 
-    void OnClick()
+    void OnPress(bool isDown)
     {
-        StartCoroutine(PlayLineAudio());
+        if (!isDown)
+        {
+            StartCoroutine(PlayLineAudio());
+        }
     }
 
     IEnumerator PlayLineAudio()

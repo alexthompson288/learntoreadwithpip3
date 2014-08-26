@@ -36,13 +36,13 @@ public class BankWordCoordinator : MonoBehaviour
 
         m_showButtonsButton.gameObject.SetActive(BankIndexCoordinator.Instance.GetDataType() != "keywords");
 
-        m_backToIndexButton.SingleClicked += OnClickBackToIndex;
-        m_correctButton.SingleClicked += OnClickCorrect;
-        m_incorrectButton.SingleClicked += OnClickIncorrect;
-        m_leftArrow.SingleClicked += OnLeftArrowClick;
-        m_rightArrow.SingleClicked += OnRightArrowClick;
-        m_showPictureButton.SingleClicked += TogglePicture;
-        m_showButtonsButton.SingleClicked += ToggleButtons;
+        m_backToIndexButton.Unpressed += OnClickBackToIndex;
+        m_correctButton.Unpressed += OnClickCorrect;
+        m_incorrectButton.Unpressed += OnClickIncorrect;
+        m_leftArrow.Unpressed += OnLeftArrowClick;
+        m_rightArrow.Unpressed += OnRightArrowClick;
+        m_showPictureButton.Unpressed += TogglePicture;
+        m_showButtonsButton.Unpressed += ToggleButtons;
     }
 
     void RefreshWordPool(DataRow word, string s)

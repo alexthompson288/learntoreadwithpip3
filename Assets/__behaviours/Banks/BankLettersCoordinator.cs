@@ -61,12 +61,12 @@ public class BankLettersCoordinator : MonoBehaviour
 
         m_mnemonicTexture.gameObject.SetActive(!m_isAlphabet);
 
-        m_soundButton.SingleClicked += OnClickSoundButton;
-        m_backToIndexButton.SingleClicked += OnClickBackToIndex;
-        m_correctButton.SingleClicked += OnClickCorrect;
-        m_incorrectButton.SingleClicked += OnClickIncorrect;
-        m_leftArrow.SingleClicked += OnLeftArrowClick;
-        m_rightArrow.SingleClicked += OnRightArrowClick;
+        m_soundButton.Unpressed += OnClickSoundButton;
+        m_backToIndexButton.Unpressed += OnClickBackToIndex;
+        m_correctButton.Unpressed += OnClickCorrect;
+        m_incorrectButton.Unpressed += OnClickIncorrect;
+        m_leftArrow.Unpressed += OnLeftArrowClick;
+        m_rightArrow.Unpressed += OnRightArrowClick;
     }
     
     void Refresh(DataRow phoneme, string s)

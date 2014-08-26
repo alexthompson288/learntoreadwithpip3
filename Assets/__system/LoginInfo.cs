@@ -155,11 +155,11 @@ public class LoginInfo : Singleton<LoginInfo>
             expirationDate = DateTime.Now.AddDays(-2);
         }
         
-        
+        /*
         bool isUserLegal = false;
 
         // Only check user if we actually have a token 
-        if (!System.String.IsNullOrEmpty(m_accessToken))
+        if (!String.IsNullOrEmpty(m_accessToken))
         {
             //D.Log("FOUND TOKEN - CHECK USER");
 
@@ -192,13 +192,15 @@ public class LoginInfo : Singleton<LoginInfo>
         {
             //D.Log("NO TOKEN - CANNOT CHECK USER");
         }
+        */
+       
         
-        if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
+        //if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
+        if (String.IsNullOrEmpty(m_email) || String.IsNullOrEmpty(m_accessToken) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
         {
             //D.Log("FAIL - MUST LOGIN");
             //D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
             //D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
-            //D.Log("isUserLegal: " + isUserLegal);
 
             if (Application.loadedLevelName != m_loginSceneName)
             {

@@ -92,4 +92,10 @@ public class CatapultCountingTarget : MonoBehaviour
             Destroying(this);
         }
     }
+
+    public void Off()
+    {
+        StopAllCoroutines();
+        iTween.ScaleTo(gameObject, Vector3.zero, 0.2f);
+    }
 }

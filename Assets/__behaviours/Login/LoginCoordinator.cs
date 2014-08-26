@@ -282,6 +282,24 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             
             LoginInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
 
+
+            float panelTweenDuration = 0.25f;
+            TweenAlpha.Begin(m_loginRegisterPanel.gameObject, panelTweenDuration, 0);
+            TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
+            
+            m_pipSpriteAnim.PlayAnimation("JUMP");
+            
+            yield return new WaitForSeconds(0.22f);
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
+            
+            yield return new WaitForSeconds(0.5f);
+            
+            SetInfoText("Login");
+            
+            TransitionScreen.Instance.ChangeToDefaultLevel();
+
+            /*
             bool isUserLegal = false;
 
             try
@@ -315,6 +333,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
                 
                 TransitionScreen.Instance.ChangeToDefaultLevel();
             }
+            */
         } 
 
         m_loginButtonLabel.text = "Login";
