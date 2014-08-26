@@ -215,6 +215,17 @@ public class Target : MonoBehaviour
         }
     }
 
+    public void ParentOff() 
+    {
+        MyStopCoroutines();
+
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("scale", Vector3.zero);
+        tweenArgs.Add("time", 0.2f);
+        tweenArgs.Add("easetype", iTween.EaseType.linear);
+        iTween.ScaleTo(transform.parent.gameObject, tweenArgs);
+    }
+
     protected virtual IEnumerator OnCo(float initialDelay) { yield break; }
     public virtual void Off() {}
     public virtual void SetOffPosition(Vector3 direction, float distance) {}

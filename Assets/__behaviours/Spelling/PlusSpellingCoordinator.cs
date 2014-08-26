@@ -155,7 +155,14 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     IEnumerator CompleteGameCo()
     {
         int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
-        
+
+        for (int i = 0; i < m_gamePlayers.Length; ++i)
+        {
+            m_gamePlayers[i].ClearGame();
+        }
+
+        yield return new WaitForSeconds(0.15f);
+
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
         GameManager.Instance.CompleteGame();

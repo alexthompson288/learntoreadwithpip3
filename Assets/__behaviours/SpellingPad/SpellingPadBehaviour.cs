@@ -20,6 +20,8 @@ public class SpellingPadBehaviour : MonoBehaviour
 	private GameObject m_starsParent;
     [SerializeField]
     private UISprite[] m_starsSprites;
+    [SerializeField]
+    private TweenBehaviour m_moveable;
 
     // TODO: Possibly deprecate
     [SerializeField]
@@ -65,6 +67,11 @@ public class SpellingPadBehaviour : MonoBehaviour
     {
         m_starsSprites = m_starsParent.GetComponentsInChildren<UISprite>() as UISprite[];
         m_starsParent.SetActive(false);
+    }
+
+    public void Off()
+    {
+        m_moveable.Off();
     }
 
 	public void DisplayNewWord(string word, PadLetter.State letterStartingState = PadLetter.State.Unanswered)

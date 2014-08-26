@@ -237,6 +237,8 @@ public class FlySwatPlayer : GamePlayer
 
     public void StopGame()
     {
+        m_dataDisplay.Off();
+
         StopCoroutine("SpawnFly");
 
         for (int i = m_spawnedWidgets.Count - 1; i > -1; --i)

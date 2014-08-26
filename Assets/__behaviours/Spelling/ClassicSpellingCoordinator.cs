@@ -170,6 +170,10 @@ public class ClassicSpellingCoordinator : MonoBehaviour
 
         //D.Log("WAIT FOR SCOREKEEPER");
 
+        m_spellingPad.Off();
+        m_dataDisplay.Off();
+        yield return new WaitForSeconds(0.15f);
+
         yield return StartCoroutine(m_scoreKeeper.Celebrate());
 
         //D.Log("SET DEFAULT");

@@ -219,6 +219,13 @@ public class PlusSpellingPlayer : GamePlayer
         PlusSpellingCoordinator.Instance.CompleteGame();
     }
 
+    public void ClearGame()
+    {
+        m_spellingPad.Off();
+        m_dataDisplay.Off();
+        CollectionHelpers.DestroyObjects(m_spawnedDraggables, true);
+    }
+
     public IEnumerator CelebrateVictory()
     {
         if (SessionInformation.Instance.GetNumPlayers() == 2)

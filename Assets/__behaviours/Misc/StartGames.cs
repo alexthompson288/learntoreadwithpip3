@@ -6,10 +6,13 @@ public class StartGames : MonoBehaviour
     [SerializeField]
     private string[] m_gameNames;
 
-	void OnClick()
+	void OnPress(bool isDown)
     {
-        GameManager.Instance.Reset();
-        GameManager.Instance.AddGames(m_gameNames);
-        GameManager.Instance.StartGames();
+        if (!isDown)
+        {
+            GameManager.Instance.Reset();
+            GameManager.Instance.AddGames(m_gameNames);
+            GameManager.Instance.StartGames();
+        }
     }
 }

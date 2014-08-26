@@ -22,8 +22,6 @@ public class CatapultMixedCoordinator : MonoBehaviour
     [SerializeField]
     private AudioClip m_mixedDataInstructions;
     [SerializeField]
-    private Target[] m_targets;
-    [SerializeField]
     private ScoreKeeper m_scoreKeeper;
     [SerializeField]
     private DataDisplay m_dataDisplay;
@@ -268,7 +266,15 @@ public class CatapultMixedCoordinator : MonoBehaviour
     
     IEnumerator OnGameComplete()
     {
+        m_dataDisplay.Off();
         m_catapult.Off();
+        Target[] targets = UnityEngine.Object.FindObjectsOfType(typeof(Target)) as Target[];
+        foreach (Target target in targets)
+        {
+            target.ParentOff();
+        }
+
+        yield return new WaitForSeconds(0.2f);
 
         float timeTaken = Time.time - m_startTime;
 
