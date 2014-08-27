@@ -32,9 +32,21 @@ public class StoryMenuBook : MonoBehaviour
         Destroy(gameObject);
     }
 
+    float m_horizontalMagnitude;
+    float m_horizontalThreshold = 10;
+
+    void OnDrag(Vector2 delta)
+    {
+        m_horizontalMagnitude += Mathf.Abs(delta.x);
+    }
+
     void OnPress(bool isDown)
     {
-        if (!isDown && Clicked != null)
+        if (isDown)
+        {
+            m_horizontalMagnitude = 0;
+        }
+        if (!isDown && m_horizontalMagnitude < m_horizontalThreshold && Clicked != null)
         {
             Clicked(this);
         }

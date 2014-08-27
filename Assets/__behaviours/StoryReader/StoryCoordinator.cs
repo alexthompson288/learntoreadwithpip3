@@ -277,8 +277,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_scaleLabel.transform.localScale = Vector3.one;
 
         //float maxWidth = 900;
-        float maxWidth = 145;
-        float maxHeight = 38;
+        float maxWidth = 135;
+        float maxHeight = 36;
 
         ////D.Log("storyPage: " + storyPage);
         ////D.Log("currentAttribute: " + m_currentTextAttribute);

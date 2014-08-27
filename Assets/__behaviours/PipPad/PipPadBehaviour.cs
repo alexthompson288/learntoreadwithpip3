@@ -196,7 +196,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 					}
 				}
 
-				if(hasPhonemes)
+				if(hasPhonemes || (row["tricky"] != null && row["tricky"].ToString() == "t"))
 				{
 					List<PhonemeBuildInfo> pbiList = new List<PhonemeBuildInfo>();
 					
