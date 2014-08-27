@@ -69,7 +69,7 @@ public class BuyBooksCoordinator : BuyCoordinator<BuyBooksCoordinator>
         /*
         if (BuyInfo.Instance != null && m_currentBook != null && m_currentBook.storyData != null)
         {
-            ////D.Log("m_currentBook: " + m_currentBook);
+            //////D.Log("m_currentBook: " + m_currentBook);
             bool bookIsLocked = !BuyInfo.Instance.IsBookBought(Convert.ToInt32(m_currentBook.storyData ["id"]));
             m_buyButton.collider.enabled = bookIsLocked;
 

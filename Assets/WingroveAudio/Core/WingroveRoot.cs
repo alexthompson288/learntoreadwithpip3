@@ -474,7 +474,7 @@ namespace WingroveAudio
     /*
         public AudioSourcePoolItem TryClaimPoolSource(ActiveCue cue)
         {
-            ////D.Log("WingroveRoot.TryClaimPoolSource(" + cue + ")");
+            //////D.Log("WingroveRoot.TryClaimPoolSource(" + cue + ")");
             AudioSourcePoolItem bestSteal = null;
             int lowestImportance = cue.GetImportance();
             float quietestSimilarImportance = 1.0f;
@@ -482,7 +482,7 @@ namespace WingroveAudio
             {
                 if (aspi.m_user == null)
                 {
-                    ////D.Log("Found unused audio source");
+                    //////D.Log("Found unused audio source");
                     aspi.m_user = cue;
                     return aspi;
                 }
@@ -508,13 +508,13 @@ namespace WingroveAudio
             }
             if (bestSteal != null)
             {
-                ////D.Log("Stealing audio source");
+                //////D.Log("Stealing audio source");
                 bestSteal.m_user.Virtualise();
                 bestSteal.m_user = cue;
                 return bestSteal;
             }
 
-            ////D.Log("Could not find audio source");
+            //////D.Log("Could not find audio source");
             return null;
         }
         */

@@ -78,7 +78,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		{
 			if(letter["m_starSpawnGrid"] == null)
 			{
-				////D.Log(letter["phoneme"].ToString() + " has no dummy property");
+				//////D.Log(letter["phoneme"].ToString() + " has no dummy property");
 			}
 			if(letter["m_starSpawnGrid"] != null && letter["m_starSpawnGrid"].ToString() == "t")
 			{
@@ -119,16 +119,16 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			}
 		}
 		
-		////D.Log("target");
+		//////D.Log("target");
 		foreach(DataRow targetLetter in m_targetLetterPool)
 		{
-			////D.Log(targetLetter["phoneme"].ToString());
+			//////D.Log(targetLetter["phoneme"].ToString());
 		}
 
-		////D.Log("dummy");
+		//////D.Log("dummy");
 		foreach(DataRow dummyLetter in m_dummyLetterPool)
 		{
-			////D.Log(dummyLetter["phoneme"].ToString());
+			//////D.Log(dummyLetter["phoneme"].ToString());
 		}
 
 		if(Game.session == Game.Session.Premade && !m_useLinkingIndices)
@@ -176,7 +176,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 
         //UserStats.Activity.AddWord(m_currentWordData);
 		
-		////D.Log("currentWord: " + currentWord);
+		//////D.Log("currentWord: " + currentWord);
 
 		HashSet<string> answerPhonemes = new HashSet<string>();
 		string targetPhoneme = null;
@@ -185,7 +185,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 		{
 			if(m_useLinkingIndices)
 			{
-				////D.Log("Linking Index: " + m_currentWordData["linking_index"].ToString());
+				//////D.Log("Linking Index: " + m_currentWordData["linking_index"].ToString());
 
 				foreach(DataRow letter in m_targetLetterPool)
 				{
@@ -255,7 +255,7 @@ public class MissingPhonemeCoordinator : MonoBehaviour
 			
 		WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 			
-		////D.Log("targetPhoneme: " + targetPhoneme);
+		//////D.Log("targetPhoneme: " + targetPhoneme);
 
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonemes WHERE phoneme ='" + targetPhoneme + "'");
         if (dt.Rows.Count > 0)

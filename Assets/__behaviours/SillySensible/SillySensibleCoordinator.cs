@@ -67,6 +67,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 	// Use this for initialization
 	IEnumerator Start () 
     {
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+
         m_benny.SetFirst(m_instructionAudio);
         StartCoroutine(m_benny.PlayAudio());
 
@@ -88,10 +90,13 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
 		if(m_wordList.Count > 0)
 		{
+            /*
             while(m_benny.IsPlaying())
             {
                 yield return null;
             }
+            */
+            yield return new WaitForSeconds(2f);
 
             ShowNextWord();
 		}

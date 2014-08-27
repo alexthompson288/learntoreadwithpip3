@@ -83,7 +83,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        //D.Log("Starting game");
+        ////D.Log("Starting game");
         
         DataRow sharedData = GetRandomWord();
         

@@ -23,7 +23,7 @@ public class UserMenuButton : MonoBehaviour
 	//public void SetUp (string userName, string imageName, UIDraggablePanel draggablePanel) 
     public void SetUp (string userName, string imageName)
 	{
-        ////D.Log("imageName: " + imageName);
+        //////D.Log("imageName: " + imageName);
 
 		m_label.text = userName;
 
@@ -57,7 +57,7 @@ public class UserMenuButton : MonoBehaviour
 
 	void OnClick()
 	{
-        ////D.Log("UserMenuButton.OnClick()");
+        //////D.Log("UserMenuButton.OnClick()");
 		UserInfo.Instance.SetCurrentUser(m_label.text);
         UserMenuCoordinator.Instance.SelectButton(this);
 	}

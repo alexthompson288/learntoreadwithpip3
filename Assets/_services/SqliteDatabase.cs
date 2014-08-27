@@ -156,7 +156,7 @@ public class SqliteDatabase
         }
         catch
         {
-            ////D.LogError("Could not parse tablename");
+            //////D.LogError("Could not parse tablename");
             tableName = "default";
         }
         

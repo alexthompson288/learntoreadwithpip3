@@ -64,7 +64,7 @@ public class GameManager : Singleton<GameManager>
 
         m_currentGameName = m_gameNames.Dequeue();
 
-        //D.Log("NextGame: " + m_currentGameName);
+        ////D.Log("NextGame: " + m_currentGameName);
 
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
@@ -77,7 +77,7 @@ public class GameManager : Singleton<GameManager>
 
         if (!System.String.IsNullOrEmpty(sceneName))
         {
-            //D.Log("SceneName: " + sceneName);
+            ////D.Log("SceneName: " + sceneName);
             TransitionScreen.Instance.ChangeLevel(sceneName, true);
         } 
         else

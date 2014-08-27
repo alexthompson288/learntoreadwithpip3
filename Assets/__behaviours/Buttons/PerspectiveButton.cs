@@ -60,7 +60,7 @@ public class PerspectiveButton : MonoBehaviour
             /*
             if(name.Contains("KeywordBank"))
             {
-                ////D.Log(follower.position.x);
+                //////D.Log(follower.position.x);
             }
             */
 

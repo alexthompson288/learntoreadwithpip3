@@ -133,7 +133,7 @@ public class JoinPairsPlayer : GamePlayer
         pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, m_locators.Length / 2);
         pairsToShowAtOnce = Mathf.Min(pairsToShowAtOnce, JoinPairsCoordinator.Instance.dataPool.Count);
 
-        ////D.Log("Created dataPool");
+        //////D.Log("Created dataPool");
 
         while (dataPool.Count < pairsToShowAtOnce)
         {
@@ -145,7 +145,7 @@ public class JoinPairsPlayer : GamePlayer
             yield return null;
         }
 
-        ////D.Log("dataPool.Count: " + dataPool);
+        //////D.Log("dataPool.Count: " + dataPool);
 
         CollectionHelpers.Shuffle(m_locators);
 

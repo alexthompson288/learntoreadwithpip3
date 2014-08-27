@@ -76,7 +76,7 @@ public class PlaceValueCoordinator : Singleton<PlaceValueCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        //D.Log("Starting game");
+        ////D.Log("Starting game");
 
         List<DataRow> sharedDataPool = GetRandomDataPool();
         

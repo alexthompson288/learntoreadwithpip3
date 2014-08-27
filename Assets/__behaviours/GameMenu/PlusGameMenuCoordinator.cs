@@ -46,7 +46,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         }
 
         PlusGameButton[] gameButtons = Object.FindObjectsOfType(typeof(PlusGameButton)) as PlusGameButton[];
-        //D.Log(System.String.Format("Found {0} game buttons", gameButtons.Length));
+        ////D.Log(System.String.Format("Found {0} game buttons", gameButtons.Length));
         foreach (PlusGameButton button in gameButtons)
         {
             button.Unpressed += OnClickGameButton;

@@ -14,7 +14,7 @@ public class MathHelpers : MonoBehaviour
             {
                 for(int j = 0; j < 13; ++j)
                 {
-                    ////D.Log(System.String.Format("{0} * {1} = {2}", i, j, i * j));
+                    //////D.Log(System.String.Format("{0} * {1} = {2}", i, j, i * j));
                     m_timesTableNumbers.Add(i * j);
                 }
             }

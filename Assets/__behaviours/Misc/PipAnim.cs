@@ -50,10 +50,10 @@ public class PipAnim : Collector
         int localScaleX = m_targetPos.x > transform.position.x ? 1 : -1;
         transform.localScale = new Vector3(localScaleX, 1, 1);
         
-        ////D.Log("WALK");
+        //////D.Log("WALK");
         m_anim.PlayAnimation("WALK", false);
         
-        ////D.Log("tweenDuration: " + tweenDuration);
+        //////D.Log("tweenDuration: " + tweenDuration);
         
         yield return new WaitForSeconds(tweenDuration);
 

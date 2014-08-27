@@ -26,10 +26,10 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 		Dictionary<string, string> users = UserInfo.Instance.GetUsers();
 
-		////D.Log("Users");
+		//////D.Log("Users");
 		foreach(KeyValuePair<string, string> kvp in users)
 		{
-			////D.Log(kvp.Key + " - " + kvp.Value);
+			//////D.Log(kvp.Key + " - " + kvp.Value);
 			GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_UserMenuButtonPrefab, m_grid.transform);
 			//newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value, m_draggablePanel);
             newButton.GetComponent<UserMenuButton>().SetUp(kvp.Key, kvp.Value);
@@ -62,12 +62,12 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
 	public void SelectButton (UserMenuButton button)
 	{
-        ////D.Log("UserMenuCoordinator.SelectButton()");
+        //////D.Log("UserMenuCoordinator.SelectButton()");
         float tweenDuration = 0.25f;
 
         if (button != m_currentButton)
         {
-            ////D.Log("button != m_currentButton");
+            //////D.Log("button != m_currentButton");
             if (m_currentButton != null)
             {
                 m_currentButton.ChangeSprite(false, tweenDuration);

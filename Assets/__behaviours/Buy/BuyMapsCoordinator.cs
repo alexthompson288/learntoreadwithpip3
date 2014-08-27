@@ -21,7 +21,7 @@ public class BuyMapsCoordinator : BuyCoordinator<BuyMapsCoordinator>
 	
 	public void Show(int mapId)
 	{
-		////D.Log("Buy Map Show"); 
+		//////D.Log("Buy Map Show"); 
 		m_mapId = mapId;
 
         RefreshBuyButton();

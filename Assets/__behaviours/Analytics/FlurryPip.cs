@@ -26,7 +26,7 @@ public class FlurryPip : Singleton<FlurryPip>
     {
         if (m_hasStarted)
         {
-            //D.Log("FlurryPip.OnApplicationPause() - HAS STARTED");
+            ////D.Log("FlurryPip.OnApplicationPause() - HAS STARTED");
 
             m_hasExited = true;
             OnAppClose();
@@ -35,13 +35,13 @@ public class FlurryPip : Singleton<FlurryPip>
 
     void OnApplicationQuit()
     {
-        //D.Log("FlurryPip.OnApplicationQuit()");
+        ////D.Log("FlurryPip.OnApplicationQuit()");
         OnAppClose();
     }
 
     void Start()
     {
-        //D.Log("FlurryPip.Start()");
+        ////D.Log("FlurryPip.Start()");
         Save();
 
         m_hasStarted = true;
@@ -60,26 +60,26 @@ public class FlurryPip : Singleton<FlurryPip>
         if (m_hasExited)
         {
             m_hasExited = false;
-            //D.Log("FlurryPip.CheckForExit() - HAS EXITED");
+            ////D.Log("FlurryPip.CheckForExit() - HAS EXITED");
             StartCoroutine(OnAppOpen());
         } 
     }
 
     void LogSaved()
     {
-        //D.Log("FlurryPip.LogSaved()");
+        ////D.Log("FlurryPip.LogSaved()");
         foreach (KeyValuePair<string, string> kvp in m_generalSavedParameters)
         {
-            //D.Log(kvp.Key + ": " + kvp.Value);
+            ////D.Log(kvp.Key + ": " + kvp.Value);
         }
     }
 
     void LogTimed()
     {
-        //D.Log("FlurryPip.LogTimed()");
+        ////D.Log("FlurryPip.LogTimed()");
         foreach (KeyValuePair<string, string> kvp in m_generalTimedParameters)
         {
-            //D.Log(kvp.Key + ": " + kvp.Value);
+            ////D.Log(kvp.Key + ": " + kvp.Value);
         }
     }
 

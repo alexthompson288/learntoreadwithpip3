@@ -72,7 +72,7 @@ public static class LoginHelpers
 
     public static string Register(string email, string password, string name)
     {
-        //D.Log("LoginHelpers.Register()");
+        ////D.Log("LoginHelpers.Register()");
         #if UNITY_EDITOR
         // Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
         //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -86,9 +86,9 @@ public static class LoginHelpers
         // email, password, name, password confirmation
         //byte[] bytfArray = System.Text.Encoding.UTF8.GetBytes("{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\"\n}");
 
-        //D.Log("email: " + email);
-        //D.Log("password: " + password);
-        //D.Log("name: " + name);
+        ////D.Log("email: " + email);
+        ////D.Log("password: " + password);
+        ////D.Log("name: " + name);
 
         //string byteString = String.Format("{\n    \"email\": \"{0}\",\n    \"password\": \"{1}\",\n    \"name\": \"{2}\",\n    \"password_confirmation\": \"{3}\"\n}", 
                                           //new object[] { email, password, name, password });
@@ -151,7 +151,7 @@ public static class LoginHelpers
 		//System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 		#endif
 		
-		////D.Log (m_url + m_userExtension);
+		//////D.Log (m_url + m_userExtension);
 		var request = System.Net.WebRequest.Create(m_url + m_userExtension) as System.Net.HttpWebRequest;
 		request.KeepAlive = true;
 		request.Method = "GET";
@@ -171,32 +171,32 @@ public static class LoginHelpers
 
 	public static bool IsUserLegal(string accessToken)
 	{
-		////D.Log ("LoginHelpers.GetUserState()");
+		//////D.Log ("LoginHelpers.GetUserState()");
 		string userResponse = GetUser(accessToken);
 
-        ////D.Log("IsUserLegal.userResponse: " + userResponse);
+        //////D.Log("IsUserLegal.userResponse: " + userResponse);
 		
 		if (!userResponse.Contains("error"))
         {
             string userPrefix = "\"can_access_content\":";
 
             string canAccessContent = ParseResponse(userResponse, userPrefix, "}");
-            ////D.Log("canAccessContent: " + canAccessContent);
+            //////D.Log("canAccessContent: " + canAccessContent);
 
             if (canAccessContent == "true")
             {
-                ////D.Log("GOOD");
+                //////D.Log("GOOD");
                 return true;
             } 
             else
             {
-                ////D.Log("EXPIRED");
+                //////D.Log("EXPIRED");
                 throw new LoginException(LoginException.ExceptionType.Expired);
             }
         } 
         else
         {
-            ////D.Log("INVALID_TOKEN");
+            //////D.Log("INVALID_TOKEN");
             throw new LoginException(LoginException.ExceptionType.InvalidToken);
         }
 	}

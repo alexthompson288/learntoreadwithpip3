@@ -38,10 +38,10 @@ public class PlusSpellingPlayer : GamePlayer
     
     public override void SelectCharacter(int characterIndex)
     {
-        ////D.Log("SelectCharacter");
+        //////D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        ////D.Log("m_selectedCharacter: " + m_selectedCharacter);
+        //////D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
