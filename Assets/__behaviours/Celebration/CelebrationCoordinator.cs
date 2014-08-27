@@ -292,7 +292,7 @@ public class CelebrationCoordinator : Singleton<CelebrationCoordinator>
 
 		string spriteName = characterName.ToLower() + "_state_b";
 		m_characterPopper.GetComponentInChildren<UISprite>().spriteName = spriteName;
-        m_characterPopper.GetComponentInChildren<UISprite>().MakePixelPerfect();
+        //m_characterPopper.GetComponentInChildren<UISprite>().MakePixelPerfect();
 
 		m_characterPopper.PopCharacter(3);
 	}
