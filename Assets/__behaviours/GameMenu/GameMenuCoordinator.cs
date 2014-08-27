@@ -125,6 +125,7 @@ public class GameMenuCoordinator : MonoBehaviour
     void OnPressGameButton(PipButton button)
     {
         DataRow game = DataHelpers.GetGame(button.GetString());
+        D.Log("game: " + game);
 
         if (game != null)
         {
