@@ -169,6 +169,11 @@ public class PictureGamePlayer : GamePlayer
         yield return new WaitForSeconds(1.5f);
 
         //WingroveAudio.WingroveRoot.Instance.PostEvent("SFX_SPARKLE");
+
+        if (m_remainingWords.Count == 0)
+        {
+            m_remainingWords.AddRange(m_wordPool);
+        }
         
         if (!m_scoreKeeper.HasCompleted() && m_remainingWords.Count > 0)
         {
