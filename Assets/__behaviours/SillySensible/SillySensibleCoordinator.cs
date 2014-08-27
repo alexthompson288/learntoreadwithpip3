@@ -64,6 +64,8 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
     bool m_hasGotWrong = false;
 
+    float m_startTime;
+
 	// Use this for initialization
 	IEnumerator Start () 
     {
@@ -97,7 +99,7 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
             }
             */
             yield return new WaitForSeconds(2f);
-
+            m_startTime = Time.time;
             ShowNextWord();
 		}
 		else
@@ -289,6 +291,15 @@ public class SillySensibleCoordinator : Singleton<SillySensibleCoordinator>
 
     IEnumerator CompleteGame()
     {
+        float timeTaken = Time.time - m_startTime;
+        
+        float twoStarPerQuestion = 6f;
+        float threeStarPerQuestion = 3f;
+        
+        int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+        
+        ScoreInfo.Instance.NewScore(timeTaken, m_score, m_targetScore, stars);
+
         yield return new WaitForSeconds(1.0f);
         iTween.MoveTo(m_moveHierarchy, m_offPosition.transform.position, 1.0f);
         yield return new WaitForSeconds(1.0f);

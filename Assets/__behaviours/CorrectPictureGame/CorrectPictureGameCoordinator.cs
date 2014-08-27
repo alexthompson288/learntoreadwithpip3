@@ -69,13 +69,6 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			Resources.UnloadUnusedAssets();
 		}
 
-#if UNITY_EDITOR
-        // shout, knight
-        //List<DataRow> debugData = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='shout'").Rows;
-        //m_remainingWords.Clear();
-        //m_remainingWords.Add(debugData[0]["word"].ToString());
-#endif
-
 		//////D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 		if(m_maxSpawn > m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		{
@@ -89,6 +82,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		Resources.UnloadUnusedAssets();
 
+        D.Log("m_remainingWords.Count: " + m_remainingWords.Count);
 
 		if(m_wordSelection.Count >= m_maxSpawn)
 		{
@@ -102,6 +96,13 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
     IEnumerator ShowNextQuestion()
     {
+
+        if (m_remainingWords.Count == 0)
+        {
+            m_remainingWords.AddRange(m_allWords);
+        }
+
+
         yield return new WaitForSeconds(1.5f);
 
         m_hasAnsweredCorrectly = false;
@@ -194,6 +195,13 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
             yield return new WaitForSeconds(4.0f);
         }
         PipPadBehaviour.Instance.Hide();
+
+
+        if (m_remainingWords.Count == 0)
+        {
+            m_remainingWords.AddRange(m_allWords);
+        }
+
 
         m_progressScoreBar.SetStarsCompleted(m_score);
         m_progressScoreBar.SetScore(m_score);
