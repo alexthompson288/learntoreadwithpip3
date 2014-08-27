@@ -130,6 +130,7 @@ public class BankLettersCoordinator : MonoBehaviour
             string mnemonic = phoneme["mneumonic"].ToString();
 
             string finalletter = m_mainColorString + mnemonic.Replace(colorReplace, m_highlightColorString + colorReplace + m_mainColorString);
+
             // do some mad logic to replace splits
             if (colorReplace.Contains("-") && colorReplace.Length == 3)
             {
