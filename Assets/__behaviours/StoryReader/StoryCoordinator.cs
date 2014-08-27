@@ -277,7 +277,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         //float maxWidth = 900;
         float maxWidth = 150;
-        float maxHeight = 39;
+        float maxHeight = 38;
 
         ////D.Log("storyPage: " + storyPage);
         ////D.Log("currentAttribute: " + m_currentTextAttribute);
