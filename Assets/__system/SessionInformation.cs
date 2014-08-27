@@ -575,9 +575,19 @@ public class SessionInformation : Singleton<SessionInformation>
         m_currentlySelectedNumPlayers = numPlayers;
     }
 
+#if UNITY_EDITOR
+    [SerializeField]
+    private bool m_alwaysTwoPlayers = false;
+#endif
+
     public int GetNumPlayers()
     {
-        //return 2;
+#if UNITY_EDITOR
+        if(m_alwaysTwoPlayers)
+        {
+            return 2;
+        }
+#endif
         return m_currentlySelectedNumPlayers;
     }
 
