@@ -35,6 +35,8 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
     // Use this for initialization
     IEnumerator Start()
     {
+        PipPadBehaviour.Instance.HideDownButton();
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
 		m_wordSelection = DataHelpers.GetWords();
