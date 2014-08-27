@@ -141,9 +141,10 @@ public static class DataHelpers
         string[] ids = GetArray(set, columnName);
         
         List<DataRow> data = new List<DataRow>();
-        
+        //D.Log(String.Format("GetSetData(): columnName = {0}, tableName = {1}", columnName, tableName));
         foreach(string id in ids)
         {
+            //D.Log(id);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
             
             if(dt.Rows.Count > 0)
@@ -160,7 +161,7 @@ public static class DataHelpers
         List<DataRow> dataPool = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
-
+        //D.Log(String.Format("GetModuleData(): Found {0} phonicssets", dt.Rows.Count));
         foreach (DataRow set in dt.Rows)
         {
             dataPool.AddRange(GetSetData(set, joinAttributeName, tableName));
@@ -525,6 +526,7 @@ public static class DataHelpers
     
     public static List<DataRow> GetModuleKeywords(int moduleId)
     {
+        //D.Log(String.Format("GetModuleKeywords(): moduleId = {0}", moduleId));
         if (moduleId != -1)
         {
             return GetModuleData(moduleId, "setkeywords", "words");
@@ -544,6 +546,8 @@ public static class DataHelpers
     public static List<DataRow> GetCorrectCaptions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
+
+        D.Log(String.Format("Found {0} datasentences", dataPool.Count));
         
         if (dataPool.Count == 0)
         {

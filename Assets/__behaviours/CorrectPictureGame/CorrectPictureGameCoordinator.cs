@@ -67,6 +67,13 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			Resources.UnloadUnusedAssets();
 		}
 
+#if UNITY_EDITOR
+        // shout, knight
+        //List<DataRow> debugData = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='shout'").Rows;
+        //m_remainingWords.Clear();
+        //m_remainingWords.Add(debugData[0]["word"].ToString());
+#endif
+
 		////D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 		if(m_maxSpawn > m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		{

@@ -164,7 +164,7 @@ public class GameMenuCoordinator : MonoBehaviour
             {
                 DataSetters.AddModuleNumbers(m_currentColorButton.pipColor);
             }
-            
+
             ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
             
             GameMenuInfo.Instance.CreateBookmark(pipColor);

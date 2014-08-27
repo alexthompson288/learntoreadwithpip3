@@ -64,11 +64,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_loginRegisterPanel.alpha = 1;
         m_successPanel.alpha = 0;
 
-        if (!Application.isEditor)
-        {
-            //m_passwordInput.GetComponent<UIInput>().isPassword = true;
-        }
-
         m_loginButton.Unpressing += OnPressLogin;
 
         m_infoLabel.text = m_infoText;
@@ -82,7 +77,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         m_hasEnteredEmail = true;
 
-        m_emailInput.text = m_emailInput.text.ToLower();
+        EditEmailInput();
 
         if (m_hasEnteredPassword)
         {
@@ -220,36 +215,25 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
     }
 
+    void EditEmailInput()
+    {
+        m_emailInput.text = m_emailInput.text.ToLower().Replace("\n","");
+    }
+
     void OnPressLogin(PipButton button)
     {
-        m_emailInput.text = m_emailInput.text.ToLower();
+        EditEmailInput();
 
-        if (m_emailInput.text == "pipoffline" && m_passwordInput.text == "pipoffline")
+        if (m_emailInput.text == "pipoffline" && m_passwordInput.GetComponent<UIInput>().value == "pipoffline")
         {
             TransitionScreen.Instance.ChangeToDefaultLevel();
         }
-#if UNITY_STANDALONE
         else
         {
             m_infoLabel.text = "Logging in...";
             m_loginButtonLabel.text = "Logging in...";
             StartCoroutine(OnPressLoginCo());
         }
-#else
-        //else if(m_hasEnteredEmail && m_hasEnteredPassword)
-        else
-        {
-            m_infoLabel.text = "Logging in...";
-            m_loginButtonLabel.text = "Logging in...";
-            StartCoroutine(OnPressLoginCo());
-        }
-        /*
-        else
-        {
-            m_infoLabel.text = "Please enter your login details";
-        }
-        */
-#endif
     }
 
     IEnumerator OnPressLoginCo()
@@ -258,9 +242,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         string tokenResponse = "";
 
+        string password = m_passwordInput.GetComponent<UIInput>().value;
+
         try
         {
-            tokenResponse = LoginHelpers.RequestToken(m_emailInput.text, m_passwordInput.text);
+            tokenResponse = LoginHelpers.RequestToken(m_emailInput.text, password);
         }
         catch(WebException ex)
         {
@@ -280,7 +266,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             string expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
             ////D.Log("EXPIRATION_DATE: " + expirationDate);
             
-            LoginInfo.Instance.SaveUserDetails(m_emailInput.text, m_passwordInput.text, accessToken, expirationDate);
+            LoginInfo.Instance.SaveUserDetails(m_emailInput.text, password, accessToken, expirationDate);
 
 
             float panelTweenDuration = 0.25f;

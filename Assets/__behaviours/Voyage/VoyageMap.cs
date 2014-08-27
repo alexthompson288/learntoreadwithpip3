@@ -67,7 +67,8 @@ public class VoyageMap : MonoBehaviour
         {
             buttonToDisable = -1;
         } 
-        else if (m_color == ColorInfo.PipColor.Orange)
+        //else if (m_color == ColorInfo.PipColor.Orange)
+        else if (m_color == ColorInfo.PipColor.Blue)
         {
             buttonToDisable = 1;
         }

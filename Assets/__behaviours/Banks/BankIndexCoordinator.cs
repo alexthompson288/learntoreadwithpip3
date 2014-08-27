@@ -205,6 +205,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
         string dataType = m_dataType;
 
         int moduleId = DataHelpers.GetModuleId(color);
+        D.Log("moduleId: " + moduleId);
 
         if (dataType == "phonemes")
         {

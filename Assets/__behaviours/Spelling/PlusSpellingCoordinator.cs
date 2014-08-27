@@ -33,8 +33,10 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
         m_wordPool = DataHelpers.GetWords();
         m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
 
-        //D.Log("m_wordPool.Count: " + m_wordPool.Count);
-        
+#if UNITY_EDITOR
+        //m_wordPool = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from words WHERE word='knight'").Rows;
+#endif
+
         int numPlayers = GetNumPlayers();
         
         if (numPlayers == 1)

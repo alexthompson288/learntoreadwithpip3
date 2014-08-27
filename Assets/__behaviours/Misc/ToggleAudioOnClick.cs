@@ -12,25 +12,28 @@ public class ToggleAudioOnClick : MonoBehaviour
 	[SerializeField]
 	private string m_onSpriteName = null;
 
-	void OnClick()
+	void OnPress(bool isDown)
 	{
-		if(m_audioSource.isPlaying)
-		{
-			m_audioSource.Stop();
+        if (!isDown)
+        {
+            if (m_audioSource.isPlaying)
+            {
+                m_audioSource.Stop();
 
-            if(m_backgroundSprite != null && m_offSpriteName != null)
-			{
-				m_backgroundSprite.spriteName = m_offSpriteName;
-			}
-		}
-		else
-		{
-			m_audioSource.Play();
+                if (m_backgroundSprite != null && m_offSpriteName != null)
+                {
+                    m_backgroundSprite.spriteName = m_offSpriteName;
+                }
+            } 
+            else
+            {
+                m_audioSource.Play();
 
-            if(m_backgroundSprite != null && m_onSpriteName != null)
-			{
-				m_backgroundSprite.spriteName = m_onSpriteName;
-			}
-		}
+                if (m_backgroundSprite != null && m_onSpriteName != null)
+                {
+                    m_backgroundSprite.spriteName = m_onSpriteName;
+                }
+            }
+        }
 	}
 }

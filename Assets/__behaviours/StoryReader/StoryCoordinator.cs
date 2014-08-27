@@ -41,6 +41,10 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     private UITexture m_background;
     [SerializeField]
     private Texture2D m_singleColorBackgroundTexture;
+    [SerializeField]
+    private float m_maxWidth = 125;
+    [SerializeField]
+    private float m_maxHeight = 36;
 
     int m_storyId = 85;
 
@@ -276,10 +280,6 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         m_scaleLabel.transform.localScale = Vector3.one;
 
-        //float maxWidth = 900;
-        float maxWidth = 135;
-        float maxHeight = 36;
-
         ////D.Log("storyPage: " + storyPage);
         ////D.Log("currentAttribute: " + m_currentTextAttribute);
 
@@ -300,7 +300,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             int checkLength = 1;
             for (int i = 0; i < textToDisplay.Length && lineStartIndex + checkLength < textToDisplay.Length; ++i)
             {
-                if (NGUIHelpers.GetLabelWidth(m_scaleLabel, textToDisplay.Substring(lineStartIndex, checkLength)) > maxWidth)
+                if (NGUIHelpers.GetLabelWidth(m_scaleLabel, textToDisplay.Substring(lineStartIndex, checkLength)) > m_maxWidth)
                 {
                     ////D.Log("END");
                     ////D.Log("lineStart: " + lineStartIndex);
@@ -342,7 +342,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             }
 
             //Debug.Log("LabelHeight: " + NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay));
-            if(NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay) < maxHeight)
+            if(NGUIHelpers.GetLabelHeight(m_scaleLabel, textToDisplay) < m_maxHeight)
             {
                 break;
             }

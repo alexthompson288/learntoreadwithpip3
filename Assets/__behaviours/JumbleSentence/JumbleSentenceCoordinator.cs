@@ -73,7 +73,6 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         for (int i = 0; i < m_remainingWords.Count && i < locators.Count; ++i)
         {
-            D.Log(m_remainingWords[i]);
             GameObject newWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, locators[i]);
 
             // Set up GameWidget

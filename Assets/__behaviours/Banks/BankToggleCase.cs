@@ -9,12 +9,15 @@ public class BankToggleCase : MonoBehaviour
         gameObject.SetActive(BankIndexCoordinator.Instance.GetDataType() == "alphabet");
     }
 
-	void OnClick()
+	void OnPress(bool isDown)
     {
-        BankButton[] buttons = Object.FindObjectsOfType(typeof(BankButton)) as BankButton[];
-        foreach (BankButton button in buttons)
+        if (!isDown)
         {
-            button.ToggleCase();
+            BankButton[] buttons = Object.FindObjectsOfType(typeof(BankButton)) as BankButton[];
+            foreach (BankButton button in buttons)
+            {
+                button.ToggleCase();
+            }
         }
     }
 }
