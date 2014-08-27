@@ -429,6 +429,7 @@ public static class DataHelpers
 
     public static List<DataRow> GetData(string dataType)
     {
+        D.Log("DataHelpers.GetData()");
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
         if (dataPool.Count == 0)
@@ -531,7 +532,7 @@ public static class DataHelpers
         else
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_words INNER JOIN words ON word_id=words.id");
-            return dt.Rows.FindAll(word => (word["tricky"] == null || word["tricky"].ToString() == "f") && (word["nondecodeable"] == null || word["nondecodeable"].ToString() == "t"));
+            return dt.Rows.FindAll(word => (word["tricky"] != null && word["tricky"].ToString() == "t") || (word["highfrequencyword"] != null && word["highfrequencyword"].ToString() == "t"));
         }
     }
     

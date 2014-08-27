@@ -38,7 +38,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
     [SerializeField]
     private Transform m_alternateColorGridLocation;
 
-    List<DataRow> m_data = new List<DataRow>();
+    //List<DataRow> m_data = new List<DataRow>();
 
     List<ClickEvent> m_spawnedDataClicks = new List<ClickEvent>();
 
@@ -81,7 +81,7 @@ public class BankIndexCoordinator : Singleton<BankIndexCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_data = GameManager.Instance.GetData(m_dataType);
+        //m_data = GameManager.Instance.GetData(m_dataType);
 
         if (m_dataType != "alphabet")
         {

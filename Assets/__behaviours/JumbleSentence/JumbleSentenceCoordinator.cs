@@ -63,7 +63,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
         m_dataPool.Remove(m_currentData);
 
         m_remainingWords = DataHelpers.GetCorrectCaptionWords(m_currentData).ToList();
-        m_remainingWords.RemoveAll(x => x == " ");
+        m_remainingWords.RemoveAll(x => x == " " || System.String.IsNullOrEmpty(x));
 
         List<Transform> locators = new List<Transform>();
         locators.AddRange(m_locators);
@@ -73,6 +73,7 @@ public class JumbleSentenceCoordinator : GameCoordinator
 
         for (int i = 0; i < m_remainingWords.Count && i < locators.Count; ++i)
         {
+            D.Log(m_remainingWords[i]);
             GameObject newWord = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_wordPrefab, locators[i]);
 
             // Set up GameWidget
