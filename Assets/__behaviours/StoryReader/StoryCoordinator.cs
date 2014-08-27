@@ -55,6 +55,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         }
     }
 
+    List<DataRow> m_storyPages = new List<DataRow>();
 
     List<GameObject> m_textObjects = new List<GameObject>();
     
@@ -130,8 +131,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         //UserStats.Activity.SetStoryId (m_storyId);
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
-        
-        m_numPages = dt.Rows.Count;
+        m_storyPages = dt.Rows;
+        m_numPages = m_storyPages.Count;
         ////D.Log("There are " + m_numPages + " pages");
 
         UpdatePage();
@@ -276,7 +277,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         m_scaleLabel.transform.localScale = Vector3.one;
 
         //float maxWidth = 900;
-        float maxWidth = 150;
+        float maxWidth = 145;
         float maxHeight = 38;
 
         ////D.Log("storyPage: " + storyPage);
@@ -423,6 +424,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         if (m_currentPage < m_numPages)
         {
+            //m_pageCountLabel.text = (m_currentPage + 1).ToString() + " \\ " + m_numPages.ToString();
+            m_pageCountLabel.text = System.String.Format("{0} \\ {1}", m_currentPage + 1, m_numPages);
+
             DataRow storyPage = FindStoryPage();
             
             if (storyPage != null)
@@ -444,6 +448,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
     DataRow FindStoryPage()
     {
+        /*
         int oneBasedCurrentPage = m_currentPage + 1;
         
         if(oneBasedCurrentPage <=  m_numPages)
@@ -454,6 +459,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' and pageorder='" + oneBasedCurrentPage + "'");
 
         return dt.Rows.Count > 0 ? dt.Rows [0] : null;
+        */
+        return m_currentPage < m_storyPages.Count ? m_storyPages [m_currentPage] : null;
     }
 
     void EnableButtons(bool enable)
