@@ -13,9 +13,11 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
     [SerializeField]
     private TweenBehaviour m_menuBar;
     [SerializeField]
-    private EventRelay m_callSidebarButton;
+    private EventRelay m_callDismissButton;
     [SerializeField]
     private EventRelay m_dismissSidebarCollider;
+    [SerializeField]
+    private EventRelay m_dismissMenubarCollider;
     [SerializeField]
     private EventRelay m_callEnvironmentsButton;
     [SerializeField]
@@ -28,6 +30,8 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
     private Texture2D[] m_bgs;
     [SerializeField]
     private ColorInfo.PipColor[] m_colors;
+    [SerializeField]
+    private UIGrid m_itemGrid;
     [SerializeField]
     private GameObject m_menuItemPrefab;
     [SerializeField]
@@ -49,6 +53,85 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
         Environments,
         Stickers,
         Colors
+    }
+
+    class Environment
+    {
+        public string m_name;
+        public string m_labelText;
+        public string m_bg;
+        public int m_id;
+        public List<string> m_stickers = new List<string>();
+        
+        public void AddItem(string item)
+        {
+            m_stickers.Add(item);
+        }
+    }
+    
+    void Awake()
+    {
+        m_callDismissButton.SingleClicked += OnClickCallDismiss;
+        m_dismissSidebarCollider.SingleClicked += OnClickDismissSidebar;
+        m_dismissMenubarCollider.SingleClicked += OnClickDismissMenubar;
+        m_callEnvironmentsButton.SingleClicked += OnClickCallEnvironmentsButton;
+        m_callStickersButton.SingleClicked += OnClickCallStickersButton;
+        m_callColorsButton.SingleClicked += OnClickCallColorsButton;
+
+        string path = Application.streamingAssetsPath + m_filename;
+        
+        using (CsvFileReader reader = new CsvFileReader(path))
+        {
+            CsvRow row = new CsvRow();
+            while (reader.ReadRow(row))
+            {
+                string[] enviroData = row.LineText.Split(',');
+
+                if(enviroData.Length > 4)
+                {
+                    Environment enviro = new Environment();
+                    
+                    enviro.m_name = enviroData[0];
+                    enviro.m_labelText = enviroData[1];
+                    enviro.m_bg = enviroData[2];
+                    
+                    try
+                    {
+                        enviro.m_id = System.Convert.ToInt32(enviroData[3]);
+                    }
+                    catch
+                    {
+                        Debug.Log(string.Format("Could not convert {0} in enviro {1}", enviroData[2], enviroData[0]));
+                    }
+                    
+                    for(int i = 4; i < enviroData.Length; ++i)
+                    {
+                        if(!System.String.IsNullOrEmpty(enviroData[i]))
+                        {
+                            enviro.AddItem(enviroData[i]);
+                        }
+                    }
+                    
+                    m_enviros.Add(enviro);
+                }
+            }
+        }
+        
+        if (m_enviros.Count > 0)
+        {
+            m_currentEnviro = m_enviros [0];
+            m_background.mainTexture = GetEnviroBackground(m_currentEnviro);
+        }
+    }
+    
+    void Start()
+    {
+        if (m_colors.Length > 0)
+        {
+            m_currentColor = ColorInfo.GetColor(m_colors[0]);
+        }
+        
+        m_colorDisplay.color = m_currentColor;
     }
 
     void OnClickCallEnvironmentsButton(EventRelay relay)
@@ -93,7 +176,7 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
         {
             foreach(ColorInfo.PipColor color in m_colors)
             {
-                GameObject newItem = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_menuItemPrefab, m_menuBar.transform, false);
+                GameObject newItem = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_menuItemPrefab, m_itemGrid.transform, false);
                 newItem.GetComponent<UITexture>().mainTexture = m_colorTexture;
                 newItem.GetComponent<UITexture>().color = ColorInfo.GetColor(color);
                 newItem.GetComponent<EventRelay>().SingleClicked += OnChooseColor;
@@ -128,7 +211,7 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
 
             foreach(Texture2D tex in textures)
             {
-                GameObject newItem = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_menuItemPrefab, m_menuBar.transform, false);
+                GameObject newItem = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_menuItemPrefab, m_itemGrid.transform, false);
                 newItem.GetComponent<UITexture>().mainTexture = tex; 
 
                 if(m_currentMenu == Menu.Environments)
@@ -136,9 +219,9 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
                     newItem.GetComponent<EventRelay>().SingleClicked += OnChooseEnvironment;
                 }
             }
-
-            m_menuBar.GetComponentInChildren<UIGrid>().Reposition();
         }
+
+        m_itemGrid.Reposition();
     }
 
     IEnumerator CallMenubar()
@@ -149,7 +232,9 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
             yield return new WaitForSeconds(m_menuBar.GetTotalDurationOff());
         }
 
-        TransformHelpers.DestroyChildren(m_menuBar.transform);
+        TransformHelpers.DestroyChildren(m_itemGrid.transform);
+
+        yield return null;
 
         PopulateMenubar();
 
@@ -161,9 +246,18 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
         m_sidebar.Off();
     }
 
-    void OnClickCallSidebar(EventRelay relay)
+    void OnClickDismissMenubar(EventRelay relay)
     {
-        if (m_sidebar.isOn)
+        m_menuBar.Off();
+    }
+
+    void OnClickCallDismiss(EventRelay relay)
+    {
+        if (m_menuBar.isOn)
+        {
+            m_menuBar.Off();
+        }
+        else if (m_sidebar.isOn)
         {
             m_sidebar.Off();
         }
@@ -171,79 +265,5 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
         {
             m_sidebar.On();
         }
-    }
-
-    class Environment
-    {
-        public string m_name;
-        public string m_labelText;
-        public string m_bg;
-        public int m_id;
-        public List<string> m_stickers = new List<string>();
-        
-        public void AddItem(string item)
-        {
-            m_stickers.Add(item);
-        }
-    }
-
-    void Awake()
-    {
-        string path = Application.streamingAssetsPath + m_filename;
-        
-        using (CsvFileReader reader = new CsvFileReader(path))
-        {
-            CsvRow row = new CsvRow();
-            while (reader.ReadRow(row))
-            {
-                string[] enviroData = row.LineText.Split(',');
-                
-                D.Log(enviroData.Length);
-                
-                if(enviroData.Length > 4)
-                {
-                    Environment enviro = new Environment();
-                    
-                    enviro.m_name = enviroData[0];
-                    enviro.m_labelText = enviroData[1];
-                    enviro.m_bg = enviroData[2];
-                    
-                    try
-                    {
-                        enviro.m_id = System.Convert.ToInt32(enviroData[3]);
-                    }
-                    catch
-                    {
-                        Debug.Log(string.Format("Could not convert {0} in enviro {1}", enviroData[2], enviroData[0]));
-                    }
-                    
-                    for(int i = 4; i < enviroData.Length; ++i)
-                    {
-                        if(!System.String.IsNullOrEmpty(enviroData[i]))
-                        {
-                            enviro.AddItem(enviroData[i]);
-                        }
-                    }
-                    
-                    m_enviros.Add(enviro);
-                }
-            }
-        }
-
-        if (m_enviros.Count > 0)
-        {
-            m_currentEnviro = m_enviros [0];
-            m_background.mainTexture = GetEnviroBackground(m_currentEnviro);
-        }
-    }
-
-    void Start()
-    {
-        if (m_colors.Length > 0)
-        {
-            m_currentColor = ColorInfo.GetColor(m_colors[0]);
-        }
-
-        m_colorDisplay.color = m_currentColor;
     }
 }
