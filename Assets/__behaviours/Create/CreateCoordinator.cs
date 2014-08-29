@@ -38,13 +38,14 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
     private UITexture m_background;
     [SerializeField]
     private UISprite m_colorDisplay;
+    [SerializeField]
+    private LineDraw m_lineDraw;
 
     List<EventRelay> m_spawnedButtons = new List<EventRelay>();
 
     List<Environment> m_enviros = new List<Environment>();
 
     Environment m_currentEnviro = null;
-    Color m_currentColor = Color.white;
 
     Menu m_currentMenu = Menu.Environments;
 
@@ -128,10 +129,10 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
     {
         if (m_colors.Length > 0)
         {
-            m_currentColor = ColorInfo.GetColor(m_colors[0]);
+            Color col = ColorInfo.GetColor(m_colors[0]);
+            m_colorDisplay.color = col;
+            m_lineDraw.SetColors(col, col);
         }
-        
-        m_colorDisplay.color = m_currentColor;
     }
 
     void OnClickCallEnvironmentsButton(EventRelay relay)
@@ -161,8 +162,9 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
 
     void OnChooseColor(EventRelay relay)
     {
-        m_currentColor = relay.GetComponent<UITexture>().color;
-        m_colorDisplay.color = m_currentColor;
+        Color col = relay.GetComponent<UITexture>().color;
+        m_colorDisplay.color = col;
+        m_lineDraw.SetColors(col, col);
     }
 
     Texture2D GetEnviroBackground(Environment enviro)
