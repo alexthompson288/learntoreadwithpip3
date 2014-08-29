@@ -34,6 +34,25 @@ public static class TransformHelpers
         return closest;
     }
 
+    public static void DestroyChildren(Transform parent, string destroyMessage = "")
+    {
+        int childCount = parent.childCount;
+
+        bool sendMessage = !string.IsNullOrEmpty(destroyMessage);
+
+        for (int i = childCount - 1; i > -1; --i)
+        {
+            if(sendMessage)
+            {
+                parent.GetChild(i).SendMessage(destroyMessage);
+            }
+            else
+            {
+                Object.Destroy(parent.GetChild(i).gameObject);
+            }
+        }
+    }
+
     public static float GetDuration(Transform tra, Vector3 targetPos, float speed, bool useLocal = false)
     {
         if (useLocal)

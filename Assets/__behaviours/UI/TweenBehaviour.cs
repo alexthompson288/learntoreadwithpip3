@@ -118,4 +118,22 @@ public class TweenBehaviour : MonoBehaviour
 		
 		iTween.MoveTo (m_moveable, tweenArgs);
 	}
+
+    public bool isOn
+    {
+        get
+        {
+            return m_isOn;
+        }
+    }
+
+    public float GetTotalDuration()
+    {
+        return m_delay + m_duration;
+    }
+
+    public float GetTotalDurationOff()
+    {
+        return m_delayOff + m_durationOff;
+    }
 }
