@@ -211,6 +211,8 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
                 }
             }
 
+            Transform popCutoff = CreateStickerManager.Instance.GetPopCutoff();
+
             foreach(Texture2D tex in textures)
             {
                 GameObject newItem = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_menuItemPrefab, m_itemGrid.transform, false);
@@ -219,6 +221,11 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
                 if(m_currentMenu == Menu.Environments)
                 {
                     newItem.GetComponent<EventRelay>().SingleClicked += OnChooseEnvironment;
+                }
+                else
+                {
+                    CreateItem itemBehaviour = newItem.AddComponent<CreateItem>() as CreateItem;
+                    itemBehaviour.SetUp(tex.name, tex, "default", popCutoff, null);
                 }
             }
         }
@@ -267,5 +274,10 @@ public class CreateCoordinator : Singleton<CreateCoordinator>
         {
             m_sidebar.On();
         }
+    }
+
+    void OnDestroy()
+    {
+        Resources.UnloadUnusedAssets();
     }
 }

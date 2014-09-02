@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlacedDraggable : MonoBehaviour 
 {
-    public delegate void PlacedDraggableEventHandler(PlacedDraggable draggable);
+    public delegate void PlacedDraggableEventHandler(GameObject draggable);
     public event PlacedDraggableEventHandler MovedBelowCutoff;
 
     private Transform m_popCutoff;
@@ -26,11 +26,12 @@ public class PlacedDraggable : MonoBehaviour
         if (!press)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("DROP_STICKER");
-            if (transform.position.y < m_popCutoff.position.y)
+            //if (transform.position.y < m_popCutoff.position.y)
+            if(transform.position.x > m_popCutoff.position.x)
             {
                 if(MovedBelowCutoff != null)
                 {
-                    MovedBelowCutoff(this);
+                    MovedBelowCutoff(gameObject);
                 }
             }
         }

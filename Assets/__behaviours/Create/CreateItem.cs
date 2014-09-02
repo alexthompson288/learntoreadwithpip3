@@ -32,12 +32,13 @@ public class CreateItem : MonoBehaviour
         Ray camPos = UICamera.currentCamera.ScreenPointToRay(
             new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
         m_totalDrag += drag;
-        if (camPos.origin.y > m_cutOff.transform.position.y)
+        //if (camPos.origin.y > m_cutOff.transform.position.y)
+        if(camPos.origin.x < m_cutOff.transform.position.x)
         {
-            //m_dragPanel.enabled = false;
             m_dragBehaviour.enabled = false;
             if (m_instantiatedSprite == null)
             {
+                m_instantiatedSprite = CreateStickerManager.Instance.AddPoppedSprite(m_textureName, (Texture2D)m_texture.mainTexture, new Vector3(camPos.origin.x,camPos.origin.y,0));
                 //                m_instantiatedSprite = CollectionRoomCoordinator.Instance.AddPoppedSprite(
                 //                    m_textureName, (Texture2D)m_texture.mainTexture,
                 //                    new Vector3(camPos.origin.x,camPos.origin.y,0));
@@ -46,10 +47,10 @@ public class CreateItem : MonoBehaviour
         }
         else
         {
-            //m_dragPanel.enabled = true;
+            m_dragBehaviour.enabled = true;
             if (m_instantiatedSprite != null)
             {
-                //CollectionRoomCoordinator.Instance.DestroyPoppedSprite(m_instantiatedSprite);
+                CreateStickerManager.Instance.DestroyPoppedSprite(m_instantiatedSprite);
                 m_instantiatedSprite = null;
             }
         }
@@ -69,11 +70,11 @@ public class CreateItem : MonoBehaviour
                 WingroveAudio.WingroveRoot.Instance.PostEvent("DROP_STICKER");
             }
             m_instantiatedSprite = null;
-            //m_dragPanel.enabled = true;
+            m_dragBehaviour.enabled = true;
         }
         else
         {
-            //CollectionRoomCoordinator.Instance.PlayClip(m_clip);
+            CreateStickerManager.Instance.PlayClip(m_clip);
         }
     }
 }
