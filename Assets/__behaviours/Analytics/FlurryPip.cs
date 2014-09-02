@@ -22,6 +22,7 @@ public class FlurryPip : Singleton<FlurryPip>
 
     float m_startTime;
 
+#if UNITY_IPHONE
     void OnApplicationPause()
     {
         if (m_hasStarted)
@@ -39,6 +40,7 @@ public class FlurryPip : Singleton<FlurryPip>
         OnAppClose();
     }
 
+
     void Start()
     {
         ////D.Log("FlurryPip.Start()");
@@ -54,6 +56,7 @@ public class FlurryPip : Singleton<FlurryPip>
         
         StartCoroutine(OnAppOpen());
     }
+
     
     void CheckForExit()
     {
@@ -211,4 +214,5 @@ public class FlurryPip : Singleton<FlurryPip>
         bw.Close();
         newData.Close();
     }
+#endif
 }
