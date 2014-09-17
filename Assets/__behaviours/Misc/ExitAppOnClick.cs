@@ -3,8 +3,11 @@ using System.Collections;
 
 public class ExitAppOnClick : MonoBehaviour 
 {	
-	void OnClick () 
+	void OnPress (bool isDown) 
     {
-        Application.Quit();
+        if (!isDown)
+        {
+            Application.Quit();
+        }
 	}
 }

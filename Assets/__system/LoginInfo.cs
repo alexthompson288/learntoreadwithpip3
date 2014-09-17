@@ -111,12 +111,10 @@ public class LoginInfo : Singleton<LoginInfo>
     
     void AttemptLogin()
     {
-        //////D.Log("ATTEMPTING LOGIN");
         m_hasExited = false;
         
         if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
         {
-            //////D.Log("TRYING TO UPDATE TOKEN");
             try
             {
                 string tokenResponse = LoginHelpers.RequestToken(m_email, m_password);
@@ -125,13 +123,10 @@ public class LoginInfo : Singleton<LoginInfo>
                 {
                     m_accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
                     m_expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
-                    
-                    //////D.Log("Got new token: " + m_expirationDate);
                 }
             }
             catch(WebException ex)
             {
-                //////D.LogError("Could not get token: WebException");
                 if(ex.Response is System.Net.HttpWebResponse)
                 {
                     //////D.Log((ex.Response as HttpWebResponse).StatusCode);
@@ -143,7 +138,6 @@ public class LoginInfo : Singleton<LoginInfo>
             }
         }
 
-        //////D.Log("CHECKING EXPIRATION DATE");
         DateTime expirationDate;
         try
         {
@@ -151,7 +145,6 @@ public class LoginInfo : Singleton<LoginInfo>
         } 
         catch
         {
-            //////D.Log("CATCHING EXPIRATION DATE");
             expirationDate = DateTime.Now.AddDays(-2);
         }
         
@@ -194,13 +187,12 @@ public class LoginInfo : Singleton<LoginInfo>
         }
         */
        
-        
         //if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
         if (String.IsNullOrEmpty(m_email) || String.IsNullOrEmpty(m_accessToken) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
         {
-            //////D.Log("FAIL - MUST LOGIN");
-            //////D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
-            //////D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
+            D.Log("FAIL - MUST LOGIN");
+            D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
+            D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
 
             if (Application.loadedLevelName != m_loginSceneName)
             {
@@ -219,6 +211,7 @@ public class LoginInfo : Singleton<LoginInfo>
         m_password = myPassword;
         m_accessToken = myAccessToken;
         m_expirationDate = myExpirationDate;
+        Debug.Log("Saving expirationData: " + m_expirationDate);
         Save();
     }
     

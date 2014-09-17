@@ -9,7 +9,7 @@ public class BuyCoordinator<T> : Singleton<T> where T : Object
 
 	protected void DisableUICams()
 	{
-        NGUIHelpers.EnableUICams(false, new UICamera[] { m_myCam, ParentGate.Instance.GetUICam() });
+        NGUIHelpers.EnableUICams(false, new UICamera[] { m_myCam, OldParentGate.Instance.GetUICam() });
 	}
 
     public virtual void RefreshBuyButton() {}

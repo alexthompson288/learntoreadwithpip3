@@ -95,7 +95,6 @@ public class PlusGameButton : MonoBehaviour
         m_gameLabel.text = game != null ? DataHelpers.GetLabelText(game) : m_gameName;
     }
 
-    // TODO
     IEnumerator UnlockHighScore()
     {
         yield return StartCoroutine(TransitionScreen.WaitForScreenExit());

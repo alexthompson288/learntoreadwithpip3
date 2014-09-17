@@ -141,6 +141,8 @@ public static class LoginHelpers
 			}
 		}
 
+        D.Log("responseContent: " + responseContent);
+
 		return responseContent;
 	}
 	

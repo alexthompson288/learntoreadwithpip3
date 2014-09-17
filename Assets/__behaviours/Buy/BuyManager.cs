@@ -81,24 +81,24 @@ public class BuyManager : Singleton<BuyManager>
     {
         m_productIdentifier = BuildMapProductIdentifier(id);
 
-        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
-        ParentGate.Instance.On();
+        OldParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        OldParentGate.Instance.On();
     }
 
     public void BuyStory(DataRow storyData)
     {
         m_productIdentifier = BuildStoryProductIdentifier(storyData);
 
-        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
-        ParentGate.Instance.On();
+        OldParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        OldParentGate.Instance.On();
     }
 
     public void BuyPipisode(DataRow pipisodeData)
     {
         m_productIdentifier = BuildPipisodeProductIdentifier(pipisodeData);
 
-        ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
-        ParentGate.Instance.On();
+        OldParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+        OldParentGate.Instance.On();
     }
 
 	public void Buy(BuyType buyType)
@@ -122,13 +122,13 @@ public class BuyManager : Singleton<BuyManager>
                 break;
         }
 		
-		ParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
-		ParentGate.Instance.On();
+		OldParentGate.Instance.OnParentGateAnswer += OnParentGateAnswer;
+		OldParentGate.Instance.On();
 	}
 	
 	public void OnParentGateAnswer(bool isCorrect)
 	{
-		ParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
+		OldParentGate.Instance.OnParentGateAnswer -= OnParentGateAnswer;
 		
 		if(isCorrect)
 		{

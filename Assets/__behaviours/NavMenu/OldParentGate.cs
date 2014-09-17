@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class ParentGate : Singleton<ParentGate> 
+public class OldParentGate : Singleton<OldParentGate> 
 {
 	public delegate void ParentGateAnswer(bool isCorrect);
 	public event ParentGateAnswer OnParentGateAnswer;

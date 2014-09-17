@@ -73,6 +73,21 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         m_registerButton.Unpressing += OnUnpressRegisterButton;
     }
 
+    void OnParentGateAnswer(bool isCorrect)
+    {
+        ParentGate.Instance.Answered -= OnParentGateAnswer;
+
+        if (isCorrect)
+        {
+            Application.OpenURL("http://www.learnwithpip.com/users/sign_up");
+        }
+
+#if UNITY_EDITOR
+        string log = isCorrect ? "Correct!" : "Incorrect";
+        D.Log(log);
+#endif
+    }
+
     void OnEnterEmail()
     {
         m_hasEnteredEmail = true;
@@ -101,7 +116,11 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         //m_infoLabel.text = "Register";
         //m_registerTweenBehaviour.Off();
-        Application.OpenURL("http://www.learnwithpip.com/users/sign_up");
+
+        //Application.OpenURL("http://www.learnwithpip.com/users/sign_up");
+
+        ParentGate.Instance.Answered += OnParentGateAnswer;
+        ParentGate.Instance.On();
     }
 
     void OnUnpressCallLoginButton(PipButton button)
@@ -112,7 +131,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnUnpressRegisterButton(PipButton button)
     {
-        Debug.Log("LoginCoordinator.OnUnpressRegisterButton()");
+        //D.Log("LoginCoordinator.OnUnpressRegisterButton()");
         HashSet<string> passwords = new HashSet<string>();
 
         foreach (UILabel label in m_registerPasswordLabels)
@@ -125,12 +144,12 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             try
             {
                 string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
-                Debug.Log("REGISTER SUCCESS");
-                Debug.Log(responseContent);
+//                D.Log("REGISTER SUCCESS");
+//                D.Log(responseContent);
             }
             catch(WebException ex)
             {
-                Debug.Log("REGISTER FAIL");
+                //D.Log("REGISTER FAIL");
                 if ((ex.Response is System.Net.HttpWebResponse))
                 {
                     ////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
@@ -264,7 +283,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             //////D.Log("ACCESS_TOKEN: " + accessToken);
             
             string expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
-            //////D.Log("EXPIRATION_DATE: " + expirationDate);
+            //D.Log("EXPIRATION_DATE: " + expirationDate);
             
             LoginInfo.Instance.SaveUserDetails(m_emailInput.text, password, accessToken, expirationDate);
 
