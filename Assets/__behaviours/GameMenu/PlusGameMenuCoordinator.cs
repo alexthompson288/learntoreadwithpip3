@@ -18,9 +18,11 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     [SerializeField]
     private float m_cameraTweenDuration = 0.3f;
     [SerializeField]
-    private PlusGame[] m_plusGames;
+    private PlusGame[] m_mathsGames;
     [SerializeField]
-    private EventRelay m_backCollider;
+    private PlusGame[] m_readingGames;
+    [SerializeField]
+    private EventRelay[] m_backColliders;
     [SerializeField]
     private TweenBehaviour m_chooseNumPlayersMoveable;
     [SerializeField]
@@ -29,6 +31,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     private TweenBehaviour m_chooseColorMoveable;
     [SerializeField]
     private EventRelay[] m_chooseColorButtons;
+    [SerializeField]
+    private SpriteAnim[] m_pipAnims;
 
     string m_gameName;
     ColorInfo.PipColor m_pipColor;
@@ -42,12 +46,36 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         return m_scoreType;
     }
 
-    void Awake()
+    static Bookmark m_bookmark;
+    enum Bookmark
     {
+        None,
+        Maths,
+        Reading
+    }
+
+    IEnumerator Start()
+    {
+        if (m_bookmark == Bookmark.Maths)
+        {
+            m_camera.transform.position = m_mathsParent.position;
+        }
+        else if (m_bookmark == Bookmark.Reading)
+        {
+            m_camera.transform.position = m_readingParent.position;
+        }
+
+        m_bookmark = Bookmark.None;
+
+        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+
         m_readingButton.SingleClicked += OnClickMenuButton;
         m_mathsButton.SingleClicked += OnClickMenuButton;
 
-        m_backCollider.SingleClicked += OnClickBackCollider;
+        foreach (EventRelay relay in m_backColliders)
+        {
+            relay.SingleClicked += OnClickBackCollider;
+        }
 
         foreach (EventRelay relay in m_switchButtons)
         {
@@ -59,14 +87,57 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             relay.SingleClicked += OnChooseNumPlayers;
         }
 
+        System.Array.Sort(m_chooseColorButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
+
         foreach (EventRelay relay in m_chooseColorButtons)
         {
             relay.SingleClicked += OnChooseColor;
         }
 
-        foreach(PlusGame game in m_plusGames)
+        for(int i = 0; i < m_mathsGames.Length; ++i)
         {
-            game.GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
+            m_mathsGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
+
+            string gameName = "NewCompleteEquationNumbers";
+            switch(i)
+            {
+                case 0:
+                    gameName = "NewClockNumbers";
+                    break;
+                case 1:
+                    gameName = "NewMultiplicationQuadNumbers";
+                    break;
+                case 2:
+                    gameName = "NewToyShopNumbers";
+                    break;
+                default:
+                    break;
+            }
+
+            m_mathsGames[i].SetUp(gameName);
+        }
+
+        for(int i = 0; i < m_readingGames.Length; ++i)
+        {
+            m_readingGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
+            
+            string gameName = "NewPlusQuiz";
+            switch(i)
+            {
+                case 0:
+                    gameName = "NewPlusSpelling";
+                    break;
+                case 1:
+                    gameName = "NewCorrectWord";
+                    break;
+                case 2:
+                    gameName = "NewShoppingList";
+                    break;
+                default:
+                    break;
+            }
+
+            m_readingGames[i].SetUp(gameName);
         }
     }
 
@@ -84,32 +155,38 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         m_readingParent.localPosition = localPos;
 
         Transform target = goToMaths ? m_mathsParent : m_readingParent;
-        iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+        //iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+        StartCoroutine(TweenCamera(target.position));
     }
 
     void OnClickSwitchButton(EventRelay relay)
     {
         Transform target = Mathf.Approximately(m_camera.transform.position.x, m_readingParent.transform.position.x) ? m_mathsParent : m_readingParent;
-        iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+        //iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+        StartCoroutine(TweenCamera(target.position));
+    }
+
+    IEnumerator TweenCamera(Vector3 targetPos)
+    {
+        yield return new WaitForSeconds(0.1f);
+        iTween.MoveTo(m_camera, targetPos, m_cameraTweenDuration);
     }
 
     void OnClickGameButton(EventRelay relay)
     {
+        D.Log("OnClickGameButton()");
+
         if(!m_hasClickedGameButton)
         {
             m_hasClickedGameButton = true;
+
+            PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
+
+            m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
+
+            m_gameName = plusGame.GetGameName();
             
-            m_gameName = relay.GetComponentInParent<PlusGame>().GetGameName();
-            
-            if(m_numPlayers == 1)
-            {
-                m_pipColor = ColorInfo.PipColor.Turquoise;
-                StartGame();
-            }
-            else
-            {
-                m_chooseNumPlayersMoveable.On();
-            }    
+            m_chooseNumPlayersMoveable.On();  
         }
     }
 
@@ -137,24 +214,26 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         }
 
         m_chooseColorMoveable.Off();
-        m_chooseNumPlayersMoveable.On();
+
+        StartGame();
     }
 
     void OnChooseNumPlayers(EventRelay relay)
     {
-        int numPlayers = System.Array.IndexOf(m_chooseNumPlayersButtons, relay);
-        StartGame();
+        SessionInformation.Instance.SetNumPlayers(System.Array.IndexOf(m_chooseNumPlayersButtons, relay) + 1);
+        m_chooseNumPlayersMoveable.Off();
+        m_chooseColorMoveable.On();
     }
 
     void OnClickBackCollider(EventRelay relay)
     {
         m_chooseColorMoveable.Off();
         m_chooseNumPlayersMoveable.Off();
+        m_hasClickedGameButton = false;
     }
 
     void StartGame()
     {
-        SessionInformation.Instance.SetNumPlayers(m_numPlayers);
         PlusScoreInfo.Instance.SetScoreType(m_scoreType);
         
         GameManager.Instance.SetCurrentColor(m_pipColor);
@@ -186,5 +265,13 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         }
         
         GameManager.Instance.StartGames();
+    }
+
+    public void MakeAllPipsJump()
+    {
+        foreach (SpriteAnim anim in m_pipAnims)
+        {
+            anim.PlayAnimation("JUMP");
+        }
     }
 }

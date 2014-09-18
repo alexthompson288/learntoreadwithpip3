@@ -18,7 +18,8 @@ public class UIButtonScale : MonoBehaviour
     // Changed default values because these are used consistently throughout the entire Pip project
     public Vector3 hover = Vector3.one;
     public Vector3 pressed = new Vector3(0.8f, 0.8f, 0.8f);
-	public float duration = 0.2f;
+	//public float duration = 0.2f;
+    public float duration = 0.1f;
 
 	Vector3 mScale;
 	bool mStarted = false;

@@ -168,7 +168,7 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
     public int GetMaxColor(string game, string type)
     {
         ScoreTracker tracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
-        return tracker != null ? tracker.GetMaxColor() : 1;
+        return tracker != null ? tracker.GetMaxColor() : 0;
     }
     
     public void NewScore(float myTime, int myScore, int myMaxColor)
@@ -226,6 +226,8 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
     
     void Load()
     {
+        D.Log("PlusScoreInfo.Load()");
+
         DataSaver ds = new DataSaver(System.String.Format("PlusScoreInfo_{0}", UserInfo.Instance.GetCurrentUserName()));
         MemoryStream data = ds.Load();
         BinaryReader br = new BinaryReader(data);
@@ -241,6 +243,8 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
                 int score = br.ReadInt32();
                 int maxColor = br.ReadInt32();
 
+                D.Log(game + " maxColor: " + maxColor);
+
                 m_scoreTrackers.Add(new ScoreTracker(game, type, time, score, maxColor));
             }
         }
@@ -251,6 +255,8 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
     
     void Save(string userName = null)
     {
+        D.Log("PlusScoreInfo.Save()");
+
         if (System.String.IsNullOrEmpty(userName))
         {
             userName = UserInfo.Instance.GetCurrentUserName();
@@ -261,12 +267,15 @@ public class PlusScoreInfo : Singleton<PlusScoreInfo>
         BinaryWriter bw = new BinaryWriter(newData);
         
         bw.Write(m_scoreTrackers.Count);
+        D.Log("m_scoreTrackers.Count: " + m_scoreTrackers.Count);
+
         foreach (ScoreTracker tracker in m_scoreTrackers)
         {
             bw.Write(tracker.GetGame());
             bw.Write(tracker.GetType());
             bw.Write(tracker.GetTime());
             bw.Write(tracker.GetScore());
+            D.Log("MaxColor: " + tracker.GetMaxColor());
             bw.Write(tracker.GetMaxColor());
         }
         

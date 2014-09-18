@@ -70,17 +70,17 @@ public class ClockPlayer : GamePlayer
 
         if(DateTime.Compare(clockTime.AddMinutes(cushion), currentTime) >= 0 && DateTime.Compare(clockTime.AddMinutes(-cushion), currentTime) <= 0)
         {
-            ////D.Log("CORRECT");
-            ////D.Log("Clock: " + clockTime);
-            ////D.Log("Current: " + currentTime);
+            //D.Log("CORRECT");
+            //D.Log("Clock: " + clockTime);
+            //D.Log("Current: " + currentTime);
             m_scoreKeeper.UpdateScore(1);
             ClockCoordinator.Instance.OnCorrectAnswer(this);
         }
         else
         {
-            ////D.Log("INCORRECT");
-            ////D.Log("Clock: " + clockTime);
-            ////D.Log("Current: " + currentTime);
+            //D.Log("INCORRECT");
+            //D.Log("Clock: " + clockTime);
+            //D.Log("Current: " + currentTime);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }

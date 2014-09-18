@@ -62,6 +62,11 @@ public class ClockHand : MonoBehaviour
         
         transform.up = (fingerPos - transform.position).normalized;
     }
+
+    public float GetRawMinutes()
+    {
+        return m_angle / 6;
+    }
     
     public int GetMinutes()
     {
@@ -73,6 +78,23 @@ public class ClockHand : MonoBehaviour
         }
         
         return minutes;
+    }
+
+    public int GetHours(ClockHand minuteHand, bool wrapAround = true)
+    {
+        int hours = Mathf.FloorToInt(m_angle / 30);
+
+        if (minuteHand.GetRawMinutes() > 59.5f)
+        {
+            ++hours;
+        }
+        
+        if (wrapAround && hours == 0)
+        {
+            hours = 12;
+        }
+        
+        return hours;
     }
 
     public int GetHours(bool wrapAround = true)
@@ -128,20 +150,6 @@ public class ClockHand : MonoBehaviour
     {
         float rotationAngle = m_angle - targetAngle;
         transform.Rotate(new Vector3(0, 0, rotationAngle));
-    }
-    
-    public string GetHourString()
-    {
-        int hours = GetHours();
-        
-        return MathHelpers.GetDigitCount(hours) == 2 ? hours.ToString() : System.String.Format("0{0}", hours);
-    }
-    
-    public string GetMinuteString()
-    {
-        int minutes = GetMinutes();
-        
-        return MathHelpers.GetDigitCount(minutes) == 2 ? minutes.ToString() : System.String.Format("0{0}", minutes);
     }
 }
 

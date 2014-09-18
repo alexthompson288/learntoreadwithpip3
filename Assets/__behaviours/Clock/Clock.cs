@@ -20,9 +20,27 @@ public class Clock : MonoBehaviour
 
     public DateTime GetDateTime()
     {
-        string time = System.String.Format("{0}:{1}", m_hourHand.GetHourString(), m_minuteHand.GetMinuteString());
+        int minutes = m_minuteHand.GetMinutes();
+        string minuteString = MathHelpers.GetDigitCount(minutes) == 2 ? minutes.ToString() : System.String.Format("0{0}", minutes);
+
+        int hours = m_hourHand.GetHours(m_minuteHand, true);
+        string hourString = MathHelpers.GetDigitCount(hours) == 2 ? hours.ToString() : System.String.Format("0{0}", hours);
+
+        string time = System.String.Format("{0}:{1}", hourString, minuteString);
         return DateTime.ParseExact(time, "hh:mm", null);
     }
+
+    /*
+    string GetHourString(int hours)
+    {
+        return MathHelpers.GetDigitCount(hours) == 2 ? hours.ToString() : System.String.Format("0{0}", hours);
+    }
+    
+    string GetMinuteString(int minutes)
+    {
+        return MathHelpers.GetDigitCount(minutes) == 2 ? minutes.ToString() : System.String.Format("0{0}", minutes);
+    }
+    */
 
     public void OnHandPress(ClockHand hand)
     {
