@@ -11,9 +11,13 @@ public class ClockPlayer : GamePlayer
     [SerializeField]
     private UILabel m_questionLabel;
     [SerializeField]
-    private PipButton m_goButton;
+    private EventRelay m_submitButton;
     [SerializeField]
     private Clock m_clock;
+    [SerializeField]
+    private TweenBehaviour m_cuckoo;
+    [SerializeField]
+    private Transform m_questionLabelParent;
 
     DataRow m_currentData;
 
@@ -46,7 +50,7 @@ public class ClockPlayer : GamePlayer
     {
         m_scoreKeeper.SetHealthLostPerSecond(1f);
 
-        m_goButton.Unpressing += OnPressGoButton;
+        m_submitButton.SingleClicked += OnPressSubmitButton;
 
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
@@ -60,9 +64,12 @@ public class ClockPlayer : GamePlayer
         ////D.Log("m_currentData: " + m_currentData);
         ////D.Log("time: " + m_currentData ["time"]);
         m_questionLabel.text = m_currentData ["time"].ToString();
+        m_questionLabel.transform.parent = m_questionLabelParent;
+        m_questionLabel.transform.localPosition = Vector3.zero;
+        iTween.ScaleFrom(m_questionLabel.gameObject, Vector3.zero, 0.2f);
     }
 
-    void OnPressGoButton(PipButton button)
+    void OnPressSubmitButton(EventRelay relay)
     {
         DateTime currentTime = Convert.ToDateTime(m_currentData ["datetime"]);
         DateTime clockTime = m_clock.GetDateTime();
@@ -88,7 +95,15 @@ public class ClockPlayer : GamePlayer
 
     public IEnumerator ClearQuestion()
     {
-        yield return null;
+        m_cuckoo.On();
+
+        yield return new WaitForSeconds(m_cuckoo.GetTotalDuration() + 0.1f);
+
+        m_questionLabel.transform.parent = m_cuckoo.GetMoveable().transform;
+
+        m_cuckoo.Off();
+
+        yield return new WaitForSeconds(m_cuckoo.GetTotalDurationOff() + 0.25f);
 
         AskQuestion();
     }

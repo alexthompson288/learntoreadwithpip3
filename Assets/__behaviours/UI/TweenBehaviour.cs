@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class TweenBehaviour : MonoBehaviour 
 {
+    public delegate void TweenBehaviourEventHandler(TweenBehaviour tweenBehaviour);
+    public event TweenBehaviourEventHandler CompletedOn;
+    public event TweenBehaviourEventHandler CompletedOff;
+
 	[SerializeField]
 	private bool m_startOn;
 	[SerializeField]
@@ -93,6 +97,13 @@ public class TweenBehaviour : MonoBehaviour
 		tweenArgs.Add("easetype", m_easetype);
 
 		iTween.MoveTo (m_moveable, tweenArgs);
+
+        yield return new WaitForSeconds(m_duration);
+
+        if (CompletedOn != null)
+        {
+            CompletedOn(this);
+        }
 	}
 
 	public void Off()
@@ -117,6 +128,13 @@ public class TweenBehaviour : MonoBehaviour
 		tweenArgs.Add("easetype", m_easetypeOff);
 		
 		iTween.MoveTo (m_moveable, tweenArgs);
+
+        yield return new WaitForSeconds(m_durationOff);
+        
+        if (CompletedOff != null)
+        {
+            CompletedOff(this);
+        }
 	}
 
     public bool isOn
@@ -135,5 +153,10 @@ public class TweenBehaviour : MonoBehaviour
     public float GetTotalDurationOff()
     {
         return m_delayOff + m_durationOff;
+    }
+
+    public GameObject GetMoveable()
+    {
+        return m_moveable;
     }
 }
