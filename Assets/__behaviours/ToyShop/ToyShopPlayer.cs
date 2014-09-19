@@ -30,6 +30,8 @@ public class ToyShopPlayer : GamePlayer
     [SerializeField]
     private UILabel m_currentStackLabel;
 
+    int m_numSweetTypes = 8;
+
     int m_spriteDepthAdjust = 10;
 
     GameObject m_currentToy = null;
@@ -110,6 +112,7 @@ public class ToyShopPlayer : GamePlayer
 
         for(int i = 0; i < numToSpawn; ++i)
         {
+            /*
             GameObject newToy = SpawningHelpers.InstantiateUnderWithIdentityTransforms(toyPrefab, m_locators[i], true);
             GameWidget widgetBehaviour = newToy.GetComponent<GameWidget>() as GameWidget;
             widgetBehaviour.EnableDrag(false);
@@ -117,6 +120,8 @@ public class ToyShopPlayer : GamePlayer
             widgetBehaviour.Unpressing += OnToySelect;
             newToy.GetComponentInChildren<UISprite>().MakePixelPerfect();
             m_spawnedToys.Add(newToy);
+            */
+            SpawnToy(m_locators[i]);
         }
     }
 
@@ -192,6 +197,31 @@ public class ToyShopPlayer : GamePlayer
         }
     }
 
+    void SpawnToy(Transform parent)
+    {
+        GameObject toyPrefab = ToyShopCoordinator.Instance.GetToyPrefab();
+
+        GameObject newToy = SpawningHelpers.InstantiateUnderWithIdentityTransforms(toyPrefab, parent, true);
+        GameWidget widgetBehaviour = newToy.GetComponent<GameWidget>() as GameWidget;
+        widgetBehaviour.EnableDrag(false);
+        widgetBehaviour.SetUpBackground();
+        widgetBehaviour.Unpressing += OnToySelect;
+
+
+        string spriteName = string.Format("sweet{0}", Random.Range(1, m_numSweetTypes + 1));
+
+        while (m_spawnedToys.Find(x => x.GetComponentInChildren<UISprite>().spriteName == spriteName))
+        {
+            spriteName = string.Format("sweet{0}", Random.Range(1, m_numSweetTypes + 1));
+        }
+
+        newToy.GetComponentInChildren<UISprite>().spriteName = spriteName;
+
+        newToy.GetComponentInChildren<UISprite>().MakePixelPerfect();
+
+        m_spawnedToys.Add(newToy);
+    }
+
     void OnClickSubmitButton(EventRelay relay)
     {
         int amountPaid = 0;
@@ -211,16 +241,7 @@ public class ToyShopPlayer : GamePlayer
                 toy.GetComponentInChildren<WobbleGUIElement>().enabled = true;
             }
 
-            Transform emptyLocator = m_currentToy.transform.parent;
-            GameObject toyPrefab = ToyShopCoordinator.Instance.GetToyPrefab();
-
-            GameObject newToy = SpawningHelpers.InstantiateUnderWithIdentityTransforms(toyPrefab, emptyLocator, true);
-            GameWidget widgetBehaviour = newToy.GetComponent<GameWidget>() as GameWidget;
-            widgetBehaviour.EnableDrag(false);
-            widgetBehaviour.SetUpBackground();
-            widgetBehaviour.Unpressing += OnToySelect;
-            newToy.GetComponentInChildren<UISprite>().MakePixelPerfect();
-            m_spawnedToys.Add(newToy);
+            SpawnToy(m_currentToy.transform.parent);
 
             m_currentToy.transform.parent = m_shoppingTrolley;
             
