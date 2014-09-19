@@ -180,6 +180,7 @@ public class ToyShopPlayer : GamePlayer
             m_currentPrice = ToyShopCoordinator.Instance.GetRandomValue();
             string priceString = m_currentPrice.ToString();
 
+            /*
             if (priceString.Length > 2)
             {
                 priceString = priceString.Insert(priceString.Length - 2, ".");
@@ -189,6 +190,7 @@ public class ToyShopPlayer : GamePlayer
             {
                 priceString = priceString + "p";
             }
+            */
 
             m_priceLabel.text = priceString;
             iTween.ScaleTo(m_priceTag.gameObject, Vector3.one, tweenDuration);

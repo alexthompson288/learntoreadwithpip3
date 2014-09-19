@@ -6,11 +6,9 @@ public class MultiplicationQuadPlayer : GamePlayer
     [SerializeField]
     private ScoreHealth m_scoreKeeper;
     [SerializeField]
-    private DataDisplay m_dataDisplay;
-    [SerializeField]
     private TrafficLights m_trafficLights;
     [SerializeField]
-    private PipButton m_goButton;
+    private EventRelay m_submitButton;
     [SerializeField]
     private UIGrid m_grid;
     [SerializeField]
@@ -21,6 +19,10 @@ public class MultiplicationQuadPlayer : GamePlayer
     private UILabel m_rowLabel;
     [SerializeField]
     private UILabel m_columnLabel;
+    [SerializeField]
+    private UILabel m_targetLabel;
+    [SerializeField]
+    private UISprite m_targetSplodge;
 
     int m_numRows = 1;
     int m_numColumns = 1;
@@ -47,7 +49,7 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     public void StartGame(bool subscribeToTimer)
     {
-        m_goButton.Unpressing += OnUnpressGoButton;
+        m_submitButton.SingleClicked += OnClickGoButton;
 
         for (int i = 0; i < m_rowButtons.Length; ++i)
         {
@@ -75,7 +77,7 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     void AskQuestion()
     {
-        m_dataDisplay.On(m_currentData);
+        m_targetLabel.text = m_currentData.GetInt("value").ToString();
     }
 
     void OnUnpressColumnButton(PipButton button)
@@ -136,28 +138,41 @@ public class MultiplicationQuadPlayer : GamePlayer
         m_columnLabel.text = m_numColumns.ToString();
     }
 
+    void ChangeSplodgeColor(ColorInfo.PipColor splodgeColor)
+    {
+        StopCoroutine("ChangeSplodgeColorCo");
+        m_targetSplodge.color = ColorInfo.GetColor(splodgeColor);
+        StartCoroutine("ChangeSplodgeColorCo");
+    }
+
+    IEnumerator ChangeSplodgeColorCo()
+    {
+        yield return new WaitForSeconds(0.75f);
+        m_targetSplodge.color = Color.white;
+    }
+
     public IEnumerator ClearQuestion ()
     {
-        m_dataDisplay.Off();
-
         m_numRows = 1;
         m_numColumns = 1;
         RefreshLines();
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.8f);
 
         AskQuestion();
     }
 
-    void OnUnpressGoButton (PipButton button)
+    void OnClickGoButton (EventRelay relay)
     {
         if (m_grid.transform.childCount == m_currentData.GetInt("value"))
         {
+            ChangeSplodgeColor(ColorInfo.PipColor.LightGreen);
             m_scoreKeeper.UpdateScore(1);
             MultiplicationQuadCoordinator.Instance.OnCorrectAnswer(this);
         }
         else
         {
+            ChangeSplodgeColor(ColorInfo.PipColor.LightRed);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }

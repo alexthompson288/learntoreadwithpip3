@@ -39,6 +39,10 @@ public class ColorInfo : Singleton<ColorInfo>
     private Color m_tricky;
     [SerializeField]
     private Color m_highFrequency;
+    [SerializeField]
+    private Color m_lightGreen;
+    [SerializeField]
+    private Color m_lightRed;
 
     public enum PipColor
     {
@@ -59,6 +63,8 @@ public class ColorInfo : Singleton<ColorInfo>
         OrangeYellow,
         MetalGrey,
         LightBlue,
+        LightGreen,
+        LightRed
     }
 
     public class NoColor : System.Exception {}
@@ -118,6 +124,12 @@ public class ColorInfo : Singleton<ColorInfo>
                 break;
             case PipColor.LightBlue:
                 return Instance.m_lightBlue;
+                break;
+            case PipColor.LightGreen:
+                return Instance.m_lightGreen;
+                break;
+            case PipColor.LightRed:
+                return Instance.m_lightRed;
                 break;
             default:
                 return Color.white;
