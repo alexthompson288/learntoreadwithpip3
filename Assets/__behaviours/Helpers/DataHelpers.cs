@@ -331,6 +331,9 @@ public static class DataHelpers
             case "shapes":
                 textAttribute = "name";
                 break;
+            case "games":
+                textAttribute = "labeltext";
+                break;
             default:
                 break;
         }

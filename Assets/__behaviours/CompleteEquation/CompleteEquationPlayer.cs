@@ -15,6 +15,12 @@ public class CompleteEquationPlayer : GamePlayer
     private Transform[] m_equationPartLocators;
     [SerializeField]
     private TweenBehaviour m_equationMoveable;
+    [SerializeField]
+    private GameObject m_conveyorBelt;
+    [SerializeField]
+    private UISprite m_light;
+
+    float m_conveyorBeltOffsetX = 3036;
 
     List<GameWidget> m_spawnedEquationParts = new List<GameWidget>();
     List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
@@ -59,9 +65,23 @@ public class CompleteEquationPlayer : GamePlayer
 
         AskQuestion();
     }
+
+    void ChangeLightSprite(string suffix)
+    {
+        StopCoroutine("ResetLightSprite");
+        m_light.spriteName = "light_" + suffix;
+    }
+
+    IEnumerator ResetLightSprite()
+    {
+        yield return new WaitForSeconds(0.8f);
+        m_light.spriteName = "light_yellow";
+    }
     
     void AskQuestion()
     {
+        ChangeLightSprite("yellow");
+
         m_currentData = m_equationParts [m_missingIndex];
 
         GameObject equationPartPrefab = CompleteEquationCoordinator.Instance.GetEquationPartPrefab();
@@ -108,6 +128,19 @@ public class CompleteEquationPlayer : GamePlayer
             
             ++locatorIndex;
         }
+
+        MoveConveyorBelt(m_conveyorBeltOffsetX);
+    }
+
+    void MoveConveyorBelt(float localPosX)
+    {
+        Hashtable tweenArgs = new Hashtable();
+        tweenArgs.Add("position", new Vector3(localPosX, m_conveyorBelt.transform.localPosition.y, m_conveyorBelt.transform.localPosition.z));
+        tweenArgs.Add("islocal", true);
+        tweenArgs.Add("time", 0.4f);
+        tweenArgs.Add("easetype", iTween.EaseType.easeOutQuad);
+
+        iTween.MoveTo(m_conveyorBelt, tweenArgs);
     }
 
 #if UNITY_EDITOR
@@ -129,6 +162,10 @@ public class CompleteEquationPlayer : GamePlayer
     {
         if (widget.data == m_currentData)
         {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+            ChangeLightSprite("green");
+
+            widget.transform.parent = m_equationPartLocators[m_missingIndex];
             widget.TweenToPos(m_equationPartLocators[m_missingIndex].position);
             
             widget.FadeBackground(true);
@@ -143,6 +180,9 @@ public class CompleteEquationPlayer : GamePlayer
             m_scoreKeeper.UpdateScore(-1);
             widget.TweenToStartPos();
             widget.TintGray();
+
+            ChangeLightSprite("red");
+            StartCoroutine(ResetLightSprite());
         }
     }
 
@@ -156,7 +196,13 @@ public class CompleteEquationPlayer : GamePlayer
 
     public IEnumerator ClearQuestion()
     {
+        MoveConveyorBelt(m_conveyorBeltOffsetX * 2);
+
         yield return new WaitForSeconds(1f);
+
+        Vector3 conveyorLocalPos = m_conveyorBelt.transform.localPosition;
+        conveyorLocalPos.x = 0;
+        m_conveyorBelt.transform.localPosition = conveyorLocalPos;
         
         CollectionHelpers.DestroyObjects(m_spawnedAnswers, true);
         CollectionHelpers.DestroyObjects(m_spawnedEquationParts, true);

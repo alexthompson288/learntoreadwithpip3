@@ -18,6 +18,8 @@ public class ClockPlayer : GamePlayer
     private TweenBehaviour m_cuckoo;
     [SerializeField]
     private Transform m_questionLabelParent;
+    [SerializeField]
+    private UISprite m_questionBg;
 
     DataRow m_currentData;
 
@@ -69,6 +71,19 @@ public class ClockPlayer : GamePlayer
         iTween.ScaleFrom(m_questionLabel.gameObject, Vector3.zero, 0.2f);
     }
 
+    void ChangeQuestionBgColor(ColorInfo.PipColor splodgeColor)
+    {
+        StopCoroutine("ChangeQuestionBgColorCo");
+        m_questionBg.color = ColorInfo.GetColor(splodgeColor);
+        StartCoroutine("ChangeQuestionBgColorCo");
+    }
+    
+    IEnumerator ChangeQuestionBgColorCo()
+    {
+        yield return new WaitForSeconds(0.75f);
+        m_questionBg.color = Color.white;
+    }
+
     void OnPressSubmitButton(EventRelay relay)
     {
         DateTime currentTime = Convert.ToDateTime(m_currentData ["datetime"]);
@@ -80,6 +95,7 @@ public class ClockPlayer : GamePlayer
             //D.Log("CORRECT");
             //D.Log("Clock: " + clockTime);
             //D.Log("Current: " + currentTime);
+            ChangeQuestionBgColor(ColorInfo.PipColor.LightGreen);
             m_scoreKeeper.UpdateScore(1);
             ClockCoordinator.Instance.OnCorrectAnswer(this);
         }
@@ -88,6 +104,7 @@ public class ClockPlayer : GamePlayer
             //D.Log("INCORRECT");
             //D.Log("Clock: " + clockTime);
             //D.Log("Current: " + currentTime);
+            ChangeQuestionBgColor(ColorInfo.PipColor.LightRed);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }

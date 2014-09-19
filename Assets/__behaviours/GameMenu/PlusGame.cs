@@ -117,8 +117,6 @@ public class PlusGame : MonoBehaviour
 
             ColorInfo.PipColor maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
 
-            D.Log(m_gameName + " maxColor: " + maxColor);
-
             Transform targetTransform = FindStarTransform(maxColor);
 
             if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
