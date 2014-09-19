@@ -14,7 +14,7 @@ public class ToyShopPlayer : GamePlayer
     [SerializeField]
     private UnitStack[] m_coinStacks;
     [SerializeField]
-    private PipButton m_goButton;
+    private EventRelay m_submitButton;
     [SerializeField]
     private TweenOnOffBehaviour m_priceTagTweenBehaviour;
     [SerializeField]
@@ -27,6 +27,10 @@ public class ToyShopPlayer : GamePlayer
     private Transform m_toyBuyLocation;
     [SerializeField]
     private TweenOnOffBehaviour m_coinStackTweenBehaviour;
+    [SerializeField]
+    private UILabel m_currentStackLabel;
+
+    int m_spriteDepthAdjust = 10;
 
     GameObject m_currentToy = null;
 
@@ -57,6 +61,14 @@ public class ToyShopPlayer : GamePlayer
 
     void Update()
     {
+        int totalStackedValue = 0;
+        foreach (UnitStack stack in m_coinStacks)
+        {
+            totalStackedValue += stack.GetStackedValue();
+        }
+  
+        m_currentStackLabel.text = totalStackedValue.ToString();
+
         if (m_currentToy != null)
         {
             m_priceTag.position = m_currentToy.transform.position;
@@ -71,11 +83,11 @@ public class ToyShopPlayer : GamePlayer
             m_coinStackTweenBehaviour.On();
         }
 
-        m_goButton.Unpressing += OnUnpressGoButton;
+        m_submitButton.SingleClicked += OnClickSubmitButton;
 
         System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
 
-        int[] coinValues = new int[] {1, 2, 5, 10, 20, 50, 100};
+        int[] coinValues = new int[] {1, 5, 10, 50, 100};
 
         for (int i = 0; i < m_coinStacks.Length && i < coinValues.Length; ++i)
         {
@@ -103,6 +115,7 @@ public class ToyShopPlayer : GamePlayer
             widgetBehaviour.EnableDrag(false);
             widgetBehaviour.SetUpBackground();
             widgetBehaviour.Unpressing += OnToySelect;
+            newToy.GetComponentInChildren<UISprite>().MakePixelPerfect();
             m_spawnedToys.Add(newToy);
         }
     }
@@ -123,6 +136,8 @@ public class ToyShopPlayer : GamePlayer
             toy.GetComponentInChildren<WobbleGUIElement>().enabled = true;
         }
 
+        m_currentToy.GetComponentInChildren<UISprite>().depth -= m_spriteDepthAdjust;
+
         m_canChooseToy = true;
 
         m_currentToy = null;
@@ -130,6 +145,11 @@ public class ToyShopPlayer : GamePlayer
     
     void OnToySelect(GameWidget widget)
     {
+        if (m_currentToy != null)
+        {
+            OnToyDeselect(m_currentToy.GetComponent<GameWidget>());
+        }
+
         if (m_canChooseToy)
         {
             m_canChooseToy = false;
@@ -138,6 +158,8 @@ public class ToyShopPlayer : GamePlayer
             widget.Unpressing += OnToyDeselect;
 
             m_currentToy = widget.gameObject;
+
+            m_currentToy.GetComponentInChildren<UISprite>().depth += m_spriteDepthAdjust;
 
             m_spawnedToys.Remove(m_currentToy);
 
@@ -170,7 +192,7 @@ public class ToyShopPlayer : GamePlayer
         }
     }
 
-    void OnUnpressGoButton(PipButton button)
+    void OnClickSubmitButton(EventRelay relay)
     {
         int amountPaid = 0;
         foreach (UnitStack stack in m_coinStacks)
@@ -197,6 +219,7 @@ public class ToyShopPlayer : GamePlayer
             widgetBehaviour.EnableDrag(false);
             widgetBehaviour.SetUpBackground();
             widgetBehaviour.Unpressing += OnToySelect;
+            newToy.GetComponentInChildren<UISprite>().MakePixelPerfect();
             m_spawnedToys.Add(newToy);
 
             m_currentToy.transform.parent = m_shoppingTrolley;
@@ -204,7 +227,9 @@ public class ToyShopPlayer : GamePlayer
             float tweenDuration = 0.25f;
 
             m_currentToy.GetComponent<GameWidget>().TweenToPos(m_shoppingTrolley.position);
-            iTween.ScaleTo(m_currentToy, Vector3.one * 0.5f, tweenDuration);
+            //iTween.ScaleTo(m_currentToy, Vector3.one * 0.5f, tweenDuration);
+            iTween.ScaleTo(m_currentToy, Vector3.zero, tweenDuration);
+            StartCoroutine(DestroyToy(tweenDuration + 0.1f, m_currentToy));
 
             //m_priceTagTweenBehaviour.Off();
             iTween.ScaleTo(m_priceTag.gameObject, Vector3.zero, 0.25f);
@@ -227,6 +252,12 @@ public class ToyShopPlayer : GamePlayer
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }
+    }
+
+    IEnumerator DestroyToy(float delay, GameObject go)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(go);
     }
 
     public IEnumerator CelebrateVictory()
