@@ -124,53 +124,60 @@ public class GameMenuCoordinator : MonoBehaviour
     
     void OnPressGameButton(PipButton button)
     {
-        DataRow game = DataHelpers.GetGame(button.GetString());
-
-        if (game != null)
+        if (button.GetComponent<ChooseGameButton>().MustLogin() && !LoginInfo.Instance.IsValid())
         {
-            GameManager.Instance.AddGame(game);
-        }
+            LoginInfo.Instance.SpawnLogin();
+        } 
         else
         {
-            GameManager.Instance.AddGame(button.GetString());
-        }
-        
-        if (m_currentColorButton != null)
-        {
-            ChooseGameButton chooseGameButton = button.GetComponent<ChooseGameButton>() as ChooseGameButton;
-            int numPlayers = chooseGameButton != null ? chooseGameButton.GetNumPlayers() : 1;
-            SessionInformation.Instance.SetNumPlayers(numPlayers);
-            
-            ColorInfo.PipColor pipColor = m_currentColorButton.pipColor;
+            DataRow game = DataHelpers.GetGame(button.GetString());
 
-            GameManager.Instance.SetCurrentColor(pipColor);
-            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-            
-            // Get and set all the data associated with the color
-            if(GameManager.Instance.programme.Contains("Reading"))
+            if (game != null)
             {
-                int moduleId = DataHelpers.GetModuleId(pipColor);
-
-                GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
-                GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
-                GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
-                GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
+                GameManager.Instance.AddGame(game);
+            } 
+            else
+            {
+                GameManager.Instance.AddGame(button.GetString());
+            }
+            
+            if (m_currentColorButton != null)
+            {
+                ChooseGameButton chooseGameButton = button.GetComponent<ChooseGameButton>() as ChooseGameButton;
+                int numPlayers = chooseGameButton != null ? chooseGameButton.GetNumPlayers() : 1;
+                SessionInformation.Instance.SetNumPlayers(numPlayers);
                 
-                DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
-                GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
-                GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
-            }
-            else if(GameManager.Instance.programme.Contains("Maths"))
-            {
-                DataSetters.AddModuleNumbers(m_currentColorButton.pipColor);
-            }
+                ColorInfo.PipColor pipColor = m_currentColorButton.pipColor;
 
-            ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
-            
-            GameMenuInfo.Instance.CreateBookmark(pipColor);
+                GameManager.Instance.SetCurrentColor(pipColor);
+                GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+                
+                // Get and set all the data associated with the color
+                if (GameManager.Instance.programme.Contains("Reading"))
+                {
+                    int moduleId = DataHelpers.GetModuleId(pipColor);
 
-            ////D.Log("Starting games");
-            GameManager.Instance.StartGames();
+                    GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+                    GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+                    GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
+                    GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
+                    
+                    DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+                    GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+                    GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
+                } 
+                else if (GameManager.Instance.programme.Contains("Maths"))
+                {
+                    DataSetters.AddModuleNumbers(m_currentColorButton.pipColor);
+                }
+
+                ScoreInfo.Instance.SetScoreType(ColorInfo.GetColorString(pipColor));
+                
+                GameMenuInfo.Instance.CreateBookmark(pipColor);
+
+                ////D.Log("Starting games");
+                GameManager.Instance.StartGames();
+            }
         }
     }
     

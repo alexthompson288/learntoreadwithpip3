@@ -6,6 +6,8 @@ using System.Linq;
 public class PlusGame : MonoBehaviour 
 {
     [SerializeField]
+    private bool m_mustLogin;
+    [SerializeField]
     private GameObject m_scoreLabelMoveable;
     [SerializeField]
     private GameObject m_scoreLabelSpinnable;
@@ -171,5 +173,10 @@ public class PlusGame : MonoBehaviour
     public string GetGameName()
     {
         return m_gameName;
+    }
+
+    public bool MustLogin()
+    {
+        return m_mustLogin;
     }
 }

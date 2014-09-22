@@ -50,6 +50,8 @@ public class StoryMenuCoordinator : MonoBehaviour
     [SerializeField]
     private TweenOnOffBehaviour m_storyButtonParent;
 
+    ColorInfo.PipColor m_freeColor = ColorInfo.PipColor.Pink;
+
     PipButton m_currentColorButton = null;
     StoryMenuBook m_currentBookButton = null;
 
@@ -100,14 +102,18 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnPressReadOrPictures(PipButton button)
     {
-        if (m_currentBookButton != null)
+        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsValid())
+        {
+            LoginInfo.Instance.SpawnLogin();
+        }
+        else if (m_currentBookButton != null)
         {
             ColorInfo.PipColor startPipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
             GameManager.Instance.SetCurrentColor(startPipColor);
             StoryInfo.Instance.SetShowText(button.GetString() == m_readingString);
-
+            
             GameManager.Instance.AddGame("NewStories");
-
+            
             WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_STORY_TIME");
             
             StartCoroutine(StartActivity());
@@ -116,7 +122,11 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnPressQuiz(PipButton button)
     {
-        if (m_currentBookButton != null)
+        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsValid())
+        {
+            LoginInfo.Instance.SpawnLogin();
+        }
+        else if (m_currentBookButton != null)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_currentBookButton.GetData()["id"]));
             List<DataRow> quizQuestions = DataHelpers.OnlyQuizQuestions(dt.Rows);

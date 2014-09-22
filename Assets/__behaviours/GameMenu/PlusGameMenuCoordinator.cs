@@ -176,7 +176,11 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     {
         D.Log("OnClickGameButton()");
 
-        if(!m_hasClickedGameButton)
+        if (relay.GetComponent<PlusGame>().MustLogin() && !LoginInfo.Instance.IsValid())
+        {
+            LoginInfo.Instance.SpawnLogin();
+        }
+        else if(!m_hasClickedGameButton)
         {
             m_hasClickedGameButton = true;
 

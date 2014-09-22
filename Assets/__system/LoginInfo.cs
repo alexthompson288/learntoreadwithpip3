@@ -6,6 +6,9 @@ using System.IO;
 
 public class LoginInfo : Singleton<LoginInfo>
 {
+    [SerializeField]
+    private GameObject m_loginPrefab;
+
     ////////////////////////////////////////////////////////////////////////////////////
     // Debugging Methods
     public void MakeExpirationYesterday()
@@ -48,6 +51,13 @@ public class LoginInfo : Singleton<LoginInfo>
     bool m_hasStarted = false;
     bool m_hasExited = false;
 
+    bool m_isValid = false;
+
+    public bool IsValid()
+    {
+        return m_isValid;
+    }
+
     public bool GetAttemptLogin()
     {
         return m_attemptLogin;
@@ -63,13 +73,13 @@ public class LoginInfo : Singleton<LoginInfo>
 
     public void Logout()
     {
+        m_isValid = false;
+
         m_email = "";
         m_password = "";
         m_accessToken = "";
         m_expirationDate = "";
         Save();
-
-        TransitionScreen.Instance.ChangeLevel("NewLogin", false);
     }
 
     void Awake()
@@ -125,16 +135,9 @@ public class LoginInfo : Singleton<LoginInfo>
                     m_expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
                 }
             }
-            catch(WebException ex)
-            {
-                if(ex.Response is System.Net.HttpWebResponse)
-                {
-                    //////D.Log((ex.Response as HttpWebResponse).StatusCode);
-                }
-            }
             catch
             {
-                //////D.LogError("Could not get token using saved login details");
+                D.LogError("Could not get new login token");
             }
         }
 
@@ -147,62 +150,13 @@ public class LoginInfo : Singleton<LoginInfo>
         {
             expirationDate = DateTime.Now.AddDays(-2);
         }
-        
-        /*
-        bool isUserLegal = false;
 
-        // Only check user if we actually have a token 
-        if (!String.IsNullOrEmpty(m_accessToken))
-        {
-            //////D.Log("FOUND TOKEN - CHECK USER");
+        m_isValid = String.IsNullOrEmpty(m_email) || String.IsNullOrEmpty(m_accessToken) || DateTime.Compare(expirationDate, DateTime.Now) < 0;
+    }
 
-            try
-            {
-                isUserLegal = LoginHelpers.IsUserLegal(m_accessToken);
-                //////D.Log("NO_ERROR - isUserLegal: " + isUserLegal);
-            } 
-            catch (LoginException ex)
-            {
-                //////D.Log("USER_EXCEPTION: " + ex.exceptionType);
-                LoginCoordinator.SetInfoText(ex);
-            } 
-            catch (WebException ex)
-            {
-                if (ex.Response is System.Net.HttpWebResponse)
-                {
-                    //////D.Log("HTTP EXCEPTION: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
-                    LoginCoordinator.SetInfoText(ex, false);
-                } 
-                else
-                {
-                    // If they have no internet connection then the user is legal (N.B. We still check for token validity below)
-                    //////D.Log("LEGAL WEB EXCEPTION");
-                    isUserLegal = true;
-                }
-            }
-        }
-        else
-        {
-            //////D.Log("NO TOKEN - CANNOT CHECK USER");
-        }
-        */
-       
-        //if (String.IsNullOrEmpty(m_email) || DateTime.Compare(expirationDate, DateTime.Now) < 0 || !isUserLegal)
-        if (String.IsNullOrEmpty(m_email) || String.IsNullOrEmpty(m_accessToken) || DateTime.Compare(expirationDate, DateTime.Now) < 0)
-        {
-            D.Log("FAIL - MUST LOGIN");
-            D.Log("m_email: " + m_email + " - " + !String.IsNullOrEmpty(m_email));
-            D.Log("m_expirationDate: " + m_expirationDate + " - " + (DateTime.Compare(expirationDate, DateTime.Now) >= 0));
-
-            if (Application.loadedLevelName != m_loginSceneName)
-            {
-                TransitionScreen.Instance.ChangeLevel(m_loginSceneName, false);
-            }
-        }
-        else if (Application.loadedLevelName == m_loginSceneName)
-        {
-            TransitionScreen.Instance.ChangeLevel("NewVoyage", false);
-        }
+    public void SpawnLogin()
+    {
+        Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_loginPrefab, NavMenu.Instance.transform);
     }
     
     public void SaveUserDetails(string myEmail, string myPassword, string myAccessToken, string myExpirationDate)

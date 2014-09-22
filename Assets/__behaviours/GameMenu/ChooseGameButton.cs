@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class ChooseGameButton : MonoBehaviour 
 {
     [SerializeField]
+    private bool m_mustLogin = true;
+    [SerializeField]
     private UILabel m_label;
     [SerializeField]
     private UISprite m_icon;
@@ -124,5 +126,10 @@ public class ChooseGameButton : MonoBehaviour
         yield return new WaitForSeconds(moveTweenDuration);
         target.GetComponent<UISprite>().spriteName = "star_active_512";
         Destroy(star);
+    }
+
+    public bool MustLogin()
+    {
+        return m_mustLogin;
     }
 }
