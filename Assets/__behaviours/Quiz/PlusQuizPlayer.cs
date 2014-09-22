@@ -23,15 +23,9 @@ public class PlusQuizPlayer : PlusGamePlayer
 
     DataRow m_currentData;
 
-    
     public void SetCurrentData(DataRow myCurrentData)
     {
         m_currentData = myCurrentData;
-    }
-    
-    public IEnumerator PlayTrafficLights()
-    {
-        yield return StartCoroutine(m_trafficLights.On());
     }
     
     public override void SelectCharacter(int characterIndex)

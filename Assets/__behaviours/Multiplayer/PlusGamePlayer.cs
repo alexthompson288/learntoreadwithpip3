@@ -8,6 +8,11 @@ public class PlusGamePlayer : GamePlayer
     [SerializeField]
     protected TrafficLights m_trafficLights;
 
+    public IEnumerator PlayTrafficLights()
+    {
+        yield return StartCoroutine(m_trafficLights.On());
+    }
+
     public IEnumerator CelebrateVictory()
     {
         if (SessionInformation.Instance.GetNumPlayers() == 2)

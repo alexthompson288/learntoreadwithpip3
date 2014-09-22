@@ -5,9 +5,15 @@ using System.Collections.Generic;
 public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
 {
     [SerializeField]
-    private PlusQuizPlayer[] m_gamePlayers;
+    private ShoppingListPlayer[] m_gamePlayers;
     [SerializeField]
     private bool m_questionsAreShared;
+    [SerializeField]
+    private GameObject m_answerPrefab;
+    [SerializeField]
+    private int m_numAnswers;
+
+    int m_numQuestions = 3;
     
     List<DataRow> m_dataPool = new List<DataRow>();
     
@@ -26,15 +32,14 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
     
     IEnumerator Start()
     {
-        ////D.Log("PlusQuizCoordinator.Start()");
-        
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_dataPool = DataHelpers.GetQuizQuestions();
         RemoveIllegalData();
         
-        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
-        
+        m_numAnswers = Mathf.Min(m_numAnswers, m_dataPool.Count);
+        m_numQuestions = Mathf.Min(m_numQuestions, m_dataPool.Count);
+
         int numPlayers = GetNumPlayers();
         
         if (numPlayers == 1)
@@ -80,13 +85,13 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
 
-        DataRow sharedData = GetRandomData();
+        HashSet<DataRow> sharedData = GetQuestionData();
         
         m_timeStarted = Time.time;
         
         for (int i = 0; i < numPlayers; ++i)
         {
-            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+            HashSet<DataRow> currentData = m_questionsAreShared ? sharedData : GetQuestionData();
             m_gamePlayers[i].SetCurrentData(currentData);
             m_gamePlayers[i].StartGame();
         }
@@ -94,7 +99,7 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
     
     public void OnCompleteSet(ShoppingListPlayer correctPlayer)
     {
-        DataRow currentData = GetRandomData();
+        HashSet<DataRow> currentData = GetQuestionData();
         
         if (m_questionsAreShared && GetNumPlayers() == 2)
         {
@@ -110,8 +115,20 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
             StartCoroutine(correctPlayer.ClearQuestion());
         }
     }
+
+    HashSet<DataRow> GetQuestionData()
+    {
+        HashSet<DataRow> data = new HashSet<DataRow>();
+
+        while (data.Count < m_numQuestions)
+        {
+            data.Add(GetRandomData());
+        }
+
+        return data;
+    }
     
-    DataRow GetRandomData()
+    public DataRow GetRandomData()
     {
         DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
         
@@ -157,5 +174,15 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
         GameManager.Instance.CompleteGame();
+    }
+
+    public int GetNumAnswers()
+    {
+        return m_numAnswers;
+    }
+
+    public GameObject GetAnswerPrefab()
+    {
+        return m_answerPrefab;
     }
 }
