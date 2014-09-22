@@ -13,16 +13,13 @@ public class LoginInfo : Singleton<LoginInfo>
     // Debugging Methods
     public void MakeExpirationYesterday()
     {
-        //////D.Log("LoginInfo.MakeExpirationYesterday()");
         DateTime expirationDate = DateTime.Now.AddDays(-1);
         m_expirationDate = expirationDate.ToString(LoginHelpers.dateTimeFormat);
-        //////D.Log("NewExpirationDate: " + m_expirationDate);
         Save();
     }
 
     public void Overwrite()
     {
-        //////D.Log("LoginInfo.Overwrite()");
         m_email = "";
         m_password = "";
         m_accessToken = "";
@@ -112,7 +109,6 @@ public class LoginInfo : Singleton<LoginInfo>
 
     void CheckForLogin()
     {
-        //////D.Log("LoginInfo.CheckForLogin(): " + m_hasExited);
         if (m_hasExited)
         {
             AttemptLogin();
@@ -129,7 +125,7 @@ public class LoginInfo : Singleton<LoginInfo>
             {
                 string tokenResponse = LoginHelpers.RequestToken(m_email, m_password);
                 
-                if(tokenResponse.Contains(LoginHelpers.accessPrefix) && tokenResponse.Contains(LoginHelpers.expirationPrefix))
+                if(tokenResponse.Contains(LoginHelpers.expirationPrefix))
                 {
                     m_accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
                     m_expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");

@@ -114,11 +114,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnUnpressCallRegisterButton(PipButton button)
     {
-        //m_infoLabel.text = "Register";
-        //m_registerTweenBehaviour.Off();
-
-        //Application.OpenURL("http://www.learnwithpip.com/users/sign_up");
-
         ParentGate.Instance.Answered += OnParentGateAnswer;
         ParentGate.Instance.On();
     }
@@ -131,7 +126,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
     void OnUnpressRegisterButton(PipButton button)
     {
-        //D.Log("LoginCoordinator.OnUnpressRegisterButton()");
         HashSet<string> passwords = new HashSet<string>();
 
         foreach (UILabel label in m_registerPasswordLabels)
@@ -144,8 +138,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             try
             {
                 string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
-//                D.Log("REGISTER SUCCESS");
-//                D.Log(responseContent);
             }
             catch(WebException ex)
             {
@@ -203,7 +195,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         if ((ex.Response is System.Net.HttpWebResponse))
         {
-            //////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
             switch ((ex.Response as System.Net.HttpWebResponse).StatusCode)
             {
                 // Unauthorized status code can happen for 2 reasons: 1. Incorrect username/password 2. No access token
@@ -219,7 +210,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         else
         {
-            //////D.Log("Not HTTP - Exception: " + ex.Message);
             SetInfoText("Check your internet connection");
         }
     }
@@ -272,21 +262,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             SetInfoText(ex, true);
         }
 
-        bool hasToken = tokenResponse.Contains(LoginHelpers.accessPrefix) && tokenResponse.Contains(LoginHelpers.expirationPrefix);
-        
-        //////D.Log("hasToken: " + hasToken);
-        //////D.Log("RESPONSE_CONTENT: " + tokenResponse);
+        bool hasToken = tokenResponse.Contains(LoginHelpers.expirationPrefix);
        
         if (hasToken)
         {
             string accessToken = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.accessPrefix, "\"");
-            //////D.Log("ACCESS_TOKEN: " + accessToken);
-            
             string expirationDate = LoginHelpers.ParseResponse(tokenResponse, LoginHelpers.expirationPrefix, "\"");
-            //D.Log("EXPIRATION_DATE: " + expirationDate);
-            
-            LoginInfo.Instance.SaveUserDetails(m_emailInput.text, password, accessToken, expirationDate);
 
+            LoginInfo.Instance.SaveUserDetails(m_emailInput.text, password, accessToken, expirationDate);
 
             float panelTweenDuration = 0.25f;
             TweenAlpha.Begin(m_loginRegisterPanel.gameObject, panelTweenDuration, 0);
@@ -303,42 +286,6 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             SetInfoText("Login");
             
             TransitionScreen.Instance.ChangeToDefaultLevel();
-
-            /*
-            bool isUserLegal = false;
-
-            try
-            {
-                isUserLegal = LoginHelpers.IsUserLegal(accessToken);
-            } 
-            catch (WebException ex)
-            {
-                SetInfoText(ex, false);
-            } 
-            catch (LoginException ex)
-            {
-                SetInfoText(ex);
-            }
-
-            if (isUserLegal)
-            {
-                float panelTweenDuration = 0.25f;
-                TweenAlpha.Begin(m_loginRegisterPanel.gameObject, panelTweenDuration, 0);
-                TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
-                
-                m_pipSpriteAnim.PlayAnimation("JUMP");
-                
-                yield return new WaitForSeconds(0.22f);
-                
-                WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_WAHOO");
-                
-                yield return new WaitForSeconds(0.5f);
-
-                SetInfoText("Login");
-                
-                TransitionScreen.Instance.ChangeToDefaultLevel();
-            }
-            */
         } 
 
         m_loginButtonLabel.text = "Login";
