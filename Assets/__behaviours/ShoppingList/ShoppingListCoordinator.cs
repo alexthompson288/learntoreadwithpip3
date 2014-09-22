@@ -2,38 +2,39 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator> 
+public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
 {
     [SerializeField]
-    private CorrectWordPlayer[] m_gamePlayers;
+    private PlusQuizPlayer[] m_gamePlayers;
     [SerializeField]
     private bool m_questionsAreShared;
-
+    
     List<DataRow> m_dataPool = new List<DataRow>();
     
     float m_timeStarted;
-
-    string m_dummyAttribute1 = "dummyword1";
-    string m_dummyAttribute2 = "dummyword2";
-
+    
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
     }
-
+    
     void RemoveIllegalData()
     {
         m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
-        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
+        m_dataPool.RemoveAll(x => x["correctanswer"] == null);
     }
     
     IEnumerator Start()
     {
+        ////D.Log("PlusQuizCoordinator.Start()");
+        
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_dataPool = DataHelpers.GetWords();
+        m_dataPool = DataHelpers.GetQuizQuestions();
         RemoveIllegalData();
-
+        
+        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        
         int numPlayers = GetNumPlayers();
         
         if (numPlayers == 1)
@@ -78,29 +79,20 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
+
+        DataRow sharedData = GetRandomData();
         
-        ////D.Log("Starting game");
+        m_timeStarted = Time.time;
         
-        if (m_dataPool.Count > 0)
+        for (int i = 0; i < numPlayers; ++i)
         {
-            DataRow sharedData = GetRandomData();
-            
-            m_timeStarted = Time.time;
-            
-            for (int i = 0; i < numPlayers; ++i)
-            {
-                DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
-                m_gamePlayers[i].SetCurrentData(currentData);
-                m_gamePlayers[i].StartGame();
-            }
-        }
-        else
-        {
-            StartCoroutine(CompleteGameCo());
+            DataRow currentData = m_questionsAreShared ? sharedData : GetRandomData();
+            m_gamePlayers[i].SetCurrentData(currentData);
+            m_gamePlayers[i].StartGame();
         }
     }
-
-    public void OnCorrectAnswer(CorrectWordPlayer correctPlayer)
+    
+    public void OnCompleteSet(ShoppingListPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData();
         
@@ -122,14 +114,15 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     DataRow GetRandomData()
     {
         DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
-
+        
         m_dataPool.Remove(data);
-
+        
         if (m_dataPool.Count == 0)
         {
-            m_dataPool = DataHelpers.GetWords();
+            m_dataPool = DataHelpers.GetQuizQuestions();
+            RemoveIllegalData();
         }
-
+        
         return data;
     }
     
@@ -140,10 +133,10 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
             m_gamePlayers[index].HideCharacter(characterIndex);
         }
     }
-
+    
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpWords();
+        m_dataPool = DataSetters.LevelUpQuizQuestions();
         RemoveIllegalData();
     }
     
@@ -164,15 +157,5 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
         yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
         
         GameManager.Instance.CompleteGame();
-    }
-
-    public string GetDummyAttribute1()
-    {
-        return m_dummyAttribute1;
-    }
-
-    public string GetDummyAttribute2()
-    {
-        return m_dummyAttribute2;
     }
 }
