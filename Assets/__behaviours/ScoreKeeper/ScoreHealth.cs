@@ -16,6 +16,8 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private UISprite m_multiplayerBar;
     [SerializeField]
+    private string[] m_characterLevelUpNames;
+    [SerializeField]
     private string[] m_characterIconNames;
     [SerializeField]
     private UISprite m_characterSprite;
@@ -26,7 +28,13 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private GameObject m_levelUpTweener;
     [SerializeField]
+    private UISprite m_levelUpCharacterSprite;
+    [SerializeField]
     private UIWidget[] m_colorChangeWidgets;
+    [SerializeField]
+    private UILabel m_winLabel;
+    [SerializeField]
+    private UISprite m_winCharacterSprite;
 
     Transform m_levelUpOnLocation;
 
@@ -39,7 +47,7 @@ public class ScoreHealth : PlusScoreKeeper
         get
         {
             Vector3 pos = m_levelUpOnLocation.localPosition;
-            pos.x += 500f;
+            pos.x -= 2000f;
             return pos;
         }
     }
@@ -56,6 +64,7 @@ public class ScoreHealth : PlusScoreKeeper
     {
         m_characterSprite.gameObject.SetActive(true);
         m_characterSprite.spriteName = m_characterIconNames [characterIndex];
+        m_levelUpCharacterSprite.spriteName = m_characterLevelUpNames [characterIndex];
 
         if (m_opponentScoreHealth != null)
         {
@@ -93,7 +102,6 @@ public class ScoreHealth : PlusScoreKeeper
         int numPlayers = SessionInformation.Instance.GetNumPlayers();
 
         m_multiplayerParent.SetActive(numPlayers == 2);
-        //m_scoreLabel.gameObject.SetActive(numPlayers == 1);
 
         if (numPlayers == 1)
         {
@@ -114,10 +122,26 @@ public class ScoreHealth : PlusScoreKeeper
         m_startHeight = m_healthBar.height;
     }
 
-    // TODO
     public override IEnumerator Celebrate()
     {
-        yield return new WaitForSeconds(3f);
+        m_winLabel.text = SessionInformation.Instance.GetNumPlayers() == 1 ? "Game\nOver" : "You\nWin!!!";
+
+        string lastLetter = SessionInformation.Instance.GetNumPlayers() == 1 ? "a" : "b";
+        m_winCharacterSprite.spriteName = m_winCharacterSprite.spriteName.Substring(0, m_winCharacterSprite.spriteName.Length - 1) + lastLetter;
+
+        iTween.Stop(m_levelUpTweener);
+
+        Hashtable onTweenArgs = new Hashtable();
+        onTweenArgs.Add("position", m_levelUpOnLocation);
+        onTweenArgs.Add("time", 0.35f);
+        onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
+        iTween.MoveTo(m_levelUpTweener, onTweenArgs);
+        
+        WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+
+        yield return new WaitForSeconds(3.5f);
     }
 
     public override void UpdateScore(int delta = 1)
@@ -179,7 +203,7 @@ public class ScoreHealth : PlusScoreKeeper
         
         Hashtable onTweenArgs = new Hashtable();
         onTweenArgs.Add("position", m_levelUpOnLocation);
-        onTweenArgs.Add("time", 0.5f);
+        onTweenArgs.Add("time", 0.35f);
         onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
         iTween.MoveTo(m_levelUpTweener, onTweenArgs);
 
@@ -187,13 +211,10 @@ public class ScoreHealth : PlusScoreKeeper
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
-
         while (m_healthBar.height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
         {
             yield return null;
         }
-
-        yield return new WaitForSeconds(0.25f);
 
         m_health = Mathf.Min(m_health, m_startHealth);
 
@@ -266,7 +287,8 @@ public class ScoreHealth : PlusScoreKeeper
         Color col = ColorInfo.GetColor(GameManager.Instance.currentColor);
         foreach (UIWidget widget in m_colorChangeWidgets)
         {
-            widget.color = col;
+            TweenColor.Begin(widget.gameObject, 0.15f, col);
+            //widget.color = col;
         }
     }
 }
