@@ -126,6 +126,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     {
         m_dataPool = DataSetters.LevelUpNumbers();
         m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+        ScoreHealth.RefreshColorAll();
     }
 
     public void CompleteGame()

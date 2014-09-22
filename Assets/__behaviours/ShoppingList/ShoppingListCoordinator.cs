@@ -31,15 +31,12 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
     
     IEnumerator Start()
     {
-        D.Log("ShoppingListCoordinator.Start()");
         ScoreHealth.RefreshColorAll();
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_dataPool = DataHelpers.GetWords();
         RemoveIllegalData();
-
-        D.Log("m_dataPool.Count: " + m_dataPool.Count);
 
         if (m_dataPool.Count > 0)
         {

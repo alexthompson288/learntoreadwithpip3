@@ -145,6 +145,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     {
         m_dataPool = DataSetters.LevelUpWords();
         RemoveIllegalData();
+        ScoreHealth.RefreshColorAll();
     }
     
     public void CompleteGame()

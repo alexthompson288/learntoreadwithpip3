@@ -96,6 +96,8 @@ public class ScoreHealth : PlusScoreKeeper
 
     void Start ()
     {
+        RefreshColor();
+
         m_characterSprite.gameObject.SetActive(false);
         m_opponentCharacterSprite.gameObject.SetActive(false);
 

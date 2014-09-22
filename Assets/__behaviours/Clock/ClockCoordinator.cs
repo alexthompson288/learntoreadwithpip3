@@ -129,6 +129,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpTimes();
+        ScoreHealth.RefreshColorAll();
     }
     
     public void CompleteGame()

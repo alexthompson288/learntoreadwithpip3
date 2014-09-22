@@ -142,6 +142,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     {
         m_wordPool = DataSetters.LevelUpWords();
         m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
+        ScoreHealth.RefreshColorAll();
     }
     
     public void CompleteGame()

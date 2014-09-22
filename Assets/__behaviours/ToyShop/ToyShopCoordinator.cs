@@ -109,6 +109,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpNumbers();
+        ScoreHealth.RefreshColorAll();
     }
 
     public int GetRandomValue()

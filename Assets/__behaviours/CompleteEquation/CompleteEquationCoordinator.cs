@@ -125,6 +125,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpNumbers();
+        ScoreHealth.RefreshColorAll();
     }
 
     public void CompleteGame()

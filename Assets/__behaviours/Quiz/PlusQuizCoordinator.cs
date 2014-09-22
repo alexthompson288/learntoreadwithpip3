@@ -140,6 +140,7 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 	{
 		m_dataPool = DataSetters.LevelUpQuizQuestions();
         RemoveIllegalData();
+        ScoreHealth.RefreshColorAll();
 	}
 	
 	public void CompleteGame()
