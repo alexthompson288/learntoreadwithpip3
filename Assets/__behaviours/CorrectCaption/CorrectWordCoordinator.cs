@@ -111,7 +111,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
         }
     }
 
-    public void OnAnswer(CorrectWordPlayer correctPlayer)
+    public void OnCorrectAnswer(CorrectWordPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData();
         
