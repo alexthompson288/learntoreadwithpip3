@@ -132,19 +132,22 @@ public class GameWidget : MonoBehaviour
 
     public void SetUpBackground()
     {
-        if (m_backgroundsStateA.Length == 0)
+        if (m_background != null)
         {
-            m_backgroundsStateA = new string[1];
-            m_backgroundsStateA[0] = m_background.spriteName;
-        }
-        
-        if (m_backgroundsStateB.Length == 0)
-        {
-            m_backgroundsStateB = new string[1];
-            m_backgroundsStateB[0] = NGUIHelpers.GetLinkedSpriteName(m_backgroundsStateA[0]);
-        }
+            if (m_backgroundsStateA.Length == 0)
+            {
+                m_backgroundsStateA = new string[1];
+                m_backgroundsStateA [0] = m_background.spriteName;
+            }
+            
+            if (m_backgroundsStateB.Length == 0)
+            {
+                m_backgroundsStateB = new string[1];
+                m_backgroundsStateB [0] = NGUIHelpers.GetLinkedSpriteName(m_backgroundsStateA [0]);
+            }
 
-        m_background.spriteName = m_backgroundsStateA[Random.Range(0, m_backgroundsStateA.Length)];
+            m_background.spriteName = m_backgroundsStateA [Random.Range(0, m_backgroundsStateA.Length)];
+        }
     }
 
     protected void ChangeBackgroundWidth()

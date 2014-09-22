@@ -22,7 +22,11 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private UISprite m_opponentCharacterSprite;
     [SerializeField]
+    private UILabel m_opponentScoreLabel;
+    [SerializeField]
     private GameObject m_levelUpTweener;
+    [SerializeField]
+    private UIWidget[] m_colorChangeWidgets;
 
     Transform m_levelUpOnLocation;
 
@@ -89,7 +93,7 @@ public class ScoreHealth : PlusScoreKeeper
         int numPlayers = SessionInformation.Instance.GetNumPlayers();
 
         m_multiplayerParent.SetActive(numPlayers == 2);
-        m_scoreLabel.gameObject.SetActive(numPlayers == 1);
+        //m_scoreLabel.gameObject.SetActive(numPlayers == 1);
 
         if (numPlayers == 1)
         {
@@ -99,6 +103,11 @@ public class ScoreHealth : PlusScoreKeeper
         m_health = m_startHealth;
 
         m_scoreLabel.text = m_score.ToString();
+
+        if (m_opponentScoreHealth != null)
+        {
+            m_opponentScoreLabel.text = m_opponentScoreHealth.m_score.ToString();
+        }
 
         RefreshHealthBar(false);
 
@@ -128,6 +137,11 @@ public class ScoreHealth : PlusScoreKeeper
         }
 
         m_scoreLabel.text = m_score.ToString();
+
+        if (m_opponentScoreHealth != null)
+        {
+            m_opponentScoreHealth.m_opponentScoreLabel.text = m_score.ToString();
+        }
         
         if (delta > 0)
         {
@@ -235,6 +249,24 @@ public class ScoreHealth : PlusScoreKeeper
         if (m_opponentScoreHealth != null)
         {
             m_multiplayerBar.height = m_opponentScoreHealth.barHeight;
+        }
+    }
+
+    public static void RefreshColorAll()
+    {
+        ScoreHealth[] scoreHealths = Object.FindObjectsOfType(typeof(ScoreHealth)) as ScoreHealth[];
+        foreach (ScoreHealth scoreHealth in scoreHealths)
+        {
+            scoreHealth.RefreshColor();
+        }
+    }
+
+    public void RefreshColor()
+    {
+        Color col = ColorInfo.GetColor(GameManager.Instance.currentColor);
+        foreach (UIWidget widget in m_colorChangeWidgets)
+        {
+            widget.color = col;
         }
     }
 }

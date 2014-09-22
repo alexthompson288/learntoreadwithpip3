@@ -15,6 +15,22 @@ public class TriggerTracker : MonoBehaviour
         return m_trackedObjects.Count;
     }
 
+#if UNITY_EDITOR
+    void OnGUI()
+    {
+        if (name == "Mid")
+        {
+            GUILayout.Label("");
+        }
+        else if (name == "Right")
+        {
+            GUILayout.Label("");
+            GUILayout.Label("");
+        }
+        GUILayout.Label(name + ": " + m_trackedObjects.Count.ToString());
+    }
+#endif
+
     void Start()
     {
         StartCoroutine(RemoveNull());

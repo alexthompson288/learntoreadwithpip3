@@ -7,15 +7,19 @@ using Wingrove;
 public class ShoppingListPlayer : PlusGamePlayer
 {
     [SerializeField]
-    private ListItem[] m_listItems;
-    [SerializeField]
     private Transform[] m_locators;
+    [SerializeField]
+    private TweenBehaviour m_shoppingList;
+    [SerializeField]
+    private GameObject m_shoppingListShakeable;
+    [SerializeField]
+    private ListItem[] m_listItems;
 
+    [System.Serializable]
     class ListItem
     {
         public TriggerTracker m_tracker;
         public UILabel m_label;
-        public UITexture m_texture;
     }
 
     HashSet<DataRow> m_currentData = new HashSet<DataRow>();
@@ -49,16 +53,20 @@ public class ShoppingListPlayer : PlusGamePlayer
     {  
         m_numCorrectAnswers = 0;
 
+        // Questions
         CollectionHelpers.Shuffle(m_listItems);
 
         int questionIndex = 0;
         foreach (DataRow question in m_currentData)
         {
             m_listItems[questionIndex].m_label.text = question["word"].ToString();
-            //m_listItems[questionIndex].m_texture = DataHelpers.GetPicture(question);
             ++questionIndex;
         }
 
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+        m_shoppingList.On();
+
+        //  Answers;
         HashSet<DataRow> answers = new HashSet<DataRow>();
 
         foreach (DataRow data in m_currentData)
@@ -81,10 +89,11 @@ public class ShoppingListPlayer : PlusGamePlayer
             GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(answerPrefab, m_locators[answerIndex]);
 
             GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
-            widget.SetUp(answer);
+            widget.SetUp("words", answer, DataHelpers.GetPicture(answer), false);
             widget.Unpressed += OnWidgetRelease;
+            m_spawnedDraggables.Add(widget);
 
-            ++questionIndex;
+            ++answerIndex;
         }
 
         yield break;
@@ -105,6 +114,7 @@ public class ShoppingListPlayer : PlusGamePlayer
                 WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
                 widget.TweenToPos(correctItem.m_tracker.transform.position);
                 widget.EnableCollider(false);
+                widget.transform.parent = m_shoppingList.GetMoveable().transform;
 
                 m_scoreKeeper.UpdateScore(1);
 
@@ -116,7 +126,16 @@ public class ShoppingListPlayer : PlusGamePlayer
             else
             {
                 WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
+
+                Hashtable tweenArgs = new Hashtable();
+                tweenArgs.Add("amount", Vector3.one * 25f);
+                tweenArgs.Add("islocal", true);
+                tweenArgs.Add("time", 0.3f);
+
+                iTween.ShakePosition(m_shoppingListShakeable, tweenArgs);
+
                 m_scoreKeeper.UpdateScore(-1);
+                widget.TweenToStartPos();
             }
         }
         else
@@ -127,9 +146,21 @@ public class ShoppingListPlayer : PlusGamePlayer
     
     public IEnumerator ClearQuestion()
     {
+        m_shoppingList.Off();
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
+        yield return new WaitForSeconds(m_shoppingList.GetTotalDurationOff());
 
-        yield return null;
+        for(int i = m_spawnedDraggables.Count - 1; i > -1; --i)
+        {
+            m_spawnedDraggables[i].Off();
+        }
+
+        m_spawnedDraggables.Clear();
+
+        yield return new WaitForSeconds(0.75f);
+
+        StartCoroutine(AskQuestion());
     }
     
     void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)

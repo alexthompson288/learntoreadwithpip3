@@ -27,73 +27,80 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
     void RemoveIllegalData()
     {
         m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
-        m_dataPool.RemoveAll(x => x["correctanswer"] == null);
     }
     
     IEnumerator Start()
     {
+        ScoreHealth.RefreshColorAll();
+
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_dataPool = DataHelpers.GetQuizQuestions();
+        m_dataPool = DataHelpers.GetWords();
         RemoveIllegalData();
-        
-        m_numAnswers = Mathf.Min(m_numAnswers, m_dataPool.Count);
-        m_numQuestions = Mathf.Min(m_numQuestions, m_dataPool.Count);
 
-        int numPlayers = GetNumPlayers();
-        
-        if (numPlayers == 1)
+        if (m_dataPool.Count > 0)
         {
-            CharacterSelectionParent.DisableAll();
-            SessionInformation.SetDefaultPlayerVar();
-            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+            m_numAnswers = Mathf.Min(m_numAnswers, m_dataPool.Count);
+            m_numQuestions = Mathf.Min(m_numQuestions, m_dataPool.Count);
+
+            int numPlayers = GetNumPlayers();
+            
+            if (numPlayers == 1)
+            {
+                CharacterSelectionParent.DisableAll();
+                SessionInformation.SetDefaultPlayerVar();
+                yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+            } else
+            {
+                SideBarCameraSpawner.Instance.InstantiateSideBarCamera();
+                
+                yield return new WaitForSeconds(0.5f);
+                WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+                
+                while (true)
+                {
+                    bool allSelected = true;
+                    for (int index = 0; index < numPlayers; ++index)
+                    {
+                        if (!m_gamePlayers [index].HasSelectedCharacter())
+                        {
+                            allSelected = false;
+                        }
+                    }
+                    
+                    if (allSelected)
+                    {
+                        break;
+                    }
+                    
+                    yield return null;
+                }
+                
+                yield return new WaitForSeconds(0.8f);
+                
+                for (int index = 0; index < numPlayers; ++index)
+                {
+                    m_gamePlayers [index].HideAll();
+                }
+                
+                StartCoroutine(m_gamePlayers [0].PlayTrafficLights());
+                yield return StartCoroutine(m_gamePlayers [1].PlayTrafficLights());
+            }
+
+            HashSet<DataRow> sharedData = GetQuestionData();
+            
+            m_timeStarted = Time.time;
+            
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                HashSet<DataRow> currentData = m_questionsAreShared ? sharedData : GetQuestionData();
+                m_gamePlayers [i].SetCurrentData(currentData);
+                m_gamePlayers [i].StartGame();
+            }
         }
         else
         {
-            SideBarCameraSpawner.Instance.InstantiateSideBarCamera();
-            
-            yield return new WaitForSeconds(0.5f);
-            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
-            
-            while (true)
-            {
-                bool allSelected = true;
-                for (int index = 0; index < numPlayers; ++index)
-                {
-                    if (!m_gamePlayers [index].HasSelectedCharacter())
-                    {
-                        allSelected = false;
-                    }
-                }
-                
-                if (allSelected)
-                {
-                    break;
-                }
-                
-                yield return null;
-            }
-            
-            yield return new WaitForSeconds(0.8f);
-            
-            for (int index = 0; index < numPlayers; ++index)
-            {
-                m_gamePlayers [index].HideAll();
-            }
-            
-            StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
-            yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
-        }
-
-        HashSet<DataRow> sharedData = GetQuestionData();
-        
-        m_timeStarted = Time.time;
-        
-        for (int i = 0; i < numPlayers; ++i)
-        {
-            HashSet<DataRow> currentData = m_questionsAreShared ? sharedData : GetQuestionData();
-            m_gamePlayers[i].SetCurrentData(currentData);
-            m_gamePlayers[i].StartGame();
+            GameManager.Instance.CompleteGame();
         }
     }
     
@@ -136,7 +143,7 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
         
         if (m_dataPool.Count == 0)
         {
-            m_dataPool = DataHelpers.GetQuizQuestions();
+            m_dataPool = DataHelpers.GetWords();
             RemoveIllegalData();
         }
         
@@ -153,8 +160,9 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
     
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpQuizQuestions();
+        m_dataPool = DataSetters.LevelUpWords();
         RemoveIllegalData();
+        ScoreHealth.RefreshColorAll();
     }
     
     public void CompleteGame()
