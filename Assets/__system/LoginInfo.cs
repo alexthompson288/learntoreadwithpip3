@@ -52,7 +52,11 @@ public class LoginInfo : Singleton<LoginInfo>
 
     public bool IsValid()
     {
+#if UNITY_EDITOR
+        return m_isValid || !m_attemptLogin;
+#else
         return m_isValid;
+#endif
     }
 
     public bool GetAttemptLogin()
@@ -165,7 +169,14 @@ public class LoginInfo : Singleton<LoginInfo>
 
     public void SpawnLogin()
     {
-        Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_loginPrefab, NavMenu.Instance.transform);
+        if (LoginPrefabCoordinator.Instance == null)
+        {
+            Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_loginPrefab, NavMenu.Instance.transform);
+        }
+        else
+        {
+            LoginPrefabCoordinator.Instance.On();
+        }
     }
     
     public void SaveUserDetails(string myEmail, string myPassword, string myAccessToken, string myExpirationDate)
@@ -178,6 +189,11 @@ public class LoginInfo : Singleton<LoginInfo>
         Save();
 
         m_isValid = true;
+    }
+
+    public void SetIsValid(bool myIsValid)
+    {
+        m_isValid = myIsValid;
     }
     
     public string GetEmail()

@@ -159,7 +159,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     {
         int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
 
-        for (int i = 0; i < m_gamePlayers.Length; ++i)
+        for (int i = 0; i < GetNumPlayers(); ++i)
         {
             m_gamePlayers[i].ClearGame();
         }

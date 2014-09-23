@@ -7,9 +7,11 @@ using System.Net;
 public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
 {
     [SerializeField]
-    private TweenBehaviour m_tweenBehaviour;
+    private TweenBehaviour m_menuTween;
     [SerializeField]
-    private UIPanel m_loginPanel;
+    private TweenBehaviour m_loginRegisterTween;
+    [SerializeField]
+    private UIPanel m_loginRegisterPanel;
     [SerializeField]
     private UIPanel m_successPanel;
     [SerializeField]
@@ -19,7 +21,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     [SerializeField]
     private PipButton m_loginButton;
     [SerializeField]
-    private PipButton m_registerButton;
+    private PipButton m_callRegisterButton;
     [SerializeField]
     private UILabel m_loginButtonLabel;
     [SerializeField]
@@ -32,6 +34,18 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     private Transform m_pipOnLocation;
     [SerializeField]
     private GameObject m_loginButtonParent;
+    [SerializeField]
+    private UILabel m_registerNameLabel;
+    [SerializeField]
+    private UILabel m_registerEmailLabel;
+    [SerializeField]
+    private UILabel[] m_registerPasswordLabels;
+    [SerializeField]
+    private PipButton m_registerButton;
+    [SerializeField]
+    private PipButton m_dismissButton;
+    [SerializeField]
+    private PipButton m_callLoginButton;
     
     static string m_infoText = "Login";
     
@@ -42,14 +56,37 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     {
         m_emailInput.GetComponent<UIInput>().onSubmit.Add(new EventDelegate(this, "OnEnterEmail"));
         
-        m_loginPanel.alpha = 1;
+        m_loginRegisterPanel.alpha = 1;
         m_successPanel.alpha = 0;
         
         m_loginButton.Unpressing += OnUnpressLogin;
+        m_callRegisterButton.Unpressing += OnUnpressCallRegisterButton;
+        m_callLoginButton.Unpressing += OnUnpressCallLoginButton;
         m_registerButton.Unpressing += OnUnpressRegisterButton;
+
+        m_dismissButton.Unpressing += OnUnpressDismissButton;
         
         m_infoLabel.text = m_infoText;        
     }
+
+    public void On()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+        m_menuTween.On();
+    }
+
+    void Off()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_DISAPPEAR");
+        m_menuTween.Off();
+    }
+
+    void OnUnpressDismissButton(PipButton button)
+    {
+        Off();
+    }
+
+
 
     void EditEmailInput()
     {
@@ -60,11 +97,17 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     {
         EditEmailInput();
     }
-    
-    void OnUnpressRegisterButton(PipButton button)
+
+    void OnUnpressCallLoginButton(PipButton button)
     {
-        ParentGate.Instance.Answered += OnParentGateAnswer;
-        ParentGate.Instance.On();
+        D.Log("OnUnpressCallLoginButton()");
+        m_loginRegisterTween.On();
+    }
+    
+    void OnUnpressCallRegisterButton(PipButton button)
+    {
+        D.Log("OnUnpressCallRegisterButton()");
+        m_loginRegisterTween.Off();
     }
 
     void OnParentGateAnswer(bool isCorrect)
@@ -84,8 +127,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     
     IEnumerator Start()
     {
-        m_tweenBehaviour.On();
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+        On();
 
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
         
@@ -151,13 +193,49 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         }
     }
 
+    void OnUnpressRegisterButton(PipButton button)
+    {
+        HashSet<string> passwords = new HashSet<string>();
+        
+        foreach (UILabel label in m_registerPasswordLabels)
+        {
+            passwords.Add(label.text);
+        }
+        
+        if (passwords.Count == 1)
+        {
+            try
+            {
+                string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
+                m_loginRegisterTween.On();
+            }
+            catch(WebException ex)
+            {
+                //D.Log("REGISTER FAIL");
+                if ((ex.Response is System.Net.HttpWebResponse))
+                {
+                    ////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                }
+                else
+                {
+                    ////D.Log("Not HTTP - Exception: " + ex.Message);
+                }
+            }
+        }
+        else
+        {
+            m_infoLabel.text = "Invalid password";
+        }
+    }
+
     void OnUnpressLogin(PipButton button)
     {
         EditEmailInput();
         
         if (m_emailInput.text == "pipoffline" && m_passwordInput.GetComponent<UIInput>().value == "pipoffline")
         {
-            TransitionScreen.Instance.ChangeToDefaultLevel();
+            Off();
+            LoginInfo.Instance.SetIsValid(true);
         }
         else
         {
@@ -194,7 +272,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
             LoginInfo.Instance.SaveUserDetails(m_emailInput.text, password, accessToken, expirationDate);
             
             float panelTweenDuration = 0.25f;
-            TweenAlpha.Begin(m_loginPanel.gameObject, panelTweenDuration, 0);
+            TweenAlpha.Begin(m_loginRegisterPanel.gameObject, panelTweenDuration, 0);
             TweenAlpha.Begin(m_successPanel.gameObject, panelTweenDuration, 1);
             
             m_pipSpriteAnim.PlayAnimation("JUMP");
@@ -207,8 +285,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
             
             SetInfoText("Login");
             
-            //TransitionScreen.Instance.ChangeToDefaultLevel();
-            m_tweenBehaviour.Off();
+            Off();
         } 
         
         m_loginButtonLabel.text = "Login";

@@ -977,16 +977,16 @@ public static class DataHelpers
                 return 150;
                 break;
             case ColorInfo.PipColor.Turquoise:
-                return 500;
+                return 250;
                 break;
             case ColorInfo.PipColor.Purple:
-                return 1000;
+                return 500;
                 break;
             case ColorInfo.PipColor.Gold:
-                return 2000;
+                return 1000;
                 break;
             case ColorInfo.PipColor.White:
-                return 9999;
+                return 5000;
                 break;
             default:
                 return 10;
