@@ -31,7 +31,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
             maxValue += (val * 10);
         }
 
-        m_dataPool = DataHelpers.OnlyLowNumbers(maxValue);
+        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, maxValue);
     }
 
     IEnumerator Start()
