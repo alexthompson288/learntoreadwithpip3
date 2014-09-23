@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordinator> 
 {
@@ -32,8 +33,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_dataPool = DataHelpers.GetNumbers();
-        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+        SetNumberData();
 
         int numPlayers = GetNumPlayers();
 
@@ -122,10 +122,62 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
     }
 
+    void SetNumberData()
+    {
+        List<int> factors = new List<int>();
+
+        factors.Add(1);
+        factors.Add(2);
+        factors.Add(5);
+        factors.Add(10);
+
+        ColorInfo.PipColor currentColor = GameManager.Instance.currentColor;
+
+        if (currentColor > ColorInfo.PipColor.Turquoise)
+        {
+            factors.Add(4);
+            factors.Add(8);
+            factors.Add(9);
+        }
+
+        if (currentColor > ColorInfo.PipColor.Purple)
+        {
+            factors.Add(3);
+            factors.Add(6);
+            factors.Add(7);
+        }
+
+        if (currentColor > ColorInfo.PipColor.Gold)
+        {
+            factors.Add(11);
+            factors.Add(12);
+        }
+
+        HashSet<int> multiples = new HashSet<int>();
+
+        for(int i = 0; i < factors.Count; ++i)
+        {
+            for(int j = 0; j < factors.Count; ++j)
+            {
+                multiples.Add(factors[i] * factors[j]);
+            }
+        }
+
+        m_dataPool.Clear();
+
+        foreach (int multiple in multiples)
+        {
+            m_dataPool.Add(DataHelpers.CreateNumber(multiple));
+        }
+
+        //m_dataPool = DataSetters.LevelUpNumbers();
+        //m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+    }
+
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpNumbers();
-        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 144);
+        GameManager.Instance.IncrementCurrentColor();
+        SetNumberData();
         ScoreHealth.RefreshColorAll();
     }
 
@@ -150,6 +202,8 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
 
     DataRow GetRandomData()
     {
+        return m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
+        /*
         DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count - 1)];
 
         // Must be able to get number by multiplying 2 integers from 0-12 inclusive
@@ -168,6 +222,7 @@ public class MultiplicationQuadCoordinator : Singleton<MultiplicationQuadCoordin
         }
 
         return data;
+        */
     }
 
     public bool AreQuestionsShared()
