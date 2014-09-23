@@ -68,6 +68,16 @@ public class LoginInfo : Singleton<LoginInfo>
         }
     }
 
+#if UNITY_EDITOR
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Logout();
+        }
+    }
+#endif
+
     public void Logout()
     {
         m_isValid = false;
@@ -117,6 +127,7 @@ public class LoginInfo : Singleton<LoginInfo>
     
     void AttemptLogin()
     {
+        D.Log("LoginInfo.AttemptLogin()");
         m_hasExited = false;
         
         if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
@@ -147,7 +158,9 @@ public class LoginInfo : Singleton<LoginInfo>
             expirationDate = DateTime.Now.AddDays(-2);
         }
 
-        m_isValid = String.IsNullOrEmpty(m_email) || String.IsNullOrEmpty(m_accessToken) || DateTime.Compare(expirationDate, DateTime.Now) < 0;
+        m_isValid = !String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_accessToken) && DateTime.Compare(expirationDate, DateTime.Now) >= 0;
+
+        D.Log("m_isValid: " + m_isValid);
     }
 
     public void SpawnLogin()
@@ -157,12 +170,14 @@ public class LoginInfo : Singleton<LoginInfo>
     
     public void SaveUserDetails(string myEmail, string myPassword, string myAccessToken, string myExpirationDate)
     {
+        Debug.Log("LoginInfo.SaveUserDetails()");
         m_email = myEmail;
         m_password = myPassword;
         m_accessToken = myAccessToken;
         m_expirationDate = myExpirationDate;
-        Debug.Log("Saving expirationData: " + m_expirationDate);
         Save();
+
+        m_isValid = true;
     }
     
     public string GetEmail()

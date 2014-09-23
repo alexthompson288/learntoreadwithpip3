@@ -98,10 +98,12 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         {
             m_mathsGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
 
+            bool mustLogin = true;
             string gameName = "NewCompleteEquationNumbers";
             switch(i)
             {
                 case 0:
+                    mustLogin = false;
                     gameName = "NewClockNumbers";
                     break;
                 case 1:
@@ -114,17 +116,20 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                     break;
             }
 
+            m_mathsGames[i].SetMustLogin(mustLogin);
             m_mathsGames[i].SetUp(gameName);
         }
 
         for(int i = 0; i < m_readingGames.Length; ++i)
         {
             m_readingGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
-            
+
+            bool mustLogin = true;
             string gameName = "NewPlusQuiz";
             switch(i)
             {
                 case 0:
+                    mustLogin = false;
                     gameName = "NewPlusSpelling";
                     break;
                 case 1:
@@ -137,6 +142,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                     break;
             }
 
+            m_readingGames[i].SetMustLogin(mustLogin);
             m_readingGames[i].SetUp(gameName);
         }
     }
@@ -176,15 +182,15 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     {
         D.Log("OnClickGameButton()");
 
-        if (relay.GetComponent<PlusGame>().MustLogin() && !LoginInfo.Instance.IsValid())
+        PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
+
+        if (plusGame.MustLogin() && !LoginInfo.Instance.IsValid())
         {
             LoginInfo.Instance.SpawnLogin();
         }
         else if(!m_hasClickedGameButton)
         {
             m_hasClickedGameButton = true;
-
-            PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
             m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
 

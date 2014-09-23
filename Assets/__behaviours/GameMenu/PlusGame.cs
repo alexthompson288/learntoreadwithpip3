@@ -6,8 +6,6 @@ using System.Linq;
 public class PlusGame : MonoBehaviour 
 {
     [SerializeField]
-    private bool m_mustLogin;
-    [SerializeField]
     private GameObject m_scoreLabelMoveable;
     [SerializeField]
     private GameObject m_scoreLabelSpinnable;
@@ -25,6 +23,8 @@ public class PlusGame : MonoBehaviour
     float m_scoreLabelOffset = 0.122f;
 
     string m_gameName;
+
+    bool m_mustLogin = true;
 
     [System.Serializable]
     class ColorStar
@@ -173,6 +173,11 @@ public class PlusGame : MonoBehaviour
     public string GetGameName()
     {
         return m_gameName;
+    }
+
+    public void SetMustLogin(bool myMustLogin)
+    {
+        m_mustLogin = myMustLogin;
     }
 
     public bool MustLogin()
