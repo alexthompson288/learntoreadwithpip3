@@ -89,7 +89,7 @@ public class ToyShopPlayer : GamePlayer
 
         System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
 
-        int[] coinValues = new int[] {1, 5, 10, 50, 100};
+        int[] coinValues = ToyShopCoordinator.Instance.GetCoinValues();
 
         for (int i = 0; i < m_coinStacks.Length && i < coinValues.Length; ++i)
         {

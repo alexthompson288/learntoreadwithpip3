@@ -56,6 +56,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     IEnumerator Start()
     {
+        GameManager.Instance.SetProgramme("Plus");
+
         if (m_bookmark == Bookmark.Maths)
         {
             m_camera.transform.position = m_mathsParent.position;
@@ -253,15 +255,13 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         
         bool isMaths = Mathf.Approximately(m_camera.transform.position.x, m_mathsParent.position.x);
         
-        string programmeName = isMaths ? "Maths2" : "Reading2";
-        GameManager.Instance.SetProgramme(programmeName);
-        
+       
         if(isMaths)
         {
             DataSetters.AddModuleNumbers(m_pipColor);
             DataSetters.AddModuleTimes(m_pipColor);
         }
-        else if(GameManager.Instance.programme.Contains("Maths"))
+        else
         {
             int moduleId = DataHelpers.GetModuleId(m_pipColor);
             

@@ -8,9 +8,13 @@ public class InstantiateNavMenu : MonoBehaviour
     private GameObject m_readingMenu;
     [SerializeField]
     private GameObject m_mathsMenu;
+    [SerializeField]
+    private GameObject m_plusMenu;
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null; // Wait a frame to give other classes time to set the programme
+
         GameObject prefabToInstantiate = null;
 
         switch (GameManager.Instance.programme)
@@ -20,6 +24,9 @@ public class InstantiateNavMenu : MonoBehaviour
                 break;
             case "Maths1":
                 prefabToInstantiate = m_mathsMenu;
+                break;
+            case "Plus":
+                prefabToInstantiate = m_plusMenu;
                 break;
         }
 

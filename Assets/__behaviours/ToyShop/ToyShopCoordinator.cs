@@ -14,16 +14,31 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     private GameObject m_toyPrefab;
     [SerializeField]
     private GameObject m_sideBarCameraPrefab;
+    [SerializeField]
+    private int[] m_coinValues = {1, 5, 10, 50, 100}; 
 
     List<DataRow> m_dataPool = new List<DataRow>();
 
     float m_timeStarted;
 
+    void SetData()
+    {
+        m_dataPool = DataHelpers.GetNumbers();
+
+        int maxValue = 0;
+        foreach (int val in m_coinValues)
+        {
+            maxValue += (val * 10);
+        }
+
+        m_dataPool = DataHelpers.OnlyLowNumbers(maxValue);
+    }
+
     IEnumerator Start()
     {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        m_dataPool = DataHelpers.GetNumbers();
+        SetData();
 
         int numPlayers = GetNumPlayers();
 
@@ -108,7 +123,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpNumbers();
+        SetData();
         ScoreHealth.RefreshColorAll();
     }
 
@@ -130,6 +145,11 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     public int GetNumToysToSpawn()
     {
         return m_numToysToSpawn;
+    }
+
+    public int[] GetCoinValues()
+    {
+        return m_coinValues; 
     }
     
     int GetNumPlayers()
