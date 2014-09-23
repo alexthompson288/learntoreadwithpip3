@@ -59,7 +59,7 @@ public static class LoginHelpers
 	
 	static string m_tokenExtension = "tokens";
 	static string m_userExtension = "users/me";
-    static string m_registerExtension = "newusers";
+    static string m_registerExtension = "users/create";
 
 	public static string ParseResponse(string responseContent, string prefix, string end)
 	{
@@ -72,6 +72,7 @@ public static class LoginHelpers
 
     public static string Register(string email, string password, string name)
     {   
+        D.Log("registration URL: " + m_url + m_registerExtension);
         var request = System.Net.WebRequest.Create(m_url + m_registerExtension) as System.Net.HttpWebRequest;
         request.KeepAlive = true;
         request.Method = "POST";

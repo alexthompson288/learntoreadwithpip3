@@ -46,6 +46,8 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     private PipButton m_dismissButton;
     [SerializeField]
     private PipButton m_callLoginButton;
+    [SerializeField]
+    private PipButton m_dummyRegisterButton;
     
     static string m_infoText = "Login";
     
@@ -63,6 +65,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         m_callRegisterButton.Unpressing += OnUnpressCallRegisterButton;
         m_callLoginButton.Unpressing += OnUnpressCallLoginButton;
         m_registerButton.Unpressing += OnUnpressRegisterButton;
+        m_dummyRegisterButton.Unpressing += OnUnpressDummyRegisterButton;
 
         m_dismissButton.Unpressing += OnUnpressDismissButton;
         
@@ -85,8 +88,6 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     {
         Off();
     }
-
-
 
     void EditEmailInput()
     {
@@ -193,8 +194,33 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         }
     }
 
+    void OnUnpressDummyRegisterButton(PipButton button)
+    {
+        try
+        {
+            D.Log("Attempting registration");
+            string responseContent = LoginHelpers.Register("tom+1@learnwithpip.com", "password", "Tom");
+            D.Log("registerResponseContent: " + responseContent);
+            m_loginRegisterTween.On();
+        }
+        catch(WebException ex)
+        {
+            D.Log("REGISTER FAIL");
+            if ((ex.Response is System.Net.HttpWebResponse))
+            {
+                D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+            }
+            else
+            {
+                D.Log("Not HTTP - Exception: " + ex.Message);
+            }
+        }
+    }
+
     void OnUnpressRegisterButton(PipButton button)
     {
+        D.Log("LoginPrefabCoordinator.OnUnpressRegisterButton()");
+
         HashSet<string> passwords = new HashSet<string>();
         
         foreach (UILabel label in m_registerPasswordLabels)
@@ -206,19 +232,21 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         {
             try
             {
+                D.Log("Attempting registration");
                 string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
+                D.Log("registerResponseContent: " + responseContent);
                 m_loginRegisterTween.On();
             }
             catch(WebException ex)
             {
-                //D.Log("REGISTER FAIL");
+                D.Log("REGISTER FAIL");
                 if ((ex.Response is System.Net.HttpWebResponse))
                 {
-                    ////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                    D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
                 }
                 else
                 {
-                    ////D.Log("Not HTTP - Exception: " + ex.Message);
+                    D.Log("Not HTTP - Exception: " + ex.Message);
                 }
             }
         }
