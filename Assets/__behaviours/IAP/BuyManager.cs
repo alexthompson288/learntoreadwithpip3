@@ -269,12 +269,15 @@ public class BuyManager : Singleton<BuyManager>
     {
         if (productId == m_mathsModulesProductId)
         {
+
         } 
         else if (productId == m_readingModulesProductId)
         {
+
         } 
         else if (productId == m_allModulesProductId)
         {
+
         } 
         else if (productId == m_mathsGamesProductId)
         {
