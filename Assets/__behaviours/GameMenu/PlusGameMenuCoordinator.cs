@@ -34,6 +34,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     [SerializeField]
     private SpriteAnim[] m_pipAnims;
 
+    ColorInfo.PipColor[] m_colorBands = new ColorInfo.PipColor[] { ColorInfo.PipColor.Turquoise, ColorInfo.PipColor.Purple, ColorInfo.PipColor.Gold, ColorInfo.PipColor.White};
+
     string m_gameName;
     ColorInfo.PipColor m_pipColor;
     int m_numPlayers;
@@ -90,11 +92,6 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         }
 
         System.Array.Sort(m_chooseColorButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
-
-        foreach (EventRelay relay in m_chooseColorButtons)
-        {
-            relay.SingleClicked += OnChooseColor;
-        }
 
         for(int i = 0; i < m_mathsGames.Length; ++i)
         {
@@ -186,6 +183,19 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
+        ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
+        for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
+        {
+            bool isUnlocked = i == 0 || (int)m_colorBands[i] <= (int)maxColor + 1;
+
+            m_chooseColorButtons[i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands[i]) : Color.grey;
+
+            if(isUnlocked)
+            {
+                m_chooseColorButtons[i].SingleClicked += OnChooseColor;
+            }
+        }
+
         if (plusGame.MustLogin() && !LoginInfo.Instance.IsValid())
         {
             LoginInfo.Instance.SpawnLogin();
@@ -204,29 +214,13 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     void OnChooseColor(EventRelay relay)
     {
-        int index = System.Array.IndexOf(m_chooseColorButtons, relay);
-
-        switch (index)
+        foreach(EventRelay button in m_chooseColorButtons)
         {
-            case 0:
-                m_pipColor = ColorInfo.PipColor.Turquoise;
-                break;
-            case 1:
-                m_pipColor = ColorInfo.PipColor.Purple;
-                break;
-            case 2:
-                m_pipColor = ColorInfo.PipColor.Gold;
-                break;
-            case 3:
-                m_pipColor = ColorInfo.PipColor.White;
-                break;
-            default:
-                m_pipColor = ColorInfo.PipColor.Turquoise;
-                break;
+            relay.SingleClicked -= OnChooseColor;
         }
 
+        m_pipColor = m_colorBands [System.Array.IndexOf(m_chooseColorButtons, relay)];
         m_chooseColorMoveable.Off();
-
         StartGame();
     }
 
@@ -239,6 +233,11 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     void OnClickBackCollider(EventRelay relay)
     {
+        foreach(EventRelay button in m_chooseColorButtons)
+        {
+            relay.SingleClicked -= OnChooseColor;
+        }
+
         m_chooseColorMoveable.Off();
         m_chooseNumPlayersMoveable.Off();
         m_hasClickedGameButton = false;

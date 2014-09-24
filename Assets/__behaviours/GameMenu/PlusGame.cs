@@ -26,6 +26,13 @@ public class PlusGame : MonoBehaviour
 
     bool m_mustLogin = true;
 
+    ColorInfo.PipColor m_maxColor;
+
+    public ColorInfo.PipColor GetMaxColor()
+    {
+        return m_maxColor;
+    }
+
     [System.Serializable]
     class ColorStar
     {
@@ -117,16 +124,15 @@ public class PlusGame : MonoBehaviour
         {
             List<ColorStar> unlockedStars = new List<ColorStar>();
 
-            ColorInfo.PipColor maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
+            m_maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
 
-            Transform targetTransform = FindStarTransform(maxColor);
+            Transform targetTransform = FindStarTransform(m_maxColor);
 
             if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
             {
                 int newMaxColor = PlusScoreInfo.Instance.GetNewMaxColor();
 
-                unlockedStars = System.Array.FindAll(m_colorStars, x => (int)x.m_pipColor > PlusScoreInfo.Instance.GetOldMaxColor() 
-                                                     && (int)x.m_pipColor <= newMaxColor).ToList();
+                unlockedStars = System.Array.FindAll(m_colorStars, x => (int)x.m_pipColor > PlusScoreInfo.Instance.GetOldMaxColor() && (int)x.m_pipColor <= newMaxColor).ToList();
 
                 if(unlockedStars.Count > 0)
                 {
@@ -154,7 +160,7 @@ public class PlusGame : MonoBehaviour
                 {
                     StartCoroutine(UnlockColorStar(m_colorStars[i]));
                 }
-                else if(m_colorStars[i].m_pipColor <= maxColor)
+                else if(m_colorStars[i].m_pipColor <= m_maxColor)
                 {
                     m_colorStars[i].m_colorStar.transform.localScale = Vector3.one;
                 }

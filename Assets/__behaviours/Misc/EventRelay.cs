@@ -4,7 +4,7 @@ using System.Collections;
 public class EventRelay : MonoBehaviour 
 {
 	public delegate void SimpleRelayEventHandler(EventRelay relay);
-	public event SimpleRelayEventHandler SingleClicked;
+    public event SimpleRelayEventHandler SingleClicked;
 
 	public delegate void BoolRelayEventHandler(EventRelay relay, bool pressed);
 	public event BoolRelayEventHandler Pressed;
