@@ -8,6 +8,8 @@ public class Clock : MonoBehaviour
     private ClockHand m_minuteHand;
     [SerializeField]
     private ClockHand m_hourHand;
+    [SerializeField]
+    private ColorInfo.PipColor m_handPressedColor = ColorInfo.PipColor.Green;
 
     ClockHand m_currentHand = null;
     ClockHand m_followHand = null;
@@ -47,6 +49,7 @@ public class Clock : MonoBehaviour
         if (m_currentHand == null)
         {
             m_currentHand = hand;
+            m_currentHand.SetHandColor(ColorInfo.GetColor(m_handPressedColor));
             m_followHand = m_currentHand == m_minuteHand ? m_hourHand : m_minuteHand;
         }
     }
@@ -55,6 +58,7 @@ public class Clock : MonoBehaviour
     {
         if (m_currentHand == hand)
         {
+            m_currentHand.SetHandColor(Color.white);
             m_currentHand = null;
             m_followHand = null;
         }

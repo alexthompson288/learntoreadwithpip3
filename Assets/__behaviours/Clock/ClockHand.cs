@@ -10,6 +10,8 @@ public class ClockHand : MonoBehaviour
     private Clock m_clock;
     [SerializeField]
     private bool m_isMinuteHand;
+    [SerializeField]
+    private UIWidget m_hand;
     
     float m_angle
     {
@@ -150,6 +152,11 @@ public class ClockHand : MonoBehaviour
     {
         float rotationAngle = m_angle - targetAngle;
         transform.Rotate(new Vector3(0, 0, rotationAngle));
+    }
+
+    public void SetHandColor(Color col)
+    {
+        m_hand.color = col;
     }
 }
 
