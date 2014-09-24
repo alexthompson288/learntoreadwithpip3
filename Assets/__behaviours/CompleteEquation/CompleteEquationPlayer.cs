@@ -19,6 +19,8 @@ public class CompleteEquationPlayer : GamePlayer
     private GameObject m_conveyorBelt;
     [SerializeField]
     private UISprite m_light;
+    [SerializeField]
+    private RotateConstantly[] m_conveyorWheels;
 
     float m_conveyorBeltOffsetX = 3036;
 
@@ -53,6 +55,19 @@ public class CompleteEquationPlayer : GamePlayer
     {
         m_equationParts = equation.m_equationParts;
         m_missingIndex = equation.m_missingIndex;
+    }
+
+    void EnableWheels(bool enable)
+    {
+        foreach (RotateConstantly wheel in m_conveyorWheels)
+        {
+            wheel.enabled = enable;
+        }
+    }
+
+    void Awake()
+    {
+        EnableWheels(false);
     }
     
     public void StartGame(bool subscribeToTimer)
@@ -129,18 +144,26 @@ public class CompleteEquationPlayer : GamePlayer
             ++locatorIndex;
         }
 
-        MoveConveyorBelt(m_conveyorBeltOffsetX);
+        StartCoroutine(MoveConveyorBelt(m_conveyorBeltOffsetX));
     }
 
-    void MoveConveyorBelt(float localPosX)
+    IEnumerator MoveConveyorBelt(float localPosX)
     {
+        EnableWheels(true);
+
+        float tweenDuration = 0.4f;
+
         Hashtable tweenArgs = new Hashtable();
         tweenArgs.Add("position", new Vector3(localPosX, m_conveyorBelt.transform.localPosition.y, m_conveyorBelt.transform.localPosition.z));
         tweenArgs.Add("islocal", true);
-        tweenArgs.Add("time", 0.4f);
+        tweenArgs.Add("time", tweenDuration);
         tweenArgs.Add("easetype", iTween.EaseType.easeOutQuad);
 
         iTween.MoveTo(m_conveyorBelt, tweenArgs);
+
+        yield return new WaitForSeconds(tweenDuration);
+
+        EnableWheels(false);
     }
 
 #if UNITY_EDITOR
@@ -196,7 +219,7 @@ public class CompleteEquationPlayer : GamePlayer
 
     public IEnumerator ClearQuestion()
     {
-        MoveConveyorBelt(m_conveyorBeltOffsetX * 2);
+        StartCoroutine(MoveConveyorBelt(m_conveyorBeltOffsetX * 2));
 
         yield return new WaitForSeconds(1f);
 
