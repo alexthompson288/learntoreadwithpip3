@@ -78,7 +78,9 @@ public static class LoginHelpers
         request.Method = "POST";
         request.ContentType="application/json";
 
-        string byteString = "{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\",\n    \"name\": \"" + name + "\",\n    \"password_confirmation\": \"" + password + "\"\n}";
+        //string byteString = "{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\",\n    \"name\": \"" + name + "\",\n    \"password_confirmation\": \"" + password + "\"\n}";
+        string byteString = "{\n    \"email\": \"" + email + "\",\n    \"password\": \"" + password + "\",\n    \"password_confirmation\": \"" + password + "\",\n    \"name\": \"" + name + "\"\n}";
+
 
         byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(byteString);
 
