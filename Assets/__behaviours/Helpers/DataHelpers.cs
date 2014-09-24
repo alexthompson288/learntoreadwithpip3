@@ -198,6 +198,16 @@ public static class DataHelpers
                     {
                         tex = Resources.Load<Texture2D>("Images/storypages/" + data["correct_image_name"].ToString());
                     }
+
+                    if(tex == null)
+                    {
+                        tex = Resources.Load<Texture2D>("Images/word_images_png_350/" + data["correct_image_name"].ToString());
+                    }
+
+                    if(tex == null)
+                    {
+                        tex = Resources.Load<Texture2D>("Images/mnemonics_images_png_250/" + data["correct_image_name"].ToString());
+                    }
                 }
                 break;
             case "shapes":
@@ -594,7 +604,9 @@ public static class DataHelpers
     public static List<DataRow> GetQuizQuestions()
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("quizquestions");
-        
+
+        D.Log("Found " + dataPool.Count + " quiz questions");
+
         if (dataPool.Count == 0)
         {
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences");

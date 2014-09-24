@@ -26,6 +26,8 @@ public class InstantiateNavMenu : MonoBehaviour
                 prefabToInstantiate = m_mathsMenu;
                 break;
             case "Plus":
+            case "Reading2":
+            case "Maths2":
                 prefabToInstantiate = m_plusMenu;
                 break;
         }

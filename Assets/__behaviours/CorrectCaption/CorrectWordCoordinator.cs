@@ -23,9 +23,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
 
     void RemoveIllegalData()
     {
-        D.Log("COUNT PRE PICTURE CHECK: " + m_dataPool.Count);
         m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
-        D.Log("COUNT PRE DUMMY CHECK: " + m_dataPool.Count);
         m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
     }
     
@@ -130,6 +128,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
         if (m_dataPool.Count == 0)
         {
             m_dataPool = DataHelpers.GetWords();
+            RemoveIllegalData();
         }
 
         return data;

@@ -74,16 +74,16 @@ public class CorrectWordPlayer : PlusGamePlayer
         // Add answer strings
         answerStrings.Add(m_currentData["word"].ToString());
 
-        string dummy1 = m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString();
-        if (!string.IsNullOrEmpty(dummy1))
+        if (m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()] != null)
         {
-            answerStrings.Add(dummy1);
+            //D.Log("dummy1: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString());
+            answerStrings.Add(m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString());
         }
 
-        string dummy2 = m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString();
-        if (!string.IsNullOrEmpty(dummy2))
+        if (m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()] != null)
         {
-            answerStrings.Add(dummy2);
+            //D.Log("dummy2: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString());
+            answerStrings.Add(m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString());
         }
         
         CollectionHelpers.Shuffle(answerStrings);

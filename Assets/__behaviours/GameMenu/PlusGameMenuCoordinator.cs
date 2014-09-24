@@ -34,6 +34,9 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     [SerializeField]
     private SpriteAnim[] m_pipAnims;
 
+    string m_mathsProgrammeName = "Maths2";
+    string m_readingProgrammeName = "Reading2";
+
     ColorInfo.PipColor[] m_colorBands = new ColorInfo.PipColor[] { ColorInfo.PipColor.Turquoise, ColorInfo.PipColor.Purple, ColorInfo.PipColor.Gold, ColorInfo.PipColor.White};
 
     string m_gameName;
@@ -58,7 +61,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     IEnumerator Start()
     {
-        GameManager.Instance.SetProgramme("Plus");
+        GameManager.Instance.SetProgramme(m_readingProgrammeName);
 
         if (m_bookmark == Bookmark.Maths)
         {
@@ -160,14 +163,22 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         m_readingParent.localPosition = localPos;
 
         Transform target = goToMaths ? m_mathsParent : m_readingParent;
-        //iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+
+        string programmeName = goToMaths ? m_mathsProgrammeName : m_readingProgrammeName;
+        GameManager.Instance.SetProgramme(programmeName);
+
         StartCoroutine(TweenCamera(target.position));
     }
 
     void OnClickSwitchButton(EventRelay relay)
     {
-        Transform target = Mathf.Approximately(m_camera.transform.position.x, m_readingParent.transform.position.x) ? m_mathsParent : m_readingParent;
-        //iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
+        bool goToMaths = Mathf.Approximately(m_camera.transform.position.x, m_readingParent.transform.position.x);
+
+        Transform target = goToMaths ? m_mathsParent : m_readingParent;
+
+        string programmeName = goToMaths ? m_mathsProgrammeName : m_readingProgrammeName;
+        GameManager.Instance.SetProgramme(programmeName);
+
         StartCoroutine(TweenCamera(target.position));
     }
 
@@ -263,6 +274,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         else
         {
             int moduleId = DataHelpers.GetModuleId(m_pipColor);
+
+            D.Log("moduleId: " + moduleId);
             
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
             GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
@@ -270,7 +283,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
             
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
-            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+            //GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
         }
         
