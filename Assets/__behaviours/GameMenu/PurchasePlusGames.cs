@@ -31,6 +31,7 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
 
     void OnClickPurchase(EventRelay relay)
     {
+        D.Log("PurchasePlusGames.OnClickPurchase()");
         if (m_canPurchase)
         {
             m_canPurchase = false;
