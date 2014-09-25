@@ -59,6 +59,7 @@ public class BuyManager : Singleton<BuyManager>
         m_currentProductId = BuildGameProductId(gameId);
         
         ParentGate.Instance.Answered += OnParentGateAnswer;
+        ParentGate.Instance.Dismissed += OnParentGateDismiss;
         ParentGate.Instance.On();
     }
 
@@ -89,6 +90,7 @@ public class BuyManager : Singleton<BuyManager>
         if (validType)
         {
             ParentGate.Instance.Answered += OnParentGateAnswer;
+            ParentGate.Instance.Dismissed += OnParentGateDismiss;
             ParentGate.Instance.On();
         }
     }
@@ -97,7 +99,8 @@ public class BuyManager : Singleton<BuyManager>
 	{
         D.Log("BuyManager.OnParentGateAnswer()");
 		ParentGate.Instance.Answered -= OnParentGateAnswer;
-		
+        ParentGate.Instance.Dismissed -= OnParentGateDismiss;
+
 		if(isCorrect)
 		{
 			StartCoroutine(AttemptPurchase());
@@ -108,13 +111,12 @@ public class BuyManager : Singleton<BuyManager>
     {
         D.Log("BuyManager.OnParentGateDismiss()");
         ParentGate.Instance.Answered -= OnParentGateAnswer;
+        ParentGate.Instance.Dismissed -= OnParentGateDismiss;
     }
 
 #if UNITY_IPHONE
     IEnumerator Start()
     {
-        ParentGate.Instance.Dismissed += OnParentGateDismiss;
-
         yield return StartCoroutine(GameManager.WaitForSetProgramme());
 
         if(m_logProductRequests)
