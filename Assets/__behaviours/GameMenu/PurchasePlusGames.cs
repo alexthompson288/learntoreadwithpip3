@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PurchasePlusGames : MonoBehaviour 
+public class PurchasePlusGames : Singleton<PurchasePlusGames> 
 {
     [SerializeField]
     private TweenBehaviour m_tweenBehaviour;
@@ -22,7 +22,7 @@ public class PurchasePlusGames : MonoBehaviour
         m_purchaseAllGames.SingleClicked += OnClickPurchase;
     }
 
-    void On(int myGameId)
+    public void On(int myGameId)
     {
         m_gameId = myGameId;
 

@@ -168,7 +168,14 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         if (ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGameId()))
         {
-            LoginInfo.Instance.SpawnLogin();
+            if(ContentLock.Instance.lockType == ContentLock.Lock.Login)
+            {
+                LoginInfo.Instance.SpawnLogin();
+            }
+            else
+            {
+                PurchasePlusGames.Instance.On(plusGame.GetGameId());
+            }
         }
         else if(!m_hasClickedGameButton)
         {
