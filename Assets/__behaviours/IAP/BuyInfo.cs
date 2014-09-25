@@ -8,8 +8,6 @@ public class BuyInfo : Singleton<BuyInfo>
 {
     #if UNITY_EDITOR
     [SerializeField]
-    private bool m_unlockInEditor;
-    [SerializeField]
     private bool m_overwrite;
     #endif
 

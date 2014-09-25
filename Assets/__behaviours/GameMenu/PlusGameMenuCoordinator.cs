@@ -153,40 +153,38 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
-        ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
-        for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
-        {
-            bool isUnlocked = i == 0 || (int)m_colorBands[i] <= (int)maxColor + 1;
-
-            m_chooseColorButtons[i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands[i]) : Color.grey;
-
-            if(isUnlocked)
-            {
-                m_chooseColorButtons[i].SingleClicked += OnChooseColor;
-            }
-        }
-
-        if (ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGameId()))
-        {
-            if(ContentLock.Instance.lockType == ContentLock.Lock.Login)
-            {
-                LoginInfo.Instance.SpawnLogin();
-            }
-            else
-            {
-                PurchasePlusGames.Instance.On(plusGame.GetGameId());
-            }
-        }
-        else if(!m_hasClickedGameButton)
+        if (!m_hasClickedGameButton && ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGameId()))
         {
             m_hasClickedGameButton = true;
-
+            
+            ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
+            for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
+            {
+                bool isUnlocked = i == 0 || (int)m_colorBands[i] <= (int)maxColor + 1;
+                
+                m_chooseColorButtons[i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands[i]) : Color.grey;
+                
+                if(isUnlocked)
+                {
+                    m_chooseColorButtons[i].SingleClicked += OnChooseColor;
+                }
+            }
+            
             m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
-
+            
             m_gameName = plusGame.GetGameName();
             
-            m_chooseNumPlayersMoveable.On();  
+            m_chooseNumPlayersMoveable.On();
         }
+        else if(ContentLock.Instance.lockType == ContentLock.Lock.Login)
+        {
+            LoginInfo.Instance.SpawnLogin();
+        }
+        else
+        {
+            PurchasePlusGames.Instance.On(plusGame.GetGameId());
+        }
+
     }
 
     void OnChooseColor(EventRelay relay)

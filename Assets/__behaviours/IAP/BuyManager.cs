@@ -93,7 +93,7 @@ public class BuyManager : Singleton<BuyManager>
         }
     }
 	
-	public void OnParentGateAnswer(bool isCorrect)
+	void OnParentGateAnswer(bool isCorrect)
 	{
         D.Log("BuyManager.OnParentGateAnswer()");
 		ParentGate.Instance.Answered -= OnParentGateAnswer;
@@ -104,9 +104,17 @@ public class BuyManager : Singleton<BuyManager>
 		}
 	}
 
+    void OnParentGateDismiss()
+    {
+        D.Log("BuyManager.OnParentGateDismiss()");
+        ParentGate.Instance.Answered -= OnParentGateAnswer;
+    }
+
 #if UNITY_IPHONE
     IEnumerator Start()
     {
+        ParentGate.Instance.Dismissed += OnParentGateDismiss;
+
         yield return StartCoroutine(GameManager.WaitForSetProgramme());
 
         if(m_logProductRequests)
