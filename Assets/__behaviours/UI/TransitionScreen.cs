@@ -315,7 +315,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
     public void ChangeToDefaultLevel()
     {
-        if (GameManager.Instance.programme == "Reading1")
+        if (GameManager.Instance.programme == ProgrammeInfo.basicReading)
         {
             ChangeLevel("NewVoyage", false);
         }

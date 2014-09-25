@@ -32,7 +32,7 @@ public class OldPlusGameMenuCoordinator : Singleton<OldPlusGameMenuCoordinator>
     {
         m_chooseColorBackCollider.SingleClicked += OnClickChooseColorBackCollider;
 
-        if (GameManager.Instance.programme == "Reading2")
+        if (GameManager.Instance.programme == ProgrammeInfo.plusReading)
         {
             m_camera.transform.position = m_readingParent.position;
         }
@@ -83,7 +83,7 @@ public class OldPlusGameMenuCoordinator : Singleton<OldPlusGameMenuCoordinator>
 
         bool isMaths = Mathf.Approximately(m_camera.transform.position.x, m_mathsParent.position.x);
 
-        string programmeName = isMaths ? "Maths2" : "Reading2";
+        string programmeName = isMaths ? ProgrammeInfo.plusMaths : ProgrammeInfo.plusReading;
         GameManager.Instance.SetProgramme(programmeName);
 
         if(isMaths)

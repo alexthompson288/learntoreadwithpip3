@@ -5,7 +5,7 @@ using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
 {
-    string m_programme = "Reading1";
+    string m_programme = ProgrammeInfo.basicReading;
     public string programme
     {
         get

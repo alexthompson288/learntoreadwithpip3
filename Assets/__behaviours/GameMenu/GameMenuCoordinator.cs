@@ -75,7 +75,7 @@ public class GameMenuCoordinator : MonoBehaviour
         GameMenuInfo.Instance.DestroyBookmark();
         
         #if UNITY_EDITOR
-        string programmeName = Application.loadedLevelName == "NewGameMenu" ? "Reading1" : "Maths1";
+        string programmeName = Application.loadedLevelName == "NewGameMenu" ? ProgrammeInfo.basicReading : ProgrammeInfo.basicMaths;
         GameManager.Instance.SetProgramme(programmeName);
         #endif
     }

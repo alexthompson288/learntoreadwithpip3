@@ -154,6 +154,40 @@ public class BuyManager : Singleton<BuyManager>
     // TODO
     string[] FindAllProductIdentifiers()
     {
+        List<string> productIds = new List<string>();
+
+        productIds.Add(m_mathsGamesProductId);
+        productIds.Add(m_readingGamesProductId);
+        productIds.Add(m_allGamesProductId);
+
+        productIds.Add(m_mathsModulesProductId);
+        productIds.Add(m_readingModulesProductId);
+        productIds.Add(m_allModulesProductId);
+
+        string[] mathsGames = ProgrammeInfo.GetPlusMathsGames();
+        foreach (string game in mathsGames)
+        {
+            productIds.Add(BuildGameProductId(game));
+        }
+
+        string[] readingGames = ProgrammeInfo.GetPlusReadingGames();
+        foreach (string game in readingGames)
+        {
+            productIds.Add(BuildGameProductId(game));
+        }
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicMaths + "'");
+        foreach (DataRow module in dt.Rows)
+        {
+            productIds.Add(BuildModuleProductId(module.GetId()));
+        }
+
+        dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicReading + "'");
+        foreach (DataRow module in dt.Rows)
+        {
+            productIds.Add(BuildModuleProductId(module.GetId()));
+        }
+
         return null;
     }
 
@@ -265,33 +299,73 @@ public class BuyManager : Singleton<BuyManager>
     }
 #endif
 
+    void UnlockMathsGames()
+    {
+        string[] mathsGames = ProgrammeInfo.GetPlusMathsGames();
+        BuyInfo.Instance.SetGamesPurchased(mathsGames);
+    }
+
+    void UnlockReadingGames()
+    {
+        string[] readingGames = ProgrammeInfo.GetPlusReadingGames();
+        BuyInfo.Instance.SetGamesPurchased(readingGames);
+    }
+
+    void UnlockMathsModules()
+    {
+        UnlockProgramModules(ProgrammeInfo.basicMaths);
+    }
+
+    void UnlockReadingModules()
+    {
+        UnlockProgramModules(ProgrammeInfo.basicMaths);
+    }
+
+    void UnlockProgramModules(string programmename)
+    {
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + programmename + "'");
+        if (dt.Rows.Count > 0)
+        {
+            int[] moduleIds = new int[dt.Rows.Count];
+            
+            for(int i = 0; i < moduleIds.Length; ++i)
+            {
+                moduleIds[i] = dt.Rows[i].GetId();
+            }
+            
+            BuyInfo.Instance.SetModulesPurchased(moduleIds);
+        }
+    }
+
     void UnlockProduct(string productId)
     {
         if (productId == m_mathsModulesProductId)
         {
-
+            UnlockMathsModules();
         } 
         else if (productId == m_readingModulesProductId)
         {
-
+            UnlockReadingModules();
         } 
         else if (productId == m_allModulesProductId)
         {
-
+            UnlockMathsModules();
+            UnlockReadingModules();
         } 
         else if (productId == m_mathsGamesProductId)
         {
-
+            UnlockMathsGames();
         } 
         else if (productId == m_readingGamesProductId)
         {
-
+            UnlockReadingGames();
         }
         else if (productId == m_allGamesProductId)
         {
-
+            UnlockMathsGames();
+            UnlockReadingGames();
         }
-        else if(productId.Contains(m_modulePrefix)) // Book
+        else if(productId.Contains(m_modulePrefix))
         {
             // Find the module id
             string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
@@ -299,9 +373,9 @@ public class BuyManager : Singleton<BuyManager>
             
             BuyInfo.Instance.SetModulePurchased(bookId);
         }
-        else if(productId.Contains(m_gamePrefix)) // Map
+        else if(productId.Contains(m_gamePrefix))
         {
-
+            BuyInfo.Instance.SetGamePurchased(productId.Replace(m_gamePrefix, ""));
         }
         else
         {

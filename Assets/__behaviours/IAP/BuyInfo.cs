@@ -38,22 +38,19 @@ public class BuyInfo : Singleton<BuyInfo>
         return m_purchasedModules.Contains(moduleId);
     }
 
-    // TODO
-    public bool AreAllModulesPurchased()
-    {
-        return false;
-    }
-
     public void SetModulePurchased(int moduleId)
     {
         m_purchasedModules.Add(moduleId);
         Save();
     }
 
-    // TODO
-    public void SetAllModulesPurchased()
+    public void SetModulesPurchased(int[] moduleIds)
     {
-
+        foreach (int moduleId in moduleIds)
+        {
+            m_purchasedModules.Add(moduleId);
+        }
+        Save();
     }
 
     ////////////////////////////////////////////////////////////////
@@ -63,21 +60,19 @@ public class BuyInfo : Singleton<BuyInfo>
         return m_purchasedGames.Contains(gameName);
     }
 
-    // TODO
-    public bool AreAllGamesPurchased()
-    {
-        return false;
-    }
-
-    // TODO
     public void SetGamePurchased(string gameName)
     {
         m_purchasedGames.Add(gameName);
+        Save();
     }
 
-    public void SetAllGamesPurchased()
+    public void SetGamesPurchased(string[] gameNames)
     {
-
+        foreach (string gameName in gameNames)
+        {
+            m_purchasedGames.Add(gameName);
+        }
+        Save();
     }
 
     ////////////////////////////////////////////////////////////////

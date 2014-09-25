@@ -17,19 +17,19 @@ public class InstantiateNavMenu : MonoBehaviour
 
         GameObject prefabToInstantiate = null;
 
-        switch (GameManager.Instance.programme)
+        string programme = GameManager.Instance.programme;
+
+        if (programme == ProgrammeInfo.basicReading)
         {
-            case "Reading1":
-                prefabToInstantiate = m_readingMenu;
-                break;
-            case "Maths1":
-                prefabToInstantiate = m_mathsMenu;
-                break;
-            case "Plus":
-            case "Reading2":
-            case "Maths2":
-                prefabToInstantiate = m_plusMenu;
-                break;
+            prefabToInstantiate = m_readingMenu;
+        }
+        else if (programme == ProgrammeInfo.basicMaths)
+        {
+            prefabToInstantiate = m_mathsMenu;
+        }
+        else if (programme == ProgrammeInfo.plusMaths || programme == ProgrammeInfo.plusReading)
+        {
+            prefabToInstantiate = m_plusMenu;
         }
 
         if (prefabToInstantiate != null)
