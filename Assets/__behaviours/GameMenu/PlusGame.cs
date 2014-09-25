@@ -22,9 +22,8 @@ public class PlusGame : MonoBehaviour
 
     float m_scoreLabelOffset = 0.122f;
 
+    int m_gameId;
     string m_gameName;
-
-    bool m_mustLogin = true;
 
     ColorInfo.PipColor m_maxColor;
 
@@ -97,97 +96,98 @@ public class PlusGame : MonoBehaviour
     public void SetUp(string myGameName)
     {
         m_gameName = myGameName;
+        DataRow game = DataHelpers.GetGame(m_gameName);
 
-        bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && m_gameName == PlusScoreInfo.Instance.GetUnlockGame();
+        if (game != null)
+        {
+            m_gameId = game.GetId();
 
-        if (isUnlocking)
-        {
-            PlusGameMenuCoordinator.Instance.MakeAllPipsJump();
-        }
-        
-        // High Scores
-        if (m_scoreLabel != null)
-        {
-            if (isUnlocking && PlusScoreInfo.Instance.HasNewHighScore())
+            m_gameLabel.text = DataHelpers.GetLabelText(game);
+
+            bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && m_gameName == PlusScoreInfo.Instance.GetUnlockGame();
+            if (isUnlocking)
             {
-                m_scoreLabel.text = PlusScoreInfo.Instance.GetOldHighScore().ToString();
-                StartCoroutine(UnlockHighScore(PlusScoreInfo.Instance.GetNewScore()));
+                PlusGameMenuCoordinator.Instance.MakeAllPipsJump();
             }
-            else
+            
+            // High Scores
+            if (m_scoreLabel != null)
             {
-                m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
-            }
-        }
-        
-        // Color Stars
-        if (m_colorStars != null && m_colorStars.Length > 0)
-        {
-            List<ColorStar> unlockedStars = new List<ColorStar>();
-
-            m_maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
-
-            Transform targetTransform = FindStarTransform(m_maxColor);
-
-            if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
-            {
-                int newMaxColor = PlusScoreInfo.Instance.GetNewMaxColor();
-
-                unlockedStars = System.Array.FindAll(m_colorStars, x => (int)x.m_pipColor > PlusScoreInfo.Instance.GetOldMaxColor() && (int)x.m_pipColor <= newMaxColor).ToList();
-
-                if(unlockedStars.Count > 0)
+                if (isUnlocking && PlusScoreInfo.Instance.HasNewHighScore())
                 {
-                    ColorStar lowestUnlocked = unlockedStars[0];
-                    int index = System.Array.IndexOf(m_colorStars, lowestUnlocked);
-                    --index;
+                    m_scoreLabel.text = PlusScoreInfo.Instance.GetOldHighScore().ToString();
+                    StartCoroutine(UnlockHighScore(PlusScoreInfo.Instance.GetNewScore()));
+                } else
+                {
+                    m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+                }
+            }
+            
+            // Color Stars
+            if (m_colorStars != null && m_colorStars.Length > 0)
+            {
+                List<ColorStar> unlockedStars = new List<ColorStar>();
 
-                    if(index > -1)
+                m_maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
+
+                Transform targetTransform = FindStarTransform(m_maxColor);
+
+                if (isUnlocking && PlusScoreInfo.Instance.HasNewMaxColor())
+                {
+                    int newMaxColor = PlusScoreInfo.Instance.GetNewMaxColor();
+
+                    unlockedStars = System.Array.FindAll(m_colorStars, x => (int)x.m_pipColor > PlusScoreInfo.Instance.GetOldMaxColor() && (int)x.m_pipColor <= newMaxColor).ToList();
+
+                    if (unlockedStars.Count > 0)
                     {
-                        targetTransform = FindStarTransform(m_colorStars[index].m_pipColor);
+                        ColorStar lowestUnlocked = unlockedStars [0];
+                        int index = System.Array.IndexOf(m_colorStars, lowestUnlocked);
+                        --index;
+
+                        if (index > -1)
+                        {
+                            targetTransform = FindStarTransform(m_colorStars [index].m_pipColor);
+                        }
+                    }
+                }
+
+                if (targetTransform != null)
+                {
+                    Vector3 pos = m_scoreLabelMoveable.transform.position;
+                    pos.x = targetTransform.position.x + m_scoreLabelOffset;
+                    m_scoreLabelMoveable.transform.position = pos;
+                }
+
+                for (int i = 0; i < m_colorStars.Length; ++i)
+                {
+                    if (unlockedStars.Contains(m_colorStars [i]))
+                    {
+                        StartCoroutine(UnlockColorStar(m_colorStars [i]));
+                    } else if (m_colorStars [i].m_pipColor <= m_maxColor)
+                    {
+                        m_colorStars [i].m_colorStar.transform.localScale = Vector3.one;
                     }
                 }
             }
-
-            if(targetTransform != null)
+            
+            if (isUnlocking)
             {
-                Vector3 pos = m_scoreLabelMoveable.transform.position;
-                pos.x = targetTransform.position.x + m_scoreLabelOffset;
-                m_scoreLabelMoveable.transform.position = pos;
-            }
-
-            for (int i = 0; i < m_colorStars.Length; ++i)
-            {
-                if (unlockedStars.Contains(m_colorStars[i]))
-                {
-                    StartCoroutine(UnlockColorStar(m_colorStars[i]));
-                }
-                else if(m_colorStars[i].m_pipColor <= m_maxColor)
-                {
-                    m_colorStars[i].m_colorStar.transform.localScale = Vector3.one;
-                }
+                PlusScoreInfo.Instance.ClearUnlockTrackers();
             }
         }
-        
-        if (isUnlocking)
+        else
         {
-            PlusScoreInfo.Instance.ClearUnlockTrackers();
+            gameObject.SetActive(false);
         }
+    }
 
-        DataRow game = DataHelpers.GetGame(m_gameName);
-        m_gameLabel.text = game != null ? DataHelpers.GetLabelText(game) : m_gameName;
+    public int GetGameId()
+    {
+        return m_gameId;
     }
 
     public string GetGameName()
     {
         return m_gameName;
-    }
-
-    public void SetMustLogin(bool myMustLogin)
-    {
-        m_mustLogin = myMustLogin;
-    }
-
-    public bool MustLogin()
-    {
-        return m_mustLogin;
     }
 }

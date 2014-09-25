@@ -15,10 +15,6 @@ public class BuyManager : Singleton<BuyManager>
     [SerializeField]
     private string m_allModulesProductId;
     [SerializeField]
-    private string m_mathsGamesProductId;
-    [SerializeField]
-    private string m_readingGamesProductId;
-    [SerializeField]
     private string m_allGamesProductId;
 
 	bool m_purchaseIsResolved = false;
@@ -36,8 +32,6 @@ public class BuyManager : Singleton<BuyManager>
         MathsModules,
         ReadingModules,
         AllModules,
-        MathsGames,
-        ReadingGames,
         AllGames
     }
 
@@ -54,14 +48,15 @@ public class BuyManager : Singleton<BuyManager>
         ParentGate.Instance.On();
     }
 
-    string BuildGameProductId(string gameName)
+    string BuildGameProductId(int gameId)
     {
-        return m_gamePrefix + gameName;
+        return m_gamePrefix + gameId;
     }
     
-    public void BuyGame(string gameName)
+    public void BuyGame(int gameId)
     {
-        m_currentProductId = BuildGameProductId(gameName);
+        D.Log("BuyManager.BuyGame(" + gameId + ")");
+        m_currentProductId = BuildGameProductId(gameId);
         
         ParentGate.Instance.Answered += OnParentGateAnswer;
         ParentGate.Instance.On();
@@ -69,6 +64,7 @@ public class BuyManager : Singleton<BuyManager>
 
     public void BuyBundle(BundleType bundleType)
     {
+        D.Log("BuyManager.BuyBundle(" + bundleType + ")");
         bool validType = true;
         switch (bundleType)
         {
@@ -81,11 +77,6 @@ public class BuyManager : Singleton<BuyManager>
             case BundleType.AllModules:
                 m_currentProductId = m_allModulesProductId;
                 break;
-            case BundleType.MathsGames:
-                m_currentProductId = m_mathsGamesProductId;
-                break;
-            case BundleType.ReadingGames:
-                m_currentProductId = m_readingGamesProductId;
                 break;
             case BundleType.AllGames:
                 m_currentProductId = m_allGamesProductId;
@@ -104,6 +95,7 @@ public class BuyManager : Singleton<BuyManager>
 	
 	public void OnParentGateAnswer(bool isCorrect)
 	{
+        D.Log("BuyManager.OnParentGateAnswer()");
 		ParentGate.Instance.Answered -= OnParentGateAnswer;
 		
 		if(isCorrect)
@@ -112,11 +104,10 @@ public class BuyManager : Singleton<BuyManager>
 		}
 	}
 
-
 #if UNITY_IPHONE
     IEnumerator Start()
     {
-        yield return null;
+        yield return StartCoroutine(GameManager.WaitForSetProgramme());
 
         if(m_logProductRequests)
             D.Log("PRODUCTLIST: Waiting for db");
@@ -156,39 +147,46 @@ public class BuyManager : Singleton<BuyManager>
     {
         List<string> productIds = new List<string>();
 
-        productIds.Add(m_mathsGamesProductId);
-        productIds.Add(m_readingGamesProductId);
-        productIds.Add(m_allGamesProductId);
-
-        productIds.Add(m_mathsModulesProductId);
-        productIds.Add(m_readingModulesProductId);
-        productIds.Add(m_allModulesProductId);
-
-        string[] mathsGames = ProgrammeInfo.GetPlusMathsGames();
-        foreach (string game in mathsGames)
+        if (GameManager.Instance.programme == ProgrammeInfo.plusReading || GameManager.Instance.programme == ProgrammeInfo.plusMaths)
         {
-            productIds.Add(BuildGameProductId(game));
+            productIds.Add(m_allGamesProductId);
+
+            SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
+            for(int i = 0; i < 2; ++i)
+            {
+                string[] games = i == 0 ? ProgrammeInfo.GetPlusMathsGames() : ProgrammeInfo.GetPlusReadingGames();
+
+                foreach (string game in games)
+                {
+                    DataTable dt = db.ExecuteQuery("select * from games WHERE name='" + game + "'");
+                    
+                    if(dt.Rows.Count > 0)
+                    {
+                        productIds.Add(BuildGameProductId(dt.Rows[0].GetId()));
+                    }
+                }
+            }
+        } 
+        else
+        {
+            productIds.Add(m_mathsModulesProductId);
+            productIds.Add(m_readingModulesProductId);
+            productIds.Add(m_allModulesProductId);
+
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicMaths + "'");
+            foreach (DataRow module in dt.Rows)
+            {
+                productIds.Add(BuildModuleProductId(module.GetId()));
+            }
+
+            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicReading + "'");
+            foreach (DataRow module in dt.Rows)
+            {
+                productIds.Add(BuildModuleProductId(module.GetId()));
+            }
         }
 
-        string[] readingGames = ProgrammeInfo.GetPlusReadingGames();
-        foreach (string game in readingGames)
-        {
-            productIds.Add(BuildGameProductId(game));
-        }
-
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicMaths + "'");
-        foreach (DataRow module in dt.Rows)
-        {
-            productIds.Add(BuildModuleProductId(module.GetId()));
-        }
-
-        dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicReading + "'");
-        foreach (DataRow module in dt.Rows)
-        {
-            productIds.Add(BuildModuleProductId(module.GetId()));
-        }
-
-        return null;
+        return productIds.ToArray();
     }
 
     void StoreKitManager_productListReceivedEvent(List<StoreKitProduct> productList)
@@ -302,13 +300,41 @@ public class BuyManager : Singleton<BuyManager>
     void UnlockMathsGames()
     {
         string[] mathsGames = ProgrammeInfo.GetPlusMathsGames();
-        BuyInfo.Instance.SetGamesPurchased(mathsGames);
+
+        List<int> ids = new List<int>();
+
+        SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
+
+        foreach (string game in mathsGames)
+        {
+            DataTable dt = db.ExecuteQuery("select * from games WHERE name='" + game + "'");
+            if(dt.Rows.Count > 0)
+            {
+                ids.Add(dt.Rows[0].GetId());
+            }
+        }
+
+        BuyInfo.Instance.SetGamesPurchased(ids.ToArray());
     }
 
     void UnlockReadingGames()
     {
         string[] readingGames = ProgrammeInfo.GetPlusReadingGames();
-        BuyInfo.Instance.SetGamesPurchased(readingGames);
+
+        List<int> ids = new List<int>();
+        
+        SqliteDatabase db = GameDataBridge.Instance.GetDatabase();
+        
+        foreach (string game in readingGames)
+        {
+            DataTable dt = db.ExecuteQuery("select * from games WHERE name='" + game + "'");
+            if(dt.Rows.Count > 0)
+            {
+                ids.Add(dt.Rows[0].GetId());
+            }
+        }
+        
+        BuyInfo.Instance.SetGamesPurchased(ids.ToArray());
     }
 
     void UnlockMathsModules()
@@ -352,14 +378,6 @@ public class BuyManager : Singleton<BuyManager>
             UnlockMathsModules();
             UnlockReadingModules();
         } 
-        else if (productId == m_mathsGamesProductId)
-        {
-            UnlockMathsGames();
-        } 
-        else if (productId == m_readingGamesProductId)
-        {
-            UnlockReadingGames();
-        }
         else if (productId == m_allGamesProductId)
         {
             UnlockMathsGames();
@@ -369,13 +387,17 @@ public class BuyManager : Singleton<BuyManager>
         {
             // Find the module id
             string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
-            int bookId = Convert.ToInt32(idNum);
+            int id = Convert.ToInt32(idNum);
             
-            BuyInfo.Instance.SetModulePurchased(bookId);
+            BuyInfo.Instance.SetModulePurchased(id);
         }
         else if(productId.Contains(m_gamePrefix))
         {
-            BuyInfo.Instance.SetGamePurchased(productId.Replace(m_gamePrefix, ""));
+            // Find the module id
+            string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
+            int id = Convert.ToInt32(idNum);
+            
+            BuyInfo.Instance.SetGamePurchased(id);
         }
         else
         {

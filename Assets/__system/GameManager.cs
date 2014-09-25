@@ -13,9 +13,24 @@ public class GameManager : Singleton<GameManager>
             return Instance.m_programme;
         }
     }
-    
+
+    bool m_hasSetProgramme = false;
+    public static IEnumerator WaitForSetProgramme()
+    {
+        while (Instance == null)
+        {
+            yield return null;
+        }
+
+        while (!Instance.m_hasSetProgramme)
+        {
+            yield return null;
+        }
+    }
+
     public void SetProgramme(string myProgramme)
     {
+        m_hasSetProgramme = true;
         m_programme = myProgramme;
     }
 

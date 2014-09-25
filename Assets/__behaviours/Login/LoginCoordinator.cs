@@ -162,6 +162,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
     {
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
 
+        /*
         if (LoginInfo.Instance.GetAttemptLogin())
         {
             GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
@@ -176,6 +177,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         {
             TransitionScreen.Instance.ChangeToDefaultLevel();
         }
+        */
     }
 
     public static void SetInfoText(LoginException ex)

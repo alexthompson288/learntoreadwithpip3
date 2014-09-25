@@ -102,7 +102,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnPressReadOrPictures(PipButton button)
     {
-        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsValid())
+        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsLoggedIn())
         {
             LoginInfo.Instance.SpawnLogin();
         }
@@ -122,7 +122,7 @@ public class StoryMenuCoordinator : MonoBehaviour
 
     void OnPressQuiz(PipButton button)
     {
-        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsValid())
+        if (m_currentColorButton.pipColor != m_freeColor && !LoginInfo.Instance.IsLoggedIn())
         {
             LoginInfo.Instance.SpawnLogin();
         }

@@ -5,16 +5,6 @@ using System.IO;
 
 public class SessionInformation : Singleton<SessionInformation> 
 {
-    [SerializeField]
-    Unlock m_unlockType;
-
-    public enum Unlock
-    {
-        Free,
-        Register,
-        Buy
-    }
-
 	private string m_classicStoryLevel;
 	private string m_storyType;
     private int m_currentlySelectedBook = 4;

@@ -132,20 +132,13 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
 
         yield return StartCoroutine(TransitionScreen.WaitForInstance());
         
-        if (LoginInfo.Instance.GetAttemptLogin())
-        {
-            GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
-            m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
-            m_pipSpriteAnim = m_pipAnim.GetAnim() as SpriteAnim;
-            
-            yield return new WaitForSeconds(0.8f);
-            
-            m_pipAnim.MoveToPos(m_pipOnLocation.position);
-        }
-        else
-        {
-            TransitionScreen.Instance.ChangeToDefaultLevel();
-        }
+        GameObject newPip = Wingrove.SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_pipPrefab, m_pipSpawnLocation);
+        m_pipAnim = newPip.GetComponent<PipAnim>() as PipAnim;
+        m_pipSpriteAnim = m_pipAnim.GetAnim() as SpriteAnim;
+        
+        yield return new WaitForSeconds(0.8f);
+        
+        m_pipAnim.MoveToPos(m_pipOnLocation.position);
     }
     
     public static void SetInfoText(LoginException ex)

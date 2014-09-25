@@ -18,7 +18,7 @@ public class BuyInfo : Singleton<BuyInfo>
     //       however, this is not the case if they purchased content individually
 
     HashSet<int> m_purchasedModules = new HashSet<int>();
-    HashSet<string> m_purchasedGames = new HashSet<string>();
+    HashSet<int> m_purchasedGames = new HashSet<int>();
 
     void Awake()
     {
@@ -55,22 +55,22 @@ public class BuyInfo : Singleton<BuyInfo>
 
     ////////////////////////////////////////////////////////////////
     // Games
-    public bool IsGamePurchased(string gameName)
+    public bool IsGamePurchased(int gameId)
     {
-        return m_purchasedGames.Contains(gameName);
+        return m_purchasedGames.Contains(gameId);
     }
 
-    public void SetGamePurchased(string gameName)
+    public void SetGamePurchased(int gameId)
     {
-        m_purchasedGames.Add(gameName);
+        m_purchasedGames.Add(gameId);
         Save();
     }
 
-    public void SetGamesPurchased(string[] gameNames)
+    public void SetGamesPurchased(int[] gameIds)
     {
-        foreach (string gameName in gameNames)
+        foreach (int gameId in gameIds)
         {
-            m_purchasedGames.Add(gameName);
+            m_purchasedGames.Add(gameId);
         }
         Save();
     }
@@ -94,7 +94,7 @@ public class BuyInfo : Singleton<BuyInfo>
             int numGamesPurchased = br.ReadInt32();
             for(int i = 0; i < numGamesPurchased; ++i)
             {
-                m_purchasedGames.Add(br.ReadString());
+                m_purchasedGames.Add(br.ReadInt32());
             }
         }
         
@@ -115,9 +115,9 @@ public class BuyInfo : Singleton<BuyInfo>
         }
 
         bw.Write(m_purchasedGames.Count);
-        foreach (string s in m_purchasedGames)
+        foreach (int i in m_purchasedGames)
         {
-            bw.Write(s);
+            bw.Write(i);
         }
         
         ds.Save(newData);

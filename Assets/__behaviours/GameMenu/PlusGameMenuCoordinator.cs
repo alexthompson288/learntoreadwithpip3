@@ -93,56 +93,18 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         System.Array.Sort(m_chooseColorButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
-        for(int i = 0; i < m_mathsGames.Length; ++i)
+        string[] mathGameNames = ProgrammeInfo.GetPlusMathsGames();
+        for(int i = 0; i < m_mathsGames.Length && i < mathGameNames.Length; ++i)
         {
             m_mathsGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
-
-            bool mustLogin = true;
-            string gameName = "NewCompleteEquationNumbers";
-            switch(i)
-            {
-                case 0:
-                    mustLogin = false;
-                    gameName = "NewClockNumbers";
-                    break;
-                case 1:
-                    gameName = "NewMultiplicationQuadNumbers";
-                    break;
-                case 2:
-                    gameName = "NewToyShopNumbers";
-                    break;
-                default:
-                    break;
-            }
-
-            m_mathsGames[i].SetMustLogin(mustLogin);
-            m_mathsGames[i].SetUp(gameName);
+            m_mathsGames[i].SetUp(mathGameNames[i]);
         }
 
-        for(int i = 0; i < m_readingGames.Length; ++i)
+        string[] readingGameNames = ProgrammeInfo.GetPlusReadingGames();
+        for(int i = 0; i < m_readingGames.Length && i < readingGameNames.Length; ++i)
         {
             m_readingGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
-
-            bool mustLogin = true;
-            string gameName = "NewPlusQuiz";
-            switch(i)
-            {
-                case 0:
-                    mustLogin = false;
-                    gameName = "NewPlusSpelling";
-                    break;
-                case 1:
-                    gameName = "NewCorrectWord";
-                    break;
-                case 2:
-                    gameName = "NewShoppingList";
-                    break;
-                default:
-                    break;
-            }
-
-            m_readingGames[i].SetMustLogin(mustLogin);
-            m_readingGames[i].SetUp(gameName);
+            m_readingGames[i].SetUp(readingGameNames[i]);
         }
     }
 
@@ -204,7 +166,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             }
         }
 
-        if (plusGame.MustLogin() && !LoginInfo.Instance.IsValid())
+        if (ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGameId()))
         {
             LoginInfo.Instance.SpawnLogin();
         }

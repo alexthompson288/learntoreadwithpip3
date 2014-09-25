@@ -7,6 +7,9 @@ public class ParentGate : Singleton<ParentGate>
     public delegate void ParentGateAnswer(bool isCorrect);
     public event ParentGateAnswer Answered;
 
+    public delegate void ParentGateDismiss();
+    public event ParentGateDismiss Dismissed;
+
     [SerializeField]
     private TweenBehaviour m_tweenBehaviour;
     [SerializeField]
@@ -17,6 +20,8 @@ public class ParentGate : Singleton<ParentGate>
     private UILabel m_questionLabel;
     [SerializeField]
     private EventRelay[] m_answerButtons;
+    [SerializeField]
+    private EventRelay m_backCollider;
 
     int m_correctAnswer;
 
@@ -78,11 +83,20 @@ public class ParentGate : Singleton<ParentGate>
 
     void OnClickAnswer(EventRelay relay)
     {
+        m_tweenBehaviour.Off();
+
         if(Answered != null)
         {
             Answered(CheckAnswer(relay));
         }
-        
+    }
+
+    void OnClickBackCollider(EventRelay relay)
+    {
         m_tweenBehaviour.Off();
+        if (Dismissed != null)
+        {
+            Dismissed();
+        }
     }
 }

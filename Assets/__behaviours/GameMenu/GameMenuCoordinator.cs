@@ -124,7 +124,7 @@ public class GameMenuCoordinator : MonoBehaviour
     
     void OnPressGameButton(PipButton button)
     {
-        if (button.GetComponent<ChooseGameButton>().MustLogin() && !LoginInfo.Instance.IsValid())
+        if (button.GetComponent<ChooseGameButton>().MustLogin() && !LoginInfo.Instance.IsLoggedIn())
         {
             LoginInfo.Instance.SpawnLogin();
         } 

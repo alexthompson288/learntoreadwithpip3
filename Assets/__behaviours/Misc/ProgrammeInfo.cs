@@ -51,6 +51,4 @@ public static class ProgrammeInfo
     {
         return m_plusReadingGames;
     }
-
-
 }

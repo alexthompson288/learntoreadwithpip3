@@ -309,7 +309,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
 
     public void StartGames(int sessionId)
     {
-        if (m_currentModuleMap.color != ColorInfo.PipColor.Pink && !LoginInfo.Instance.IsValid())
+        if (m_currentModuleMap.color != ColorInfo.PipColor.Pink && !LoginInfo.Instance.IsLoggedIn())
         {
             LoginInfo.Instance.SpawnLogin();
         } 

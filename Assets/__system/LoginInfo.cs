@@ -30,9 +30,6 @@ public class LoginInfo : Singleton<LoginInfo>
     ////////////////////////////////////////////////////////////////////////////////////
 
 
-    [SerializeField]
-    private bool m_attemptLogin;
-
 #if UNITY_EDITOR
     [SerializeField]
     private bool m_overwrite;
@@ -48,20 +45,10 @@ public class LoginInfo : Singleton<LoginInfo>
     bool m_hasStarted = false;
     bool m_hasExited = false;
 
-    bool m_isValid = false;
-
-    public bool IsValid()
+    bool m_isLoggedIn = false;
+    public bool IsLoggedIn()
     {
-#if UNITY_EDITOR
-        return m_isValid || !m_attemptLogin;
-#else
-        return m_isValid;
-#endif
-    }
-
-    public bool GetAttemptLogin()
-    {
-        return m_attemptLogin;
+        return m_isLoggedIn;
     }
 
     void OnApplicationPause()
@@ -84,7 +71,7 @@ public class LoginInfo : Singleton<LoginInfo>
 
     public void Logout()
     {
-        m_isValid = false;
+        m_isLoggedIn = false;
 
         m_email = "";
         m_password = "";
@@ -109,12 +96,7 @@ public class LoginInfo : Singleton<LoginInfo>
     {
         m_hasStarted = true;
 
-        if (!Debug.isDebugBuild)
-        {
-            m_attemptLogin = true;
-        }
-        
-        if (m_attemptLogin)
+        if (ContentLock.Instance.lockType == ContentLock.Lock.Login)
         {
             AttemptLogin();
             InvokeRepeating("CheckForLogin", 10, 10);
@@ -162,9 +144,9 @@ public class LoginInfo : Singleton<LoginInfo>
             expirationDate = DateTime.Now.AddDays(-2);
         }
 
-        m_isValid = !String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_accessToken) && DateTime.Compare(expirationDate, DateTime.Now) >= 0;
+        m_isLoggedIn = !String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_accessToken) && DateTime.Compare(expirationDate, DateTime.Now) >= 0;
 
-        D.Log("m_isValid: " + m_isValid);
+        D.Log("m_isLoggedIn: " + m_isLoggedIn);
     }
 
     public void SpawnLogin()
@@ -188,12 +170,12 @@ public class LoginInfo : Singleton<LoginInfo>
         m_expirationDate = myExpirationDate;
         Save();
 
-        m_isValid = true;
+        m_isLoggedIn = true;
     }
 
     public void SetIsValid(bool myIsValid)
     {
-        m_isValid = myIsValid;
+        m_isLoggedIn = myIsValid;
     }
     
     public string GetEmail()
