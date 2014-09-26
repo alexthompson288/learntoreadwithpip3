@@ -24,7 +24,7 @@ public class BuyManager : Singleton<BuyManager>
 
     string m_currentProductId;
 
-    string m_gamePrefix = "game_";
+    string m_gamePrefix = "plusgame_";
     string m_modulePrefix = "module_";
 
     public enum BundleType
@@ -119,39 +119,48 @@ public class BuyManager : Singleton<BuyManager>
     {
         D.Log("BuyManager.Start()");
 
-        yield return StartCoroutine(GameManager.WaitForSetProgramme());
+        if (ContentLock.Instance.lockType == ContentLock.Lock.Buy)
+        {
+            if (m_logProductRequests)
+                D.Log("PRODUCTLIST: Waiting set programme");
 
-        if(m_logProductRequests)
-            D.Log("PRODUCTLIST: Waiting for db");
-        
-        yield return StartCoroutine(GameDataBridge.WaitForDatabase());
+            yield return StartCoroutine(GameManager.WaitForSetProgramme());
 
-        StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-        StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
+            if (m_logProductRequests)
+                D.Log("PRODUCTLIST: Waiting for db");
+            
+            yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-
-        if(m_logProductRequests)
-            D.Log("PRODUCTLIST: Building");
-
-        string[] productIdentifiers = FindAllProductIdentifiers();
+            StoreKitManager.productListReceivedEvent += new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+            StoreKitManager.productListRequestFailedEvent += new Action<string>(StoreKitManager_productListFailedEvent);
 
 
-        if(m_logProductRequests)
-            D.Log("PRODUCTLIST: Requesting");
+            if (m_logProductRequests)
+                D.Log("PRODUCTLIST: Building");
 
-        StoreKitBinding.requestProductData(productIdentifiers);
-        
-        while(!m_productListResolved)
+            string[] productIdentifiers = FindAllProductIdentifiers();
+
+
+            if (m_logProductRequests)
+                D.Log("PRODUCTLIST: Requesting");
+
+            StoreKitBinding.requestProductData(productIdentifiers);
+            
+            while (!m_productListResolved)
+            {
+                yield return null;
+            }
+            
+            StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
+            StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
+            
+            if (m_logProductRequests)
+                D.Log("PRODUCTLIST: Finished");
+        }
+        else
         {
             yield return null;
         }
-        
-        StoreKitManager.productListReceivedEvent -= new Action<List<StoreKitProduct>>(StoreKitManager_productListReceivedEvent);
-        StoreKitManager.productListRequestFailedEvent -= new Action<string>(StoreKitManager_productListFailedEvent);
-        
-        if(m_logProductRequests)
-            D.Log("PRODUCTLIST: Finished");
-
     }
 
     // TODO
