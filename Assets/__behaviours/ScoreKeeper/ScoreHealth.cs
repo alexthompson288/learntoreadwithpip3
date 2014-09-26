@@ -218,6 +218,9 @@ public class ScoreHealth : PlusScoreKeeper
             yield return null;
         }
 
+        int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
+        D.Log("targetBarHeight: " + targetBarHeight);
+
         m_health = Mathf.Min(m_health, m_startHealth);
 
         while (m_healthBars[0].height > m_startHeight)
@@ -259,7 +262,7 @@ public class ScoreHealth : PlusScoreKeeper
     void RefreshHealthBar(bool clampMovement = true)
     {
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
-        
+
         int barMoveAmount = targetBarHeight - m_healthBars[0].height;
         
         if (clampMovement && Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
