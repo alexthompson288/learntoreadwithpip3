@@ -29,6 +29,8 @@ public class ToyShopPlayer : GamePlayer
     private TweenOnOffBehaviour m_coinStackTweenBehaviour;
     [SerializeField]
     private UILabel m_currentStackLabel;
+    [SerializeField]
+    private UISprite m_currentStackBackground;
 
     int m_numSweetTypes = 8;
 
@@ -61,6 +63,16 @@ public class ToyShopPlayer : GamePlayer
         yield return StartCoroutine(m_trafficLights.On());
     }
 
+    void Start()
+    {
+        System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
+        Color[] stackColors = ToyShopCoordinator.Instance.GetCoinStackColors(); 
+        for (int i = 0; i < m_coinStacks.Length && i < stackColors.Length; ++i)
+        {
+            m_coinStacks[i].SetSeparatorColor(stackColors[i]);
+        }
+    }
+
     void Update()
     {
         int totalStackedValue = 0;
@@ -86,8 +98,6 @@ public class ToyShopPlayer : GamePlayer
         }
 
         m_submitButton.SingleClicked += OnClickSubmitButton;
-
-        System.Array.Sort(m_coinStacks, CollectionHelpers.LocalLeftToRight);
 
         int[] coinValues = ToyShopCoordinator.Instance.GetCoinValues();
 
@@ -234,6 +244,8 @@ public class ToyShopPlayer : GamePlayer
 
         if (amountPaid == m_currentPrice)
         {
+            ChangeCurrentStackBgColor(ColorInfo.PipColor.LightGreen);
+
             WingroveAudio.WingroveRoot.Instance.PostEvent("PIP_PAD_APPEAR");
 
             m_scoreKeeper.UpdateScore(1);
@@ -272,6 +284,8 @@ public class ToyShopPlayer : GamePlayer
         }
         else
         {
+            ChangeCurrentStackBgColor(ColorInfo.PipColor.LightRed);
+
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }
@@ -305,6 +319,19 @@ public class ToyShopPlayer : GamePlayer
     {
         ////D.Log("ToyShopPlayer.OnTimerFinish()");
         ToyShopCoordinator.Instance.CompleteGame();
+    }
+
+    void ChangeCurrentStackBgColor(ColorInfo.PipColor bgColor)
+    {
+        StopCoroutine("ChangeCurrentStackBgColorCo");
+        m_currentStackBackground.color = ColorInfo.GetColor(bgColor);
+        StartCoroutine("ChangeCurrentStackBgColorCo");
+    }
+    
+    IEnumerator ChangeCurrentStackBgColorCo()
+    {
+        yield return new WaitForSeconds(0.75f);
+        m_currentStackBackground.color = Color.white;
     }
 
     public int GetScore()

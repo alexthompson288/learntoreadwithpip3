@@ -9,6 +9,8 @@ public class UnitStack : MonoBehaviour
     [SerializeField]
     private UISprite m_background;
     [SerializeField]
+    private UISprite m_separator;
+    [SerializeField]
     private UIGrid m_stackableGrid;
     [SerializeField]
     private GameObject m_stackablePrefab;
@@ -129,5 +131,10 @@ public class UnitStack : MonoBehaviour
             string labelText = m_labelShowsStackedValue ? GetStackedValue().ToString() : m_stackableGrid.transform.childCount.ToString();
             m_label.text = labelText;
         }
+    }
+
+    public void SetSeparatorColor(Color col)
+    {
+        m_separator.color = col;
     }
 }

@@ -115,15 +115,15 @@ public class PlusQuizCoordinator : Singleton<PlusQuizCoordinator>
 	
 	DataRow GetRandomData()
 	{
-        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
-
-        m_dataPool.Remove(data);
-
         if (m_dataPool.Count == 0)
         {
             m_dataPool = DataHelpers.GetQuizQuestions();
             RemoveIllegalData();
         }
+
+        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
+
+        m_dataPool.Remove(data);
 
         return data;
 	}

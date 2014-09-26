@@ -86,7 +86,7 @@ public class ClockHand : MonoBehaviour
     {
         int hours = Mathf.FloorToInt(m_angle / 30);
 
-        if (minuteHand.GetRawMinutes() > 59.5f)
+        if (minuteHand.GetRawMinutes() > 59.5f && minuteHand.GetRawMinutes() < 59.9f)
         {
             ++hours;
         }

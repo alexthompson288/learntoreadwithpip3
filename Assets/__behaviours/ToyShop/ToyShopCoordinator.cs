@@ -16,6 +16,8 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     private GameObject m_sideBarCameraPrefab;
     [SerializeField]
     private int[] m_coinValues = {1, 5, 10, 50, 100}; 
+    [SerializeField]
+    private Color[] m_coinStackColors;
 
     List<DataRow> m_dataPool = new List<DataRow>();
 
@@ -155,5 +157,10 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     int GetNumPlayers()
     {
         return SessionInformation.Instance.GetNumPlayers();
+    }
+
+    public Color[] GetCoinStackColors()
+    {
+        return m_coinStackColors;
     }
 }
