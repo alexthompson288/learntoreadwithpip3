@@ -6,7 +6,7 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private int m_maxPixelsMovePerFrame;
     [SerializeField]
-    private UISprite m_healthBar;
+    private UISprite[] m_healthBars;
     [SerializeField]
     private Transform m_healthBarTargetLocation;
     [SerializeField]
@@ -14,7 +14,7 @@ public class ScoreHealth : PlusScoreKeeper
     [SerializeField]
     private GameObject m_multiplayerParent;
     [SerializeField]
-    private UISprite m_multiplayerBar;
+    private UISprite[] m_opponentHealthBars;
     [SerializeField]
     private string[] m_characterLevelUpNames;
     [SerializeField]
@@ -56,7 +56,7 @@ public class ScoreHealth : PlusScoreKeeper
     {
         get
         {
-            return m_healthBar.height;
+            return m_healthBars[0].height;
         }
     }
 
@@ -121,7 +121,7 @@ public class ScoreHealth : PlusScoreKeeper
 
         RefreshHealthBar(false);
 
-        m_startHeight = m_healthBar.height;
+        m_startHeight = m_healthBars[0].height;
     }
 
     public override IEnumerator Celebrate()
@@ -213,14 +213,14 @@ public class ScoreHealth : PlusScoreKeeper
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
-        while (m_healthBar.height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
+        while (m_healthBars[0].height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
         {
             yield return null;
         }
 
         m_health = Mathf.Min(m_health, m_startHealth);
 
-        while (m_healthBar.height > m_startHeight)
+        while (m_healthBars[0].height > m_startHeight)
         {
             yield return null;
         }
@@ -260,18 +260,24 @@ public class ScoreHealth : PlusScoreKeeper
     {
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
         
-        int barMoveAmount = targetBarHeight - m_healthBar.height;
+        int barMoveAmount = targetBarHeight - m_healthBars[0].height;
         
         if (clampMovement && Mathf.Abs(barMoveAmount) > m_maxPixelsMovePerFrame)
         {
             barMoveAmount = m_maxPixelsMovePerFrame * barMoveAmount / Mathf.Abs(barMoveAmount);
         }
-        
-        m_healthBar.height += barMoveAmount;
-        
+
+        for (int i = 0; i < m_healthBars.Length; ++i)
+        {
+            m_healthBars[i].height += barMoveAmount;
+        }
+
         if (m_opponentScoreHealth != null)
         {
-            m_multiplayerBar.height = m_opponentScoreHealth.barHeight;
+            for (int i = 0; i < m_opponentHealthBars.Length; ++i)
+            {
+                m_opponentHealthBars[i].height = m_opponentScoreHealth.barHeight;
+            }
         }
     }
 
@@ -290,7 +296,6 @@ public class ScoreHealth : PlusScoreKeeper
         foreach (UIWidget widget in m_colorChangeWidgets)
         {
             TweenColor.Begin(widget.gameObject, 0.15f, col);
-            //widget.color = col;
         }
     }
 }

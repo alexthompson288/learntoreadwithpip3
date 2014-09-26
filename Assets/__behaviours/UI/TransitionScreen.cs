@@ -9,6 +9,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	private Texture2D[] m_backgroundTextures;
 	[SerializeField]
 	private AudioClip[] m_transitionSounds;
+
+    float m_tweenDuration = 0.15f;
 	
 	public GameObject ScreenCover;
 
@@ -49,7 +51,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
         if (m_isEmptyScene)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.05f);
             if (m_loadingToScene == null)
             {
                 //////D.Log("Moving to default scene; scene to load was null");
@@ -76,16 +78,17 @@ public class TransitionScreen : Singleton<TransitionScreen>
 
 				while(Application.isLoadingLevel)
 				{
-					//////D.Log("Loading " + m_loadingToScene);
 					yield return null;
 				}
             }
             yield break;
         }
 
-		////////D.Log("About to tween transition screen");
 
         yield return null;
+
+        TweenAlpha.Begin(ScreenCover, m_tweenDuration, 0);
+        /*
 		Vector3 newPos=new Vector3(1024.0f, 0.0f, 0.0f);
 		var config=new GoTweenConfig()
 			.vector3Prop( "localPosition", newPos )
@@ -95,6 +98,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		tween.setOnCompleteHandler(c => FinishedIntro());
 
 		Go.addTween(tween);
+        */
 
 		if(m_transitionSounds.Length > 0)
 		{
@@ -112,7 +116,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
         }
 
 
-		yield return new WaitForSeconds(0.8f); // 0.8f is duration of ScreenCover tween
+		yield return new WaitForSeconds(m_tweenDuration);
 
 		m_screenHasExited = true;
 	}
@@ -121,6 +125,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
     {
         ScreenCover.SetActive(true);
         ScreenCover.transform.localPosition = Vector3.zero;
+        ScreenCover.GetComponent<UIWidget>().color = new Color(1, 1, 1, 1); 
 		if ( SettingsHolder.Instance != null )
 		{
 			Texture2D texture = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_transitionScreenTexture;
@@ -137,17 +142,14 @@ public class TransitionScreen : Singleton<TransitionScreen>
         {
             if (m_backStack.Count == 0)
             {
-                //////D.Log("Back stack empty, going to start menu!");
                 ChangeLevel(null, false);
                 break;
             }
             else
             {
                 string levelName = m_backStack.Pop();
-                //////D.Log("Pulled " + levelName + " from back stack!");
                 if (levelName != Application.loadedLevelName)
                 {
-                    //////D.Log("Is another scene - let's go!");
                     ChangeLevel(levelName, false);
                     break;
                 }
@@ -158,12 +160,6 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	public void ChangeLevel(string level, bool addToStack)
 	{
 		int stackCount = m_backStack.Count;
-		
-		if(stackCount > 0)
-		{
-			////////D.Log("stackCount: " + stackCount);
-			////////D.Log("stack.Peek(): " + m_backStack.Peek());
-		}
 		
 		if ( SettingsHolder.Instance != null )
 		{
@@ -193,6 +189,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 			}
 		}
 
+        /*
         ScreenCover.SetActive(true);
 
 		Vector3 newPos=new Vector3(0.0f, 0.0f, 0.0f);
@@ -200,12 +197,10 @@ public class TransitionScreen : Singleton<TransitionScreen>
 			.vector3Prop( "localPosition", newPos )
 			.setEaseType( GoEaseType.QuadInOut );
 
-		GoTween tween=new GoTween(ScreenCover.transform, 0.8f, config);
+		GoTween tween=new GoTween(ScreenCover.transform, 0.25f, config);
         if (addToStack)
         {
-            //m_backStack.Push(level);
 			m_backStack.Push(Application.loadedLevelName);
-            //////D.Log("Adding " + level + " to back stack!");
         }
 
         if (level != null)
@@ -216,21 +211,40 @@ public class TransitionScreen : Singleton<TransitionScreen>
         {
             tween.setOnCompleteHandler(c => LoadStartLevel());
         }
-
+        */
+        
         UnityEngine.Object[] uic = GameObject.FindObjectsOfType(typeof(UICamera));
         foreach (UICamera cam in uic)
         {
             cam.enabled = false;
         }
 
-		Go.addTween(tween);
+        StartCoroutine(ChangeLevelCo(level));
+
+		//Go.addTween(tween);
 	}
+
+    IEnumerator ChangeLevelCo(string level)
+    {
+        TweenAlpha.Begin(ScreenCover, m_tweenDuration, 1f);
+
+        yield return new WaitForSeconds(m_tweenDuration);
+
+        if (level != null)
+        {
+            LoadNextLevel(level);
+        }
+        else
+        {
+            LoadStartLevel();
+        }
+    }
 	
 	// Reset the cover to the left
 	void FinishedIntro () 
     {
-        ScreenCover.transform.localPosition = new Vector3(-1024, 0, 0);
-        ScreenCover.SetActive(false);
+        //ScreenCover.transform.localPosition = new Vector3(-1024, 0, 0);
+        //ScreenCover.SetActive(false);
 	}
 	
 	// Reset the cover to the left
@@ -293,6 +307,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 	
 	public void FlashTransitionScreen()
 	{
+        /*
         ScreenCover.SetActive(true);
         Vector3 newPos=new Vector3(0.0f, 0.0f, 0.0f);
 		var config=new GoTweenConfig()
@@ -311,6 +326,7 @@ public class TransitionScreen : Singleton<TransitionScreen>
 		tween=new GoTween(ScreenCover.transform, 0.8f, config);
 		Go.addTween(tween);
         tween.setOnCompleteHandler(c => FinishedIntro());
+        */
 	}
 
     public void ChangeToDefaultLevel()
