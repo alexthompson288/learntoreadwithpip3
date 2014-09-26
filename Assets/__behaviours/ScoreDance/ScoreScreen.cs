@@ -60,6 +60,6 @@ public class ScoreScreen : MonoBehaviour {
 
         yield return new WaitForSeconds(15.0f);
 
-        TransitionScreen.Instance.GoBack();
+        //TransitionScreen.Instance.GoBack();
 	}
 }

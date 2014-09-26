@@ -7,7 +7,7 @@ public class UnitStack : MonoBehaviour
     [SerializeField]
     private int m_value;
     [SerializeField]
-    private UISprite m_background;
+    private UISprite m_button;
     [SerializeField]
     private UISprite m_separator;
     [SerializeField]
@@ -28,6 +28,8 @@ public class UnitStack : MonoBehaviour
     private string[] m_addAudioEvents;
     [SerializeField]
     private string[] m_removeAudioEvents;
+
+    Color m_stackableColor;
 
     string m_stackableSpriteName;
 
@@ -57,7 +59,7 @@ public class UnitStack : MonoBehaviour
 
         if (correctUnit != null)
         {
-            m_background.spriteName = correctUnit.m_spriteName;
+            //m_button.spriteName = correctUnit.m_spriteName;
             m_stackableSpriteName = correctUnit.m_stackableSpriteName;
         }
     }
@@ -77,7 +79,8 @@ public class UnitStack : MonoBehaviour
             }
 
             GameObject newStackableCoin = Wingrove.SpawningHelpers.InstantiateUnderWithPrefabTransforms(m_stackablePrefab, m_stackableGrid.transform);
-            newStackableCoin.GetComponent<UISprite>().spriteName = m_stackableSpriteName;
+            //newStackableCoin.GetComponent<UISprite>().spriteName = m_stackableSpriteName;
+            newStackableCoin.GetComponent<UISprite>().color = m_stackableColor;
             newStackableCoin.GetComponent<ClickEvent>().SingleClicked += OnClickRemoveButton;
             m_stackableGrid.Reposition();
         }
@@ -133,8 +136,10 @@ public class UnitStack : MonoBehaviour
         }
     }
 
-    public void SetSeparatorColor(Color col)
+    public void SetStackableColor(Color myStackableColor)
     {
-        m_separator.color = col;
+        m_stackableColor = myStackableColor;
+        m_button.color = m_stackableColor;
+        m_separator.color = m_stackableColor;
     }
 }

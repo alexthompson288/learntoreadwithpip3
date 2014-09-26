@@ -90,7 +90,7 @@ public class UserMenuCoordinator : Singleton<UserMenuCoordinator>
 
     void OnClickDone(PipButton button)
     {
-        TransitionScreen.Instance.ChangeToDefaultLevel();
+        TransitionScreen.Instance.ChangeLevel("", false);
     }
 
     /*

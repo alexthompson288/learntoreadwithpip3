@@ -4,214 +4,97 @@ using System.Collections.Generic;
 using System;
 
 public class TransitionScreen : Singleton<TransitionScreen> 
-{
-	[SerializeField]
-	private Texture2D[] m_backgroundTextures;
-	[SerializeField]
-	private AudioClip[] m_transitionSounds;
+{   
+    [SerializeField]
+    private UITexture m_screenTexture;
 
-    float m_tweenDuration = 0.15f;
-	
-	public GameObject ScreenCover;
-
-    static Stack<string> m_backStack = new Stack<string>();
+    float m_tweenDuration = 0.2f;
 
     static string m_loadingToScene = null;
     static string m_emptySceneName = "DeliberatelyEmptyScene";
-
+    
     public bool m_isEmptyScene;
 
-	static int m_currentTextureIndex;
-
-	bool m_screenHasExited = false;
-
-	public static IEnumerator WaitForScreenExit()
-	{
-		while(TransitionScreen.Instance == null)
-		{
-			yield return null;
-		}
-
-		while(!TransitionScreen.Instance.m_screenHasExited)
-		{
-			yield return null;
-		}
-	}
-
-	// Use this for initialization
-	IEnumerator Start () 
+    bool m_screenHasExited = false;
+    
+    public static IEnumerator WaitForScreenExit()
     {
-#if UNITY_IPHONE
-		Dictionary<string, string> ep = new Dictionary<string, string>();
-		ep.Add("Name", Application.loadedLevelName);
-		//FlurryBinding.logEventWithParameters("NewLevel", ep, true);
-#endif
+        while(TransitionScreen.Instance == null)
+        {
+            yield return null;
+        }
+        
+        while(!TransitionScreen.Instance.m_screenHasExited)
+        {
+            yield return null;
+        }
+    }
 
-		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
-
+    void Awake()
+    {
+        m_screenTexture.color = Color.white;
+    }
+    
+    // Use this for initialization
+    IEnumerator Start () 
+    {   
         if (m_isEmptyScene)
         {
             yield return new WaitForSeconds(0.05f);
-            if (m_loadingToScene == null)
+            if (string.IsNullOrEmpty(m_loadingToScene))
             {
-                //////D.Log("Moving to default scene; scene to load was null");
-
-#if UNITY_IPHONE
-				ep = new Dictionary<string, string>();
-				ep.Add("Name", Application.loadedLevelName);
-				//FlurryBinding.endTimedEvent("NewLevel", ep);
-#endif
-
                 Application.LoadLevel(0);
             }
-			else
+            else
             {
-                //////D.Log("Moving to scene " + m_loadingToScene);
-
-#if UNITY_IPHONE
-				ep = new Dictionary<string, string>();
-				ep.Add("Name", Application.loadedLevelName);
-				//FlurryBinding.endTimedEvent("NewLevel", ep);
-#endif
-
                 Application.LoadLevel(m_loadingToScene);
-
-				while(Application.isLoadingLevel)
-				{
-					yield return null;
-				}
+                
+                while(Application.isLoadingLevel)
+                {
+                    yield return null;
+                }
             }
             yield break;
         }
-
-
+        
+        
         yield return null;
+        
+        Color newCol = new Color(1f, 1f, 1f, 0f);
+        var config = new GoTweenConfig()
+            .colorProp("color", newCol)
+                .setEaseType(GoEaseType.Linear);
 
-        TweenAlpha.Begin(ScreenCover, m_tweenDuration, 0);
-        /*
-		Vector3 newPos=new Vector3(1024.0f, 0.0f, 0.0f);
-		var config=new GoTweenConfig()
-			.vector3Prop( "localPosition", newPos )
-			.setEaseType( GoEaseType.QuadInOut );
-
-		GoTween tween=new GoTween(ScreenCover.transform, 0.8f, config);
-		tween.setOnCompleteHandler(c => FinishedIntro());
-
-		Go.addTween(tween);
-        */
-
-		if(m_transitionSounds.Length > 0)
-		{
-			AudioClip clip = m_transitionSounds[UnityEngine.Random.Range(0, m_transitionSounds.Length)];
-			if(clip != null)
-			{
-				GetComponent<AudioSource>().clip = clip;
-				GetComponent<AudioSource>().Play();
-			}
-		}
-		
+        GoTween tween = new GoTween(m_screenTexture, m_tweenDuration, config);
+        tween.setOnCompleteHandler(c => OnScreenExit());
+        
+        Go.addTween(tween);
+        
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_ON");
         }
-
-
-		yield return new WaitForSeconds(m_tweenDuration);
-
-		m_screenHasExited = true;
-	}
-	
-	void Awake () 
-    {
-        ScreenCover.SetActive(true);
-        ScreenCover.transform.localPosition = Vector3.zero;
-        ScreenCover.GetComponent<UIWidget>().color = new Color(1, 1, 1, 1); 
-		if ( SettingsHolder.Instance != null )
-		{
-			Texture2D texture = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_transitionScreenTexture;
-			if ( texture != null )
-			{
-				ScreenCover.GetComponent<UITexture>().mainTexture = texture;
-			}
-		}
-	}
-
-    public void GoBack(bool addToStack = false)
-    {
-        while (true)
-        {
-            if (m_backStack.Count == 0)
-            {
-                ChangeLevel(null, false);
-                break;
-            }
-            else
-            {
-                string levelName = m_backStack.Pop();
-                if (levelName != Application.loadedLevelName)
-                {
-                    ChangeLevel(levelName, false);
-                    break;
-                }
-            }
-        }
     }
 
-	public void ChangeLevel(string level, bool addToStack)
-	{
-		int stackCount = m_backStack.Count;
-		
-		if ( SettingsHolder.Instance != null )
-		{
-			Texture2D texture = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_transitionScreenTexture;
-			if ( texture != null )
-			{
-				ScreenCover.GetComponent<UITexture>().mainTexture = texture;
-			}
-		}
-
+    void OnScreenExit()
+    {
+        m_screenHasExited = true;
+    }
+    
+    public void ChangeLevel(string level, bool addToStack)
+    {
         if (WingroveAudio.WingroveRoot.Instance != null)
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent("TRANSITION_OFF");
-        }
+        }        
 
-		m_currentTextureIndex = UnityEngine.Random.Range(0, m_backgroundTextures.Length);
+        Color newCol = new Color(1f, 1f, 1f, 1f);
+        var config = new GoTweenConfig()
+            .colorProp("color", newCol)
+                .setEaseType(GoEaseType.Linear);
 
-		ScreenCover.GetComponent<UITexture>().mainTexture = m_backgroundTextures[m_currentTextureIndex];
-
-		if(m_transitionSounds.Length > 0)
-		{
-			AudioClip clip = m_transitionSounds[UnityEngine.Random.Range(0, m_transitionSounds.Length)];
-			if(clip != null)
-			{
-				GetComponent<AudioSource>().clip = clip;
-				GetComponent<AudioSource>().Play();
-			}
-		}
-
-        /*
-        ScreenCover.SetActive(true);
-
-		Vector3 newPos=new Vector3(0.0f, 0.0f, 0.0f);
-		var config=new GoTweenConfig()
-			.vector3Prop( "localPosition", newPos )
-			.setEaseType( GoEaseType.QuadInOut );
-
-		GoTween tween=new GoTween(ScreenCover.transform, 0.25f, config);
-        if (addToStack)
-        {
-			m_backStack.Push(Application.loadedLevelName);
-        }
-
-        if (level != null)
-        {
-            tween.setOnCompleteHandler(c => LoadNextLevel(level));
-        }
-        else
-        {
-            tween.setOnCompleteHandler(c => LoadStartLevel());
-        }
-        */
+        GoTween tween = new GoTween(m_screenTexture, m_tweenDuration, config);
+        tween.setOnCompleteHandler(c => LoadNextLevel(level));
         
         UnityEngine.Object[] uic = GameObject.FindObjectsOfType(typeof(UICamera));
         foreach (UICamera cam in uic)
@@ -219,139 +102,13 @@ public class TransitionScreen : Singleton<TransitionScreen>
             cam.enabled = false;
         }
 
-        StartCoroutine(ChangeLevelCo(level));
-
-		//Go.addTween(tween);
-	}
-
-    IEnumerator ChangeLevelCo(string level)
-    {
-        TweenAlpha.Begin(ScreenCover, m_tweenDuration, 1f);
-
-        yield return new WaitForSeconds(m_tweenDuration);
-
-        if (level != null)
-        {
-            LoadNextLevel(level);
-        }
-        else
-        {
-            LoadStartLevel();
-        }
+        Go.addTween(tween);
     }
-	
-	// Reset the cover to the left
-	void FinishedIntro () 
-    {
-        //ScreenCover.transform.localPosition = new Vector3(-1024, 0, 0);
-        //ScreenCover.SetActive(false);
-	}
-	
-	// Reset the cover to the left
-	void LoadNextLevel (string level) 
-	{
-		//////D.Log("TransitionScreen.LoadNextLevel(" + level + ") - Now loading empty scene");
-        m_loadingToScene = level;
-
-        /*
-		UITexture screenTex = ScreenCover.GetComponent<UITexture>() as UITexture;
-		UITexture[] textures = UnityEngine.Object.FindObjectsOfType<UITexture>() as UITexture[];
-		for(int i = 0; i < textures.Length; ++i)
-		{
-			if(textures[i] != screenTex)
-			{
-				if(textures[i].mainTexture != null)
-				{
-					Resources.UnloadAsset(textures[i].mainTexture);
-				}
-
-				NGUITools.Destroy(textures[i]);
-			}
-		}
-        */      
-
-#if UNITY_IPHONE
-		Dictionary<string, string> ep = new Dictionary<string, string>();
-		ep.Add("Name", Application.loadedLevelName);
-		//FlurryBinding.endTimedEvent("NewLevel", ep);
-#endif
-
-        //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        ////////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
-        //Application.LoadLevel(deliberatelyEmptySceneIndex);
-
-        Application.LoadLevel(m_emptySceneName);
-	}
-
+    
     // Reset the cover to the left
-    void LoadStartLevel()
+    void LoadNextLevel (string level) 
     {
-        //////D.Log("TransitionScreen.LoadStartLevel()");
-        //m_loadingToScene = null;
-		//m_loadingToScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
-		m_loadingToScene = "NewVoyage";
-
-#if UNITY_IPHONE
-		Dictionary<string, string> ep = new Dictionary<string, string>();
-		ep.Add("Name", Application.loadedLevelName);
-		//FlurryBinding.endTimedEvent("NewLevel", ep);
-#endif
-
-        //int deliberatelyEmptySceneIndex = Application.levelCount - 1;
-        ////////D.Log("DeliberatelyEmptyScene index: " + deliberatelyEmptySceneIndex);
-        //Application.LoadLevel(deliberatelyEmptySceneIndex);
-
+        m_loadingToScene = level;     
         Application.LoadLevel(m_emptySceneName);
-    }	
-	
-	
-	public void FlashTransitionScreen()
-	{
-        /*
-        ScreenCover.SetActive(true);
-        Vector3 newPos=new Vector3(0.0f, 0.0f, 0.0f);
-		var config=new GoTweenConfig()
-			.vector3Prop( "localPosition", newPos )
-			.setEaseType( GoEaseType.QuadInOut );
-
-		GoTween tween=new GoTween(ScreenCover.transform, 0.8f, config);
-		Go.addTween(tween);
-		
-		newPos=new Vector3(1024.0f, 0.0f, 0.0f);
-		config=new GoTweenConfig()
-			.vector3Prop( "localPosition", newPos )
-			.setEaseType( GoEaseType.QuadInOut )
-			.setDelay( 1.2f);
-
-		tween=new GoTween(ScreenCover.transform, 0.8f, config);
-		Go.addTween(tween);
-        tween.setOnCompleteHandler(c => FinishedIntro());
-        */
-	}
-
-    public void ChangeToDefaultLevel()
-    {
-        if (GameManager.Instance.programme == ProgrammeInfo.basicReading)
-        {
-            ChangeLevel("NewVoyage", false);
-        }
-        else
-        {
-            ChangeLevel("NewNumberGameMenu", false);
-        }
     }
-	
-	// TODO: Deprecate this function and find a better way of making sure that the Challenge Menu stays on the stack or gets put back on the stack when you leave it
-	public void PushToStack(string sceneName)
-	{
-		if(m_backStack.Count == 0 || (m_backStack.Count > 0 && m_backStack.Peek() != sceneName))
-		{
-			//////D.Log("Pushing: " + sceneName);
-			m_backStack.Push(sceneName);
-		}
-		else
-		{
-			//////D.Log(sceneName + " is already on back stack");
-		}
-	}
 }

@@ -117,6 +117,8 @@ public class BuyManager : Singleton<BuyManager>
 #if UNITY_IPHONE
     IEnumerator Start()
     {
+        D.Log("BuyManager.Start()");
+
         yield return StartCoroutine(GameManager.WaitForSetProgramme());
 
         if(m_logProductRequests)

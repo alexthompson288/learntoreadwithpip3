@@ -175,7 +175,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
         }
         else
         {
-            TransitionScreen.Instance.ChangeToDefaultLevel();
+            TransitionScreen.Instance.ChangeLevel("", false);
         }
         */
     }
@@ -237,7 +237,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
         if (m_emailInput.text == "pipoffline" && m_passwordInput.GetComponent<UIInput>().value == "pipoffline")
         {
-            TransitionScreen.Instance.ChangeToDefaultLevel();
+            TransitionScreen.Instance.ChangeLevel("", false);
         }
         else
         {
@@ -287,7 +287,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             
             SetInfoText("Login");
             
-            TransitionScreen.Instance.ChangeToDefaultLevel();
+            TransitionScreen.Instance.ChangeLevel("", false);
         } 
 
         m_loginButtonLabel.text = "Login";

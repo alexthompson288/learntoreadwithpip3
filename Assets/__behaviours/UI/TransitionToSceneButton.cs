@@ -22,7 +22,7 @@ public class TransitionToSceneButton : MonoBehaviour {
             {
                 if (m_transitionBack)
                 {
-                    ts.GoBack(m_addToBackStack);
+                    //ts.GoBack(m_addToBackStack);
                 } else
                 {
                     ts.ChangeLevel(m_sceneToTransitionTo, m_addToBackStack);

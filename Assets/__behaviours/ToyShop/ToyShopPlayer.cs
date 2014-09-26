@@ -69,7 +69,7 @@ public class ToyShopPlayer : GamePlayer
         Color[] stackColors = ToyShopCoordinator.Instance.GetCoinStackColors(); 
         for (int i = 0; i < m_coinStacks.Length && i < stackColors.Length; ++i)
         {
-            m_coinStacks[i].SetSeparatorColor(stackColors[i]);
+            m_coinStacks[i].SetStackableColor(stackColors[i]);
         }
     }
 
