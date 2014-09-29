@@ -27,6 +27,8 @@ public class ParentGate : Singleton<ParentGate>
 
     void Awake()
     {
+        m_tweenBehaviour.gameObject.SetActive(true);
+
         m_backCollider.SingleClicked += OnClickBackCollider;
 
         foreach (EventRelay button in m_answerButtons)

@@ -97,14 +97,14 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         for(int i = 0; i < m_mathsGames.Length && i < mathGameNames.Length; ++i)
         {
             m_mathsGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
-            m_mathsGames[i].SetUp(mathGameNames[i]);
+            m_mathsGames[i].SetUp(mathGameNames[i], i);
         }
 
         string[] readingGameNames = ProgrammeInfo.GetPlusReadingGames();
         for(int i = 0; i < m_readingGames.Length && i < readingGameNames.Length; ++i)
         {
             m_readingGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
-            m_readingGames[i].SetUp(readingGameNames[i]);
+            m_readingGames[i].SetUp(readingGameNames[i], i);
         }
     }
 
@@ -153,36 +153,41 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
-        if (!m_hasClickedGameButton && ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGameId()))
+        if (!m_hasClickedGameButton)
         {
+            ResourcesAudio.Instance.PlayFromResources(plusGame.GetGame()["labeltext"].ToString());
+
             m_hasClickedGameButton = true;
-            
-            ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
-            for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
+
+            if (ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGame().GetId()))
             {
-                bool isUnlocked = i == 0 || (int)m_colorBands[i] <= (int)maxColor + 1;
-                
-                m_chooseColorButtons[i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands[i]) : Color.grey;
-                
-                if(isUnlocked)
+                ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
+                for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
                 {
-                    m_chooseColorButtons[i].SingleClicked += OnChooseColor;
+                    bool isUnlocked = i == 0 || (int)m_colorBands [i] <= (int)maxColor + 1;
+                    
+                    m_chooseColorButtons [i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands [i]) : Color.grey;
+                    
+                    if (isUnlocked)
+                    {
+                        m_chooseColorButtons [i].SingleClicked += OnChooseColor;
+                    }
                 }
+                
+                m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
+                
+                m_gameName = plusGame.GetGame()["name"].ToString();
+                
+                m_chooseNumPlayersMoveable.On();
+            } 
+            else if (ContentLock.Instance.lockType == ContentLock.Lock.Login)
+            {
+                LoginInfo.Instance.SpawnLogin();
+            } 
+            else
+            {
+                PurchasePlusGames.Instance.On(plusGame.GetGame());
             }
-            
-            m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
-            
-            m_gameName = plusGame.GetGameName();
-            
-            m_chooseNumPlayersMoveable.On();
-        }
-        else if(ContentLock.Instance.lockType == ContentLock.Lock.Login)
-        {
-            LoginInfo.Instance.SpawnLogin();
-        }
-        else
-        {
-            PurchasePlusGames.Instance.On(plusGame.GetGameId());
         }
 
     }
@@ -195,13 +200,18 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         }
 
         m_pipColor = m_colorBands [System.Array.IndexOf(m_chooseColorButtons, relay)];
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("COLOR_{0}", m_pipColor.ToString().ToUpper()));
+
         m_chooseColorMoveable.Off();
         StartGame();
     }
 
     void OnChooseNumPlayers(EventRelay relay)
     {
-        SessionInformation.Instance.SetNumPlayers(System.Array.IndexOf(m_chooseNumPlayersButtons, relay) + 1);
+        int numPlayers = System.Array.IndexOf(m_chooseNumPlayersButtons, relay) + 1;
+        SessionInformation.Instance.SetNumPlayers(numPlayers);
+        WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("{0}_PLAYER", numPlayers));
         m_chooseNumPlayersMoveable.Off();
         m_chooseColorMoveable.On();
     }
@@ -213,6 +223,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             relay.SingleClicked -= OnChooseColor;
         }
 
+        PurchasePlusGames.Instance.Off();
         m_chooseColorMoveable.Off();
         m_chooseNumPlayersMoveable.Off();
         m_hasClickedGameButton = false;
@@ -251,7 +262,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
         }
         
-        GameManager.Instance.StartGames();
+        GameManager.Instance.StartGames(false);
     }
 
     public void MakeAllPipsJump()

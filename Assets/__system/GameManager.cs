@@ -66,10 +66,13 @@ public class GameManager : Singleton<GameManager>
         m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
     }
 
+    bool m_playGameNameAudio = false;
+
     // I have created this method so as a pre-emptive measure. 
     // If we need to execute something before starting any games then we can add it here without changing code in any other classes
-    public void StartGames()  
+    public void StartGames(bool playGameNameAudio = true)  
     {
+        m_playGameNameAudio = playGameNameAudio;
         PlayNextGame();
     }
 
@@ -79,11 +82,9 @@ public class GameManager : Singleton<GameManager>
 
         m_currentGameName = m_gameNames.Dequeue();
 
-        ////D.Log("NextGame: " + m_currentGameName);
-
         DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
 
-        if (currentGame != null && currentGame["labeltext"] != null)
+        if (m_playGameNameAudio && currentGame != null && currentGame["labeltext"] != null)
         {
             ResourcesAudio.Instance.PlayFromResources(currentGame["labeltext"].ToString());
         }
@@ -92,7 +93,6 @@ public class GameManager : Singleton<GameManager>
 
         if (!System.String.IsNullOrEmpty(sceneName))
         {
-            ////D.Log("SceneName: " + sceneName);
             TransitionScreen.Instance.ChangeLevel(sceneName, true);
         } 
         else

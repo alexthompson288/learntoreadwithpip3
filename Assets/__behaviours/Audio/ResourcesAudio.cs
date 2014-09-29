@@ -28,6 +28,7 @@ public class ResourcesAudio : Singleton<ResourcesAudio>
             yield return null;
         }
 
+        D.Log("Finding: " + m_resourcesRelativePath + m_filenamePrefix + eventName);
         AudioClip clip = Resources.Load<AudioClip>(m_resourcesRelativePath + m_filenamePrefix + eventName);
 
         if (clip != null)

@@ -19,11 +19,12 @@ public class PlusGame : MonoBehaviour
     private float m_rotateAmount = 20.02f;
     [SerializeField]
     private ColorStar[] m_colorStars;
+    [SerializeField]
+    private GameObject m_padlock;
 
     float m_scoreLabelOffset = 0.122f;
 
-    int m_gameId;
-    string m_gameName;
+    DataRow m_game;
 
     ColorInfo.PipColor m_maxColor;
 
@@ -93,18 +94,36 @@ public class PlusGame : MonoBehaviour
         return targetStar != null ? targetStar.m_colorStar.transform : null;
     }
 
-    public void SetUp(string myGameName)
+    public void SetUp(string gameName, int characterIndex)
     {
-        m_gameName = myGameName;
-        DataRow game = DataHelpers.GetGame(m_gameName);
+        m_game = DataHelpers.GetGame(gameName);
 
-        if (game != null)
+        if (m_game != null)
         {
-            m_gameId = game.GetId();
+            string characterName = "pip";
 
-            m_gameLabel.text = DataHelpers.GetLabelText(game);
+            switch(characterIndex)
+            {
+                case 1:
+                    characterName = "pop";
+                    break;
+                case 2:
+                    characterName = "lala";
+                    break;
+                case 3:
+                    characterName = "sam";
+                    break;
+                default:
+                    break;
+            }
 
-            bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && m_gameName == PlusScoreInfo.Instance.GetUnlockGame();
+            m_gameIcon.spriteName = string.Format("{0}_state_a", characterName);
+
+            m_padlock.SetActive(!ContentLock.Instance.IsPlusGameUnlocked(m_game.GetId()));
+
+            m_gameLabel.text = DataHelpers.GetLabelText(m_game);
+
+            bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && gameName == PlusScoreInfo.Instance.GetUnlockGame();
             if (isUnlocking)
             {
                 PlusGameMenuCoordinator.Instance.MakeAllPipsJump();
@@ -119,7 +138,7 @@ public class PlusGame : MonoBehaviour
                     StartCoroutine(UnlockHighScore(PlusScoreInfo.Instance.GetNewScore()));
                 } else
                 {
-                    m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
+                    m_scoreLabel.text = PlusScoreInfo.Instance.GetScore(gameName, PlusGameMenuCoordinator.Instance.GetScoreType()).ToString();
                 }
             }
             
@@ -128,7 +147,7 @@ public class PlusGame : MonoBehaviour
             {
                 List<ColorStar> unlockedStars = new List<ColorStar>();
 
-                m_maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(m_gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
+                m_maxColor = (ColorInfo.PipColor)PlusScoreInfo.Instance.GetMaxColor(gameName, PlusGameMenuCoordinator.Instance.GetScoreType());
 
                 Transform targetTransform = FindStarTransform(m_maxColor);
 
@@ -181,13 +200,8 @@ public class PlusGame : MonoBehaviour
         }
     }
 
-    public int GetGameId()
+    public DataRow GetGame()
     {
-        return m_gameId;
-    }
-
-    public string GetGameName()
-    {
-        return m_gameName;
+        return m_game;
     }
 }

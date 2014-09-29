@@ -257,7 +257,7 @@ public class BuyManager : Singleton<BuyManager>
 			yield return null;
 		}
 		
-        NGUIHelpers.EnableUICams(false);
+        NGUIHelpers.EnableUICams(true);
                 		
 		StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
 		StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
@@ -278,7 +278,7 @@ public class BuyManager : Singleton<BuyManager>
 		m_purchaseIsResolved = true;
 	}
 
-    public IEnumerator RestorePurchases(float restoreTime)
+    public IEnumerator RestorePurchases(TweenBehaviour restoringMoveable, UILabel countdownLabel)
     {
         D.Log("RestorePurchases - Opening processes");
         
@@ -291,13 +291,27 @@ public class BuyManager : Singleton<BuyManager>
         // Restore
         D.Log("RestorePurchases - Calling restoreCompletedTransactions");
         StoreKitBinding.restoreCompletedTransactions();
-        
+
+
+        float restoreTime = 30;
+
         D.Log("RestorePurchases - Waiting for " + restoreTime);
-        yield return new WaitForSeconds(restoreTime);
+
+        restoringMoveable.On();
+
+        float timeRemaining = restoreTime;
+        while (timeRemaining > 0)
+        {
+            timeRemaining -= Time.deltaTime;
+            countdownLabel.text = Mathf.RoundToInt(timeRemaining).ToString();
+            yield return null;
+        }
+
+        restoringMoveable.Off();
         
         D.Log("RestorePurchases - Closing processes");
         
-        NGUIHelpers.EnableUICams(false);
+        NGUIHelpers.EnableUICams(true);
         
         StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
         StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
