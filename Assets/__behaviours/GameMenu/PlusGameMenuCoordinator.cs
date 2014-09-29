@@ -222,7 +222,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         int numPlayers = System.Array.IndexOf(m_chooseNumPlayersButtons, relay) + 1;
         SessionInformation.Instance.SetNumPlayers(numPlayers);
         WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("{0}_PLAYER", numPlayers));
-        //m_chooseNumPlayersMoveable.Off();
+        m_chooseNumPlayersMoveable.Off();
         m_chooseColorMoveable.On();
     }
 

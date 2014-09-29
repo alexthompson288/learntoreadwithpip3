@@ -23,6 +23,8 @@ public class MultiplicationQuadPlayer : GamePlayer
     private UILabel m_targetLabel;
     [SerializeField]
     private UISprite m_targetSplodge;
+    [SerializeField]
+    private UILabel m_countLabel;
 
     int m_numRows = 1;
     int m_numColumns = 1;
@@ -136,6 +138,8 @@ public class MultiplicationQuadPlayer : GamePlayer
 
         m_rowLabel.text = m_numRows.ToString();
         m_columnLabel.text = m_numColumns.ToString();
+
+        m_countLabel.text = (m_numRows * m_numColumns).ToString();
     }
 
     void ChangeSplodgeColor(ColorInfo.PipColor splodgeColor)

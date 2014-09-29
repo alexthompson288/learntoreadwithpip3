@@ -82,6 +82,8 @@ public class ScoreHealth : PlusScoreKeeper
     {
         base.Awake();
 
+        m_levelUpTweener.SetActive(true);
+
         if (m_opponentKeeper is ScoreHealth)
         {
             m_opponentScoreHealth = m_opponentKeeper as ScoreHealth;
