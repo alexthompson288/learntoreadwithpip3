@@ -63,9 +63,11 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
             StopCoroutine("ResetCanPurchase");
             StartCoroutine("ResetCanPurchase");
 
+            BuyManager.Instance.Resolved += OnPurchaseResolve;
+
             if (relay == m_purchaseGame)
             {
-                D.Log("Purchasing game");
+                D.Log("Purchasing game: " + m_gameId);
                 BuyManager.Instance.BuyGame(m_gameId);
             } 
             else if(relay == m_purchaseAllGames)
@@ -84,5 +86,13 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
     {
         yield return new WaitForSeconds(0.75f);
         m_canPurchase = true;
+    }
+
+    void OnPurchaseResolve(bool successful)
+    {
+        BuyManager.Instance.Resolved -= OnPurchaseResolve;
+        m_tweenBehaviour.Off();
+
+        PlusGameMenuCoordinator.Instance.RefreshPurchases();
     }
 }

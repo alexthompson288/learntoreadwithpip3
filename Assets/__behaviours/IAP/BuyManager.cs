@@ -6,6 +6,9 @@ using System.IO;
 
 public class BuyManager : Singleton<BuyManager> 
 {
+    public delegate void PurchaseEventHandler(bool success);
+    public event PurchaseEventHandler Resolved;
+
     [SerializeField]
 	private bool m_logProductRequests = false;
     [SerializeField]
@@ -245,8 +248,9 @@ public class BuyManager : Singleton<BuyManager>
 		float pcTimeOut = 0;
 		while (!m_purchaseIsResolved)
 		{
+            #if UNITY_EDITOR
 			pcTimeOut += Time.deltaTime;
-			#if UNITY_EDITOR
+			
 			if (pcTimeOut > 3.0f)
 			{
 				D.Log("PURCHASE TIMED OUT");
@@ -269,6 +273,11 @@ public class BuyManager : Singleton<BuyManager>
         D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
         UnlockProduct(obj.productIdentifier);
         m_purchaseIsResolved = true;
+
+        if (Resolved != null)
+        {
+            Resolved(true);
+        }
     }
 
 	void StoreKitManager_purchaseCancelledEvent(string obj)
@@ -276,19 +285,26 @@ public class BuyManager : Singleton<BuyManager>
 		D.Log("PURCHASE CANCELLED - " + m_currentProductId);
 		D.Log("Cancelled Message: " + obj);
 		m_purchaseIsResolved = true;
+
+        if (Resolved != null)
+        {
+            Resolved(false);
+        }
 	}
+
+    bool m_restoreWasSuccess = false;
 
     public IEnumerator RestorePurchases(TweenBehaviour restoringMoveable, UILabel countdownLabel)
     {
         D.Log("RestorePurchases - Opening processes");
         
         StoreKitManager.purchaseSuccessfulEvent += new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-        StoreKitManager.purchaseCancelledEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent += new Action<string>(StoreKitManager_purchaseCancelledEvent);
         
         NGUIHelpers.EnableUICams(false);
         
         // Restore
+        m_restoreWasSuccess = false;
+
         D.Log("RestorePurchases - Calling restoreCompletedTransactions");
         StoreKitBinding.restoreCompletedTransactions();
 
@@ -308,19 +324,23 @@ public class BuyManager : Singleton<BuyManager>
         }
 
         restoringMoveable.Off();
+
+        if (Resolved != null)
+        {
+            Resolved(m_restoreWasSuccess);
+        }
         
         D.Log("RestorePurchases - Closing processes");
         
         NGUIHelpers.EnableUICams(true);
         
         StoreKitManager.purchaseSuccessfulEvent -= new Action<StoreKitTransaction>(StoreKitManager_restorePurchaseSuccessfulEvent);
-        StoreKitManager.purchaseCancelledEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
-        StoreKitManager.purchaseFailedEvent -= new Action<string>(StoreKitManager_purchaseCancelledEvent);
     }
 
     void StoreKitManager_restorePurchaseSuccessfulEvent(StoreKitTransaction obj)
     {
         D.Log("restorePurchaseSuccessfulEvent: " + obj.productIdentifier);
+        m_restoreWasSuccess = true;
         UnlockProduct(obj.productIdentifier);
     }
 #endif

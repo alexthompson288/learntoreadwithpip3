@@ -143,7 +143,7 @@ public class ClockPlayer : GamePlayer
             WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("PLAYER_{0}_WIN", m_selectedCharacter));
             CelebrationCoordinator.Instance.DisplayVictoryLabels(m_playerIndex);
             CelebrationCoordinator.Instance.PopCharacter(m_selectedCharacter, true);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(4f);
         }
 
         yield return StartCoroutine(m_scoreKeeper.Celebrate());

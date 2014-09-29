@@ -126,24 +126,29 @@ public class ScoreHealth : PlusScoreKeeper
 
     public override IEnumerator Celebrate()
     {
-        m_winLabel.text = SessionInformation.Instance.GetNumPlayers() == 1 ? "Game\nOver" : "You\nWin!!!";
+        yield return null;
 
-        string lastLetter = SessionInformation.Instance.GetNumPlayers() == 1 ? "a" : "b";
-        m_winCharacterSprite.spriteName = m_winCharacterSprite.spriteName.Substring(0, m_winCharacterSprite.spriteName.Length - 1) + lastLetter;
+        if (SessionInformation.Instance.GetNumPlayers() == 1)
+        {
+            m_winLabel.text = SessionInformation.Instance.GetNumPlayers() == 1 ? "Game\nOver" : "You\nWin!!!";
 
-        iTween.Stop(m_levelUpTweener);
+            string lastLetter = SessionInformation.Instance.GetNumPlayers() == 1 ? "a" : "b";
+            m_winCharacterSprite.spriteName = m_winCharacterSprite.spriteName.Substring(0, m_winCharacterSprite.spriteName.Length - 1) + lastLetter;
 
-        Hashtable onTweenArgs = new Hashtable();
-        onTweenArgs.Add("position", m_levelUpOnLocation);
-        onTweenArgs.Add("time", 0.35f);
-        onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
-        iTween.MoveTo(m_levelUpTweener, onTweenArgs);
-        
-        WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+            iTween.Stop(m_levelUpTweener);
 
-        yield return new WaitForSeconds(3.5f);
+            Hashtable onTweenArgs = new Hashtable();
+            onTweenArgs.Add("position", m_levelUpOnLocation);
+            onTweenArgs.Add("time", 0.35f);
+            onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
+            iTween.MoveTo(m_levelUpTweener, onTweenArgs);
+            
+            WingroveAudio.WingroveRoot.Instance.PostEvent("DING");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+            WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
+
+            yield return new WaitForSeconds(3.5f);
+        }
     }
 
     public override void UpdateScore(int delta = 1)

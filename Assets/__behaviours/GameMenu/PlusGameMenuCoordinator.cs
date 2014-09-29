@@ -33,6 +33,10 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     private EventRelay[] m_chooseColorButtons;
     [SerializeField]
     private SpriteAnim[] m_pipAnims;
+    [SerializeField]
+    private TweenBehaviour m_allUnlockedMoveable;
+    [SerializeField]
+    private GameObject[] m_titleLabels;
 
     ColorInfo.PipColor[] m_colorBands = new ColorInfo.PipColor[] { ColorInfo.PipColor.Turquoise, ColorInfo.PipColor.Purple, ColorInfo.PipColor.Gold, ColorInfo.PipColor.White};
 
@@ -106,6 +110,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             m_readingGames[i].GetComponentInChildren<EventRelay>().SingleClicked += OnClickGameButton;
             m_readingGames[i].SetUp(readingGameNames[i], i);
         }
+
+        RefreshPurchases();
     }
 
     void OnClickMenuButton(EventRelay relay)
@@ -167,11 +173,15 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                     bool isUnlocked = i == 0 || (int)m_colorBands [i] <= (int)maxColor + 1;
                     
                     m_chooseColorButtons [i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands [i]) : Color.grey;
-                    
+
+#if UNITY_EDITOR
+                    m_chooseColorButtons [i].SingleClicked += OnChooseColor;
+#else
                     if (isUnlocked)
                     {
                         m_chooseColorButtons [i].SingleClicked += OnChooseColor;
                     }
+#endif
                 }
                 
                 m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
@@ -212,7 +222,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         int numPlayers = System.Array.IndexOf(m_chooseNumPlayersButtons, relay) + 1;
         SessionInformation.Instance.SetNumPlayers(numPlayers);
         WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("{0}_PLAYER", numPlayers));
-        m_chooseNumPlayersMoveable.Off();
+        //m_chooseNumPlayersMoveable.Off();
         m_chooseColorMoveable.On();
     }
 
@@ -270,6 +280,55 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         foreach (SpriteAnim anim in m_pipAnims)
         {
             anim.PlayAnimation("JUMP");
+        }
+    }
+
+    public void RefreshPurchases()
+    {
+        bool allUnlocked = true;
+
+        for (int i = 0; i < m_mathsGames.Length; ++i)
+        {
+            m_mathsGames[i].RefreshPadlock();
+
+            if(!m_mathsGames[i].IsGameUnlocked())
+            {
+                allUnlocked = false;
+            }
+        }
+
+        for (int i = 0; i < m_readingGames.Length; ++i)
+        {
+            m_readingGames[i].RefreshPadlock();
+
+            if(!m_readingGames[i].IsGameUnlocked())
+            {
+                allUnlocked = false;
+            }
+        }
+
+
+
+        Hashtable tweenArgs = new Hashtable();
+
+        float posY = allUnlocked ? 262 : 310;
+        tweenArgs.Add("position", new Vector3(0, posY, 0));
+
+        tweenArgs.Add("islocal", true);
+        tweenArgs.Add("time", 0.2f);
+
+        for (int i = 0; i < m_titleLabels.Length; ++i)
+        {
+            iTween.MoveTo(m_titleLabels[i], tweenArgs);
+        }
+
+        if (allUnlocked)
+        {
+            m_allUnlockedMoveable.On();
+        }
+        else
+        {
+            m_allUnlockedMoveable.Off();
         }
     }
 }

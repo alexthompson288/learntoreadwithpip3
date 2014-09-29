@@ -30,15 +30,32 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
         return SessionInformation.Instance.GetNumPlayers();
     }
 
+    void GetData()
+    {
+        m_dataPool = DataHelpers.GetNumbers();
+        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+
+        /*
+        if (GameManager.Instance.currentColor == ColorInfo.PipColor.Turquoise)
+        {
+            m_dataPool.RemoveAll(x => x.GetInt("value") % 5 != 0);
+        }
+        else if (GameManager.Instance.currentColor == ColorInfo.PipColor.Purple)
+        {
+            m_dataPool.RemoveAll(x => x.GetInt("value") % 5 != 0 && x.GetInt("value") % 2 != 0);
+        }
+
+        D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        */
+    }
+
     IEnumerator Start()
     {
         ////D.Log("CompleteEquationCoordinator.Start()");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
-        m_dataPool = DataHelpers.GetNumbers();
-        
-        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
+        GetData();
 
         ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
         
@@ -124,7 +141,8 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     public void OnLevelUp()
     {
-        m_dataPool = DataSetters.LevelUpNumbers();
+        DataSetters.LevelUpNumbers();
+        GetData();
         ScoreHealth.RefreshColorAll();
     }
 

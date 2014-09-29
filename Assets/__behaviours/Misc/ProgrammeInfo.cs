@@ -46,7 +46,7 @@ public static class ProgrammeInfo
         return m_plusMathsGames;
     }
     
-    private static string[] m_plusReadingGames = new string[] { "NewPlusQuiz", "NewPlusSpelling", "NewCorrectWord", "NewShoppingList" };
+    private static string[] m_plusReadingGames = new string[] { "NewPlusQuiz", "NewShoppingList", "NewCorrectWord", "NewPlusSpelling" };
     public static string[] GetPlusReadingGames()
     {
         return m_plusReadingGames;

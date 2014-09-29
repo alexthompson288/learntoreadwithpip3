@@ -909,7 +909,9 @@ public static class DataHelpers
         
         // 00.00 - 23.59
         //for (int i = 0; i < 2400; ++i)
-        for(int i = 0; i < 1300; ++i)
+
+        // 01.00 - 12.59
+        for(int i = 100; i < 1300; ++i)
         {
             if(i % 100 < 60) // Only minutes up to 59 inclusive are allowed
             {
@@ -1202,6 +1204,11 @@ public static class DataHelpers
         List<int> numbers = GetNumberValues(dataPool);
         
         numbers.Sort();
+
+        if (sumData ["value"] == null)
+        {
+            D.LogError("sum value is NULL!");
+        }
 
         int sum = Convert.ToInt32(sumData ["value"]);
 

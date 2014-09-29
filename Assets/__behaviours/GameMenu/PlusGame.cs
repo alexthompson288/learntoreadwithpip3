@@ -119,8 +119,6 @@ public class PlusGame : MonoBehaviour
 
             m_gameIcon.spriteName = string.Format("{0}_state_a", characterName);
 
-            m_padlock.SetActive(!ContentLock.Instance.IsPlusGameUnlocked(m_game.GetId()));
-
             m_gameLabel.text = DataHelpers.GetLabelText(m_game);
 
             bool isUnlocking = PlusScoreInfo.Instance.HasUnlockTrackers() && gameName == PlusScoreInfo.Instance.GetUnlockGame();
@@ -203,5 +201,15 @@ public class PlusGame : MonoBehaviour
     public DataRow GetGame()
     {
         return m_game;
+    }
+
+    public void RefreshPadlock()
+    {
+        m_padlock.SetActive(!IsGameUnlocked());
+    }
+
+    public bool IsGameUnlocked()
+    {
+        return ContentLock.Instance.IsPlusGameUnlocked(m_game.GetId());
     }
 }
