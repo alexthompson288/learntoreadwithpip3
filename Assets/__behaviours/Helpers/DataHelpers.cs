@@ -1020,12 +1020,12 @@ public static class DataHelpers
                 return 150;
                 break;
             case ColorInfo.PipColor.Turquoise:
-                return 100;
-                //return 250;
+                //return 100;
+                return 250;
                 break;
             case ColorInfo.PipColor.Purple:
-                return 250;
-                //return 500;
+                //return 250;
+                return 500;
                 break;
             case ColorInfo.PipColor.Gold:
                 return 1000;
@@ -1230,51 +1230,6 @@ public static class DataHelpers
         return operators;
     }
 
-    public static List<DataRow> GetLegalAdditionLHS(DataRow sumData, List<DataRow> dataPool)
-    {
-        List<int> numbers = GetNumberValues(dataPool);
-        
-        numbers.Sort();
-
-        if (sumData ["value"] == null)
-        {
-            D.LogError("sum value is NULL!");
-        }
-
-        int sum = Convert.ToInt32(sumData ["value"]);
-
-        int[] equationPartValues = new int[2];
-
-        bool foundEquationParts = false;
-
-        while (!foundEquationParts)
-        {
-            int firstPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
-
-            for(int i = 0; i < 100; ++i)
-            {
-                int secondPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
-
-                if((firstPart + secondPart) == sum)
-                {
-                    equationPartValues[0] = firstPart;
-                    equationPartValues[1] = secondPart;
-                    foundEquationParts = true;
-                    break;
-                }
-            }
-        }
-
-        List<DataRow> equationParts = new List<DataRow>();
-
-        for (int i = 0; i < equationPartValues.Length; ++i)
-        {
-            equationParts.Add(GetNumberWithValue(dataPool, equationPartValues[i]));
-        }
-
-        return equationParts;
-    }
-
     public static DataRow GetLegalSum(List<DataRow> dataPool)
     {
         List<int> numbers = GetNumberValues(dataPool);
@@ -1284,6 +1239,51 @@ public static class DataHelpers
         int minLegal = numbers [0] + numbers [0];
 
         return GetNumberWithValue(dataPool, UnityEngine.Random.Range(minLegal, numbers[numbers.Count - 1] + 1));
+    }
+
+    public static List<DataRow> GetLegalAdditionLHS(DataRow sumData, List<DataRow> dataPool)
+    {
+        List<int> numbers = GetNumberValues(dataPool);
+        
+        numbers.Sort();
+        
+        if (sumData ["value"] == null)
+        {
+            D.LogError("sum value is NULL!");
+        }
+        
+        int sum = Convert.ToInt32(sumData ["value"]);
+        
+        int[] equationPartValues = new int[2];
+        
+        bool foundEquationParts = false;
+        
+        while (!foundEquationParts)
+        {
+            int firstPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
+            
+            for(int i = 0; i < 100; ++i)
+            {
+                int secondPart = numbers[UnityEngine.Random.Range(0, numbers.Count)];
+                
+                if((firstPart + secondPart) == sum)
+                {
+                    equationPartValues[0] = firstPart;
+                    equationPartValues[1] = secondPart;
+                    foundEquationParts = true;
+                    break;
+                }
+            }
+        }
+        
+        List<DataRow> equationParts = new List<DataRow>();
+        
+        for (int i = 0; i < equationPartValues.Length; ++i)
+        {
+            equationParts.Add(GetNumberWithValue(dataPool, equationPartValues[i]));
+        }
+        
+        return equationParts;
     }
 
     public static List<int> GetNumberValues(List<DataRow> dataPool)

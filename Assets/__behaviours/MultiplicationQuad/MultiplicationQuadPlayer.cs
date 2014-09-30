@@ -33,6 +33,7 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     void Awake()
     {
+        m_targetLabel.text = "";
         m_countLabel.text = "";
     }
 
@@ -149,9 +150,11 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     void ChangeSplodgeColor(ColorInfo.PipColor splodgeColor)
     {
+        /*
         StopCoroutine("ChangeSplodgeColorCo");
         m_targetSplodge.color = ColorInfo.GetColor(splodgeColor);
         StartCoroutine("ChangeSplodgeColorCo");
+        */
     }
 
     IEnumerator ChangeSplodgeColorCo()

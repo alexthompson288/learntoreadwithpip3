@@ -161,7 +161,10 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         if (!m_hasClickedGameButton)
         {
-            ResourcesAudio.Instance.PlayFromResources(plusGame.GetGame()["labeltext"].ToString());
+            if(plusGame.GetGame()["labeltext"] != null)
+            {
+                ResourcesAudio.Instance.PlayFromResources(plusGame.GetGame()["labeltext"].ToString());
+            }
 
             m_hasClickedGameButton = true;
 

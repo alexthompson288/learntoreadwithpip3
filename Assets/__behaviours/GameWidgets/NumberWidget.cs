@@ -28,7 +28,7 @@ public class NumberWidget : GameWidget
 	{
 		m_data = number;
 		
-		int value = System.Convert.ToInt32(number ["value"]);
+		int value = number.GetInt("value");
 		string valueString = value.ToString ();
 
 		if (m_icon != null) 

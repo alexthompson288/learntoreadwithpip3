@@ -35,18 +35,14 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
         m_dataPool = DataHelpers.GetNumbers();
         m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
 
-        /*
         if (GameManager.Instance.currentColor == ColorInfo.PipColor.Turquoise)
         {
-            m_dataPool.RemoveAll(x => x.GetInt("value") % 5 != 0);
+            m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 50);
         }
         else if (GameManager.Instance.currentColor == ColorInfo.PipColor.Purple)
         {
-            m_dataPool.RemoveAll(x => x.GetInt("value") % 5 != 0 && x.GetInt("value") % 2 != 0);
+            m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 100);
         }
-
-        D.Log("m_dataPool.Count: " + m_dataPool.Count);
-        */
     }
 
     IEnumerator Start()
@@ -203,6 +199,73 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
             m_missingIndex = myMissingIndex;
         }
     }
+
+//    public DataRow GetRandomData()
+//    {
+//        List<DataRow> pool = new List<DataRow>();
+//        pool.AddRange(m_dataPool);
+//
+//        if (GameManager.Instance.currentColor == ColorInfo.PipColor.Turquoise)
+//        {
+//            pool.RemoveAll(x => x.GetInt("value") % 5 != 0);
+//        }
+//        else if (GameManager.Instance.currentColor == ColorInfo.PipColor.Purple)
+//        {
+//            pool.RemoveAll(x => x.GetInt("value") % 5 != 0 && x.GetInt("value") % 2 != 0);
+//        }
+//
+//        return pool [Random.Range(0, pool.Count)];
+//    }
+//
+//    Equation GetRandomEquation()
+//    {
+//        List<DataRow> pool = new List<DataRow>();
+//        pool.AddRange(m_dataPool);
+//        pool.Sort(delegate(DataRow x, DataRow y)
+//        {
+//            return x.GetInt("value").CompareTo(y.GetInt("value"));
+//        });
+//
+//        int maxLengthAddend2 = 4;
+//        if (GameManager.Instance.currentColor == ColorInfo.PipColor.Turquoise)
+//        {
+//            maxLengthAddend2 = 1;
+//            pool.RemoveAll(x => x.GetInt("value") % 5 != 0);
+//        }
+//        else if (GameManager.Instance.currentColor == ColorInfo.PipColor.Purple)
+//        {
+//            maxLengthAddend2 = 2;
+//            pool.RemoveAll(x => x.GetInt("value") % 5 != 0 && x.GetInt("value") % 2 != 0);
+//        }
+//
+//        int maxLHS = pool [pool.Count - 1].GetInt("value");
+//
+//        DataRow addend1 = pool [Random.Range(0, pool.Count)];
+//        while (addend1.GetInt("value") > maxLHS)
+//        {
+//            addend1 = pool [Random.Range(0, pool.Count)];
+//        }
+//
+//        DataRow addend2 = pool [Random.Range(0, pool.Count)];
+//        while ((addend2.ToString().Length > maxLengthAddend2 && addend2.GetInt("value") % 10 != 0) || addend2.GetInt("value") > maxLHS)
+//        {
+//            addend2 = pool [Random.Range(0, pool.Count)];
+//        }
+//
+//        List<DataRow> equationParts = new List<DataRow>();
+//
+//        equationParts.Add(addend1);
+//        equationParts.Add(addend2);
+//
+//        CollectionHelpers.Shuffle(equationParts);
+//
+//        equationParts.Add(DataHelpers.GetNumberWithValue(pool, addend1.GetInt("value") + addend2.GetInt("value")));
+//
+//        //int missingIndex = Random.Range(0, equationParts.Count);
+//        int missingIndex = 2;
+//        
+//        return new Equation(equationParts, missingIndex);
+//    }
 
     public DataRow GetRandomData()
     {
