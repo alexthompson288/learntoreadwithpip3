@@ -47,11 +47,11 @@ public class VoyageGameButton : MonoBehaviour
 
             string completedString = hasCompleted ? "complete" : "incomplete";
 
-            ////////D.Log(System.String.Format("icon: {0}_{1}", skillName.ToLower(), completedString));
+            //////////D.Log(System.String.Format("icon: {0}_{1}", skillName.ToLower(), completedString));
             //m_icon.spriteName = System.String.Format("{0}_{1}", skillName.ToLower(), completedString);
             m_icon.spriteName = System.String.Format("{0}_{1}", game["name"], completedString);
 
-            ////////D.Log("texName: " + m_icon.spriteName);
+            //////////D.Log("texName: " + m_icon.spriteName);
 
             m_temporaryIconTexture.mainTexture = Resources.Load<Texture2D>(System.String.Format("{0}_{1}", game["name"], completedString));
             if (m_temporaryIconTexture.mainTexture == null)

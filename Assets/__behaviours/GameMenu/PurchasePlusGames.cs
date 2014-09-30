@@ -55,8 +55,8 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
 
     void OnClickButton(EventRelay relay)
     {
-        D.Log("PurchasePlusGames.OnClickButton()");
-        D.Log("Name: " + relay.name);
+        //D.Log("PurchasePlusGames.OnClickButton()");
+        //D.Log("Name: " + relay.name);
         if (m_canPurchase)
         {
             m_canPurchase = false;
@@ -67,12 +67,12 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
 
             if (relay == m_purchaseGame)
             {
-                D.Log("Purchasing game: " + m_gameId);
+                //D.Log("Purchasing game: " + m_gameId);
                 BuyManager.Instance.BuyGame(m_gameId);
             } 
             else if(relay == m_purchaseAllGames)
             {
-                D.Log("Purchasing all games");
+                //D.Log("Purchasing all games");
                 BuyManager.Instance.BuyBundle(BuyManager.BundleType.AllGames);
             }
             else

@@ -7,7 +7,7 @@ public class LogPosition : MonoBehaviour
     {
         yield return null;
 
-        //////D.Log(name + " global: " + transform.position);
-        //////D.Log(name + " local: " + transform.localPosition);
+        ////////D.Log(name + " global: " + transform.position);
+        ////////D.Log(name + " local: " + transform.localPosition);
     }
 }

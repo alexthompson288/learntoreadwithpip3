@@ -90,7 +90,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         DataRow story = DataHelpers.GetStory();
 
-        ////////D.Log("title: " + story["title"].ToString());
+        //////////D.Log("title: " + story["title"].ToString());
 
         if (story != null)
         {
@@ -137,7 +137,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
         m_storyPages = dt.Rows;
         m_numPages = m_storyPages.Count;
-        //////D.Log("There are " + m_numPages + " pages");
+        ////////D.Log("There are " + m_numPages + " pages");
 
         UpdatePage();
 	}
@@ -254,7 +254,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             string audioFileName = storyPage ["audio"] != null ? 
                 System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), ColorInfo.GetColorString(GameManager.Instance.currentColor)) 
                     : null;
-            //////D.Log("audioFileName: " + audioFileName);
+            ////////D.Log("audioFileName: " + audioFileName);
 
             m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
             m_audioPlayButton.GetComponent<StoryPlayLineButton>().SetLineAudio("audio/stories/" + audioFileName);
@@ -280,8 +280,8 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         m_scaleLabel.transform.localScale = Vector3.one;
 
-        //////D.Log("storyPage: " + storyPage);
-        //////D.Log("currentAttribute: " + m_currentTextAttribute);
+        ////////D.Log("storyPage: " + storyPage);
+        ////////D.Log("currentAttribute: " + m_currentTextAttribute);
 
         string originalText = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "").Replace("  ", " ");
 
@@ -302,9 +302,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             {
                 if (NGUIHelpers.GetLabelWidth(m_scaleLabel, textToDisplay.Substring(lineStartIndex, checkLength)) > m_maxWidth)
                 {
-                    //////D.Log("END");
-                    //////D.Log("lineStart: " + lineStartIndex);
-                    //////D.Log("checkLength: " + checkLength);
+                    ////////D.Log("END");
+                    ////////D.Log("lineStart: " + lineStartIndex);
+                    ////////D.Log("checkLength: " + checkLength);
 
                     // Find empty char before lineStartIndex + checkLength
                     while (textToDisplay[lineStartIndex + checkLength] != ' ')
@@ -325,13 +325,13 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
                         }
                     }
 
-                    //////D.Log("space: " + checkLength);
+                    ////////D.Log("space: " + checkLength);
 
                     textToDisplay = textToDisplay.Insert(lineStartIndex + checkLength, "\n");
                     //lineStartIndex = lineStartIndex + checkLength + 1;
                     lineStartIndex = lineStartIndex + checkLength;
 
-                    //////D.Log("newLineStart: " + lineStartIndex);
+                    ////////D.Log("newLineStart: " + lineStartIndex);
 
                     checkLength = 1;
                 } 
@@ -355,7 +355,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         m_textAnchors [0].transform.localScale = m_scaleLabel.transform.localScale;
 
-        //////D.Log(textToDisplay);
+        ////////D.Log(textToDisplay);
         m_scaleLabel.text = textToDisplay;
 
         string[] lines = textToDisplay.Split('\n');

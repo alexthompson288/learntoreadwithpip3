@@ -41,9 +41,9 @@ public class PipPadPhoneme : MonoBehaviour
 	        m_highlight.enabled = false;
 	        if (pbi.m_audioFilename != null)
 	        {
-				////////D.Log("audioFilename: " + pbi.m_audioFilename);
+				//////////D.Log("audioFilename: " + pbi.m_audioFilename);
 	            m_audioClip = AudioBankManager.Instance.GetAudioClip(pbi.m_audioFilename);
-				////////D.Log("m_audioClip: " + m_audioClip);
+				//////////D.Log("m_audioClip: " + m_audioClip);
 	            m_audioSource.clip = m_audioClip;
 	        }
 	        else
@@ -82,7 +82,7 @@ public class PipPadPhoneme : MonoBehaviour
 		}
 		catch
 		{
-			//////D.Log("SetUpPhoneme.SetUpPhoneme - catch executing");
+			////////D.Log("SetUpPhoneme.SetUpPhoneme - catch executing");
 		}
     }
 

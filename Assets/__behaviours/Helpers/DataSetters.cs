@@ -62,7 +62,7 @@ public static class DataSetters
     {
         bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
         
-        ////D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
+        //////D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
         
         if (hasIncremented)
         {

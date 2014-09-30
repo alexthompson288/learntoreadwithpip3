@@ -98,7 +98,7 @@ public static class DataHelpers
         return array;
 
         /*
-        //////D.Log(data [columnName].ToString());
+        ////////D.Log(data [columnName].ToString());
         string pattern = "[^ ]+";
         Regex rgx = new Regex(pattern);
         MatchCollection mc = rgx.Matches(data[columnName].ToString());
@@ -111,7 +111,7 @@ public static class DataHelpers
 
         foreach (string item in items)
         {
-            //////D.Log(item);
+            ////////D.Log(item);
         }
 
         return items;  
@@ -141,10 +141,10 @@ public static class DataHelpers
         string[] ids = GetArray(set, columnName);
         
         List<DataRow> data = new List<DataRow>();
-        ////D.Log(String.Format("GetSetData(): columnName = {0}, tableName = {1}", columnName, tableName));
+        //////D.Log(String.Format("GetSetData(): columnName = {0}, tableName = {1}", columnName, tableName));
         foreach(string id in ids)
         {
-            ////D.Log(id);
+            //////D.Log(id);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from " + tableName + " WHERE id='" + id + "'");
             
             if(dt.Rows.Count > 0)
@@ -161,7 +161,7 @@ public static class DataHelpers
         List<DataRow> dataPool = new List<DataRow>();
         
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from phonicssets WHERE programmodule_id=" + moduleId);
-        ////D.Log(String.Format("GetModuleData(): Found {0} phonicssets", dt.Rows.Count));
+        //////D.Log(String.Format("GetModuleData(): Found {0} phonicssets", dt.Rows.Count));
         foreach (DataRow set in dt.Rows)
         {
             dataPool.AddRange(GetSetData(set, joinAttributeName, tableName));
@@ -443,7 +443,7 @@ public static class DataHelpers
 
     public static List<DataRow> GetData(string dataType)
     {
-        //D.Log("DataHelpers.GetData()");
+        ////D.Log("DataHelpers.GetData()");
         List<DataRow> dataPool = GameManager.Instance.GetData(dataType);
 
         if (dataPool.Count == 0)
@@ -539,7 +539,7 @@ public static class DataHelpers
     
     public static List<DataRow> GetModuleKeywords(int moduleId)
     {
-        ////D.Log(String.Format("GetModuleKeywords(): moduleId = {0}", moduleId));
+        //////D.Log(String.Format("GetModuleKeywords(): moduleId = {0}", moduleId));
         if (moduleId != -1)
         {
             return GetModuleData(moduleId, "setkeywords", "words");
@@ -560,11 +560,11 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("correctcaptions");
 
-        //D.Log(String.Format("Found {0} datasentences", dataPool.Count));
+        ////D.Log(String.Format("Found {0} datasentences", dataPool.Count));
         
         if (dataPool.Count == 0)
         {
-            //////D.LogWarning("Defaulting to all correctsentences");
+            ////////D.LogWarning("Defaulting to all correctsentences");
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE correctsentence='t'");
             dataPool = dt.Rows.FindAll(x => x["correctsentence"] != null && x["correctsentence"].ToString() == "t");
         }
@@ -605,7 +605,7 @@ public static class DataHelpers
     {
         List<DataRow> dataPool = GameManager.Instance.GetData("quizquestions");
 
-        D.Log("Found " + dataPool.Count + " quiz questions");
+        //D.Log("Found " + dataPool.Count + " quiz questions");
 
         if (dataPool.Count == 0)
         {
@@ -635,7 +635,7 @@ public static class DataHelpers
         
         if(dataPool.Count == 0)
         {
-            //////D.LogWarning("Defaulting to Pink Phonemes");
+            ////////D.LogWarning("Defaulting to Pink Phonemes");
             dataPool = GetModulePhonemes(GetModuleId(ColorInfo.PipColor.Pink));
         }
         
@@ -889,7 +889,7 @@ public static class DataHelpers
             onsetWords = dt.Rows.FindAll(x => phoneme.Equals(GetOnsetPhoneme(x)));
         }
 
-        //////D.Log("Found extra " + onsetWords.Count + " onsetWords");
+        ////////D.Log("Found extra " + onsetWords.Count + " onsetWords");
 
         numToFind = Mathf.Min(numToFind, onsetWords.Count);
 
@@ -1090,7 +1090,7 @@ public static class DataHelpers
     /*
     public static List<DataRow> GetNumbers()
     {
-        //////D.Log("DataHelpers.GetNumbers()"); 
+        ////////D.Log("DataHelpers.GetNumbers()"); 
         List<DataRow> boundaryData = GameManager.Instance.GetData("numbers");
 
         int[] boundaryValues = new int[2];
@@ -1108,7 +1108,7 @@ public static class DataHelpers
             boundaryValues[1] = 10;
         }
 
-        //////D.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
+        ////////D.Log("BoundaryValues: " + boundaryValues [0] + " - " + boundaryValues [1]);
 
         Array.Sort(boundaryValues);
 
@@ -1249,7 +1249,7 @@ public static class DataHelpers
         
         if (sumData ["value"] == null)
         {
-            D.LogError("sum value is NULL!");
+            //D.LogError("sum value is NULL!");
         }
         
         int sum = Convert.ToInt32(sumData ["value"]);
@@ -1380,7 +1380,7 @@ public static class DataHelpers
                     } 
                     catch
                     {
-                        //////D.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
+                        ////////D.Log(String.Format("Getting set {0} for {1} - Invalid ID: {2}", setNum, tableName, id));
                     }
                 }
             }

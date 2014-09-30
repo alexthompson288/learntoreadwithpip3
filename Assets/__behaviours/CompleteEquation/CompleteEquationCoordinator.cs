@@ -47,13 +47,13 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
 
     IEnumerator Start()
     {
-        ////D.Log("CompleteEquationCoordinator.Start()");
+        //////D.Log("CompleteEquationCoordinator.Start()");
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         GetData();
 
-        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        //////D.Log("m_dataPool.Count: " + m_dataPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -101,7 +101,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        ////D.Log("Starting game");
+        //////D.Log("Starting game");
         
         Equation sharedData = GetRandomEquation();
 

@@ -39,7 +39,7 @@ public class LessonInfo : Singleton<LessonInfo>
 			// TODO: Delete this lesson instantion. Only necessary so that I don't need to change scenes during development
 			if(m_lessons.Count == 0)
 			{
-				//////D.Log("Instantiating debug lesson");
+				////////D.Log("Instantiating debug lesson");
 				m_lessons.Add(new Lesson());
 			}
 			
@@ -68,18 +68,18 @@ public class LessonInfo : Singleton<LessonInfo>
 
 	public void SetCurrentLesson(int i)
 	{
-		//////D.Log("Lessons Count: " + m_lessons.Count);
-		//////D.Log("index: " + i);
+		////////D.Log("Lessons Count: " + m_lessons.Count);
+		////////D.Log("index: " + i);
 		m_currentLesson = m_lessons[i];
 	}
 	
 	public List<string> GetLessonNames()
 	{
-		//////D.Log("There are " + m_lessons.Count + " lessons");
+		////////D.Log("There are " + m_lessons.Count + " lessons");
 		List<string> lessonNames = new List<string>();
 		foreach(Lesson lesson in m_lessons)
 		{
-			//////D.Log(lesson.GetName());
+			////////D.Log(lesson.GetName());
 			lessonNames.Add(lesson.GetName());
 		}
 		
@@ -137,7 +137,7 @@ public class LessonInfo : Singleton<LessonInfo>
 		{
 			if(index > m_games.Count)
 			{
-				//////D.LogError("Adding a game at an index greater than m_games.Count");
+				////////D.LogError("Adding a game at an index greater than m_games.Count");
 			}
 
 			if(index == -1 || index >= m_games.Count)
@@ -295,7 +295,7 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 			else
 			{
-				//////D.Log("Lesson.GetData() - Stories");
+				////////D.Log("Lesson.GetData() - Stories");
 				return m_stories;
 			}
 		}
@@ -332,7 +332,7 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 			else
 			{
-				//////D.Log("Lesson.AddData(" + id + ")");
+				////////D.Log("Lesson.AddData(" + id + ")");
 				m_stories.Add(id);
 			}
 		}
@@ -440,11 +440,11 @@ public class LessonInfo : Singleton<LessonInfo>
 
 	public List<DataRow> GetData(string dataType)
 	{
-		//////D.Log("LessonInfo.GetData()");
+		////////D.Log("LessonInfo.GetData()");
 
 		HashSet<int> ids = m_currentLesson.GetData(dataType);
 
-		//////D.Log("There are " + ids.Count + " " + dataType);
+		////////D.Log("There are " + ids.Count + " " + dataType);
 		
 		//string dataName = (dataType == "phonemes") ? "phonemes" : "words";
 
@@ -473,7 +473,7 @@ public class LessonInfo : Singleton<LessonInfo>
 			}
 		}
 
-		//////D.Log(System.String.Format("Found {0} id matches", data.Count));
+		////////D.Log(System.String.Format("Found {0} id matches", data.Count));
 		
 		return data;
 	}

@@ -19,12 +19,12 @@ public class GameDataBridge : Singleton<GameDataBridge>
     {
         while (GameDataBridge.Instance == null)
         {
-            //////D.Log("Singleton not ready");
+            ////////D.Log("Singleton not ready");
             yield return null;
         }
         while (!GameDataBridge.Instance.IsReady())
         {
-            ////////D.Log("DB not ready");
+            //////////D.Log("DB not ready");
             yield return null;
         }
     }
@@ -40,7 +40,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
         ////FlurryBinding.startSession("FV6X7ZZW2B2YVY6BY9RR");
         #if UNITY_IPHONE
         
-        //////D.Log("DEVELOPMENT BUILD: " + Debug.isDebugBuild);
+        ////////D.Log("DEVELOPMENT BUILD: " + Debug.isDebugBuild);
         
         string apiKey = Debug.isDebugBuild ?  "FV6X7ZZW2B2YVY6BY9RR" : "6Z5K6YT4JSC6KYMD77XQ";
         //FlurryBinding.startSession(apiKey);
@@ -72,7 +72,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
             {
                 foreach (SavedAssetBundles.DownloadedAsset da in avr.m_assetList)
                 {
-                    //////D.Log(da.m_name + " " + da.m_version);
+                    ////////D.Log(da.m_name + " " + da.m_version);
                     if (da.m_name == "local-store.bytes")
                     {
                         //if the version is set as 0 on the online version list, use the built in DB
@@ -96,7 +96,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
         //string cmsDbPath = "jar:file://" + Application.dataPath + "!/assets/" 
         //+ SavedAssetBundles.Instance.GetSavedName(dbName);
         
-        //////D.Log ("Database name for this game: " + dbName + " filename: " + cmsDbPath);
+        ////////D.Log ("Database name for this game: " + dbName + " filename: " + cmsDbPath);
         m_cmsDb = new SqliteDatabase();
         
 #if UNITY_EDITOR || UNITY_IPHONE || UNITY_STANDALONE
@@ -110,62 +110,62 @@ public class GameDataBridge : Singleton<GameDataBridge>
             if ((!SavedAssetBundles.Instance.HasAny(dbName)) ||
                 (m_localDatabaseVersion > SavedAssetBundles.Instance.GetVersion(dbName)))
             {
-                //////D.Log("Using built-in DB, saving to " + cmsDbPath);
+                ////////D.Log("Using built-in DB, saving to " + cmsDbPath);
                 
 #if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE
-                //////D.Log(cmsDbPath);
+                ////////D.Log(cmsDbPath);
                 System.IO.File.WriteAllBytes(cmsDbPath, m_localDatabase.bytes);
 #endif
                 /*
                 //#else
-                //////D.Log(1);
+                ////////D.Log(1);
                 string streamingAssetsPath = "jar:file://" + Application.dataPath + "!/assets/" + "local-store.bytes";
-                //////D.Log(streamingAssetsPath);
+                ////////D.Log(streamingAssetsPath);
                 WWW loadDB = new WWW(streamingAssetsPath);
-                //////D.Log(2);
+                ////////D.Log(2);
                 
                 float counter = 0;
                 bool foundDB = true;
-                //////D.Log(3);
+                ////////D.Log(3);
                 while(!loadDB.isDone) 
                 {
-                    //////D.Log(4);
+                    ////////D.Log(4);
                     counter += Time.deltaTime;
-                    //////D.Log("counter: " + counter);
+                    ////////D.Log("counter: " + counter);
                     //float progess = loadDB.progress;
-                    ////////D.Log(progress);
+                    //////////D.Log(progress);
                     
                     if(counter > 120)
                     {
-                        //////D.LogError("Could not find database in StreamingAssets");
+                        ////////D.LogError("Could not find database in StreamingAssets");
                         foundDB = false;
                         break;
                     }
                 }
-                //////D.Log(5);
+                ////////D.Log(5);
                 
-                //////D.Log("loadDB.bytes: " + loadDB.bytes);
+                ////////D.Log("loadDB.bytes: " + loadDB.bytes);
                 
                 if(foundDB)
                 {
-                    //////D.Log(6 + "if");
-                    //////D.Log("Writing db to persistent data path");
+                    ////////D.Log(6 + "if");
+                    ////////D.Log("Writing db to persistent data path");
                     System.IO.File.WriteAllBytes(cmsDbPath, loadDB.bytes);
-                    //////D.Log(7 + "if");
+                    ////////D.Log(7 + "if");
                     SavedAssetBundles.Instance.AddAssetVersion(dbName, m_localDatabaseVersion);
-                    //////D.Log(8 + "if");
+                    ////////D.Log(8 + "if");
                 }
                 else
                 {
-                    //////D.Log(6 + "else");
-                    //////D.Log("Not writing db because unable to find");
+                    ////////D.Log(6 + "else");
+                    ////////D.Log("Not writing db because unable to find");
                 }
                 #endif
                 */
             }
             else
             {
-                //////D.Log("Using existing from " + cmsDbPath);
+                ////////D.Log("Using existing from " + cmsDbPath);
             }
         }
         else
@@ -173,7 +173,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
             if (!SavedAssetBundles.Instance.HasVersion(dbName, dbVersion))
             {
 #if UNITY_ANDROID || UNITY_IPHONE || UNITY_STANDALONE
-                //////D.Log("Update to database found!");
+                ////////D.Log("Update to database found!");
                 WWW www = new WWW(m_webStoreURL + dbName);
                 while(!www.isDone)
                 {
@@ -203,7 +203,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
             }
             else
             {
-                //////D.Log("Already on latest database!");
+                ////////D.Log("Already on latest database!");
             }
         }
         
@@ -223,7 +223,7 @@ public class GameDataBridge : Singleton<GameDataBridge>
         }
         
         m_isReady = true;
-        //////D.Log("Database is ready");
+        ////////D.Log("Database is ready");
         
         yield break;
     }

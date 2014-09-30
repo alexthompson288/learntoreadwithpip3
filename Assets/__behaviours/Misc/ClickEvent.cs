@@ -66,7 +66,7 @@ public class ClickEvent : MonoBehaviour
 
 	void OnClick()
 	{
-        ////D.Log("Clicked " + name);
+        //////D.Log("Clicked " + name);
         if(SingleClicked != null)
 		{
             SingleClicked(this);

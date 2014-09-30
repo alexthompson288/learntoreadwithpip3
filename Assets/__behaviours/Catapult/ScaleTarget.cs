@@ -63,7 +63,7 @@ public class ScaleTarget : Target
 
 		transform.position = m_startLocation.position;
 		
-        ////////D.Log("Restart Invoking");
+        //////////D.Log("Restart Invoking");
 		InvokeMoveCompleted();
 		
         On(0.5f);
@@ -71,7 +71,7 @@ public class ScaleTarget : Target
 
     protected override IEnumerator OnCo(float initialDelay)
 	{
-        ////////D.Log("ScaleTarget.OnCo");
+        //////////D.Log("ScaleTarget.OnCo");
 		yield return new WaitForSeconds(initialDelay);
 
         ShowDefault();
@@ -88,7 +88,7 @@ public class ScaleTarget : Target
 		
         yield return new WaitForSeconds(m_tweenDurationOff + Random.Range(m_durationOff.x, m_durationOff.y));
 		
-        ////////D.Log("Invoking OnCompleteMove");
+        //////////D.Log("Invoking OnCompleteMove");
 		InvokeMoveCompleted();
 		
 		StartCoroutine(OnCo(0.2f));

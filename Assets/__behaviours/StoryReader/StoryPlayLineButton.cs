@@ -14,7 +14,7 @@ public class StoryPlayLineButton : MonoBehaviour
         m_audioSource.clip = newClip;
         if (newClip == null)
         {
-			//////D.Log("Couldn't find audio for: " + audioClipName);
+			////////D.Log("Couldn't find audio for: " + audioClipName);
             m_hideObject.SetActive(false);
         }
         else

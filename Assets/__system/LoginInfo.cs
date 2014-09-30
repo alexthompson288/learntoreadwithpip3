@@ -113,7 +113,7 @@ public class LoginInfo : Singleton<LoginInfo>
     
     void AttemptLogin()
     {
-        D.Log("LoginInfo.AttemptLogin()");
+        //D.Log("LoginInfo.AttemptLogin()");
         m_hasExited = false;
         
         if(!String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_password))
@@ -130,7 +130,7 @@ public class LoginInfo : Singleton<LoginInfo>
             }
             catch
             {
-                D.LogError("Could not get new login token");
+                //D.LogError("Could not get new login token");
             }
         }
 
@@ -146,7 +146,7 @@ public class LoginInfo : Singleton<LoginInfo>
 
         m_isLoggedIn = !String.IsNullOrEmpty(m_email) && !String.IsNullOrEmpty(m_accessToken) && DateTime.Compare(expirationDate, DateTime.Now) >= 0;
 
-        D.Log("m_isLoggedIn: " + m_isLoggedIn);
+        //D.Log("m_isLoggedIn: " + m_isLoggedIn);
     }
 
     public void SpawnLogin()

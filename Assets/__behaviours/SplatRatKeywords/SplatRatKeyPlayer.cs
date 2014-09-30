@@ -32,10 +32,10 @@ public class SplatRatKeyPlayer : GamePlayer
 
     public override void SelectCharacter(int characterIndex)
     {
-        //////D.Log("SelectCharacter");
+        ////////D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        //////D.Log("m_selectedCharacter: " + m_selectedCharacter);
+        ////////D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
@@ -64,7 +64,7 @@ public class SplatRatKeyPlayer : GamePlayer
 		
 	public IEnumerator DisplayLargeBlackboard(string word)
 	{
-		//////D.Log("DisplayInitialBlackBoard()");
+		////////D.Log("DisplayInitialBlackBoard()");
 
 		m_largeBlackboard.ShowImage(null, word, null, null);
 

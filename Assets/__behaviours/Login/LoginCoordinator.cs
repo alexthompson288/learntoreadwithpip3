@@ -84,7 +84,7 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
 
 #if UNITY_EDITOR
         string log = isCorrect ? "Correct!" : "Incorrect";
-        D.Log(log);
+        //D.Log(log);
 #endif
     }
 
@@ -141,14 +141,14 @@ public class LoginCoordinator : Singleton<LoginCoordinator>
             }
             catch(WebException ex)
             {
-                //D.Log("REGISTER FAIL");
+                ////D.Log("REGISTER FAIL");
                 if ((ex.Response is System.Net.HttpWebResponse))
                 {
-                    ////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                    //////D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
                 }
                 else
                 {
-                    ////D.Log("Not HTTP - Exception: " + ex.Message);
+                    //////D.Log("Not HTTP - Exception: " + ex.Message);
                 }
             }
         }

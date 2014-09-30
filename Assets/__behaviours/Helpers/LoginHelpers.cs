@@ -75,7 +75,7 @@ public static class LoginHelpers
 
     public static string Register(string email, string password, string name)
     {   
-        D.Log("registration URL: " + m_url + m_registerExtension);
+        //D.Log("registration URL: " + m_url + m_registerExtension);
         var request = System.Net.WebRequest.Create(m_url + m_registerExtension) as System.Net.HttpWebRequest;
         request.KeepAlive = true;
         request.Method = "POST";
@@ -156,7 +156,7 @@ public static class LoginHelpers
        		
 		if (!userResponse.Contains("error"))
         {
-            D.Log("userResponse: " + userResponse);
+            //D.Log("userResponse: " + userResponse);
             return true;
             /*
             string userPrefix = "\"can_access_content\":";
@@ -165,12 +165,12 @@ public static class LoginHelpers
 
             if (canAccessContent == "true")
             {
-                //////D.Log("GOOD");
+                ////////D.Log("GOOD");
                 return true;
             } 
             else
             {
-                //////D.Log("EXPIRED");
+                ////////D.Log("EXPIRED");
                 throw new LoginException(LoginException.ExceptionType.Expired);
             }
             */

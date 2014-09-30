@@ -58,7 +58,7 @@ public class ScorePotion : ScoreKeeper
        
         float cauldronTweenDuration = Mathf.Abs(((m_cauldron.transform.position - targetGo.transform.position).magnitude) / m_cauldronTweenSpeed);
 
-        ////////D.Log("cauldronTweenDuration: " + cauldronTweenDuration);
+        //////////D.Log("cauldronTweenDuration: " + cauldronTweenDuration);
 
         yield return new WaitForSeconds(cauldronTweenDuration);
 

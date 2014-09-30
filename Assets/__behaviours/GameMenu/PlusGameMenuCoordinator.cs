@@ -155,7 +155,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     void OnClickGameButton(EventRelay relay)
     {
-        D.Log("OnClickGameButton()");
+        //D.Log("OnClickGameButton()");
 
         PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
@@ -247,7 +247,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         PlusScoreInfo.Instance.SetScoreType(m_scoreType);
         
         GameManager.Instance.SetCurrentColor(m_pipColor);
-        D.Log("m_gameName: " + m_gameName);
+        //D.Log("m_gameName: " + m_gameName);
         GameManager.Instance.AddGame(m_gameName);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
         
@@ -263,7 +263,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         {
             int moduleId = DataHelpers.GetModuleId(m_pipColor);
 
-            D.Log("moduleId: " + moduleId);
+            //D.Log("moduleId: " + moduleId);
             
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
             GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));

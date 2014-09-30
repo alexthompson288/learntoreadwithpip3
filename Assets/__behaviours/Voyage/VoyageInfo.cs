@@ -44,10 +44,10 @@ public class VoyageInfo : Singleton<VoyageInfo>
     public void CreateBookmark(int moduleId, int sessionId, int sectionId)
     {
         /*
-        //////D.Log("CREATING BOOKMARK");
-        //////D.Log("moduleId: " + moduleId);
-        //////D.Log("sessionId: " + sessionId);
-        //////D.Log("sectionId: " + sectionId);
+        ////////D.Log("CREATING BOOKMARK");
+        ////////D.Log("moduleId: " + moduleId);
+        ////////D.Log("sessionId: " + sessionId);
+        ////////D.Log("sectionId: " + sectionId);
         */
 
         m_bookmark = new Bookmark(moduleId, sessionId, sectionId);
@@ -134,12 +134,12 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void OnCompleteGames()
     {
-        //////D.Log("VoyageInfo.OnCompleteGames");
+        ////////D.Log("VoyageInfo.OnCompleteGames");
         GameManager.Instance.CompletedAll -= OnCompleteGames;
         
         if (m_bookmark != null)
         {
-            //////D.Log("Completed session: " + m_bookmark.GetSessionId());
+            ////////D.Log("Completed session: " + m_bookmark.GetSessionId());
             m_completedSessions.Add(m_bookmark.GetSessionId());
         }
         
@@ -148,7 +148,7 @@ public class VoyageInfo : Singleton<VoyageInfo>
     
     void OnGameCancel()
     {
-        //////D.Log("VoyageInfo.OnGameCancel");
+        ////////D.Log("VoyageInfo.OnGameCancel");
         GameManager.Instance.CompletedAll -= OnCompleteGames;
         
         m_bookmark = null;

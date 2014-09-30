@@ -69,7 +69,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 			Resources.UnloadUnusedAssets();
 		}
 
-		//////D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
+		////////D.Log("Difficulty Spawn: " + m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()]);
 		if(m_maxSpawn > m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()])
 		{
 			m_maxSpawn = m_wordsForDifficulty[SessionInformation.Instance.GetDifficulty()];
@@ -82,7 +82,7 @@ public class CorrectPictureGameCoordinator : Singleton<CorrectPictureGameCoordin
 
 		Resources.UnloadUnusedAssets();
 
-        D.Log("m_remainingWords.Count: " + m_remainingWords.Count);
+        //D.Log("m_remainingWords.Count: " + m_remainingWords.Count);
 
 		if(m_wordSelection.Count >= m_maxSpawn)
 		{

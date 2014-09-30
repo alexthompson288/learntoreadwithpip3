@@ -51,7 +51,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
     int m_sessionId;
     public void SetSessionId(int sessionId)
     {
-        ////////D.Log("SetSessionId: " + sessionId);
+        //////////D.Log("SetSessionId: " + sessionId);
         m_sessionId = sessionId;
     }
 
@@ -107,7 +107,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If VoyageInfo has a bookmark then we might want to spawn in a module map instead of the world map
             if (VoyageInfo.Instance.hasBookmark)
             {
-                ////////D.Log("Instantiate module map");
+                //////////D.Log("Instantiate module map");
 
                 int moduleId = VoyageInfo.Instance.currentModuleId;
 
@@ -125,7 +125,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             // If we have not spawned a module map then spawn the world map instead
             if(!hasSpawnedModuleMap)
             {
-                ////////D.Log("Instantiate world map");
+                //////////D.Log("Instantiate world map");
                 InstantiateWorldMap();
             }
 
@@ -354,7 +354,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         
                         if (phonemePool.Count < m_minimumDataCount)
                         {
-                            ////////D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
+                            //////////D.Log("Adding extra phonemes: " + phonemePool.Count + "/" + m_minimumDataCount);
 
                             int extraModuleId = previousModuleId;
 
@@ -365,7 +365,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                             }
                         }
 
-                        ////////D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
+                        //////////D.Log("PHONEME_POOL.COUNT: " + phonemePool.Count);
                         
                         GameManager.Instance.AddData("phonemes", phonemePool);
                         GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x ["is_target_phoneme"] != null && x ["is_target_phoneme"].ToString() == "t"));
@@ -380,7 +380,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                         
                         if (words.Count < m_minimumDataCount)
                         {
-                            ////////D.Log("Adding extra words: " + words.Count + "/" + m_minimumDataCount);
+                            //////////D.Log("Adding extra words: " + words.Count + "/" + m_minimumDataCount);
 
                             int extraModuleId = previousModuleId;
 
@@ -392,7 +392,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                             
                         }
 
-                        ////////D.Log("WORD_POOL.COUNT: " + words.Count);
+                        //////////D.Log("WORD_POOL.COUNT: " + words.Count);
                         
                         GameManager.Instance.AddData("words", words);
                         GameManager.Instance.AddTargetData("words", words.FindAll(x => x ["is_target_word"] != null && x ["is_target_word"].ToString() == "t"));

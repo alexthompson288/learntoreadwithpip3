@@ -226,7 +226,7 @@ public class ScoreHealth : PlusScoreKeeper
         }
 
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
-        D.Log("targetBarHeight: " + targetBarHeight);
+        //D.Log("targetBarHeight: " + targetBarHeight);
 
         m_health = Mathf.Min(m_health, m_startHealth);
 
@@ -235,7 +235,7 @@ public class ScoreHealth : PlusScoreKeeper
             yield return null;
         }
 
-        ////D.Log("Reset");
+        //////D.Log("Reset");
 
         m_state = State.Timer;
 

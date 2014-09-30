@@ -44,7 +44,7 @@ public class PunctuationCoordinator : Singleton<PunctuationCoordinator>
     
     IEnumerator Start()
     {
-        ////D.Log("PunctuationCoordinator.Start()");
+        //////D.Log("PunctuationCoordinator.Start()");
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
@@ -52,7 +52,7 @@ public class PunctuationCoordinator : Singleton<PunctuationCoordinator>
 
         m_dataPool.RemoveAll(DoesNotContainPunctuation);
 
-        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
+        //////D.Log("m_dataPool.Count: " + m_dataPool.Count);
         
         int numPlayers = GetNumPlayers();
         
@@ -98,7 +98,7 @@ public class PunctuationCoordinator : Singleton<PunctuationCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        ////D.Log("Starting game");
+        //////D.Log("Starting game");
         
         DataRow sharedData = GetRandomData();
         

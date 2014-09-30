@@ -16,7 +16,7 @@ public class TransitionToSceneButton : MonoBehaviour {
     {
         if (!isDown)
         {
-            ////D.Log("TransitionToSceneButton.OnClick()");
+            //////D.Log("TransitionToSceneButton.OnClick()");
             TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
             if (ts != null)
             {
@@ -42,7 +42,7 @@ public class TransitionToSceneButton : MonoBehaviour {
     /*
     void OnClick()
     {
-        ////D.Log("TransitionToSceneButton.OnClick()");
+        //////D.Log("TransitionToSceneButton.OnClick()");
         TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
         if (ts != null)
         {

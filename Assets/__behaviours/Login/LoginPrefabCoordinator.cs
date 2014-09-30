@@ -101,13 +101,13 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
 
     void OnUnpressCallLoginButton(PipButton button)
     {
-        D.Log("OnUnpressCallLoginButton()");
+        //D.Log("OnUnpressCallLoginButton()");
         m_loginRegisterTween.On();
     }
     
     void OnUnpressCallRegisterButton(PipButton button)
     {
-        D.Log("OnUnpressCallRegisterButton()");
+        //D.Log("OnUnpressCallRegisterButton()");
         m_loginRegisterTween.Off();
     }
 
@@ -122,7 +122,7 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         
         #if UNITY_EDITOR
         string log = isCorrect ? "Correct!" : "Incorrect";
-        D.Log(log);
+        //D.Log(log);
         #endif
     }
     
@@ -191,28 +191,28 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
     {
         try
         {
-            D.Log("Attempting registration");
+            //D.Log("Attempting registration");
             string responseContent = LoginHelpers.Register("tom+1@learnwithpip.com", "password", "Tom");
-            D.Log("registerResponseContent: " + responseContent);
+            //D.Log("registerResponseContent: " + responseContent);
             m_loginRegisterTween.On();
         }
         catch(WebException ex)
         {
-            D.Log("REGISTER FAIL");
+            //D.Log("REGISTER FAIL");
             if ((ex.Response is System.Net.HttpWebResponse))
             {
-                D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                //D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
             }
             else
             {
-                D.Log("Not HTTP - Exception: " + ex.Message);
+                //D.Log("Not HTTP - Exception: " + ex.Message);
             }
         }
     }
 
     void OnUnpressRegisterButton(PipButton button)
     {
-        D.Log("LoginPrefabCoordinator.OnUnpressRegisterButton()");
+        //D.Log("LoginPrefabCoordinator.OnUnpressRegisterButton()");
 
         HashSet<string> passwords = new HashSet<string>();
         
@@ -225,21 +225,21 @@ public class LoginPrefabCoordinator : Singleton<LoginPrefabCoordinator>
         {
             try
             {
-                D.Log("Attempting registration");
+                //D.Log("Attempting registration");
                 string responseContent = LoginHelpers.Register(m_registerEmailLabel.text, m_registerPasswordLabels[0].text, m_registerNameLabel.text);
-                D.Log("registerResponseContent: " + responseContent);
+                //D.Log("registerResponseContent: " + responseContent);
                 m_loginRegisterTween.On();
             }
             catch(WebException ex)
             {
-                D.Log("REGISTER FAIL");
+                //D.Log("REGISTER FAIL");
                 if ((ex.Response is System.Net.HttpWebResponse))
                 {
-                    D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
+                    //D.Log("HTTP - StatusCode: " + (ex.Response as System.Net.HttpWebResponse).StatusCode);
                 }
                 else
                 {
-                    D.Log("Not HTTP - Exception: " + ex.Message);
+                    //D.Log("Not HTTP - Exception: " + ex.Message);
                 }
             }
         }

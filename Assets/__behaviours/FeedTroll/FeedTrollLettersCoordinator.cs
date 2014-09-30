@@ -83,7 +83,7 @@ public class FeedTrollLettersCoordinator : MonoBehaviour
 			m_numSpawn = m_locators.Length;
 		}
 
-		//////D.Log("m_lettersPool.Count: " + m_lettersPool.Count);
+		////////D.Log("m_lettersPool.Count: " + m_lettersPool.Count);
 
         foreach (DataRow myPh in m_lettersPool)
         {

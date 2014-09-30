@@ -6,7 +6,7 @@ public static class NGUIHelpers
 {
     public static void EnableUICams(bool enable, UICamera[] exceptions = null)
     {
-        D.Log(string.Format("NGUIHelpers.EnableUICams({0})", enable));
+        //D.Log(string.Format("NGUIHelpers.EnableUICams({0})", enable));
         UICamera[] cams = UnityEngine.Object.FindObjectsOfType(typeof(UICamera)) as UICamera[];
 
         foreach (UICamera cam in cams)
@@ -61,11 +61,11 @@ public static class NGUIHelpers
 
         if (width > maxWidth)
         {
-            ////////D.Log(label.name + " - width: " + width);
-            ////////D.Log("maxWidth: " + maxWidth);
-            ////////D.Log("preLocalScale: " + label.transform.localScale);
+            //////////D.Log(label.name + " - width: " + width);
+            //////////D.Log("maxWidth: " + maxWidth);
+            //////////D.Log("preLocalScale: " + label.transform.localScale);
             label.transform.localScale *= (maxWidth / width);
-            ////////D.Log("postLocalScale: " + label.transform.localScale);
+            //////////D.Log("postLocalScale: " + label.transform.localScale);
         }
     }
 

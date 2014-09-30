@@ -327,7 +327,7 @@ public class BubbleCoordinator : MonoBehaviour
 	
 	void LevelUp()
 	{
-		//////D.Log("LEVEL UP!");
+		////////D.Log("LEVEL UP!");
 
 		m_speed += m_speedIncrease;
 		foreach(Transform bubbleParent in m_bubbleParents)
@@ -354,7 +354,7 @@ public class BubbleCoordinator : MonoBehaviour
 			m_dataPool.AddRange(DataHelpers.GetPhonemes());
 			break;
 		default:
-			//////D.Log("Getting word data");
+			////////D.Log("Getting word data");
 			m_dataPool.AddRange(DataHelpers.GetWords());
 			break;
 		}
@@ -430,10 +430,10 @@ public class BubbleCoordinator : MonoBehaviour
 		}
 		else
 		{
-			////////D.Log("SayShortAudio()");
-			////////D.Log("m_targetData: " + m_targetData);
-			////////D.Log("id: " + m_targetData["id"].ToString());
-			////////D.Log("word: " + m_targetData["word"].ToString());
+			//////////D.Log("SayShortAudio()");
+			//////////D.Log("m_targetData: " + m_targetData);
+			//////////D.Log("id: " + m_targetData["id"].ToString());
+			//////////D.Log("word: " + m_targetData["word"].ToString());
 			clip = LoaderHelpers.LoadAudioForWord(m_targetData["word"].ToString());
 		}
 		

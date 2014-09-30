@@ -35,10 +35,10 @@ public class ClockPlayer : GamePlayer
     
     public override void SelectCharacter(int characterIndex)
     {
-        //////D.Log("SelectCharacter");
+        ////////D.Log("SelectCharacter");
         SessionInformation.Instance.SetPlayerIndex(m_playerIndex, characterIndex);
         m_selectedCharacter = characterIndex;
-        //////D.Log("m_selectedCharacter: " + m_selectedCharacter);
+        ////////D.Log("m_selectedCharacter: " + m_selectedCharacter);
         foreach (CharacterSelection cs in m_characterSelections)
         {
             cs.DeactivatePress(false);
@@ -63,8 +63,8 @@ public class ClockPlayer : GamePlayer
 
     void AskQuestion()
     {
-        ////D.Log("m_currentData: " + m_currentData);
-        ////D.Log("time: " + m_currentData ["time"]);
+        //////D.Log("m_currentData: " + m_currentData);
+        //////D.Log("time: " + m_currentData ["time"]);
         m_questionLabel.text = m_currentData ["time"].ToString();
         m_questionLabel.transform.parent = m_questionLabelParent;
         m_questionLabel.transform.localPosition = Vector3.zero;
@@ -92,18 +92,18 @@ public class ClockPlayer : GamePlayer
 
         if(DateTime.Compare(clockTime.AddMinutes(cushion), currentTime) >= 0 && DateTime.Compare(clockTime.AddMinutes(-cushion), currentTime) <= 0)
         {
-            //D.Log("CORRECT");
-            //D.Log("Clock: " + clockTime);
-            //D.Log("Current: " + currentTime);
+            ////D.Log("CORRECT");
+            ////D.Log("Clock: " + clockTime);
+            ////D.Log("Current: " + currentTime);
             ChangeQuestionBgColor(ColorInfo.PipColor.LightGreen);
             m_scoreKeeper.UpdateScore(1);
             ClockCoordinator.Instance.OnCorrectAnswer(this);
         }
         else
         {
-            //D.Log("INCORRECT");
-            //D.Log("Clock: " + clockTime);
-            //D.Log("Current: " + currentTime);
+            ////D.Log("INCORRECT");
+            ////D.Log("Clock: " + clockTime);
+            ////D.Log("Current: " + currentTime);
             ChangeQuestionBgColor(ColorInfo.PipColor.LightRed);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);

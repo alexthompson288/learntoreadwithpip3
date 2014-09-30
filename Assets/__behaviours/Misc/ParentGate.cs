@@ -50,7 +50,7 @@ public class ParentGate : Singleton<ParentGate>
             
             m_correctAnswer = num1 + num2;
 
-            D.Log("correctAnswer: " + m_correctAnswer);
+            //D.Log("correctAnswer: " + m_correctAnswer);
 
             HashSet<int> answers = new HashSet<int>();
 

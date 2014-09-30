@@ -91,7 +91,7 @@ public class ToyShopPlayer : GamePlayer
 
     public void StartGame(bool subscribeToTimer)
     {
-        ////D.Log("ToyShopPlayer.StartGame()");
+        //////D.Log("ToyShopPlayer.StartGame()");
         if (m_coinStackTweenBehaviour != null)
         {
             m_coinStackTweenBehaviour.On();
@@ -318,7 +318,7 @@ public class ToyShopPlayer : GamePlayer
 
     void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)
     {
-        ////D.Log("ToyShopPlayer.OnTimerFinish()");
+        //////D.Log("ToyShopPlayer.OnTimerFinish()");
         ToyShopCoordinator.Instance.CompleteGame();
     }
 

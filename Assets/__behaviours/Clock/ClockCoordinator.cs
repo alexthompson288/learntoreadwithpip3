@@ -25,7 +25,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
 
     IEnumerator Start()
     {
-        ////D.Log("CompleteEquationCoordinator.Start()");
+        //////D.Log("CompleteEquationCoordinator.Start()");
         
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
@@ -79,7 +79,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
         
-        ////D.Log("Starting game");
+        //////D.Log("Starting game");
         
         DataRow sharedData = GetRandomData();
         

@@ -80,7 +80,7 @@ public class JoinableLineDraw : LineDraw
             string spriteName = m_spriteNames[Random.Range(0, m_spriteNames.Length)];
 
             int value = System.Convert.ToInt32(myData["value"]);
-            //D.Log("value: " + value);
+            ////D.Log("value: " + value);
             for(int i = 0; i < m_sprites.Length; ++i)
             {
                 m_sprites[i].spriteName = spriteName;

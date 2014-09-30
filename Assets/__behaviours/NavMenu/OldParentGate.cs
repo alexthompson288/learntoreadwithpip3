@@ -108,7 +108,7 @@ public class OldParentGate : Singleton<OldParentGate>
         }
         */
 
-        //////D.Log("Answer: " + CheckAnswer(answerBehaviour));
+        ////////D.Log("Answer: " + CheckAnswer(answerBehaviour));
 
 		if(OnParentGateAnswer != null)
 		{

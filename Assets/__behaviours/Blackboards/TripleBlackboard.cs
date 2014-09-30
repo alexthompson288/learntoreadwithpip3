@@ -108,7 +108,7 @@ public class TripleBlackboard : MonoBehaviour {
 
     void OnClick()
     {
-		//////D.Log("Clicked: " + m_letter);
+		////////D.Log("Clicked: " + m_letter);
         //LetterBankGrid.Instance.LetterClicked(this);
     }
 	

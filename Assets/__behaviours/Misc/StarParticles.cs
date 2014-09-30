@@ -17,7 +17,7 @@ public class StarParticles : MonoBehaviour {
 		if(transform.hasChanged)
 		{
 			m_particles.enableEmission = true;
-			//////D.Log("Particles!!!");
+			////////D.Log("Particles!!!");
 		}
 		else
 		{

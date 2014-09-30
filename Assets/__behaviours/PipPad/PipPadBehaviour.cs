@@ -86,7 +86,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	
 	public void SetLanguage(string language)
 	{
-		//////D.Log("SetLanguage(" + language + ")");
+		////////D.Log("SetLanguage(" + language + ")");
 		m_currentLanguage = language;
 		DisplayWord(m_currentEnglishWord);
 	}
@@ -165,7 +165,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 		
 		string editedWord = StringHelpers.Edit(word);
 
-		////////D.Log("editedWord: " + editedWord);
+		//////////D.Log("editedWord: " + editedWord);
 
 		try
 		{
@@ -178,14 +178,14 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 				m_pipWordNotFound.On();
 			}
 
-			//////D.Log("editedWord: " + editedWord);
+			////////D.Log("editedWord: " + editedWord);
 			m_sayWholeWordButton.SetWordAudio(editedWord);
 			
 			if (dt.Rows.Count > 0)
 			{
 				DataRow row = dt[0];
 
-                //////D.Log("PipPadBehavior orderedphonemes: " + row["ordered_phonemes"]);
+                ////////D.Log("PipPadBehavior orderedphonemes: " + row["ordered_phonemes"]);
 
 
 				if(postEvent)
@@ -220,7 +220,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
 						pbi.m_displayString = row[m_currentLanguage].ToString(); // If the field is null then error thrown, catch executes, shows "Word Not Found" sign
 
-						//////D.Log(m_currentLanguage + ": " + row[m_currentLanguage].ToString());
+						////////D.Log(m_currentLanguage + ": " + row[m_currentLanguage].ToString());
 						pbi.m_positionIndex = 0;
 						pbi.m_fullPhonemeId = -1;
 						pbiList.Add(pbi);
@@ -231,7 +231,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 
                         UISprite[] starSprites = m_trickyStars.GetComponentsInChildren<UISprite>(true) as UISprite[];
 
-                        //////D.Log("Found " + starSprites.Length + " star sprites");
+                        ////////D.Log("Found " + starSprites.Length + " star sprites");
 
                         foreach(UISprite star in starSprites)
                         {
@@ -285,12 +285,12 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 								if (phonemeData.Contains("-"))
 								{
 									splitPhoneme = 1;
-									//////D.Log("INFO - phonemeData: " + phonemeData);
+									////////D.Log("INFO - phonemeData: " + phonemeData);
 									pbi.m_displayString = phonemeData[0].ToString();
 									PhonemeBuildInfo pbi2 = new PhonemeBuildInfo();
 									pbi2.m_displayString = phonemeData[2].ToString();
 									pbi2.m_positionIndex = index + 2;
-									//////D.Log("INFO - index + 2: " + (index + 2));
+									////////D.Log("INFO - index + 2: " + (index + 2));
 									pbi.m_linkedPhoneme = pbi2;
 									pbi2.m_linkedPhoneme = pbi;
 									pbi.m_fullPhonemeId = Convert.ToInt32(phoneme);
@@ -344,13 +344,13 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 					
 					if (width > 512)
 					{
-						//////D.Log("PipPad word width > 512: " + width);
+						////////D.Log("PipPad word width > 512: " + width);
 						m_textPosition.transform.localScale = new Vector3(0.8f, 1, 1);
 						m_textPosition.transform.localPosition = new Vector3(((-width / 2.0f) * 0.8f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
 					}
 					else
 					{
-						//////D.Log("PipPad word width < 512: " + width);
+						////////D.Log("PipPad word width < 512: " + width);
 						m_textPosition.transform.localPosition = new Vector3((-width / 2.0f) + 60, m_textPosition.transform.localPosition.y, m_textPosition.localPosition.z);
 						m_textPosition.transform.localScale = Vector3.one;
 					}
@@ -501,7 +501,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	
 	public void ReShowWordImage()
 	{
-        //////D.Log("ReShowWordImage()");
+        ////////D.Log("ReShowWordImage()");
 
 		if (m_multipleBlackboardMode == false)
 		{
@@ -549,13 +549,13 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	{
 		if(m_isSayingAll)
 		{
-            //////D.Log("Is already saying all. Return early");
+            ////////D.Log("Is already saying all. Return early");
 			return;
 		}
 
 		m_isSayingAll = true;
 
-		//////D.Log("PPB.SayAll()");
+		////////D.Log("PPB.SayAll()");
 		StopAllCoroutines();
 		StartCoroutine(SayAllCo(delay));
 	}

@@ -76,13 +76,13 @@ public class CorrectWordPlayer : PlusGamePlayer
 
         if (m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()] != null)
         {
-            //D.Log("dummy1: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString());
+            ////D.Log("dummy1: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString());
             answerStrings.Add(m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute1()].ToString());
         }
 
         if (m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()] != null)
         {
-            //D.Log("dummy2: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString());
+            ////D.Log("dummy2: " + m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString());
             answerStrings.Add(m_currentData [CorrectWordCoordinator.Instance.GetDummyAttribute2()].ToString());
         }
         

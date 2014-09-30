@@ -62,7 +62,7 @@ public class PadPhoneme : MonoBehaviour
         m_phoneme = pbi.m_fullPhoneme;
         m_positionIndex = pbi.m_positionIndex;
         
-        ////////D.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
+        //////////D.Log(System.String.Format("Phoneme: {0} - {1}", m_phoneme, m_positionIndex));
     }
 
     public void AddPadLetter(PadLetter padLetter)
