@@ -919,6 +919,34 @@ public static class DataHelpers
             }
         }
 
+        // White: All
+        // Gold: .10
+        // Purple: .15
+        // Turquoise: .00 and .30
+
+        if (pipColor < ColorInfo.PipColor.White)
+        {
+            times.RemoveAll(x => x.GetId() % 10 != 0 && x.GetId() % 100 % 15 != 0);
+        }
+        
+        if (pipColor < ColorInfo.PipColor.Gold)
+        {
+            times.RemoveAll(x => x.GetId() % 100 % 15 != 0);
+        }
+        
+        if (pipColor < ColorInfo.PipColor.Purple)
+        {
+            times.RemoveAll(x => x.GetId() % 100 % 30 != 0);
+        }
+
+
+
+        /*
+        // White: All
+        // Gold: .05
+        // Purple: .10
+        // Turquoise: .00 and .30
+        
         if (pipColor < ColorInfo.PipColor.White)
         {
             times.RemoveAll(x => x.GetId() % 5 != 0);
@@ -933,6 +961,7 @@ public static class DataHelpers
         {
             times.RemoveAll(x => x.GetId() % 100 % 30 != 0);
         }
+        */
 
         return times;
     }
@@ -991,10 +1020,12 @@ public static class DataHelpers
                 return 150;
                 break;
             case ColorInfo.PipColor.Turquoise:
-                return 250;
+                return 100;
+                //return 250;
                 break;
             case ColorInfo.PipColor.Purple:
-                return 500;
+                return 250;
+                //return 500;
                 break;
             case ColorInfo.PipColor.Gold:
                 return 1000;

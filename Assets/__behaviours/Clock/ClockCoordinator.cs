@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class ClockCoordinator : Singleton<ClockCoordinator>
 {
@@ -29,11 +30,9 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
         
         m_dataPool = DataHelpers.GetTimes();
-        
-        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
-        
-        ////D.Log("m_dataPool.Count: " + m_dataPool.Count);
-        
+        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return ((DateTime)x["datetime"]).CompareTo((DateTime)y["datetime"]); });
+
+
         int numPlayers = GetNumPlayers();
         
         if (numPlayers == 1)
@@ -115,7 +114,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
 
     DataRow GetRandomData()
     {
-        return m_dataPool [Random.Range(0, m_dataPool.Count)];
+        return m_dataPool [UnityEngine.Random.Range(0, m_dataPool.Count)];
     }
 
     public void CharacterSelected(int characterIndex)
@@ -129,6 +128,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
     public void OnLevelUp()
     {
         m_dataPool = DataSetters.LevelUpTimes();
+        m_dataPool.Sort(delegate(DataRow x, DataRow y) { return ((DateTime)x["datetime"]).CompareTo((DateTime)y["datetime"]); });
         ScoreHealth.RefreshColorAll();
     }
     

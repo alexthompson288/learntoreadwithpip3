@@ -212,7 +212,7 @@ public class ScoreHealth : PlusScoreKeeper
         
         Hashtable onTweenArgs = new Hashtable();
         onTweenArgs.Add("position", m_levelUpOnLocation);
-        onTweenArgs.Add("time", 0.35f);
+        onTweenArgs.Add("time", 0.2f);
         onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
         iTween.MoveTo(m_levelUpTweener, onTweenArgs);
 
@@ -239,7 +239,7 @@ public class ScoreHealth : PlusScoreKeeper
 
         m_state = State.Timer;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
 
         Hashtable offTweenArgs = new Hashtable();
         offTweenArgs.Add("position", m_levelUpOffLocalPosition);

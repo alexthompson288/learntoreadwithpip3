@@ -31,6 +31,11 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     DataRow m_currentData = null;
 
+    void Awake()
+    {
+        m_countLabel.text = "";
+    }
+
     public IEnumerator PlayTrafficLights()
     {
         yield return StartCoroutine(m_trafficLights.On());

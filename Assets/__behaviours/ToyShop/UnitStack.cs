@@ -28,6 +28,8 @@ public class UnitStack : MonoBehaviour
     private string[] m_addAudioEvents;
     [SerializeField]
     private string[] m_removeAudioEvents;
+    [SerializeField]
+    private UILabel m_valueLabel;
 
     Color m_stackableColor;
 
@@ -54,6 +56,7 @@ public class UnitStack : MonoBehaviour
 	public void SetValue(int myValue)
     {
         m_value = myValue;
+        m_valueLabel.text = m_value.ToString();
 
         ValueSpriteName correctUnit = System.Array.Find(m_valueSpriteNames, x => x.m_value == m_value);
 

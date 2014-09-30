@@ -311,7 +311,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
         Hashtable tweenArgs = new Hashtable();
 
-        float posY = allUnlocked ? 262 : 310;
+        float posY = allUnlocked ? 280 : 310;
         tweenArgs.Add("position", new Vector3(0, posY, 0));
 
         tweenArgs.Add("islocal", true);

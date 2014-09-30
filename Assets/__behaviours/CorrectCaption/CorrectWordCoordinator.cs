@@ -24,7 +24,8 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     void RemoveIllegalData()
     {
         m_dataPool = DataHelpers.OnlyPictureData(m_dataPool);
-        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null && x[m_dummyAttribute2] == null);
+        m_dataPool.RemoveAll(x => x[m_dummyAttribute1] == null || string.IsNullOrEmpty(x[m_dummyAttribute1].ToString()) 
+                               || x[m_dummyAttribute2] == null || string.IsNullOrEmpty(x[m_dummyAttribute1].ToString()));
     }
     
     IEnumerator Start()
