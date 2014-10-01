@@ -155,14 +155,12 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     IEnumerator ResetHasClickedGameButton()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.4f);
         m_hasClickedGameButton = false;
     }
 
     void OnClickGameButton(EventRelay relay)
     {
-        //D.Log("OnClickGameButton()");
-
         PlusGame plusGame = relay.GetComponentInParent<PlusGame>() as PlusGame;
 
         if (!m_hasClickedGameButton)
