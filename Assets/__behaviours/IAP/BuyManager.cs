@@ -308,8 +308,11 @@ public class BuyManager : Singleton<BuyManager>
         D.Log("RestorePurchases - Calling restoreCompletedTransactions");
         StoreKitBinding.restoreCompletedTransactions();
 
-
+#if UNITY_EDITOR
+        float restoreTime = 3;
+#else
         float restoreTime = 30;
+#endif
 
         D.Log("RestorePurchases - Waiting for " + restoreTime);
 

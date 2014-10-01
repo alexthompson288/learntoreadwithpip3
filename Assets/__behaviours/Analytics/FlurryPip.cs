@@ -8,8 +8,13 @@ public class FlurryPip : Singleton<FlurryPip>
     bool m_hasStarted = false;
     bool m_hasExited = false;
 
-    string m_devApiKey = "JB23T9C942S2B8P8R742";
-    string m_apiKey = "C6CHVND79YBYW3ZBRV54";
+    // Level One
+    //string m_devApiKey = "JB23T9C942S2B8P8R742";
+    //string m_apiKey = "C6CHVND79YBYW3ZBRV54";
+
+    // Plus
+    string m_devApiKey = "Y57427M7ZS8PXQTWKJKX";
+    string m_apiKey = "DMWBJ2C4WTPJNXHFHFYM";
 
     // N.B. Probably skipped GeneralTimed3, maybe skipped GeneralTimed5 and 8
     string m_generalTimedEventName = "GeneralTimed9";

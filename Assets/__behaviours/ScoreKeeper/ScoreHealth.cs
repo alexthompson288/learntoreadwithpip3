@@ -91,7 +91,7 @@ public class ScoreHealth : PlusScoreKeeper
 
         m_levelUpOnLocation = new GameObject("LevelUpOnLocation").transform;
         m_levelUpOnLocation.parent = transform;
-        m_levelUpOnLocation.position = m_levelUpTweener.transform.position;
+        m_levelUpOnLocation.position = new Vector3(m_levelUpTweener.transform.position.x, 0, m_levelUpTweener.transform.position.z);
 
         m_levelUpTweener.transform.localPosition = m_levelUpOffLocalPosition;
     }

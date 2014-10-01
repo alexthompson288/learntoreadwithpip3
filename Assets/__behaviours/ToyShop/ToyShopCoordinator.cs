@@ -125,6 +125,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
     public void OnLevelUp()
     {
+        DataSetters.LevelUpNumbers();
         SetData();
         ScoreHealth.RefreshColorAll();
     }

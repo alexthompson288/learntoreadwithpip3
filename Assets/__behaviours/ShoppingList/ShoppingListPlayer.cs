@@ -24,8 +24,6 @@ public class ShoppingListPlayer : PlusGamePlayer
 
     HashSet<DataRow> m_currentData = new HashSet<DataRow>();
 
-    List<GameWidget> m_spawnedDraggables = new List<GameWidget>();
-
     int m_numCorrectAnswers = 0;
 
 
@@ -91,7 +89,6 @@ public class ShoppingListPlayer : PlusGamePlayer
             GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
             widget.SetUp("words", answer, DataHelpers.GetPicture(answer), false);
             widget.Unpressed += OnWidgetRelease;
-            m_spawnedDraggables.Add(widget);
 
             ++answerIndex;
         }
@@ -146,17 +143,31 @@ public class ShoppingListPlayer : PlusGamePlayer
     
     public IEnumerator ClearQuestion()
     {
+        GameWidget[] listWidgets = m_shoppingList.GetComponentsInChildren<GameWidget>() as GameWidget[];
+
+        for (int i = 0; i < listWidgets.Length; ++i)
+        {
+            iTween.Stop(listWidgets[i].gameObject);
+        }
+
         m_shoppingList.Off();
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
         yield return new WaitForSeconds(m_shoppingList.GetTotalDurationOff());
 
-        for(int i = m_spawnedDraggables.Count - 1; i > -1; --i)
+        for(int i = listWidgets.Length - 1; i > -1; --i)
         {
-            m_spawnedDraggables[i].Off();
+            listWidgets[i].Off();
         }
 
-        m_spawnedDraggables.Clear();
+        foreach (Transform locator in m_locators)
+        {
+            GameWidget[] unusedWidgets = locator.GetComponentsInChildren<GameWidget>() as GameWidget[];
+            for(int i = unusedWidgets.Length - 1; i > -1; --i)
+            {
+                unusedWidgets[i].Off();
+            }
+        }
 
         yield return new WaitForSeconds(0.75f);
 

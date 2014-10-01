@@ -21,8 +21,8 @@ public class MultiplicationQuadPlayer : GamePlayer
     private UILabel m_columnLabel;
     [SerializeField]
     private UILabel m_targetLabel;
-    [SerializeField]
-    private UISprite m_targetSplodge;
+//    [SerializeField]
+//    private UISprite m_targetSplodge;
     [SerializeField]
     private UILabel m_countLabel;
 
@@ -68,6 +68,8 @@ public class MultiplicationQuadPlayer : GamePlayer
         {
             m_columnButtons[i].Unpressing += OnUnpressColumnButton;
         }
+
+        m_scoreKeeper.SetHealthLostPerSecond(1f);
         
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
@@ -150,18 +152,16 @@ public class MultiplicationQuadPlayer : GamePlayer
 
     void ChangeSplodgeColor(ColorInfo.PipColor splodgeColor)
     {
-        /*
-        StopCoroutine("ChangeSplodgeColorCo");
-        m_targetSplodge.color = ColorInfo.GetColor(splodgeColor);
-        StartCoroutine("ChangeSplodgeColorCo");
-        */
+//        StopCoroutine("ChangeSplodgeColorCo");
+//        m_targetSplodge.color = ColorInfo.GetColor(splodgeColor);
+//        StartCoroutine("ChangeSplodgeColorCo");
     }
 
-    IEnumerator ChangeSplodgeColorCo()
-    {
-        yield return new WaitForSeconds(0.75f);
-        m_targetSplodge.color = Color.white;
-    }
+//    IEnumerator ChangeSplodgeColorCo()
+//    {
+//        yield return new WaitForSeconds(0.75f);
+//        m_targetSplodge.color = Color.white;
+//    }
 
     public IEnumerator ClearQuestion ()
     {

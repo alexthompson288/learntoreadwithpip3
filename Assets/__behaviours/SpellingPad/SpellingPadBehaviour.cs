@@ -86,7 +86,10 @@ public class SpellingPadBehaviour : MonoBehaviour
 		SqliteDatabase database = GameDataBridge.Instance.GetDatabase();
 		DataTable dt = database.ExecuteQuery("select * from words where word='" + m_editedWord + "'");
 		
-		m_sayWholeWordButton.SetWordAudio(m_editedWord);
+        if (m_sayWholeWordButton != null)
+        {
+            m_sayWholeWordButton.SetWordAudio(m_editedWord);
+        }
 		
 		if (dt.Rows.Count > 0)
 		{
@@ -254,14 +257,21 @@ public class SpellingPadBehaviour : MonoBehaviour
 
 	public void SayWholeWord()
 	{
-		m_sayWholeWordButton.Speak();
+        if (m_sayWholeWordButton != null)
+        {
+            m_sayWholeWordButton.Speak();
+        }
 	}
 	
 	public void SayAll()
 	{
 		StopAllCoroutines();
 		SayWholeWord();
-		StartCoroutine(Segment(m_sayWholeWordButton.GetClipLength()));
+
+        if (m_sayWholeWordButton != null)
+        {
+            StartCoroutine(Segment(m_sayWholeWordButton.GetClipLength()));
+        }
 	}
 	
 	public IEnumerator Segment(float delay)

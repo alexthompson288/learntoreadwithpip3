@@ -153,6 +153,12 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         iTween.MoveTo(m_camera, targetPos, m_cameraTweenDuration);
     }
 
+    IEnumerator ResetHasClickedGameButton()
+    {
+        yield return new WaitForSeconds(0.2f);
+        m_hasClickedGameButton = false;
+    }
+
     void OnClickGameButton(EventRelay relay)
     {
         //D.Log("OnClickGameButton()");
@@ -167,8 +173,16 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             }
 
             m_hasClickedGameButton = true;
+            StopCoroutine("ResetHasClickedGameButton");
+            StartCoroutine("ResetHasClickedGameButton");
 
-            if (ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGame().GetId()))
+#if UNITY_EDITOR
+            bool canAccess = true;
+#else
+            bool canAccess = ContentLock.Instance.IsPlusGameUnlocked(plusGame.GetGame().GetId());
+#endif
+
+            if (canAccess)
             {
                 ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
                 for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
@@ -202,7 +216,6 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                 PurchasePlusGames.Instance.On(plusGame.GetGame());
             }
         }
-
     }
 
     void OnChooseColor(EventRelay relay)
@@ -288,6 +301,8 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     public void RefreshPurchases()
     {
+        m_hasClickedGameButton = false;
+
         bool allUnlocked = true;
 
         for (int i = 0; i < m_mathsGames.Length; ++i)
@@ -309,8 +324,6 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                 allUnlocked = false;
             }
         }
-
-
 
         Hashtable tweenArgs = new Hashtable();
 
