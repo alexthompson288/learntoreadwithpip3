@@ -138,6 +138,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     void OnClickMenuButton(EventRelay relay)
     {
+        D.Log("Clicked Menu Button");
         bool goToMaths = relay == m_mathsButton;
 
         Vector3 localPos = m_mathsParent.localPosition;
@@ -171,6 +172,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
     IEnumerator TweenCamera(Vector3 targetPos)
     {
+        D.Log("Tweening Camera");
         yield return new WaitForSeconds(0.1f);
         iTween.MoveTo(m_camera, targetPos, m_cameraTweenDuration);
     }
