@@ -68,4 +68,10 @@ public class PipColorWidgets : MonoBehaviour
             Clicked(this);
         }
     }
+
+    public void SetPipColor(ColorInfo.PipColor myColor)
+    {
+        m_color = myColor;
+        RefreshWidgets();
+    }
 }

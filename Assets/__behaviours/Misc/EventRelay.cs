@@ -1,10 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class EventRelay : MonoBehaviour 
 {
 	public delegate void SimpleRelayEventHandler(EventRelay relay);
-    public event SimpleRelayEventHandler SingleClicked;
+    private event SimpleRelayEventHandler InternalSingleClicked;
+    public event SimpleRelayEventHandler SingleClicked
+    {
+        add
+        {
+            if(InternalSingleClicked == null || !InternalSingleClicked.GetInvocationList().Contains(value))
+            {
+                InternalSingleClicked += value;
+            }
+        }
+        remove
+        {
+            InternalSingleClicked -= value;
+        }
+    }
 
 	public delegate void BoolRelayEventHandler(EventRelay relay, bool pressed);
 	public event BoolRelayEventHandler Pressed;
@@ -99,9 +114,9 @@ public class EventRelay : MonoBehaviour
 
 	void OnClick()
 	{
-		if(SingleClicked != null && (Swiped == null || !m_hasDragged))
+        if(InternalSingleClicked != null && (Swiped == null || !m_hasDragged))
 		{
-			SingleClicked(this);
+            InternalSingleClicked(this);
 		}
 	}
 	
