@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BasicMenuNavigation : MonoBehaviour {
+public class BasicMenuNavigation : MonoBehaviour 
+{
+    [SerializeField]
+    private GameObject m_camera;
+    [SerializeField]
+    private Transform m_gamesMenu;
+    [SerializeField]
+    private Transform m_storiesMenu;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    
 }
