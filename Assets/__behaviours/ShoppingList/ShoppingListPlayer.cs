@@ -93,6 +93,8 @@ public class ShoppingListPlayer : PlusGamePlayer
             ++answerIndex;
         }
 
+        ShoppingListCoordinator.Instance.SetHasCompletedFalse();
+
         yield break;
     }
     

@@ -209,10 +209,12 @@ public class ScoreHealth : PlusScoreKeeper
         }
         
         InvokeLevelledUp();
-        
+
+        float tweenDurationOn = 0.2f;
+
         Hashtable onTweenArgs = new Hashtable();
         onTweenArgs.Add("position", m_levelUpOnLocation);
-        onTweenArgs.Add("time", 0.2f);
+        onTweenArgs.Add("time", tweenDurationOn);
         onTweenArgs.Add("easetype", iTween.EaseType.easeOutBounce);
         iTween.MoveTo(m_levelUpTweener, onTweenArgs);
 
@@ -220,26 +222,32 @@ public class ScoreHealth : PlusScoreKeeper
         WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
         WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
-        while (m_healthBars[0].height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
+        if (numPlayers == 1)
         {
-            yield return null;
+            while (m_healthBars[0].height < Mathf.FloorToInt(m_healthBarTargetLocation.transform.localPosition.y))
+            {
+                yield return null;
+            }
+        }
+        else
+        {
+            RefreshHealthBar(false);
         }
 
         int targetBarHeight = (int)(m_health * m_healthBarTargetLocation.localPosition.y / m_maxHealth);
-        //D.Log("targetBarHeight: " + targetBarHeight);
 
         m_health = Mathf.Min(m_health, m_startHealth);
 
-        while (m_healthBars[0].height > m_startHeight)
-        {
-            yield return null;
-        }
-
-        //////D.Log("Reset");
+//        while (m_healthBars[0].height > m_startHeight)
+//        {
+//            yield return null;
+//        }
 
         m_state = State.Timer;
 
-        yield return new WaitForSeconds(0.2f);
+        float extraDelay = numPlayers == 1 ? 0.3f : 1f;
+
+        yield return new WaitForSeconds(tweenDurationOn + extraDelay);
 
         Hashtable offTweenArgs = new Hashtable();
         offTweenArgs.Add("position", m_levelUpOffLocalPosition);

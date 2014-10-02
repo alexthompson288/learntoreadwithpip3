@@ -55,8 +55,7 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
 
     void OnClickButton(EventRelay relay)
     {
-        //D.Log("PurchasePlusGames.OnClickButton()");
-        //D.Log("Name: " + relay.name);
+#if UNITY_IPHONE
         if (m_canPurchase)
         {
             m_canPurchase = false;
@@ -80,6 +79,7 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
                 StartCoroutine(BuyManager.Instance.RestorePurchases(m_restoringMoveable, m_countdownLabel));
             }
         }
+#endif
     }
 
     IEnumerator ResetCanPurchase()

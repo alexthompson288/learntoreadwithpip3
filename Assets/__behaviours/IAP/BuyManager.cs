@@ -38,6 +38,7 @@ public class BuyManager : Singleton<BuyManager>
         AllGames
     }
 
+    #if UNITY_IPHONE
     string BuildModuleProductId(int moduleId)
     {
         return m_modulePrefix + moduleId.ToString();
@@ -117,7 +118,7 @@ public class BuyManager : Singleton<BuyManager>
         ParentGate.Instance.Dismissed -= OnParentGateDismiss;
     }
 
-#if UNITY_IPHONE
+
     IEnumerator Start()
     {
         D.Log("BuyManager.Start()");

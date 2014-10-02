@@ -90,10 +90,32 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             relay.SingleClicked += OnClickSwitchButton;
         }
 
+#if UNITY_STANDALONE
+        System.Array.Sort(m_chooseNumPlayersButtons, CollectionHelpers.LocalTopToBottom);
+
+        for(int i = 0; i < m_chooseNumPlayersButtons.Length; ++i)
+        {
+            if(i == 0)
+            {
+                m_chooseNumPlayersButtons[i].SingleClicked += OnChooseNumPlayers;
+            }
+            else
+            {
+                //m_chooseNumPlayersButtons[i].GetComponentInChildren<UILabel>()
+
+                UISprite[] buttonSprites = m_chooseNumPlayersButtons[i].GetComponentsInChildren<UISprite>() as UISprite[];
+                foreach(UISprite sprite in buttonSprites)
+                {
+                    sprite.color = Color.grey;
+                }
+            }
+        }
+#else
         foreach (EventRelay relay in m_chooseNumPlayersButtons)
         {
             relay.SingleClicked += OnChooseNumPlayers;
         }
+#endif
 
         System.Array.Sort(m_chooseColorButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
 
@@ -202,7 +224,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
                 m_bookmark = System.Array.IndexOf(m_mathsGames, plusGame) != -1 ? Bookmark.Maths : Bookmark.Reading;
                 
                 m_gameName = plusGame.GetGame()["name"].ToString();
-                
+
                 m_chooseNumPlayersMoveable.On();
             } 
             else if (ContentLock.Instance.lockType == ContentLock.Lock.Login)
@@ -323,6 +345,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             }
         }
 
+#if UNITY_IPHONE
         Hashtable tweenArgs = new Hashtable();
 
         float posY = allUnlocked ? 280 : 310;
@@ -344,5 +367,6 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
         {
             m_allUnlockedMoveable.Off();
         }
+#endif
     }
 }

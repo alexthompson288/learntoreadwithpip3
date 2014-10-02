@@ -103,23 +103,35 @@ public class ShoppingListCoordinator : Singleton<ShoppingListCoordinator>
             GameManager.Instance.CompleteGame();
         }
     }
-    
+
+    bool m_hasCompleted = false;
+
+    public void SetHasCompletedFalse()
+    {
+        m_hasCompleted = false;
+    }
+
     public void OnCompleteSet(ShoppingListPlayer correctPlayer)
     {
-        HashSet<DataRow> currentData = GetQuestionData();
-        
-        if (m_questionsAreShared && GetNumPlayers() == 2)
+        if (!m_hasCompleted)
         {
-            for(int i = 0; i < GetNumPlayers(); ++i)
+            m_hasCompleted = true;
+
+            HashSet<DataRow> currentData = GetQuestionData();
+            
+            if (m_questionsAreShared && GetNumPlayers() == 2)
             {
-                m_gamePlayers[i].SetCurrentData(currentData);
-                StartCoroutine(m_gamePlayers[i].ClearQuestion());
+                for (int i = 0; i < GetNumPlayers(); ++i)
+                {
+                    m_gamePlayers [i].SetCurrentData(currentData);
+                    StartCoroutine(m_gamePlayers [i].ClearQuestion());
+                }
+            } 
+            else
+            {
+                correctPlayer.SetCurrentData(currentData);
+                StartCoroutine(correctPlayer.ClearQuestion());
             }
-        }
-        else
-        {
-            correctPlayer.SetCurrentData(currentData);
-            StartCoroutine(correctPlayer.ClearQuestion());
         }
     }
 
