@@ -1,0 +1,12 @@
+Pink,NewJoinNumbers,NewSequenceNumbers
+Red,NewSequenceNumbers,NewPipeNumbers
+Yellow,NewSequenceNumbers,NewJoinNumbers
+Blue,NewCompleteEquationNumbers,NewJoinNumbers
+Green,NewCompleteEquationNumbers,NewSequenceNumbers
+Orange,NewCompleteEquationNumbers,NewPipeNumbers
+Pink,NewJoinWordPictures,NewCatapultPhonemePictures
+Red,NewFlySwat,NewPlusSpelling
+Yellow,NewOrderSentence,NewCatapultWordPictures
+Blue,NewSillySensible,NewOrderSentence
+Green,NewJoinWordPictures,NewCatapultWordPictures
+Orange,NewPlusSpelling,NewOrderSentence
