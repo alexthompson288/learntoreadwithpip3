@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class BasicMenuNavigation : MonoBehaviour 
+public class BasicMenuNavigation : Menu 
 {
     [SerializeField]
     private UIPanel m_panel;
@@ -55,16 +55,16 @@ public class BasicMenuNavigation : MonoBehaviour
         }
     }
 
-    public void On()
+    public override void On()
     {
         m_camera.transform.position = m_main.position;
-        m_camera.GetComponent<UICamera>().enabled = true;
+        //m_camera.GetComponent<UICamera>().enabled = true;
         TweenAlpha.Begin(m_panel.gameObject, 0.25f, 1);
     }
 
     public void OnClickDismiss(EventRelay relay)
     {
-        m_camera.GetComponent<UICamera>().enabled = false;
+        //m_camera.GetComponent<UICamera>().enabled = false;
         TweenAlpha.Begin(m_panel.gameObject, 0.25f, 0);
     }
 
@@ -96,7 +96,7 @@ public class BasicMenuNavigation : MonoBehaviour
 
         bool isStartLevel = Application.loadedLevel == 0;
 
-        m_camera.GetComponent<UICamera>().enabled = isStartLevel;
+        //m_camera.GetComponent<UICamera>().enabled = isStartLevel;
         m_panel.alpha = isStartLevel ? 1 : 0;
 
         if (isStartLevel)
@@ -143,7 +143,7 @@ public class BasicMenuNavigation : MonoBehaviour
     {
         ColorInfo.PipColor pipColor = relay.GetComponent<PipColorWidgets>().color;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         bool canAccess = true;
 #else
         bool canAccess = BuyInfo.Instance.IsColorPurchased(pipColor);
@@ -166,7 +166,7 @@ public class BasicMenuNavigation : MonoBehaviour
     {
         ColorInfo.PipColor pipColor = relay.GetComponent<PipColorWidgets>().color;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         bool canAccess = true;
 #else
         bool canAccess = BuyInfo.Instance.IsColorPurchased(pipColor);
@@ -189,7 +189,7 @@ public class BasicMenuNavigation : MonoBehaviour
     {
         ColorInfo.PipColor pipColor = relay.GetComponent<PipColorWidgets>().color;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
         bool canAccess = true;
 #else
         bool canAccess = BuyInfo.Instance.IsColorPurchased(pipColor);

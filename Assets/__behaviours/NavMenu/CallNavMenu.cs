@@ -16,26 +16,8 @@ public class CallNavMenu : MonoBehaviour
 		}
 	}
 
-	void OnPress (bool pressed) 
+	void OnClick () 
 	{
-        if (!pressed)
-        {
-            ////////D.Log("CallNavMenu.OnPress(false)");
-            PipGameBuildSettings gameSettings = (PipGameBuildSettings)(SettingsHolder.Instance.GetSettings());
-    		
-            if (gameSettings.m_disableNavMenu)
-            {
-                TransitionScreen ts = (TransitionScreen)GameObject.FindObjectOfType(typeof(TransitionScreen));
-                if (ts != null)
-                {
-                    ts.ChangeLevel(gameSettings.m_startingSceneName, false);
-                }
-            } 
-            else
-            {
-                ////////D.Log("Calling");
-                NavMenu.Instance.Call(m_menuType);
-            }
-        }
+        Menu.Instance.On();
 	}
 }

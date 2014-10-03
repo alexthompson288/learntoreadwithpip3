@@ -2,12 +2,10 @@
 using System.Collections;
 using Wingrove;
 
-public class NavMenu : Singleton<NavMenu> 
+public class NavMenu : Menu
 {
     [SerializeField]
     private TweenOnOffBehaviour[] m_moveables;
-    [SerializeField]
-    private GameObject m_callButton;
     [SerializeField]
     private GameObject m_moveableParent;
     [SerializeField]
@@ -63,10 +61,11 @@ public class NavMenu : Singleton<NavMenu>
         StartCoroutine("Disable");
     }
     
-    public void HideCallButton()
+
+
+    public override void On()
     {
-        ////////D.Log("HideCallButton()");
-        m_callButton.SetActive(false);
+        Call(MenuType.Main);
     }
 
     public void Call(MenuType menuType)
