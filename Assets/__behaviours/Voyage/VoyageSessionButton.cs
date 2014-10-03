@@ -20,16 +20,16 @@ public class VoyageSessionButton : MonoBehaviour
         int sessionId = System.Convert.ToInt32(m_session["id"]);
 
         /*
-        if (VoyageInfo.Instance.HasCompletedSession(sessionId))
+        if (OldVoyageInfo.Instance.HasCompletedSession(sessionId))
         {
-            m_background.spriteName = VoyageInfo.Instance.GetSessionBackground(sessionId);
+            m_background.spriteName = OldVoyageInfo.Instance.GetSessionBackground(sessionId);
             m_background.MakePixelPerfect();
         }
         */
 
-        m_background.spriteName = VoyageInfo.Instance.GetSessionBackground(sessionId);
+        m_background.spriteName = OldVoyageInfo.Instance.GetSessionBackground(sessionId);
 
-        m_rotationBehaviour.enabled = VoyageInfo.Instance.HasCompletedSession(sessionId);
+        m_rotationBehaviour.enabled = OldVoyageInfo.Instance.HasCompletedSession(sessionId);
 
 
         //m_background.MakePixelPerfect();

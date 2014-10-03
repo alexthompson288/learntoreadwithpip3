@@ -11,11 +11,7 @@ public class BuyInfo : Singleton<BuyInfo>
     private bool m_overwrite;
     #endif
 
-    // TODO: You need to record whether they have bought package versus have bought each item individually.
-    //       If they buy a packgage and you add a new module/games then the new content should be unlocked
-    //       however, this is not the case if they purchased content individually
-
-    HashSet<int> m_purchasedModules = new HashSet<int>();
+    HashSet<string> m_purchasedColors = new HashSet<string>();
     HashSet<int> m_purchasedGames = new HashSet<int>();
 
     void Awake()
@@ -30,23 +26,23 @@ public class BuyInfo : Singleton<BuyInfo>
     }
 
     ////////////////////////////////////////////////////////////////
-    // Modules
-    public bool IsModulePurchased(int moduleId)
+    // Colors
+    public bool IsColorPurchased(ColorInfo.PipColor pipColor)
     {
-        return m_purchasedModules.Contains(moduleId);
+        return m_purchasedColors.Contains(pipColor.ToString()) || pipColor == ColorInfo.PipColor.Pink;
     }
 
-    public void SetModulePurchased(int moduleId)
+    public void SetColorPurchased(string colorName)
     {
-        m_purchasedModules.Add(moduleId);
+        m_purchasedColors.Add(colorName);
         Save();
     }
 
-    public void SetModulesPurchased(int[] moduleIds)
+    public void SetColorsPurchased(List<string> colorNames)
     {
-        foreach (int moduleId in moduleIds)
+        foreach (string colorName in colorNames)
         {
-            m_purchasedModules.Add(moduleId);
+            m_purchasedColors.Add(colorName);
         }
         Save();
     }
@@ -83,10 +79,10 @@ public class BuyInfo : Singleton<BuyInfo>
         
         if (data.Length != 0)
         {
-            int numModulesPurchased = br.ReadInt32();
-            for (int i = 0; i < numModulesPurchased; ++i)
+            int numColorsPurchased = br.ReadInt32();
+            for (int i = 0; i < numColorsPurchased; ++i)
             {
-                m_purchasedModules.Add(br.ReadInt32());
+                m_purchasedColors.Add(br.ReadString());
             }
 
             int numGamesPurchased = br.ReadInt32();
@@ -106,10 +102,10 @@ public class BuyInfo : Singleton<BuyInfo>
         MemoryStream newData = new MemoryStream();
         BinaryWriter bw = new BinaryWriter(newData);
         
-        bw.Write(m_purchasedModules.Count);
-        foreach (int i in m_purchasedModules)
+        bw.Write(m_purchasedColors.Count);
+        foreach (string s in m_purchasedColors)
         {
-            bw.Write(i);
+            bw.Write(s);
         }
 
         bw.Write(m_purchasedGames.Count);

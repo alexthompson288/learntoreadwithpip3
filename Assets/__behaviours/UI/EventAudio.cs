@@ -7,6 +7,8 @@ public class EventAudio : MonoBehaviour
     private string m_press;
     [SerializeField]
     private string m_unpress;
+    [SerializeField]
+    private string m_click;
 
 	void OnPress(bool pressed)
     {
@@ -16,5 +18,10 @@ public class EventAudio : MonoBehaviour
         {
             WingroveAudio.WingroveRoot.Instance.PostEvent(audioEvent);
         }
+    }
+
+    void OnClick()
+    {
+        WingroveAudio.WingroveRoot.Instance.PostEvent(m_click);
     }
 }

@@ -22,11 +22,54 @@ public class EventRelay : MonoBehaviour
     }
 
 	public delegate void BoolRelayEventHandler(EventRelay relay, bool pressed);
-	public event BoolRelayEventHandler Pressed;
+    private event BoolRelayEventHandler InternalPressed;
+    public event BoolRelayEventHandler Pressed
+    {
+        add
+        {
+            if(InternalPressed == null || !InternalPressed.GetInvocationList().Contains(value))
+            {
+                InternalPressed += value;
+            }
+        }
+        remove
+        {
+            InternalPressed -= value;
+        }
+    }
 
 	public delegate void MouseOrTouchRelayEventHandler(EventRelay relay, UICamera.MouseOrTouch mot);
-	public event MouseOrTouchRelayEventHandler Swiped;
-	public event MouseOrTouchRelayEventHandler SwipedHorizontal;
+    private event MouseOrTouchRelayEventHandler InternalSwiped;
+	public event MouseOrTouchRelayEventHandler Swiped
+    {
+        add
+        {
+            if(InternalSwiped == null || !InternalSwiped.GetInvocationList().Contains(value))
+            {
+                InternalSwiped += value;
+            }
+        }
+        remove
+        {
+            InternalSwiped -= value;
+        }
+    }
+
+    private event MouseOrTouchRelayEventHandler InternalSwipedHorizontal;
+    public event MouseOrTouchRelayEventHandler SwipedHorizontal
+    {
+        add
+        {
+            if(InternalSwipedHorizontal == null || !InternalSwipedHorizontal.GetInvocationList().Contains(value))
+            {
+                InternalSwipedHorizontal += value;
+            }
+        }
+        remove
+        {
+            InternalSwipedHorizontal -= value;
+        }
+    }
 
 	[SerializeField]
 	private float m_swipeDistanceThreshold = 20;
@@ -55,9 +98,9 @@ public class EventRelay : MonoBehaviour
 			m_hasSwipedHorizontal = false;
 		}
 		
-		if (Pressed != null) 
+		if (InternalPressed != null) 
 		{
-			Pressed(this, pressed);
+            InternalPressed(this, pressed);
 		}
 	}
 
@@ -65,56 +108,25 @@ public class EventRelay : MonoBehaviour
 	{
 		m_hasDragged = true;
 
-		if (Mathf.Abs(UICamera.currentTouch.totalDelta.x) > m_swipeDistanceThreshold && !m_hasSwiped && SwipedHorizontal != null) 
+        if (InternalSwipedHorizontal != null && Mathf.Abs(UICamera.currentTouch.totalDelta.x) > m_swipeDistanceThreshold && !m_hasSwiped) 
 		{
-			Debug.Log("SwipedHorizontal");
-			SwipedHorizontal(this, UICamera.currentTouch);
+            InternalSwipedHorizontal(this, UICamera.currentTouch);
 		}
 
 		if (UICamera.currentTouch.totalDelta.magnitude > m_swipeDistanceThreshold) 
 		{
 			m_hasSwiped = true;
 
-			if(!m_hasSwiped && Swiped != null)
+            if(InternalSwiped != null && !m_hasSwiped)
 			{
-				Debug.Log("Swiped");
-				Swiped(this, UICamera.currentTouch);
+				InternalSwiped(this, UICamera.currentTouch);
 			}
 		}
 	}
 
-	/*
-	// Player Interactions
-	void OnDrag(Vector2 delta)
-	{
-		if(m_canDrag)
-		{
-			Ray camPos = UICamera.currentCamera.ScreenPointToRay(
-				new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
-			transform.position = new Vector3(camPos.origin.x, camPos.origin.y, 0) - m_dragOffset;
-			
-			m_dragOffset = m_dragOffset - (Time.deltaTime * m_dragOffset);
-			
-			m_hasDragged = true;
-		}
-	}
-	
-	void OnPress(bool pressed)
-	{
-		if (pressed)
-		{
-			m_startPosition = transform.position;
-			Ray camPos = UICamera.currentCamera.ScreenPointToRay(new Vector3(UICamera.currentTouch.pos.x, UICamera.currentTouch.pos.y, 0));
-			m_dragOffset = new Vector3(camPos.origin.x, camPos.origin.y, 0) - transform.position;
-			
-			m_hasDragged = false;
-		} 
-	}
-	*/
-
 	void OnClick()
 	{
-        if(InternalSingleClicked != null && (Swiped == null || !m_hasDragged))
+        if(InternalSingleClicked != null && (InternalSwiped == null || !m_hasDragged))
 		{
             InternalSingleClicked(this);
 		}

@@ -66,13 +66,11 @@ public class PurchasePlusGames : Singleton<PurchasePlusGames>
 
             if (relay == m_purchaseGame)
             {
-                //D.Log("Purchasing game: " + m_gameId);
                 BuyManager.Instance.BuyGame(m_gameId);
             } 
             else if(relay == m_purchaseAllGames)
             {
-                //D.Log("Purchasing all games");
-                BuyManager.Instance.BuyBundle(BuyManager.BundleType.AllGames);
+                BuyManager.Instance.BuyBundle(false);
             }
             else
             {

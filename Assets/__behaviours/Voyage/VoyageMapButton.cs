@@ -30,7 +30,7 @@ public class VoyageMapButton : MonoBehaviour
             int moduleId = DataHelpers.GetModuleId(m_color);
             int numVerticesPerSession = 5;
 
-            int numSessionsComplete = VoyageInfo.Instance.GetNumSessionsComplete(moduleId);
+            int numSessionsComplete = OldVoyageInfo.Instance.GetNumSessionsComplete(moduleId);
             int numVerticesComplete = numSessionsComplete * numVerticesPerSession;
 
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE programmodule_id=" + moduleId);

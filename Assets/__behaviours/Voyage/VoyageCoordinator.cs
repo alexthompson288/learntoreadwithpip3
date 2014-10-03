@@ -104,12 +104,12 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
         {
             bool hasSpawnedModuleMap = false;
 
-            // If VoyageInfo has a bookmark then we might want to spawn in a module map instead of the world map
-            if (VoyageInfo.Instance.hasBookmark)
+            // If OldVoyageInfo has a bookmark then we might want to spawn in a module map instead of the world map
+            if (OldVoyageInfo.Instance.hasBookmark)
             {
                 //////////D.Log("Instantiate module map");
 
-                int moduleId = VoyageInfo.Instance.currentModuleId;
+                int moduleId = OldVoyageInfo.Instance.currentModuleId;
 
                 for(int i = 0; i < m_moduleMapPrefabs.Length; ++i)
                 {
@@ -129,7 +129,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
                 InstantiateWorldMap();
             }
 
-            VoyageInfo.Instance.DestroyBookmark();
+            OldVoyageInfo.Instance.DestroyBookmark();
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -318,7 +318,7 @@ public class VoyageCoordinator : Singleton<VoyageCoordinator>
             m_sessionId = sessionId;
 
             EnviroManager.Instance.SetEnvironment((int)(m_currentModuleMap.color));
-            VoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, 0);
+            OldVoyageInfo.Instance.CreateBookmark(m_currentModuleMap.moduleId, m_sessionId, 0);
 
             DataTable sectionsTable = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + m_sessionId);
 

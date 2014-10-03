@@ -12,11 +12,7 @@ public class BuyManager : Singleton<BuyManager>
     [SerializeField]
 	private bool m_logProductRequests = false;
     [SerializeField]
-    private string m_mathsModulesProductId;
-    [SerializeField]
-    private string m_readingModulesProductId;
-    [SerializeField]
-    private string m_allModulesProductId;
+    private string m_allColorsProductId;
     [SerializeField]
     private string m_allGamesProductId;
 
@@ -28,25 +24,30 @@ public class BuyManager : Singleton<BuyManager>
     string m_currentProductId;
 
     string m_gamePrefix = "plusgame_";
-    string m_modulePrefix = "module_";
+    string m_colorPrefix = "color_";
 
-    public enum BundleType
+    List<ColorInfo.PipColor> GetAllColors()
     {
-        MathsModules,
-        ReadingModules,
-        AllModules,
-        AllGames
+        List<ColorInfo.PipColor> pipColors = new List<ColorInfo.PipColor>();
+        pipColors.Add(ColorInfo.PipColor.Pink);
+        pipColors.Add(ColorInfo.PipColor.Red);
+        pipColors.Add(ColorInfo.PipColor.Yellow);
+        pipColors.Add(ColorInfo.PipColor.Blue);
+        pipColors.Add(ColorInfo.PipColor.Green);
+        pipColors.Add(ColorInfo.PipColor.Orange);
+
+        return pipColors;
     }
 
     #if UNITY_IPHONE
-    string BuildModuleProductId(int moduleId)
+    string BuildColorProductId(ColorInfo.PipColor pipColor)
     {
-        return m_modulePrefix + moduleId.ToString();
+        return m_colorPrefix + pipColor.ToString();
     }
 
-    public void BuyModule(int id)
+    public void BuyColor(ColorInfo.PipColor pipColor)
     {
-        m_currentProductId = BuildModuleProductId(id);
+        m_currentProductId = BuildColorProductId(id);
 
         ParentGate.Instance.Answered += OnParentGateAnswer;
         ParentGate.Instance.On();
@@ -67,36 +68,15 @@ public class BuyManager : Singleton<BuyManager>
         ParentGate.Instance.On();
     }
 
-    public void BuyBundle(BundleType bundleType)
+    public void BuyBundle(bool isColorBundle)
     {
         D.Log("BuyManager.BuyBundle(" + bundleType + ")");
-        bool validType = true;
-        switch (bundleType)
-        {
-            case BundleType.MathsModules:
-                m_currentProductId = m_mathsModulesProductId;
-                break;
-            case BundleType.ReadingModules:
-                m_currentProductId = m_readingModulesProductId;
-                break;
-            case BundleType.AllModules:
-                m_currentProductId = m_allModulesProductId;
-                break;
-                break;
-            case BundleType.AllGames:
-                m_currentProductId = m_allGamesProductId;
-                break;
-            default:
-                validType = false;
-                break;
-        }
 
-        if (validType)
-        {
-            ParentGate.Instance.Answered += OnParentGateAnswer;
-            ParentGate.Instance.Dismissed += OnParentGateDismiss;
-            ParentGate.Instance.On();
-        }
+        m_currentProductId = isColorBundle ? m_allColorsProductId : m_allGamesProductId;
+
+        ParentGate.Instance.Answered += OnParentGateAnswer;
+        ParentGate.Instance.Dismissed += OnParentGateDismiss;
+        ParentGate.Instance.On();
     }
 	
 	void OnParentGateAnswer(bool isCorrect)
@@ -167,7 +147,6 @@ public class BuyManager : Singleton<BuyManager>
         }
     }
 
-    // TODO
     string[] FindAllProductIdentifiers()
     {
         List<string> productIds = new List<string>();
@@ -194,20 +173,12 @@ public class BuyManager : Singleton<BuyManager>
         } 
         else
         {
-            productIds.Add(m_mathsModulesProductId);
-            productIds.Add(m_readingModulesProductId);
-            productIds.Add(m_allModulesProductId);
+            productIds.Add(m_allColorsProductId);
 
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicMaths + "'");
-            foreach (DataRow module in dt.Rows)
+            List<ColorInfo.PipColor> pipColors = GetAllColors();
+            foreach(ColorInfo.PipColor pipColor in pipColors)
             {
-                productIds.Add(BuildModuleProductId(module.GetId()));
-            }
-
-            dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + ProgrammeInfo.basicReading + "'");
-            foreach (DataRow module in dt.Rows)
-            {
-                productIds.Add(BuildModuleProductId(module.GetId()));
+                productIds.Add(BuildColorProductId(pipColor));
             }
         }
 
@@ -396,63 +367,37 @@ public class BuyManager : Singleton<BuyManager>
         BuyInfo.Instance.SetGamesPurchased(ids.ToArray());
     }
 
-    void UnlockMathsModules()
+    void UnlockAllColors()
     {
-        UnlockProgramModules(ProgrammeInfo.basicMaths);
-    }
+        List<ColorInfo.PipColor> pipColors = GetAllColors();
 
-    void UnlockReadingModules()
-    {
-        UnlockProgramModules(ProgrammeInfo.basicMaths);
-    }
-
-    void UnlockProgramModules(string programmename)
-    {
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE programmename='" + programmename + "'");
-        if (dt.Rows.Count > 0)
+        List<string> colors = new List<string>();
+        foreach (ColorInfo.PipColor pipColor in pipColors)
         {
-            int[] moduleIds = new int[dt.Rows.Count];
-            
-            for(int i = 0; i < moduleIds.Length; ++i)
-            {
-                moduleIds[i] = dt.Rows[i].GetId();
-            }
-            
-            BuyInfo.Instance.SetModulesPurchased(moduleIds);
+            colors.Add(pipColor.ToString());
         }
+
+        BuyInfo.Instance.SetColorsPurchased(colors);
     }
 
     void UnlockProduct(string productId)
     {
-        if (productId == m_mathsModulesProductId)
+        if (productId == m_allGamesProductId)
         {
-            UnlockMathsModules();
-        } 
-        else if (productId == m_readingModulesProductId)
-        {
-            UnlockReadingModules();
-        } 
-        else if (productId == m_allModulesProductId)
-        {
-            UnlockMathsModules();
-            UnlockReadingModules();
+            UnlockAllColors();
         } 
         else if (productId == m_allGamesProductId)
         {
             UnlockMathsGames();
             UnlockReadingGames();
         }
-        else if(productId.Contains(m_modulePrefix))
+        else if(productId.Contains(m_colorPrefix))
         {
-            // Find the module id
-            string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
-            int id = Convert.ToInt32(idNum);
-            
-            BuyInfo.Instance.SetModulePurchased(id);
+            BuyInfo.Instance.SetColorPurchased(productId.Replace(m_colorPrefix, ""));
         }
         else if(productId.Contains(m_gamePrefix))
         {
-            // Find the module id
+            // Find the game id
             string idNum = System.Text.RegularExpressions.Regex.Match(productId, @"\d+").Value;
             int id = Convert.ToInt32(idNum);
             

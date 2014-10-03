@@ -41,9 +41,9 @@ public class UnitProgressCoordinator : MonoBehaviour
 
 		yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        if(VoyageInfo.Instance.hasBookmark)
+        if(OldVoyageInfo.Instance.hasBookmark)
         {
-            int sectionId = VoyageInfo.Instance.currentSectionId;
+            int sectionId = OldVoyageInfo.Instance.currentSectionId;
 
     		List<DataRow> sentences = DataHelpers.GetSectionSentences(sectionId);
 

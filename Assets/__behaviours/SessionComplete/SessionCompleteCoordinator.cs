@@ -43,69 +43,42 @@ public class SessionCompleteCoordinator : MonoBehaviour
 	// Use this for initialization
 	IEnumerator Start () 
     {
-        //m_nextButton.SingleClicked += OnNextButtonClick;
-
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
         bool hasSetLabel = false;
         bool hasSetIcon = false;
 
-#if UNITY_EDITOR
-        if(!VoyageInfo.Instance.hasBookmark)
+
+        int sessionId = VoyageInfo.Instance.currentSessionId;
+        
+        for (int i = 0; i < m_spriteNames.Length; ++i)
         {
-            VoyageInfo.Instance.CreateBookmark(1, 301, 1);
+            GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionCompleteButtonPrefab, m_grid.transform);
+            newButton.GetComponent<ClickEvent>().Unpressed += OnButtonClick;
+            newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
+            newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
         }
-#endif
-
-        if (VoyageInfo.Instance.hasBookmark)
-        {
-            int sessionId = VoyageInfo.Instance.currentSessionId;
-            
-            for (int i = 0; i < m_spriteNames.Length; ++i)
-            {
-                GameObject newButton = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_sessionCompleteButtonPrefab, m_grid.transform);
-                newButton.GetComponent<ClickEvent>().Unpressed += OnButtonClick;
-                newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
-                newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
-
-                /*
-                if(VoyageInfo.Instance.GetSessionBackground(sessionId) == m_spriteNames[i])
-                {
-                    m_currentRotateBehaviour = newButton.GetComponent<RotateConstantly>() as RotateConstantly;
-                    m_currentRotateBehaviour.enabled = true;
-                    
-                    m_collectableBackground.spriteName = m_spriteNames[i];
-                }
-                */
-            }
-
-            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + VoyageInfo.Instance.currentModuleId);
-
-            if(dt.Rows.Count > 0 && dt.Rows[0]["modulereward"] != null)
-            {
-                string moduleReward = dt.Rows[0]["modulereward"].ToString();
-
-                if(moduleReward == "Phonemes")
-                {
-                    dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
-
-                    foreach (DataRow phoneme in dt.Rows)
-                    {
-                        if (phoneme["is_target_phoneme"] != null && phoneme ["is_target_phoneme"].ToString() == "t")
-                        {
-                            m_collectableLabel.text = phoneme["phoneme"].ToString();
-                            hasSetLabel = true;
-                        }
-                    }
-                }
-                /*
-                else
-                {
-                    hasSetIcon = true;
-                }
-                */
-            }
-        } 
+        
+//        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + OldVoyageInfo.Instance.currentModuleId);
+//        
+//        if(dt.Rows.Count > 0 && dt.Rows[0]["modulereward"] != null)
+//        {
+//            string moduleReward = dt.Rows[0]["modulereward"].ToString();
+//            
+//            if(moduleReward == "Phonemes")
+//            {
+//                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
+//                
+//                foreach (DataRow phoneme in dt.Rows)
+//                {
+//                    if (phoneme["is_target_phoneme"] != null && phoneme ["is_target_phoneme"].ToString() == "t")
+//                    {
+//                        m_collectableLabel.text = phoneme["phoneme"].ToString();
+//                        hasSetLabel = true;
+//                    }
+//                }
+//            }
+//        } 
 
         m_collectableLabel.gameObject.SetActive(hasSetLabel);
         m_collectableIcon.gameObject.SetActive(hasSetIcon);
@@ -132,13 +105,6 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         m_pipAnimManager.PlayAnimation("THUMBS_UP");
 	}
-
-    /*
-    void OnNextButtonClick(ClickEvent click)
-    {
-        StartCoroutine(CompleteGame());
-    }
-    */
 
     IEnumerator CompleteGame()
     {
@@ -196,13 +162,8 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
         m_collectableBackground.spriteName = click.GetString();
 
-        if (VoyageInfo.Instance.hasBookmark)
-        {
-            VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
-        }
+        VoyageInfo.Instance.AddSessionBackground(VoyageInfo.Instance.currentSessionId, click.GetString());
 
         StartCoroutine(CompleteGame());
-
-        //m_nextButtonTween.On();
     }
 }
