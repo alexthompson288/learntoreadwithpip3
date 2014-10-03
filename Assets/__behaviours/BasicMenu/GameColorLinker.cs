@@ -9,38 +9,47 @@ public class GameColorLinker : Singleton<GameColorLinker>
     [SerializeField]
     private string m_filename = "/BasicGameColors.csv";
 
-    void Awake()
+    void Start()
     {   
         string path = Application.streamingAssetsPath + m_filename;
         
         using (CsvFileReader reader = new CsvFileReader(path))
         {
+            string programme = "";
+
             CsvRow row = new CsvRow();
             while (reader.ReadRow(row))
             {
-                string[] gameColors = row.LineText.Split(',');
+                string[] cells = row.LineText.Split(',');
                 
-                if(gameColors.Length > 1)
+                if(cells.Length > 0)
                 {
-                    try
+                    if(cells[0] == ProgrammeInfo.basicMaths || cells[0] == ProgrammeInfo.basicReading)
                     {
-                        ColorInfo.PipColor pipColor = ColorInfo.GetPipColor(gameColors[0]);
-
-                        List<string> gameNames = new List<string>();
-
-                        for(int i = 1; i < gameColors.Length; ++i)
-                        {
-                            if(!System.String.IsNullOrEmpty(gameColors[i]))
-                            {
-                                gameNames.Add(gameColors[i]);
-                            }
-                        }
-
-                        m_links.Add(new GameColorLink("PlaceholderProgramme", pipColor, gameNames));
+                        programme = cells[0];
                     }
-                    catch
+                    else
                     {
-                        D.Log("Failed to link GameColors for: " + gameColors[0]);
+                        try
+                        {
+                            ColorInfo.PipColor pipColor = ColorInfo.GetPipColor(cells[0]);
+                            
+                            List<string> gameNames = new List<string>();
+                            
+                            for(int i = 1; i < cells.Length; ++i)
+                            {
+                                if(!System.String.IsNullOrEmpty(cells[i]))
+                                {
+                                    gameNames.Add(cells[i]);
+                                }
+                            }
+                            
+                            m_links.Add(new GameColorLink(programme, pipColor, gameNames));
+                        }
+                        catch
+                        {
+                            D.Log("Failed to link GameColors for: " + cells[0]);
+                        }
                     }
                 }
             }
