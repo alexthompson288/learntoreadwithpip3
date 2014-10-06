@@ -1,142 +1,218 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Wingrove;
 
-public class NumberQuizCoordinator : GameCoordinator 
+public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
 {
     [SerializeField]
-    private int m_numAnswersToSpawn = 3;
+    private bool m_questionsAreShared;
     [SerializeField]
-    private GameObject m_answerLabelPrefab;
+    private bool m_useDummyCountables;
     [SerializeField]
-    private Transform[] m_answerLocators;
+    private NumberQuizPlayer[] m_gamePlayers;
     [SerializeField]
-    private GameObject m_questionSpritePrefab;
+    private GameObject m_countablePrefab;
     [SerializeField]
-    private string[] m_questionSpriteNames;
+    private Countable[] m_countables; 
     [SerializeField]
-    private Transform[] m_questionLocators;
-    [SerializeField]
-    private GameObject m_questionParent;
-    [SerializeField]
-    private float m_scaleTweenDuration = 0.3f;
+    private float m_probabilityDataIsTarget;
 
+    List<DataRow> m_dataPool = new List<DataRow>();
+    DataRow m_targetData;
+    
+    float m_timeStarted;
 
-    List<GameWidget> m_spawnedAnswers = new List<GameWidget>();
-
-    List<GameObject> m_spawnedQuestionSprites = new List<GameObject>();
-
-    bool m_hasAnsweredIncorrectly = false;
-
-
-	IEnumerator Start () 
+    [System.Serializable]
+    public class Countable
     {
-        m_scoreKeeper.SetTargetScore(m_targetScore);
+        [SerializeField]
+        private string m_name;
+        public string name
+        {
+            get
+            {
+                return m_name;
+            }
+        }
 
-        System.Array.Sort(m_questionLocators, CollectionHelpers.LocalLeftToRight_TopToBottom);
-
+        [SerializeField]
+        private string m_spriteName;
+        public string spriteName
+        {
+            get
+            {
+                return m_spriteName;
+            }
+        }
+    }
+    
+    int GetNumPlayers()
+    {
+        return SessionInformation.Instance.GetNumPlayers();
+    }
+    
+    IEnumerator Start()
+    {
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
-
+        
         m_dataPool = DataHelpers.GetNumbers();
+        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, m_gamePlayers [0].GetLocatorCount());
 
-        m_numAnswersToSpawn = Mathf.Min(m_numAnswersToSpawn, m_answerLocators.Length);
+        m_targetData = DataHelpers.GetSingleTargetData("numbers", null);
+        D.Log("m_targetData: " + m_targetData);
 
-        AskQuestion();
-	}
-
-    void AskQuestion()
-    {
-        m_currentData = GetRandomData();
-
-        string spriteName = m_questionSpriteNames [Random.Range(0, m_questionSpriteNames.Length)];
-
-        int currentNumber = System.Convert.ToInt32(m_currentData ["value"]);
-        for (int i = 0; i < currentNumber; ++i)
+        int numPlayers = GetNumPlayers();
+        
+        if (numPlayers == 1)
         {
-            GameObject newQuestionObject = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_questionSpritePrefab, m_questionLocators[i]);
-            m_spawnedQuestionSprites.Add(newQuestionObject);
-            newQuestionObject.GetComponent<UISprite>().spriteName = spriteName;
+            CharacterSelectionParent.DisableAll();
+            SessionInformation.SetDefaultPlayerVar();
+            yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+        }
+        else
+        {
+            SideBarCameraSpawner.Instance.InstantiateSideBarCamera();
+            
+            yield return new WaitForSeconds(0.5f);
+            WingroveAudio.WingroveRoot.Instance.PostEvent("INSTRUCTION_CHOOSE_CHARACTER");
+            
+            while (true)
+            {
+                bool allSelected = true;
+                for (int index = 0; index < numPlayers; ++index)
+                {
+                    if (!m_gamePlayers [index].HasSelectedCharacter())
+                    {
+                        allSelected = false;
+                    }
+                }
+                
+                if (allSelected)
+                {
+                    break;
+                }
+                
+                yield return null;
+            }
+            
+            yield return new WaitForSeconds(0.8f);
+            
+            for (int index = 0; index < numPlayers; ++index)
+            {
+                m_gamePlayers [index].HideAll();
+            }
+            
+            StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
+            yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
 
-        HashSet<DataRow> answers = new HashSet<DataRow>();
-
-        answers.Add(m_currentData);
-
-        while (answers.Count < m_numAnswersToSpawn)
+        DataRow sharedData = m_targetData != null ? m_targetData : GetRandomData(false);
+        Countable sharedCountable = GetRandomCountable();
+        
+        m_timeStarted = Time.time;
+        
+        for (int i = 0; i < numPlayers; ++i)
         {
-            answers.Add(GetRandomData());
+            DataRow currentData = (m_questionsAreShared || m_targetData != null) ? sharedData : GetRandomData(false);
+            Countable currentCountable = m_questionsAreShared ? sharedCountable : GetRandomCountable();
+            m_gamePlayers[i].SetCurrentData(currentData);
+            m_gamePlayers[i].SetCurrentCountable(currentCountable);
+            m_gamePlayers[i].StartGame();
         }
-
-        CollectionHelpers.Shuffle(m_answerLocators);
-
-        int locatorIndex = 0;
-        foreach (DataRow answer in answers)
-        {
-            GameObject newAnswer = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_answerLabelPrefab, m_answerLocators[locatorIndex]);
-
-            GameWidget widget = newAnswer.GetComponent<GameWidget>() as GameWidget;
-            widget.SetUp(answer);
-            widget.Unpressing += OnAnswer;
-            m_spawnedAnswers.Add(widget);
-
-            ++locatorIndex;
-        }
-
-        iTween.ScaleTo(m_questionParent, Vector3.one, m_scaleTweenDuration);
     }
-
-    void OnAnswer(GameWidget widget)
+    
+    public void OnCorrectAnswer(NumberQuizPlayer correctPlayer)
     {
-        bool isCorrect = widget.data == m_currentData;
-
-        if (isCorrect)
+        DataRow currentData = GetRandomData(true);
+        Countable currentCountable = GetRandomCountable();
+        
+        if (m_questionsAreShared && GetNumPlayers() == 2)
         {
-            ++m_numAnswered;
+            for(int i = 0; i < GetNumPlayers(); ++i)
+            {
+                m_gamePlayers[i].SetCurrentData(currentData);
+                m_gamePlayers[i].SetCurrentCountable(currentCountable);
+                StartCoroutine(m_gamePlayers[i].ClearQuestion());
+            }
+        }
+        else
+        {
+            correctPlayer.SetCurrentData(currentData);
+            correctPlayer.SetCurrentCountable(currentCountable);
+            StartCoroutine(correctPlayer.ClearQuestion());
+        }
+    }
+    
+    public DataRow GetRandomData(bool useProbabilityDataIsTarget)
+    {   
+        DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
 
-            int scoreDelta = m_hasAnsweredIncorrectly ? 0 : 1;
-            m_scoreKeeper.UpdateScore(scoreDelta);
-            //WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_CORRECT");
-
-            StartCoroutine(ClearQuestion());
+        if (useProbabilityDataIsTarget && m_targetData != null)
+        {
+            data = m_targetData;
+            if(Random.Range(0f, 1f) > m_probabilityDataIsTarget)
+            {
+                while(data == m_targetData)
+                {
+                    data = m_dataPool [Random.Range(0, m_dataPool.Count)];
+                }
+            }
         } 
-        else
-        {
-            m_hasAnsweredIncorrectly = true;
-            widget.TweenToStartPos();
-            WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
-        }
+
+        return data;
     }
 
-    IEnumerator ClearQuestion()
+    public Countable GetRandomCountable()
     {
-        m_hasAnsweredIncorrectly = false;
-
-        for(int i = m_spawnedAnswers.Count - 1; i > -1; --i)
+        return m_countables [Random.Range(0, m_countables.Length)];
+    }
+    
+    public void CharacterSelected(int characterIndex)
+    {
+        for (int index = 0; index < GetNumPlayers(); ++index)
         {
-            m_spawnedAnswers[i].Off();
+            m_gamePlayers[index].HideCharacter(characterIndex);
         }
-
-        m_spawnedAnswers.Clear();
-
-        iTween.ScaleTo(m_questionParent, Vector3.zero, m_scaleTweenDuration);
-
-        yield return new WaitForSeconds(m_scaleTweenDuration);
-
-        for (int i = m_spawnedQuestionSprites.Count - 1; i > -1; --i)
+    }
+    
+    public void OnLevelUp()
+    {
+        m_dataPool = DataSetters.LevelUpNumbers();
+        m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, m_gamePlayers [0].GetLocatorCount());
+        ScoreHealth.RefreshColorAll();
+    }
+    
+    public void CompleteGame()
+    {
+        if (GetNumPlayers() == 1)
         {
-            Destroy(m_spawnedQuestionSprites[i]);
+            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
         }
+        
+        StartCoroutine(CompleteGameCo());
+    }
+    
+    IEnumerator CompleteGameCo()
+    {
+        int winningIndex = GetNumPlayers() == 2 && m_gamePlayers[0].GetScore() < m_gamePlayers[1].GetScore() ? 1 : 0;
+        
+        yield return StartCoroutine(m_gamePlayers[winningIndex].CelebrateVictory());
+        
+        GameManager.Instance.CompleteGame();
+    }
 
-        m_spawnedQuestionSprites.Clear();
+    public GameObject GetCountablePrefab()
+    {
+        return m_countablePrefab;
+    }
 
-        if(m_numAnswered >= m_targetScore)
-        {
-            StartCoroutine(CompleteGame());
-        }
-        else
-        {
-            AskQuestion();
-        }
+    public string GetRandomCountableSpriteName()
+    {
+        return m_countables [Random.Range(0, m_countables.Length)].spriteName;
+    }
+
+    public bool UseDummyCountables()
+    {
+        return m_useDummyCountables;
     }
 }

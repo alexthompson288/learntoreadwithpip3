@@ -4,36 +4,39 @@ using System.Collections;
 public class VoyageButton : MonoBehaviour 
 {
     [SerializeField]
-    private EventRelay m_buttonRelay;
+    private UISprite m_button;
     [SerializeField]
-    private UISprite m_buttonSprite;
+    private GameObject m_shadow;
     [SerializeField]
-    private GameObject m_shadowSprite;
+    private UILabel m_label;
 
     DataRow m_session;
 
-    void Awake()
-    {
-        m_buttonRelay.SingleClicked += OnClickRelay;
-    }
 
     public void SetUp(DataRow session, Color col)
     {
         m_session = session;
         gameObject.SetActive(m_session != null);
 
-        string unlockedSpriteName = VoyageInfo.Instance.GetSessionBackground(session.GetId());
+        m_label.text = m_session ["labeltext"] != null ? m_session ["labeltext"].ToString() : "?";
+
+        string unlockedSpriteName = VoyageInfo.Instance.GetSessionBackground(m_session.GetId());
         bool hasUnlocked = !string.IsNullOrEmpty(unlockedSpriteName);
 
-        m_shadowSprite.SetActive(!hasUnlocked);
+        m_shadow.SetActive(!hasUnlocked);
 
-        m_buttonSprite.color = hasUnlocked ? Color.white : col;
-        m_buttonSprite.atlas = hasUnlocked ? BasicGameMenuCoordinator.Instance.sessionUnlockedAtlas : BasicGameMenuCoordinator.Instance.sessionLockedAtlas;
-        m_buttonSprite.spriteName = hasUnlocked ? unlockedSpriteName : "button_square";
-        m_buttonSprite.MakePixelPerfect();
+        m_button.color = hasUnlocked ? Color.white : col;
+        m_button.atlas = hasUnlocked ? BasicGameMenuCoordinator.Instance.sessionUnlockedAtlas : BasicGameMenuCoordinator.Instance.sessionLockedAtlas;
+        m_button.spriteName = hasUnlocked ? unlockedSpriteName : "button_square";
+
+        if (hasUnlocked)
+        {
+            m_button.transform.localScale *= 1.3f;
+            RotateConstantly rotateBehaviour = m_button.gameObject.AddComponent<RotateConstantly>();
+        }
     }
 
-    void OnClickRelay(EventRelay relay)
+    void OnClick()
     {
         BasicGameMenuCoordinator.Instance.OnClickVoyageButton(m_session);
     }

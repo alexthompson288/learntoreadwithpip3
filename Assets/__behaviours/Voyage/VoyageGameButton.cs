@@ -21,6 +21,7 @@ public class VoyageGameButton : MonoBehaviour
 
     DataRow m_section;
 
+
     public void On(DataRow section, Color completedColor)
     {
         m_section = section;
@@ -34,6 +35,7 @@ public class VoyageGameButton : MonoBehaviour
         m_background.color = hasCompleted ? completedColor : Color.white;
 
         m_border.SetActive(hasCompleted);
+
 
         DataRow game = DataHelpers.GetGameForSection(m_section);
 
@@ -68,10 +70,5 @@ public class VoyageGameButton : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
-    }
-
-    void OnClick()
-    {
-        //VoyageCoordinator.Instance.StartGame(m_section);
     }
 }

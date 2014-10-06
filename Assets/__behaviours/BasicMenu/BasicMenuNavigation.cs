@@ -58,13 +58,11 @@ public class BasicMenuNavigation : Menu
     public override void On()
     {
         m_camera.transform.position = m_main.position;
-        //m_camera.GetComponent<UICamera>().enabled = true;
         TweenAlpha.Begin(m_panel.gameObject, 0.25f, 1);
     }
 
     public void OnClickDismiss(EventRelay relay)
     {
-        //m_camera.GetComponent<UICamera>().enabled = false;
         TweenAlpha.Begin(m_panel.gameObject, 0.25f, 0);
     }
 
@@ -95,6 +93,9 @@ public class BasicMenuNavigation : Menu
         SetUpButtons(m_storiesButtonParent, OnClickStories);
 
         bool isStartLevel = Application.loadedLevel == 0;
+
+        D.Log("level: " + Application.loadedLevel);
+        D.Log("isStartLevel: " + isStartLevel);
 
         //m_camera.GetComponent<UICamera>().enabled = isStartLevel;
         m_panel.alpha = isStartLevel ? 1 : 0;

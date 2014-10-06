@@ -55,14 +55,14 @@ public class GameColorLinker : Singleton<GameColorLinker>
             }
         }
 
-        foreach (GameColorLink link in m_links)
-        {
-            D.Log(link.m_programme + " - " + link.m_pipColor);
-            foreach(string s in link.m_gameNames)
-            {
-                D.Log(s);
-            }
-        }
+//        foreach (GameColorLink link in m_links)
+//        {
+//            D.Log(link.m_programme + " - " + link.m_pipColor);
+//            foreach(string s in link.m_gameNames)
+//            {
+//                D.Log(s);
+//            }
+//        }
     }
 
     List<GameColorLink> m_links = new List<GameColorLink>();
