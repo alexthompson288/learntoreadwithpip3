@@ -18,7 +18,7 @@ public class ProgressGameButton : MonoBehaviour
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from games WHERE name='" + m_gameName + "'");
         DataRow game = dt.Rows.Count > 0 ? dt.Rows[0] : null;
 
-        m_label.text = game != null ? game ["labeltext"].ToString() : m_gameName;
+        m_label.text = game != null && game["labeltext"] != null ? game ["labeltext"].ToString() : m_gameName;
 
         m_button.color = col;
     }

@@ -51,6 +51,7 @@ public class CountingCoordinator : Singleton<CountingCoordinator>
     
     IEnumerator Start()
     {
+        D.Log("CountingCoordinator.Start()");
         m_probabilityDataIsTarget = Mathf.Max(m_probabilityDataIsTarget, 0.05f);
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
