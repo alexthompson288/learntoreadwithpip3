@@ -7,8 +7,6 @@ public class CountingCoordinator : Singleton<CountingCoordinator>
     [SerializeField]
     private bool m_questionsAreShared;
     [SerializeField]
-    private bool m_useDummyCountables;
-    [SerializeField]
     private CountingPlayer[] m_gamePlayers;
     [SerializeField]
     private GameObject m_countablePrefab;
@@ -210,10 +208,5 @@ public class CountingCoordinator : Singleton<CountingCoordinator>
     public string GetRandomCountableSpriteName()
     {
         return m_countables [Random.Range(0, m_countables.Length)].spriteName;
-    }
-    
-    public bool UseDummyCountables()
-    {
-        return m_useDummyCountables;
     }
 }

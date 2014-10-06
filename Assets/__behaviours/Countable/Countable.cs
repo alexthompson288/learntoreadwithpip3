@@ -26,10 +26,13 @@ public class Countable : MonoBehaviour
         m_sprite.color = Color.gray;
     }
 
-    void OnClick()
+    void OnPress(bool pressed)
     {
-        m_isSelected = !m_isSelected;
-        m_sprite.color = m_isSelected ? Color.white : Color.gray;
+        if (!pressed)
+        {
+            m_isSelected = !m_isSelected;
+            m_sprite.color = m_isSelected ? Color.white : Color.gray;
+        }
     }
 
     public void Off()
