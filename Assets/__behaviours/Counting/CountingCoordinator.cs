@@ -2,26 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
+public class CountingCoordinator : Singleton<CountingCoordinator>
 {
     [SerializeField]
     private bool m_questionsAreShared;
     [SerializeField]
     private bool m_useDummyCountables;
     [SerializeField]
-    private NumberQuizPlayer[] m_gamePlayers;
+    private CountingPlayer[] m_gamePlayers;
     [SerializeField]
     private GameObject m_countablePrefab;
     [SerializeField]
     private Countable[] m_countables; 
     [SerializeField]
     private float m_probabilityDataIsTarget = 0.3f;
-
+    
     List<DataRow> m_dataPool = new List<DataRow>();
     DataRow m_targetData;
     
     float m_timeStarted;
-
+    
     [System.Serializable]
     public class Countable
     {
@@ -34,7 +34,7 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
                 return m_name;
             }
         }
-
+        
         [SerializeField]
         private string m_spriteName;
         public string spriteName
@@ -59,9 +59,8 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
         
         m_dataPool = DataHelpers.GetNumbers();
         m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, m_gamePlayers [0].GetLocatorCount());
-
+        
         m_targetData = DataHelpers.GetSingleTargetData("numbers", null);
-        D.Log("m_targetData: " + m_targetData);
 
         int numPlayers = GetNumPlayers();
         
@@ -107,7 +106,7 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
             StartCoroutine(m_gamePlayers[0].PlayTrafficLights());
             yield return StartCoroutine(m_gamePlayers[1].PlayTrafficLights());
         }
-
+        
         DataRow sharedData = m_targetData != null ? m_targetData : GetRandomData(false);
         Countable sharedCountable = GetRandomCountable();
         
@@ -118,12 +117,12 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
             DataRow currentData = (m_questionsAreShared || m_targetData != null) ? sharedData : GetRandomData(false);
             Countable currentCountable = m_questionsAreShared ? sharedCountable : GetRandomCountable();
             m_gamePlayers[i].SetCurrentData(currentData);
-            m_gamePlayers[i].SetCurrentCountable(currentCountable);
+            m_gamePlayers[i].SetCurrentCountableInfo(currentCountable);
             m_gamePlayers[i].StartGame();
         }
     }
     
-    public void OnCorrectAnswer(NumberQuizPlayer correctPlayer)
+    public void OnCorrectAnswer(CountingPlayer correctPlayer)
     {
         DataRow currentData = GetRandomData(true);
         Countable currentCountable = GetRandomCountable();
@@ -133,14 +132,14 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
             for(int i = 0; i < GetNumPlayers(); ++i)
             {
                 m_gamePlayers[i].SetCurrentData(currentData);
-                m_gamePlayers[i].SetCurrentCountable(currentCountable);
+                m_gamePlayers[i].SetCurrentCountableInfo(currentCountable);
                 StartCoroutine(m_gamePlayers[i].ClearQuestion());
             }
         }
         else
         {
             correctPlayer.SetCurrentData(currentData);
-            correctPlayer.SetCurrentCountable(currentCountable);
+            correctPlayer.SetCurrentCountableInfo(currentCountable);
             StartCoroutine(correctPlayer.ClearQuestion());
         }
     }
@@ -148,7 +147,7 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
     public DataRow GetRandomData(bool useProbabilityDataIsTarget)
     {   
         DataRow data = m_dataPool [Random.Range(0, m_dataPool.Count)];
-
+        
         if (useProbabilityDataIsTarget && m_targetData != null)
         {
             data = m_targetData;
@@ -160,10 +159,10 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
                 }
             }
         } 
-
+        
         return data;
     }
-
+    
     public Countable GetRandomCountable()
     {
         return m_countables [Random.Range(0, m_countables.Length)];
@@ -202,17 +201,17 @@ public class NumberQuizCoordinator : Singleton<NumberQuizCoordinator>
         
         GameManager.Instance.CompleteGame();
     }
-
+    
     public GameObject GetCountablePrefab()
     {
         return m_countablePrefab;
     }
-
+    
     public string GetRandomCountableSpriteName()
     {
         return m_countables [Random.Range(0, m_countables.Length)].spriteName;
     }
-
+    
     public bool UseDummyCountables()
     {
         return m_useDummyCountables;

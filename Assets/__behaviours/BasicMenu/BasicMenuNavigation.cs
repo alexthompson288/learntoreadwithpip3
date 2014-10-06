@@ -94,9 +94,6 @@ public class BasicMenuNavigation : Menu
 
         bool isStartLevel = Application.loadedLevel == 0;
 
-        D.Log("level: " + Application.loadedLevel);
-        D.Log("isStartLevel: " + isStartLevel);
-
         //m_camera.GetComponent<UICamera>().enabled = isStartLevel;
         m_panel.alpha = isStartLevel ? 1 : 0;
 
