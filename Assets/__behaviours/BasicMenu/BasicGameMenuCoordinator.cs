@@ -14,14 +14,30 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
     private UIAtlas m_sessionUnlockedAtlas;
     [SerializeField]
     private UIAtlas m_sessionLockedAtlas;
+    [SerializeField]
+    private ProgressGameButton[] m_progressGames;
+    [SerializeField]
+    private TweenBehaviour m_numPlayersMoveable;
+    [SerializeField]
+    private EventRelay[] m_numPlayersButtons;
 
     List<VoyageButton> m_voyageButtons = new List<VoyageButton>();
 
     ColorInfo.PipColor m_pipColor;
 
+    ProgressGameButton m_currentProgressGame;
+
     void Awake()
     {
+        System.Array.Sort(m_progressGames, CollectionHelpers.LocalLeftToRight_TopToBottom);
         System.Array.Sort(m_voyageRows, CollectionHelpers.LocalTopToBottom);
+
+        System.Array.Sort(m_numPlayersButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
+        for (int i = 0; i < m_numPlayersButtons.Length; ++i)
+        {
+            m_numPlayersButtons[i].SingleClicked += OnClickChooseNumPlayers;
+        }
+
         foreach (Transform row in m_voyageRows)
         {
             VoyageButton[] buttons = row.GetComponentsInChildren<VoyageButton>() as VoyageButton[];
@@ -56,13 +72,24 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             m_voyageButtons[i].SetUp(session, col);
         }
 
-
-        SetUpGameButtons();
+        SetUpProgressGameButtons();
     }
 
-    void SetUpGameButtons()
+    void SetUpProgressGameButtons()
     {
-        
+        Color col = ColorInfo.GetColor(m_pipColor);
+        List<string> gameNames = GameColorLinker.Instance.GetGameNames(m_pipColor);
+        for(int i = 0; i < m_progressGames.Length; ++i)
+        {
+            bool hasGame = i < gameNames.Count;
+
+            m_progressGames[i].gameObject.SetActive(hasGame);
+
+            if(hasGame)
+            {
+                m_progressGames[i].SetUp(gameNames[i], col);
+            }
+        }
     }
 
     int m_minimumDataCount = 6;
@@ -85,6 +112,45 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         }
     }
 
+    public void OnClickProgressGame(ProgressGameButton myCurrentProgressGame)
+    {
+        m_currentProgressGame = myCurrentProgressGame;
+        m_numPlayersMoveable.On();
+    }
+
+    void OnClickChooseNumPlayers(EventRelay relay)
+    {
+        int numPlayers = System.Array.IndexOf(m_numPlayersButtons, relay) + 1;
+        numPlayers = Mathf.Max(numPlayers, 1);
+        SessionInformation.Instance.SetNumPlayers(numPlayers);
+
+        PlusScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
+        
+        GameManager.Instance.SetCurrentColor(m_pipColor);
+        
+        GameManager.Instance.AddGame(m_currentProgressGame.GetGameName());
+        
+        if(GameManager.Instance.programme == ProgrammeInfo.basicMaths)
+        {
+            DataSetters.AddModuleNumbers(m_pipColor);
+        }
+        else
+        {
+            int moduleId = DataHelpers.GetModuleId(m_pipColor);
+            
+            GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
+            GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
+            GameManager.Instance.AddData("keywords", DataHelpers.GetModuleKeywords(moduleId));
+            GameManager.Instance.AddData("sillywords", DataHelpers.GetModuleSillywords(moduleId));
+            
+            DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
+            GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
+            GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
+        }
+        
+        StartGames();
+    }
+
     public void OnClickVoyageButton(DataRow session)
     {
         VoyageInfo.Instance.SetCurrentSessionId(session.GetId());
@@ -104,10 +170,9 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             }
             
             GameManager.Instance.AddGame("NewSessionComplete");
-            
-            // Set return scene
-            GameManager.Instance.SetReturnScene(Application.loadedLevelName);
-            
+
+            ScoreInfo.Instance.SetScoreType(session.GetId().ToString());
+
             // Set data
             SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot
             
@@ -123,7 +188,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
                     
                     if (phonemePool.Count < m_minimumDataCount)
                     {
-
+                        
                         int extraModuleId = previousModuleId;
                         
                         while (phonemePool.Count < m_minimumDataCount && extraModuleId > 0)
@@ -133,7 +198,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
                         }
                     }
                     
-
+                    
                     GameManager.Instance.AddData("phonemes", phonemePool);
                     GameManager.Instance.AddTargetData("phonemes", phonemePool.FindAll(x => x ["is_target_phoneme"] != null && x ["is_target_phoneme"].ToString() == "t"));
                 }
@@ -156,7 +221,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
                             --extraModuleId;
                         }
                     }
-
+                    
                     GameManager.Instance.AddData("words", words);
                     GameManager.Instance.AddTargetData("words", words.FindAll(x => x ["is_target_word"] != null && x ["is_target_word"].ToString() == "t"));
                     
@@ -196,14 +261,20 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
                 }
             }
             
-            ScoreInfo.Instance.SetScoreType(session.GetId().ToString());
-            
-            WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
-            
-            GameManager.Instance.StartGames();
+            StartGames();
         }
     }
 
+    public void StartGames()
+    {
+        // Set return scene
+        GameManager.Instance.SetReturnScene(Application.loadedLevelName);
+
+        WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");
+        
+        GameManager.Instance.StartGames();
+    }
+    
     public UIAtlas sessionUnlockedAtlas
     {
         get
@@ -211,7 +282,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             return m_sessionUnlockedAtlas;
         }
     }
-
+    
     public UIAtlas sessionLockedAtlas
     {
         get
