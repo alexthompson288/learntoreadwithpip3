@@ -18,6 +18,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     private GameObject m_draggablePrefab;
 
     float m_timeStarted;
+    int m_numLevelUps = 0;
 
     List<DataRow> m_wordPool = new List<DataRow>();
 
@@ -140,6 +141,7 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
 
     public void OnLevelUp()
     {
+        ++m_numLevelUps;
         m_wordPool = DataSetters.LevelUpWords();
         m_wordPool = DataHelpers.OnlyPictureData(m_wordPool);
         ScoreHealth.RefreshColorAll();
@@ -149,7 +151,15 @@ public class PlusSpellingCoordinator : Singleton<PlusSpellingCoordinator>
     {
         if (GetNumPlayers() == 1)
         {
-            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            if(ProgrammeInfo.isBasic)
+            {
+                int stars = ScoreInfo.CalculateLevelUpStars(m_numLevelUps);
+                ScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), 0, stars);
+            }
+            else
+            {
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            }
         }
         
         StartCoroutine(CompleteGameCo());

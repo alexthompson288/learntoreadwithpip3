@@ -22,6 +22,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     List<DataRow> m_dataPool = new List<DataRow>();
 
     float m_timeStarted;
+    int m_numLevelUps = 0;
 
     void SetData()
     {
@@ -108,7 +109,15 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
     {
         if (GetNumPlayers() == 1)
         {
-            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            if(ProgrammeInfo.isBasic)
+            {
+                int stars = ScoreInfo.CalculateLevelUpStars(m_numLevelUps);
+                ScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), 0, stars);
+            }
+            else
+            {
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            }
         }
 
         StartCoroutine(CompleteGameCo());
@@ -125,6 +134,7 @@ public class ToyShopCoordinator : Singleton<ToyShopCoordinator>
 
     public void OnLevelUp()
     {
+        ++m_numLevelUps;
         DataSetters.LevelUpNumbers();
         SetData();
         ScoreHealth.RefreshColorAll();

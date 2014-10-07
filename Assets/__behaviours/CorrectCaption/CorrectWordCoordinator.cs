@@ -12,6 +12,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     List<DataRow> m_dataPool = new List<DataRow>();
     
     float m_timeStarted;
+    int m_numLevelUps = 0;
 
     string m_dummyAttribute1 = "dummyword1";
     string m_dummyAttribute2 = "dummyword2";
@@ -145,6 +146,7 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
 
     public void OnLevelUp()
     {
+        ++m_numLevelUps;
         m_dataPool = DataSetters.LevelUpWords();
         RemoveIllegalData();
         ScoreHealth.RefreshColorAll();
@@ -154,7 +156,15 @@ public class CorrectWordCoordinator : Singleton<CorrectWordCoordinator>
     {
         if (GetNumPlayers() == 1)
         {
-            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            if(ProgrammeInfo.isBasic)
+            {
+                int stars = ScoreInfo.CalculateLevelUpStars(m_numLevelUps);
+                ScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), 0, stars);
+            }
+            else
+            {
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            }
         }
         
         StartCoroutine(CompleteGameCo());

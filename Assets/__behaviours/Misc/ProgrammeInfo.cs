@@ -51,4 +51,12 @@ public static class ProgrammeInfo
     {
         return m_plusReadingGames;
     }
+
+    public static bool isBasic
+    {
+        get
+        {
+            return GameManager.Instance.programme == m_basicMaths || GameManager.Instance.programme == m_basicReading;
+        }
+    }
 }

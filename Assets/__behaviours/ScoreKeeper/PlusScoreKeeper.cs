@@ -58,6 +58,11 @@ public class PlusScoreKeeper : ScoreKeeper
     {
         m_healthLostPerSecond = myHealthLostPerSecond;
     }
+
+    public void SetHealthLostOnIncorrect(float myHealthLostOnIncorrect)
+    {
+        m_healthLostOnIncorrect = myHealthLostOnIncorrect;
+    }
     
     public void StartTimer()
     {

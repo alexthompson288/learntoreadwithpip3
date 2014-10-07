@@ -18,24 +18,28 @@ public class VoyageButton : MonoBehaviour
     public void SetUp(DataRow session, Color col)
     {
         m_session = session;
+
         gameObject.SetActive(m_session != null);
 
-        m_label.text = m_session ["labeltext"] != null ? m_session ["labeltext"].ToString() : "?";
-
-        string unlockedSpriteName = VoyageInfo.Instance.GetSessionBackground(m_session.GetId());
-        bool hasUnlocked = !string.IsNullOrEmpty(unlockedSpriteName);
-
-        m_shadow.SetActive(!hasUnlocked);
-
-        m_button.color = hasUnlocked ? Color.white : col;
-        m_button.atlas = hasUnlocked ? BasicGameMenuCoordinator.Instance.sessionUnlockedAtlas : BasicGameMenuCoordinator.Instance.sessionLockedAtlas;
-        m_button.spriteName = hasUnlocked ? unlockedSpriteName : "button_square";
-        m_button.transform.localScale = hasUnlocked ? Vector3.one * 1.3f : Vector3.one;
-        m_rotateBehaviour.enabled = hasUnlocked;
-
-        if (!hasUnlocked)
+        if (m_session != null)
         {
-            m_button.transform.localRotation = Quaternion.identity;
+            m_label.text = m_session ["labeltext"] != null ? m_session ["labeltext"].ToString() : "?";
+
+            string unlockedSpriteName = VoyageInfo.Instance.GetSessionBackground(m_session.GetId());
+            bool hasUnlocked = !string.IsNullOrEmpty(unlockedSpriteName);
+
+            m_shadow.SetActive(!hasUnlocked);
+
+            m_button.color = hasUnlocked ? Color.white : col;
+            m_button.atlas = hasUnlocked ? BasicGameMenuCoordinator.Instance.sessionUnlockedAtlas : BasicGameMenuCoordinator.Instance.sessionLockedAtlas;
+            m_button.spriteName = hasUnlocked ? unlockedSpriteName : "button_square";
+            m_button.transform.localScale = hasUnlocked ? Vector3.one * 1.3f : Vector3.one;
+            m_rotateBehaviour.enabled = hasUnlocked;
+
+            if (!hasUnlocked)
+            {
+                m_button.transform.localRotation = Quaternion.identity;
+            }
         }
     }
 

@@ -29,6 +29,8 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 
     void Awake()
     {
+        m_numPlayersMoveable.gameObject.SetActive(true);
+
         System.Array.Sort(m_progressGames, CollectionHelpers.LocalLeftToRight_TopToBottom);
         System.Array.Sort(m_voyageRows, CollectionHelpers.LocalTopToBottom);
 
@@ -57,7 +59,8 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 
         if (m_titleLabel != null)
         {
-            m_titleLabel.text = isMaths ? "Maths" : "Reading";
+            string programme = isMaths ? "Maths" : "Reading";
+            m_titleLabel.text = string.Format("{0} - {1}", programme, m_pipColor.ToString());
         }
 
 
@@ -83,7 +86,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             
             if(hasGame)
             {
-                m_progressGames[i].SetUp(gameNames[i], col);
+                m_progressGames[i].SetUp(gameNames[i], m_pipColor);
             }
         }
     }
@@ -121,6 +124,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         SessionInformation.Instance.SetNumPlayers(numPlayers);
 
         PlusScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
+        ScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
         
         GameManager.Instance.SetCurrentColor(m_pipColor);
         

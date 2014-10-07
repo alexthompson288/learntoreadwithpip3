@@ -97,6 +97,11 @@ public class ScoreInfo : Singleton<ScoreInfo>
 #endif
         
         Load();
+
+        foreach (ScoreTracker tracker in m_scoreTrackers)
+        {
+            D.Log(string.Format("{0}, {1}, {2}", tracker.GetGame(), tracker.GetType(), tracker.GetStars()));
+        }
         
         UserInfo.Instance.ChangingUser += OnChangeUser;
     }
@@ -228,11 +233,12 @@ public class ScoreInfo : Singleton<ScoreInfo>
         System.Array.Sort(starSprites, CollectionHelpers.LocalLeftToRight);
 
         int numStars = Instance.GetStars(game, type);
-        
+
         for (int i = 0; i < starSprites.Length; ++i)
         {
-            string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
-            starSprites[i].spriteName = spriteName;
+//            string spriteName = i < numStars ? "star_active_512" : "star_inactive_512";
+//            starSprites[i].spriteName = spriteName;
+            starSprites[i].color = i < numStars ? ColorInfo.GetColor(ColorInfo.PipColor.Gold): Color.white;
         }
     }
 
@@ -276,6 +282,22 @@ public class ScoreInfo : Singleton<ScoreInfo>
         else
         {
             return 1;
+        }
+    }
+
+    public static int CalculateLevelUpStars(int numTimesLevelledUp)
+    {
+        if (numTimesLevelledUp < 2)
+        {
+            return 1;
+        }
+        else if (numTimesLevelledUp == 2)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
         }
     }
 

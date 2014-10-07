@@ -1,13 +1,13 @@
 Maths1
-Pink,NewCounting,NewNumberQuiz,NewJoinNumbers,NewSequenceNumbers
-Red,NewSequenceNumbers,NewPipeNumbers
+Pink,NewPictureCounting,NewNumberQuiz,NewJoinNumbers,NewSequenceNumbers
+Red,NewPictureCounting,NewSequenceNumbers,NewPipeNumbers
 Yellow,NewSequenceNumbers,NewJoinNumbers
 Blue,NewCompleteEquationNumbers,NewJoinNumbers
 Green,NewCompleteEquationNumbers,NewSequenceNumbers
 Orange,NewCompleteEquationNumbers,NewPipeNumbers
 Reading1
-Pink,NewJoinWordPictures,NewCatapultPhonemePictures
-Red,NewFlySwat,NewPlusSpelling
+Pink,NewShoppingList,NewPlusSpelling,NewJoinWordPictures
+Red,NewSplatRatLetters,NewFlySwat,NewPlusQuiz
 Yellow,NewOrderSentence,NewCatapultWordPictures
 Blue,NewSillySensible,NewOrderSentence
 Green,NewJoinWordPictures,NewCatapultWordPictures
