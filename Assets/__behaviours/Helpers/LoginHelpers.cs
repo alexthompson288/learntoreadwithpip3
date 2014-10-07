@@ -88,7 +88,7 @@ public static class LoginHelpers
         byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(byteString);
 
         request.ContentLength = byteArray.Length;
-        using (var writer = request.GetRequestStream()){writer.Write(byteArray, 0, byteArray.Length);}
+        using (var writer = request.GetRequestStream()){ writer.Write(byteArray, 0, byteArray.Length); }
         
         
         string responseContent=null;

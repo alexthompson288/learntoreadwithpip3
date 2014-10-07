@@ -9,6 +9,8 @@ public class VoyageButton : MonoBehaviour
     private GameObject m_shadow;
     [SerializeField]
     private UILabel m_label;
+    [SerializeField]
+    private RotateConstantly m_rotateBehaviour;
 
     DataRow m_session;
 
@@ -28,11 +30,12 @@ public class VoyageButton : MonoBehaviour
         m_button.color = hasUnlocked ? Color.white : col;
         m_button.atlas = hasUnlocked ? BasicGameMenuCoordinator.Instance.sessionUnlockedAtlas : BasicGameMenuCoordinator.Instance.sessionLockedAtlas;
         m_button.spriteName = hasUnlocked ? unlockedSpriteName : "button_square";
+        m_button.transform.localScale = hasUnlocked ? Vector3.one * 1.3f : Vector3.one;
+        m_rotateBehaviour.enabled = hasUnlocked;
 
-        if (hasUnlocked)
+        if (!hasUnlocked)
         {
-            m_button.transform.localScale *= 1.3f;
-            RotateConstantly rotateBehaviour = m_button.gameObject.AddComponent<RotateConstantly>();
+            m_button.transform.localRotation = Quaternion.identity;
         }
     }
 

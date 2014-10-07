@@ -16,8 +16,11 @@ public class CallNavMenu : MonoBehaviour
 		}
 	}
 
-	void OnClick () 
+	void OnPress (bool pressed) 
 	{
-        Menu.Instance.On();
+        if (!pressed)
+        {
+            Menu.Instance.On();
+        }
 	}
 }

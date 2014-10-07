@@ -68,6 +68,11 @@ public class BasicMenuNavigation : Menu
 
     void Start()
     {
+        if(SessionInformation.Instance.GetNumPlayers() == 2) 
+        {
+            m_callButton.SetActive(false);
+        }
+
         GameManager.Instance.Cancelling += OnGameCancel;
 
         m_games.position = m_subMenuOffLocation.position;

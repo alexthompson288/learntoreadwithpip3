@@ -60,9 +60,10 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             m_titleLabel.text = isMaths ? "Maths" : "Reading";
         }
 
-        // Set up VoyageButtons
+
         Color col = ColorInfo.GetColor(m_pipColor);
 
+        // Set up VoyageButtons
         List<DataRow> sessions = GameDataBridge.Instance.GetDatabase().ExecuteQuery(
             "select * from programsessions WHERE programmodule_id=" + DataHelpers.GetModule(m_pipColor).GetId() + " ORDER BY number").Rows;
         
@@ -72,19 +73,14 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             m_voyageButtons[i].SetUp(session, col);
         }
 
-        SetUpProgressGameButtons();
-    }
-
-    void SetUpProgressGameButtons()
-    {
-        Color col = ColorInfo.GetColor(m_pipColor);
+        // Set up ProgressButtons
         List<string> gameNames = GameColorLinker.Instance.GetGameNames(m_pipColor);
         for(int i = 0; i < m_progressGames.Length; ++i)
         {
             bool hasGame = i < gameNames.Count;
-
+            
             m_progressGames[i].gameObject.SetActive(hasGame);
-
+            
             if(hasGame)
             {
                 m_progressGames[i].SetUp(gameNames[i], col);
