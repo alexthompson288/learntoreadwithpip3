@@ -19,6 +19,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     private EventRelay m_readButton;
     [SerializeField]
     private EventRelay m_quizButton;
+    [SerializeField]
+    private UIScrollView m_scrollView;
 
     List<GameObject> m_spawnedStories = new List<GameObject>();
 
@@ -34,10 +36,19 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     {
         m_pipColor = myPipColor;
 
+        StartCoroutine(OnCo());
+    }
+
+    IEnumerator OnCo()
+    {
         CollectionHelpers.DestroyObjects(m_spawnedStories);
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE " + m_pipColor + "='t' ORDER BY fontsize, difficulty");
+        yield return null;
 
+        m_scrollView.ResetPosition();
+        
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE " + m_pipColor + "='t' ORDER BY fontsize, difficulty");
+        
         foreach (DataRow story in dt.Rows)
         {
             if (story ["publishable"] != null && story ["publishable"].ToString() == "t")
@@ -49,9 +60,12 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
                 newStory.GetComponent<EventRelay>().SingleClicked += OnClickStory;
             }
         }
-        
-        m_storyGrid.Reposition();
 
+        yield return null;
+
+        m_storyGrid.Reposition();
+        m_scrollView.ResetPosition();
+        
         if (m_spawnedStories.Count > 0)
         {
             OnClickStory(m_spawnedStories[0].GetComponent<EventRelay>() as EventRelay);
