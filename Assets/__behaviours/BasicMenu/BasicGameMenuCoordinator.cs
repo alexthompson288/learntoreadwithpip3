@@ -141,6 +141,8 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 
     void OnClickChooseNumPlayers(EventRelay relay)
     {
+        GameManager.Instance.Reset();
+
         int numPlayers = System.Array.IndexOf(m_numPlayersButtons, relay) + 1;
         numPlayers = Mathf.Max(numPlayers, 1);
         SessionInformation.Instance.SetNumPlayers(numPlayers);
@@ -175,6 +177,8 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 
     public void OnClickVoyageButton(DataRow session)
     {
+        GameManager.Instance.Reset();
+
         VoyageInfo.Instance.SetCurrentSessionId(session.GetId());
 
         List<DataRow> sections = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + session.GetId()).Rows;

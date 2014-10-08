@@ -123,6 +123,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
 
     void OnClickRead(EventRelay relay)
     {
+        GameManager.Instance.Reset();
+
         GameManager.Instance.AddData("stories", m_currentStory);
         GameManager.Instance.AddGame("NewStories");
         
@@ -133,6 +135,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     
     void OnClickQuiz(EventRelay relay)
     {
+        GameManager.Instance.Reset();
+
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + System.Convert.ToInt32(m_currentStory.GetInt("id")));
         List<DataRow> quizQuestions = DataHelpers.OnlyQuizQuestions(dt.Rows);
 

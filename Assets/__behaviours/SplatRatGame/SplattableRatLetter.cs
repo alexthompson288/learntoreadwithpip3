@@ -126,8 +126,6 @@ public class SplattableRatLetter : MonoBehaviour
 	
 	void OnCollisionEnter(Collision other)
 	{
-        D.Log("Hit: " + other.gameObject.name);
-
         if(other.collider.CompareTag("Floor"))
 		{
 			ChangeLetter();

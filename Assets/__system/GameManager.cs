@@ -61,11 +61,6 @@ public class GameManager : Singleton<GameManager>
         return false;
     }
 
-    void Start()
-    {
-        m_defaultReturnScene = ((PipGameBuildSettings)SettingsHolder.Instance.GetSettings()).m_startingSceneName;
-    }
-
     bool m_playGameNameAudio = false;
 
     // I have created this method so as a pre-emptive measure. 
@@ -121,8 +116,6 @@ public class GameManager : Singleton<GameManager>
     {
         if (m_gameNames.Count == 0)
         {
-            string returnScene = System.String.IsNullOrEmpty(m_returnScene) ? m_defaultReturnScene : m_returnScene;
-
             Reset();
 
             if(PrivateCompletedAll != null)
@@ -130,7 +123,7 @@ public class GameManager : Singleton<GameManager>
                 PrivateCompletedAll();
             }
 
-            TransitionScreen.Instance.ChangeLevel(returnScene, false);
+            TransitionScreen.Instance.ChangeLevel(m_returnScene, false);
         } 
         else
         {
@@ -316,7 +309,6 @@ public class GameManager : Singleton<GameManager>
         return typeMatches;
     }
 
-    string m_defaultReturnScene;
     string m_returnScene;
     
     public void SetReturnScene(string returnScene)
