@@ -29,7 +29,7 @@ public class BuyInfo : Singleton<BuyInfo>
     // Colors
     public bool IsColorPurchased(ColorInfo.PipColor pipColor)
     {
-        return m_purchasedColors.Contains(pipColor.ToString()) || pipColor == ColorInfo.PipColor.Pink;
+        return ContentLock.Instance.lockType == ContentLock.Lock.None || m_purchasedColors.Contains(pipColor.ToString()) || pipColor == ColorInfo.PipColor.Pink;
     }
 
     public void SetColorPurchased(string colorName)

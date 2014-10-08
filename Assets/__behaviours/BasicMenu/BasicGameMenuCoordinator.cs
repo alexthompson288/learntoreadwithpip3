@@ -20,6 +20,10 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
     private TweenBehaviour m_numPlayersMoveable;
     [SerializeField]
     private EventRelay[] m_numPlayersButtons;
+    [SerializeField]
+    private PipColorWidgets m_2PlayerButtonColorBehaviour;
+    [SerializeField]
+    private GameObject m_onlyiOSLabel;
 
     List<VoyageButton> m_voyageButtons = new List<VoyageButton>();
 
@@ -34,11 +38,30 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         System.Array.Sort(m_progressGames, CollectionHelpers.LocalLeftToRight_TopToBottom);
         System.Array.Sort(m_voyageRows, CollectionHelpers.LocalTopToBottom);
 
-        System.Array.Sort(m_numPlayersButtons, CollectionHelpers.LocalLeftToRight_TopToBottom);
-        for (int i = 0; i < m_numPlayersButtons.Length; ++i)
+        #if UNITY_STANDALONE
+        System.Array.Sort(m_numPlayersButtons, CollectionHelpers.LocalTopToBottom);
+        
+        for(int i = 0; i < m_numPlayersButtons.Length; ++i)
         {
-            m_numPlayersButtons[i].SingleClicked += OnClickChooseNumPlayers;
+            if(i == 0)
+            {
+                m_numPlayersButtons[i].SingleClicked += OnClickChooseNumPlayers;
+            }
+            else
+            {
+                UISprite[] buttonSprites = m_numPlayersButtons[i].GetComponentsInChildren<UISprite>() as UISprite[];
+                foreach(UISprite sprite in buttonSprites)
+                {
+                    sprite.color = Color.grey;
+                }
+            }
         }
+        #else
+        foreach (EventRelay relay in m_numPlayersButtons)
+        {
+            relay.SingleClicked += OnChooseNumPlayers;
+        }
+        #endif
 
         foreach (Transform row in m_voyageRows)
         {
@@ -62,7 +85,6 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             string programme = isMaths ? "Maths" : "Reading";
             m_titleLabel.text = string.Format("{0} - {1}", programme, m_pipColor.ToString());
         }
-
 
         Color col = ColorInfo.GetColor(m_pipColor);
 
