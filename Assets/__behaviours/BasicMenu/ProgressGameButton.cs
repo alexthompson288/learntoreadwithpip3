@@ -44,6 +44,8 @@ public class ProgressGameButton : MonoBehaviour
         int newStars = totalStars - ScoreInfo.Instance.GetPreviousHighScoreStars();
         int newStarIndex = totalStars - newStars;
 
+        ScoreInfo.Instance.DestroyNewHighScore();
+
         // Set the color of the newly unlocked stars back to white beforehand, so we can set their color to gold during the tween
         for (int i = newStarIndex; i < totalStars; ++i)
         {

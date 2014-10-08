@@ -100,6 +100,18 @@ public class ScoreHealth : PlusScoreKeeper
     {
         RefreshColor();
 
+        if (VoyageInfo.Instance.currentSessionId == -1)
+        {
+            m_health = m_startHealth;
+        }
+        else
+        {
+            D.Log("Voyage ScoreHealth");
+            m_health = 1;
+            m_healthGainedOnCorrect = m_maxHealth / 8f;
+            RefreshHealthBar(false);
+        }
+
         m_characterSprite.gameObject.SetActive(false);
         m_opponentCharacterSprite.gameObject.SetActive(false);
 
@@ -111,8 +123,6 @@ public class ScoreHealth : PlusScoreKeeper
         {
             m_opponentKeeper = null;
         }
-
-        m_health = m_startHealth;
 
         m_scoreLabel.text = m_score.ToString();
 
@@ -132,9 +142,11 @@ public class ScoreHealth : PlusScoreKeeper
 
         if (SessionInformation.Instance.GetNumPlayers() == 1)
         {
-            m_winLabel.text = SessionInformation.Instance.GetNumPlayers() == 1 ? "Game\nOver" : "You\nWin!!!";
+            bool isGameOver = SessionInformation.Instance.GetNumPlayers() == 1 && VoyageInfo.Instance.currentSessionId == -1;
 
-            string lastLetter = SessionInformation.Instance.GetNumPlayers() == 1 ? "a" : "b";
+            m_winLabel.text = isGameOver ? "Game\nOver" : "You\nWin!!!";
+
+            string lastLetter = isGameOver ? "a" : "b";
             m_winCharacterSprite.spriteName = m_winCharacterSprite.spriteName.Substring(0, m_winCharacterSprite.spriteName.Length - 1) + lastLetter;
 
             iTween.Stop(m_levelUpTweener);
@@ -149,7 +161,8 @@ public class ScoreHealth : PlusScoreKeeper
             WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
             WingroveAudio.WingroveRoot.Instance.PostEvent("BLACKBOARD_APPEAR");
 
-            yield return new WaitForSeconds(3.5f);
+            float delay = SessionInformation.Instance.GetNumPlayers() == 1 ? 2.5f : 3.5f;
+            yield return new WaitForSeconds(delay);
         }
     }
 
@@ -189,8 +202,15 @@ public class ScoreHealth : PlusScoreKeeper
 
         if (Mathf.Approximately(m_health, m_maxHealth))
         {
-            m_state = State.LevellingUp;
-            StartCoroutine(LevelUp());
+            if(VoyageInfo.Instance.currentSessionId == -1)
+            {
+                m_state = State.LevellingUp;
+                StartCoroutine(LevelUp());
+            }
+            else
+            {
+                InvokeCompleted();
+            }
         }
 
         if (delta > 0 && m_opponentKeeper != null)
@@ -310,7 +330,7 @@ public class ScoreHealth : PlusScoreKeeper
 
     public void RefreshColor()
     {
-        Color col = ColorInfo.GetColor(GameManager.Instance.currentColor);
+        Color col = ColorInfo.GetColor(GameManager.Instance.pipColor);
         foreach (UIWidget widget in m_colorChangeWidgets)
         {
             TweenColor.Begin(widget.gameObject, 0.15f, col);

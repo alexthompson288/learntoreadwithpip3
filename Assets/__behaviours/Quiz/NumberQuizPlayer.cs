@@ -74,6 +74,15 @@ public class NumberQuizPlayer : PlusGamePlayer
         if (NumberQuizCoordinator.Instance.UseDummyCountables())
         {
             m_questionLabel.text = string.Format("How many {0}?", m_currentCountable.name);
+            if (m_currentData.GetInt("value") == 1)
+            {
+                string questionText = m_questionLabel.text;
+                if(questionText[questionText.Length - 1] == 's')
+                {
+                    questionText = questionText.Substring(0, questionText.Length - 1);
+                    m_questionLabel.text = questionText;
+                }
+            }
 
             int numCountables = NumberQuizCoordinator.Instance.GetRandomData(false).GetInt("value");
             while(numCountables < target)

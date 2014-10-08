@@ -95,19 +95,10 @@ public class BasicMenuNavigation : Menu
         SetUpButtons(m_mathsButtonParent, OnClickMaths);
         SetUpButtons(m_readingButtonParent, OnClickReading);
         SetUpButtons(m_storiesButtonParent, OnClickStories);
-    }
-
-    void OnLevelWasLoaded(int level)
-    {
-        UICamera uiCam = GetComponentInChildren<UICamera>() as UICamera;
-        if (uiCam != null)
-        {
-            uiCam.enabled = true;
-        }
 
         m_callButton.SetActive(SessionInformation.Instance.GetNumPlayers() == 1);
         
-        bool isStartLevel = level == 0;
+        bool isStartLevel = Application.loadedLevel == 0;
         
         m_panel.alpha = isStartLevel ? 1 : 0;
         if (isStartLevel)
@@ -134,6 +125,46 @@ public class BasicMenuNavigation : Menu
             m_dismissBackground.SingleClicked += OnClickDismiss;
         }
     }
+
+//    void OnLevelWasLoaded(int level)
+//    {
+//        UICamera uiCam = GetComponentInChildren<UICamera>() as UICamera;
+//        if (uiCam != null)
+//        {
+//            uiCam.enabled = true;
+//        }
+//
+//        m_callButton.SetActive(SessionInformation.Instance.GetNumPlayers() == 1);
+//        
+//        bool isStartLevel = level == 0;
+//        
+//        m_panel.alpha = isStartLevel ? 1 : 0;
+//        if (isStartLevel)
+//        {
+//            m_dismissBackground.SingleClicked -= OnClickDismiss;
+//
+//            if (m_bookmark != null)
+//            {
+//                if (m_bookmark.m_subMenu == "Stories")
+//                {
+//                    BasicStoriesMenuCoordinator.Instance.On(m_bookmark.m_pipColor, m_bookmark.m_storyId);
+//                    m_stories.position = m_subMenuOnLocation.position;
+//                    m_camera.transform.position = m_stories.position;
+//                } 
+//                else
+//                {
+//                    bool isMaths = m_bookmark.m_subMenu == "Maths";
+//                    BasicGameMenuCoordinator.Instance.On(m_bookmark.m_pipColor, isMaths);
+//                    m_games.position = m_subMenuOnLocation.position;
+//                    m_camera.transform.position = m_games.position;
+//                }
+//            }
+//        }
+//        else
+//        {
+//            m_dismissBackground.SingleClicked += OnClickDismiss;
+//        }
+//    }
 
     void SetUpButtons(Transform parent, EventRelay.SimpleRelayEventHandler action)
     {

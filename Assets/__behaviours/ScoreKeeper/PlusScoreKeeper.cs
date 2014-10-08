@@ -66,7 +66,10 @@ public class PlusScoreKeeper : ScoreKeeper
     
     public void StartTimer()
     {
-        m_state = State.Timer;
+        if (VoyageInfo.Instance.currentSessionId == -1)
+        {
+            m_state = State.Timer;
+        }
     }
 
     protected void InvokeLevelledUp()

@@ -38,7 +38,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         System.Array.Sort(m_progressGames, CollectionHelpers.LocalLeftToRight_TopToBottom);
         System.Array.Sort(m_voyageRows, CollectionHelpers.LocalTopToBottom);
 
-        #if UNITY_STANDALONE
+#if UNITY_STANDALONE
         System.Array.Sort(m_numPlayersButtons, CollectionHelpers.LocalTopToBottom);
         
         for(int i = 0; i < m_numPlayersButtons.Length; ++i)
@@ -55,13 +55,17 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
                     sprite.color = Color.grey;
                 }
             }
+
+#if UNITY_EDITOR
+            m_numPlayersButtons[i].SingleClicked += OnClickChooseNumPlayers;
+#endif
         }
-        #else
+#else
         foreach (EventRelay relay in m_numPlayersButtons)
         {
             relay.SingleClicked += OnChooseNumPlayers;
         }
-        #endif
+#endif
 
         foreach (Transform row in m_voyageRows)
         {
@@ -143,6 +147,8 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
     {
         GameManager.Instance.Reset();
 
+        GameManager.Instance.SetActivity(ProgrammeInfo.progress);
+
         PlusScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
         ScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
 
@@ -150,8 +156,6 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         numPlayers = Mathf.Max(numPlayers, 1);
         SessionInformation.Instance.SetNumPlayers(numPlayers);
 
-        GameManager.Instance.SetCurrentColor(m_pipColor);
-        
         GameManager.Instance.AddGame(m_currentProgressGame.GetGameName());
         
         if(GameManager.Instance.programme == ProgrammeInfo.basicMaths)
@@ -180,12 +184,14 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         GameManager.Instance.Reset();
         ScoreInfo.Instance.SetScoreType(session.GetId().ToString());
 
-        VoyageInfo.Instance.SetCurrentSessionId(session.GetId());
+        VoyageInfo.Instance.SetUp(session.GetId());
 
         List<DataRow> sections = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from sections WHERE programsession_id=" + session.GetId()).Rows;
         
         if (sections.Count > 0)
         {
+            GameManager.Instance.SetActivity(ProgrammeInfo.voyage);
+
             foreach (DataRow section in sections)
             {
                 DataRow game = DataHelpers.GetGameForSection(section);
@@ -292,7 +298,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 
     public void StartGames()
     {
-        // Set return scene
+        GameManager.Instance.SetPipColor(m_pipColor);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);
 
         WingroveAudio.WingroveRoot.Instance.PostEvent("MUSIC_STOP");

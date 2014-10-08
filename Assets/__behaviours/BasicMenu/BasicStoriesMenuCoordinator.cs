@@ -94,6 +94,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
         int totalStars = ScoreInfo.Instance.GetNewHighScoreStars();
         int newStars = totalStars - ScoreInfo.Instance.GetPreviousHighScoreStars();
         int newStarIndex = totalStars - newStars;
+
+        ScoreInfo.Instance.DestroyNewHighScore();
         
         // Set the color of the newly unlocked stars back to white beforehand, so we can set their color to gold during the tween
         for (int i = newStarIndex; i < totalStars; ++i)
@@ -177,6 +179,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     {
         GameManager.Instance.Reset();
 
+        GameManager.Instance.SetActivity(ProgrammeInfo.story);
+
         GameManager.Instance.AddData("stories", m_currentStory);
         GameManager.Instance.AddGame("NewStories");
         
@@ -194,6 +198,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
 
         if (quizQuestions.Count > 0)
         {
+            GameManager.Instance.SetActivity(ProgrammeInfo.storyQuiz);
+
             GameManager.Instance.AddData("quizquestions", quizQuestions);
             GameManager.Instance.AddGame(m_quizGameName);
 
@@ -209,7 +215,7 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     {
         yield return null;
 
-        GameManager.Instance.SetCurrentColor(m_pipColor);
+        GameManager.Instance.SetPipColor(m_pipColor);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);        
 
         GameManager.Instance.StartGames();

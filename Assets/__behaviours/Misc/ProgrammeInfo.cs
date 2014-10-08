@@ -40,6 +40,42 @@ public static class ProgrammeInfo
         }
     }
 
+    static string m_voyage = "Voyage";
+    public static string voyage
+    {
+        get
+        {
+            return m_voyage;
+        }
+    }
+
+    static string m_progress = "Progress";
+    public static string progress
+    {
+        get
+        {
+            return m_progress;
+        }
+    }
+
+    static string m_story = "Story";
+    public static string story
+    {
+        get
+        {
+            return m_story;
+        }
+    }
+
+    static string m_storyQuiz = "StoryQuiz";
+    public static string storyQuiz
+    {
+        get
+        {
+            return m_storyQuiz;
+        }
+    }
+
     private static string[] m_plusMathsGames = new string[] { "NewCompleteEquationNumbers", "NewClockNumbers", "NewMultiplicationQuadNumbers", "NewToyShopNumbers" };
     public static string[] GetPlusMathsGames()
     {

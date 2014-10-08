@@ -43,7 +43,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         get
         {
-            return "text_" + ColorInfo.GetColorString(GameManager.Instance.currentColor).ToLower();
+            return "text_" + ColorInfo.GetColorString(GameManager.Instance.pipColor).ToLower();
         }
     }
 
@@ -70,7 +70,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         yield return StartCoroutine(GameDataBridge.WaitForDatabase());
 
-        ColorInfo.PipColor startPipColor = GameManager.Instance.currentColor;
+        ColorInfo.PipColor startPipColor = GameManager.Instance.pipColor;
 
         DataRow story = DataHelpers.GetStory();
         if (story != null)
@@ -144,7 +144,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
             m_currentColorButton = button;
 
-            GameManager.Instance.SetCurrentColor(m_currentColorButton.pipColor);
+            GameManager.Instance.SetPipColor(m_currentColorButton.pipColor);
  
 
             ClearText();
@@ -185,7 +185,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
         if (storyPage != null && storyPage [m_currentTextAttribute] != null)
         {
             string audioFileName = storyPage ["audio"] != null ? 
-                System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), ColorInfo.GetColorString(GameManager.Instance.currentColor)) 
+                System.String.Format("{0}_{1}", storyPage ["audio"].ToString(), ColorInfo.GetColorString(GameManager.Instance.pipColor)) 
                     : null;
 
             m_audioPlayButton.SetActive(!System.String.IsNullOrEmpty(audioFileName));
@@ -220,7 +220,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
 
         string textToDisplay = originalText;
 
-        ColorInfo.PipColor currentColor = GameManager.Instance.currentColor;
+        ColorInfo.PipColor currentColor = GameManager.Instance.pipColor;
         bool isPipPadAllowed = (currentColor != ColorInfo.PipColor.Green && currentColor != ColorInfo.PipColor.Orange);
 
         while (true)

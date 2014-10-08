@@ -74,6 +74,7 @@ public class CompleteEquationPlayer : GamePlayer
     {
         System.Array.Sort(m_equationPartLocators, CollectionHelpers.LocalLeftToRight);
 
+        m_scoreKeeper.SetHealthLostOnIncorrect(10);
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
         m_scoreKeeper.StartTimer();

@@ -51,6 +51,7 @@ public class PlusQuizPlayer : PlusGamePlayer
     
     public void StartGame()
     {       
+        m_scoreKeeper.SetHealthLostOnIncorrect(10);
         m_scoreKeeper.LevelledUp += OnLevelUp;
         m_scoreKeeper.Completed += OnScoreKeeperComplete;
         m_scoreKeeper.StartTimer();

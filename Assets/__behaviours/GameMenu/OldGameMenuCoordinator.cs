@@ -82,7 +82,7 @@ public class OldGameMenuCoordinator : MonoBehaviour
             }
         }
 
-        ScoreInfo.Instance.RemoveNewHighScore();
+        ScoreInfo.Instance.DestroyNewHighScore();
         GameMenuInfo.Instance.DestroyBookmark();
 
 #if UNITY_EDITOR

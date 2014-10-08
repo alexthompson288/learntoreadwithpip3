@@ -97,11 +97,6 @@ public class ScoreInfo : Singleton<ScoreInfo>
 #endif
         
         Load();
-
-        foreach (ScoreTracker tracker in m_scoreTrackers)
-        {
-            D.Log(string.Format("{0}, {1}, {2}", tracker.GetGame(), tracker.GetType(), tracker.GetStars()));
-        }
         
         UserInfo.Instance.ChangingUser += OnChangeUser;
     }
@@ -136,7 +131,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return m_newHighScore.GetStars();
     }
 
-    public void RemoveNewHighScore()
+    public void DestroyNewHighScore()
     {
         m_newHighScore = null;
     }
@@ -181,7 +176,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
 
     public void NewScore(float myTime, int myScore, int myTargetScore, int myStars)
     {
-        if (SessionInformation.Instance.GetNumPlayers() < 2)
+        if (SessionInformation.Instance.GetNumPlayers() < 2 && VoyageInfo.Instance.currentSessionId == -1)
         {
             string game = DataHelpers.GetGameName();
             if(System.String.IsNullOrEmpty(game))

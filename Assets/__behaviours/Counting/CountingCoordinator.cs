@@ -59,7 +59,7 @@ public class CountingCoordinator : Singleton<CountingCoordinator>
         
         m_dataPool = DataHelpers.GetNumbers();
         m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, m_gamePlayers [0].GetLocatorCount());
-        
+
         m_targetData = DataHelpers.GetSingleTargetData("numbers", null);
 
         int numPlayers = GetNumPlayers();
@@ -195,7 +195,7 @@ public class CountingCoordinator : Singleton<CountingCoordinator>
             }
             else
             {
-                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.pipColor);
             }
         }
         

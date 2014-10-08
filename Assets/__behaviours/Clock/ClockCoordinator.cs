@@ -145,7 +145,7 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
             }
             else
             {
-                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.pipColor);
             }
         }
         

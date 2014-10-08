@@ -5,6 +5,20 @@ using System.Linq;
 
 public class GameManager : Singleton<GameManager> 
 {
+    string m_activity;
+    public string activity
+    {
+        get
+        {
+            return m_activity;
+        }
+    }
+
+    public void SetActivity(string myActivity)
+    {
+        m_activity = myActivity;
+    }
+
     string m_programme = ProgrammeInfo.basicReading;
     public string programme
     {
@@ -36,25 +50,25 @@ public class GameManager : Singleton<GameManager>
 
     ColorInfo.PipColor m_maxColor = ColorInfo.PipColor.White;
 
-    ColorInfo.PipColor m_currentColor;
-    public ColorInfo.PipColor currentColor
+    ColorInfo.PipColor m_pipColor;
+    public ColorInfo.PipColor pipColor
     {
         get
         {
-            return m_currentColor;
+            return m_pipColor;
         }
     }
 
-    public void SetCurrentColor(ColorInfo.PipColor myCurrentColor)
+    public void SetPipColor(ColorInfo.PipColor myPipColor)
     {
-        m_currentColor = myCurrentColor;
+        m_pipColor = myPipColor;
     }
 
-    public bool IncrementCurrentColor()
+    public bool IncrementPipColor()
     {
-        if (m_currentColor < m_maxColor)
+        if (m_pipColor < m_maxColor)
         {
-            m_currentColor = (ColorInfo.PipColor)(m_currentColor + 1);
+            m_pipColor = (ColorInfo.PipColor)(m_pipColor + 1);
             return true;
         }
 
@@ -75,16 +89,16 @@ public class GameManager : Singleton<GameManager>
     {
         m_state = State.StartGame;
 
-        m_currentGameName = m_gameNames.Dequeue();
+        m_gameName = m_gameNames.Dequeue();
 
-        DataRow currentGame = DataHelpers.GetGame(m_currentGameName);
+        DataRow currentGame = DataHelpers.GetGame(m_gameName);
 
         if (m_playGameNameAudio && currentGame != null && currentGame["labeltext"] != null)
         {
             ResourcesAudio.Instance.PlayFromResources(currentGame["labeltext"].ToString());
         }
 
-        string sceneName = GameLinker.Instance.GetSceneName(m_currentGameName);
+        string sceneName = GameLinker.Instance.GetSceneName(m_gameName);
 
         if (!System.String.IsNullOrEmpty(sceneName))
         {
@@ -104,9 +118,9 @@ public class GameManager : Singleton<GameManager>
         m_targetData.Clear();
         m_gameNames.Clear();
 
-        m_currentColor = ColorInfo.PipColor.Pink;
+        m_pipColor = ColorInfo.PipColor.Pink;
 
-        m_currentGameName = "";
+        m_gameName = "";
         m_returnScene = "";
 
         SessionInformation.Instance.SetNumPlayers(1);
@@ -116,6 +130,8 @@ public class GameManager : Singleton<GameManager>
     {
         if (m_gameNames.Count == 0)
         {
+            PipAnalytics.Instance.ActivitiesCompleted();
+
             Reset();
 
             if(PrivateCompletedAll != null)
@@ -152,6 +168,7 @@ public class GameManager : Singleton<GameManager>
                 m_state = State.Cancelling;
                 break;
             case State.Cancelling: // The purpose of State.Cancelling is so that PrivateCancelling is only called in the scene after DeliberatelyEmptyScene, therefore, we know what scene we cancelled into
+                PipAnalytics.Instance.ActivitiesCancelled();
                 if(PrivateCancelling != null)
                 {
                     PrivateCancelling();
@@ -162,13 +179,13 @@ public class GameManager : Singleton<GameManager>
     }
 
     Queue<string> m_gameNames = new Queue<string>();
-    string m_currentGameName;
+    string m_gameName;
 
-    public string currentGameName
+    public string gameName
     {
         get
         {
-            return m_currentGameName;
+            return m_gameName;
         }
     }
 

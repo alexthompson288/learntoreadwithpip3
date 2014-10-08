@@ -109,7 +109,7 @@ public class StoryMenuCoordinator : MonoBehaviour
         else if (m_currentBookButton != null)
         {
             ColorInfo.PipColor startPipColor = m_currentColorButton != null ? m_currentColorButton.pipColor : ColorInfo.PipColor.Pink;
-            GameManager.Instance.SetCurrentColor(startPipColor);
+            GameManager.Instance.SetPipColor(startPipColor);
             StoryInfo.Instance.SetShowText(button.GetString() == m_readingString);
             
             GameManager.Instance.AddGame("NewStories");

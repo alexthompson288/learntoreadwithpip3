@@ -10,7 +10,9 @@ public class VoyageInfo : Singleton<VoyageInfo>
     private bool m_overwrite;
 #endif
 
-    int m_currentSessionId;
+    int m_inactiveSessionId = -1;
+
+    int m_currentSessionId = -1;
     public int currentSessionId
     {
         get
@@ -19,9 +21,10 @@ public class VoyageInfo : Singleton<VoyageInfo>
         }
     }
 
-    public void SetCurrentSessionId(int myCurrentSessionId)
+    public void SetUp(int myCurrentSessionId)
     {
         m_currentSessionId = myCurrentSessionId;
+        GameManager.Instance.CompletedAll += OnCompletedAll;
     }
 
     // Session Backgrounds. Saved between app launches
@@ -67,6 +70,9 @@ public class VoyageInfo : Singleton<VoyageInfo>
 
     void Start()
     {
+        m_currentSessionId = m_inactiveSessionId;
+        GameManager.Instance.Cancelling += OnCancel;
+
 #if UNITY_EDITOR
         if(m_overwrite)
         {
@@ -89,6 +95,18 @@ public class VoyageInfo : Singleton<VoyageInfo>
         m_sessionBackgrounds.Clear();
         
         Load();
+    }
+
+    void OnCancel()
+    {
+        m_currentSessionId = m_inactiveSessionId;
+        GameManager.Instance.CompletedAll -= OnCompletedAll;
+    }
+
+    void OnCompletedAll()
+    {
+        m_currentSessionId = m_inactiveSessionId;
+        GameManager.Instance.CompletedAll -= OnCompletedAll;
     }
     
     void Load()

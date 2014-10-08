@@ -281,7 +281,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     {
         PlusScoreInfo.Instance.SetScoreType(m_scoreType);
         
-        GameManager.Instance.SetCurrentColor(m_pipColor);
+        GameManager.Instance.SetPipColor(m_pipColor);
         //D.Log("m_gameName: " + m_gameName);
         GameManager.Instance.AddGame(m_gameName);
         GameManager.Instance.SetReturnScene(Application.loadedLevelName);

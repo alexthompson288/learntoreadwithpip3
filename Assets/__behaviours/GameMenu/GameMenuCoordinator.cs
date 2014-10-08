@@ -71,7 +71,7 @@ public class GameMenuCoordinator : MonoBehaviour
             }
         }
         
-        ScoreInfo.Instance.RemoveNewHighScore();
+        ScoreInfo.Instance.DestroyNewHighScore();
         GameMenuInfo.Instance.DestroyBookmark();
         
         #if UNITY_EDITOR
@@ -149,7 +149,7 @@ public class GameMenuCoordinator : MonoBehaviour
                 
                 ColorInfo.PipColor pipColor = m_currentColorButton.pipColor;
 
-                GameManager.Instance.SetCurrentColor(pipColor);
+                GameManager.Instance.SetPipColor(pipColor);
                 GameManager.Instance.SetReturnScene(Application.loadedLevelName);
                 
                 // Get and set all the data associated with the color

@@ -53,6 +53,17 @@ public class CountingPlayer : PlusGamePlayer
     IEnumerator AskQuestion()
     {   
         m_questionLabel.text = string.Format("Pick {0} {1}", m_currentData.GetInt("value"), m_currentCountableInfo.name);
+        if (m_currentData.GetInt("value") == 1)
+        {
+            string questionText = m_questionLabel.text;
+            if(questionText[questionText.Length - 1] == 's')
+            {
+                questionText = questionText.Substring(0, questionText.Length - 1);
+                m_questionLabel.text = questionText;
+            }
+        }
+
+
         TweenAlpha.Begin(m_questionLabel.gameObject, 0.25f, 1f);
 
         GameObject countablePrefab = CountingCoordinator.Instance.GetCountablePrefab();

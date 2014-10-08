@@ -10,7 +10,7 @@ public static class DataHelpers
     // Games
     public static DataRow GetCurrentGame()
     {
-        return GetGame(GameManager.Instance.currentGameName);
+        return GetGame(GameManager.Instance.gameName);
     }
     
     public static DataRow GetGame(string gameName)
@@ -21,7 +21,7 @@ public static class DataHelpers
 
     public static string GetGameName()
     {
-        return GameManager.Instance.currentGameName;
+        return GameManager.Instance.gameName;
     }
 
     public static DataRow GetGameForSection (DataRow section) 

@@ -28,6 +28,8 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 	Dictionary<DataRow, Texture2D> m_phonemeImages = new Dictionary<DataRow, Texture2D>();
     Dictionary<DataRow, AudioClip> m_graphemeAudio = new Dictionary<DataRow, AudioClip>();
     Dictionary<DataRow, AudioClip> m_longAudio = new Dictionary<DataRow, AudioClip>();
+
+    float m_startTime;
 	
 	public int GetNumPlayers()
     {
@@ -202,6 +204,8 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 			m_gamePlayers[index].SetScoreBar(m_targetScore);
 			m_gamePlayers[index].SpawnSplattables(lettersPool);
 		}
+
+        m_startTime = Time.time;
 		
 		int winningIndex = -1;
 		
@@ -235,6 +239,18 @@ public class SplatRatGameCoordinator : Singleton<SplatRatGameCoordinator>
 
 	IEnumerator OnFinish(int winningIndex = 0)
 	{
+        if (GetNumPlayers() == 1)
+        {
+            float timeTaken = Time.time - m_startTime;
+            
+            float twoStarPerQuestion = 2.5f;
+            float threeStarPerQuestion = 1.5f;
+            
+            int stars = ScoreInfo.CalculateTimeStars(timeTaken, twoStarPerQuestion * (float)m_targetScore, threeStarPerQuestion * (float)m_targetScore);
+            
+            ScoreInfo.Instance.NewScore(timeTaken, m_gamePlayers[0].GetScore(), m_targetScore, stars);
+        }
+
 		SessionInformation.Instance.SetWinner(winningIndex);
 
         yield return new WaitForSeconds(0.5f);

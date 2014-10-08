@@ -154,7 +154,7 @@ public class PunctuationCoordinator : Singleton<PunctuationCoordinator>
     {
         if (GetNumPlayers() == 1)
         {
-            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+            PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.pipColor);
         }
         
         StartCoroutine(CompleteGameCo());

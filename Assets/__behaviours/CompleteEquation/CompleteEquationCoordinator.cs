@@ -36,11 +36,11 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
         m_dataPool = DataHelpers.GetNumbers();
         m_dataPool.Sort(delegate(DataRow x, DataRow y) { return x.GetInt("value").CompareTo(y.GetInt("value")); });
 
-        if (GameManager.Instance.currentColor == ColorInfo.PipColor.Turquoise)
+        if (GameManager.Instance.pipColor == ColorInfo.PipColor.Turquoise)
         {
             m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 50);
         }
-        else if (GameManager.Instance.currentColor == ColorInfo.PipColor.Purple)
+        else if (GameManager.Instance.pipColor == ColorInfo.PipColor.Purple)
         {
             m_dataPool = DataHelpers.OnlyLowNumbers(m_dataPool, 100);
         }
@@ -157,7 +157,7 @@ public class CompleteEquationCoordinator : Singleton<CompleteEquationCoordinator
             }
             else
             {
-                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.currentColor);
+                PlusScoreInfo.Instance.NewScore(Time.time - m_timeStarted, m_gamePlayers[0].GetScore(), (int)GameManager.Instance.pipColor);
             }
         }
 

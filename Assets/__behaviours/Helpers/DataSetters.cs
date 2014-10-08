@@ -6,11 +6,11 @@ public static class DataSetters
 {
     public static List<DataRow> LevelUpCorrectCaptions()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
         
         if (hasIncremented)
         {
-            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.pipColor);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
             GameManager.Instance.AddData("correctcaptions", dt.Rows.FindAll(x => x ["correctsentence"] != null && x ["correctsentence"].ToString() == "t"));
         }
@@ -20,11 +20,11 @@ public static class DataSetters
 
     public static List<DataRow> LevelUpQuizQuestions()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
         
         if (hasIncremented)
         {
-            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.pipColor);
             DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE programmodule_id=" + moduleId);
             GameManager.Instance.AddData("quizquestions", dt.Rows.FindAll(x => x ["quiz"] != null && x ["quiz"].ToString() == "t"));
         }
@@ -34,11 +34,11 @@ public static class DataSetters
 
     public static List<DataRow> LevelUpPhonemes()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
         
         if (hasIncremented)
         {
-            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.pipColor);
             GameManager.Instance.AddData("phonemes", DataHelpers.GetModulePhonemes(moduleId));
         }
         
@@ -47,11 +47,11 @@ public static class DataSetters
 
     public static List<DataRow> LevelUpWords()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
 
         if (hasIncremented)
         {
-            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.currentColor);
+            int moduleId = DataHelpers.GetModuleId(GameManager.Instance.pipColor);
             GameManager.Instance.AddData("words", DataHelpers.GetModuleWords(moduleId));
         }
 
@@ -60,13 +60,13 @@ public static class DataSetters
 
     public static List<DataRow> LevelUpTimes()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
         
-        //////D.Log(System.String.Format("{0} - {1}", GameManager.Instance.currentColor, hasIncremented));
+        //////D.Log(System.String.Format("{0} - {1}", GameManager.Instance.pipColor, hasIncremented));
         
         if (hasIncremented)
         {
-            DataSetters.AddModuleTimes(GameManager.Instance.currentColor);
+            DataSetters.AddModuleTimes(GameManager.Instance.pipColor);
         }
 
         return DataHelpers.GetData("times");
@@ -80,11 +80,11 @@ public static class DataSetters
 
     public static List<DataRow> LevelUpNumbers()
     {
-        bool hasIncremented = GameManager.Instance.IncrementCurrentColor();
+        bool hasIncremented = GameManager.Instance.IncrementPipColor();
 
         if (hasIncremented)
         {
-            DataSetters.AddModuleNumbers(GameManager.Instance.currentColor);
+            DataSetters.AddModuleNumbers(GameManager.Instance.pipColor);
         }
 
         return DataHelpers.GetData("numbers");
