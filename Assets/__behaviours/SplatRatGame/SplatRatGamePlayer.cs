@@ -94,6 +94,16 @@ public class SplatRatGamePlayer : GamePlayer
 	
 	public void SpawnSplattables(List<DataRow> lettersPool)
 	{
+        UIPanel[] panels = GetComponentsInChildren<UIPanel>();
+        foreach (UIPanel panel in panels)
+        {
+            Component rb = panel.GetComponent<Rigidbody>();
+            if(rb != null)
+            {
+                Destroy(rb);
+            }
+        }
+
 		foreach(GameObject locator in m_locators)
 		{
 			GameObject newSplat = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_splatPrefab, locator.transform);
