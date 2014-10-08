@@ -143,13 +143,13 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
     {
         GameManager.Instance.Reset();
 
+        PlusScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
+        ScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
+
         int numPlayers = System.Array.IndexOf(m_numPlayersButtons, relay) + 1;
         numPlayers = Mathf.Max(numPlayers, 1);
         SessionInformation.Instance.SetNumPlayers(numPlayers);
 
-        PlusScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
-        ScoreInfo.Instance.SetScoreType(m_pipColor.ToString());
-        
         GameManager.Instance.SetCurrentColor(m_pipColor);
         
         GameManager.Instance.AddGame(m_currentProgressGame.GetGameName());
@@ -178,6 +178,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
     public void OnClickVoyageButton(DataRow session)
     {
         GameManager.Instance.Reset();
+        ScoreInfo.Instance.SetScoreType(session.GetId().ToString());
 
         VoyageInfo.Instance.SetCurrentSessionId(session.GetId());
 
@@ -196,8 +197,6 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
             }
             
             GameManager.Instance.AddGame("NewSessionComplete");
-
-            ScoreInfo.Instance.SetScoreType(session.GetId().ToString());
 
             // Set data
             SqliteDatabase db = GameDataBridge.Instance.GetDatabase(); // Locally store the database because we're going to call it a lot

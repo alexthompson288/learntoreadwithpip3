@@ -21,6 +21,10 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     private EventRelay m_quizButton;
     [SerializeField]
     private UIScrollView m_scrollView;
+    [SerializeField]
+    private UISprite[] m_stars;
+
+    string m_quizGameName = "NewQuiz";
 
     List<GameObject> m_spawnedStories = new List<GameObject>();
 
@@ -30,6 +34,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
     void Awake()
     {
         m_readButton.SingleClicked += OnClickRead;
+
+        System.Array.Sort(m_stars, CollectionHelpers.LocalLeftToRight);
     }
 
     public void On(ColorInfo.PipColor myPipColor, int storyId = 0)
@@ -47,16 +53,16 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
 
         m_scrollView.ResetPosition();
         
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE " + m_pipColor + "='t' ORDER BY fontsize, difficulty");
-        
-        foreach (DataRow story in dt.Rows)
+        List<DataRow> stories = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from stories WHERE " + m_pipColor + "='t' ORDER BY fontsize, difficulty").Rows;
+
+        for (int i = 0; i < stories.Count; ++i)
         {
-            if (story ["publishable"] != null && story ["publishable"].ToString() == "t")
+            if (stories[i] ["publishable"] != null && stories[i] ["publishable"].ToString() == "t")
             {
                 GameObject newStory = SpawningHelpers.InstantiateUnderWithIdentityTransforms(m_storyPrefab, m_storyGrid.transform);
                 m_spawnedStories.Add(newStory);
                 
-                newStory.GetComponent<BasicStory>().SetUp(story);
+                newStory.GetComponent<BasicStory>().SetUp(stories[i]);
                 newStory.GetComponent<EventRelay>().SingleClicked += OnClickStory;
             }
         }
@@ -75,12 +81,50 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
             }
 
             OnClickStory(startingStory.GetComponent<EventRelay>() as EventRelay);
+
+            if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_quizGameName)
+            {
+                StartCoroutine(TweenNewStars());
+            }
+        }
+    }
+
+    IEnumerator TweenNewStars()
+    {
+        int totalStars = ScoreInfo.Instance.GetNewHighScoreStars();
+        int newStars = totalStars - ScoreInfo.Instance.GetPreviousHighScoreStars();
+        int newStarIndex = totalStars - newStars;
+        
+        // Set the color of the newly unlocked stars back to white beforehand, so we can set their color to gold during the tween
+        for (int i = newStarIndex; i < totalStars; ++i)
+        {
+            m_stars[i].color = Color.white;
+        }
+        
+        yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
+        yield return new WaitForSeconds(0.5f);
+        
+        float tweenDuration = 1f;
+        for(int i = newStarIndex; i < totalStars; ++i)
+        {
+            WingroveAudio.WingroveRoot.Instance.PostEvent("SPARKLE_2");
+            
+            m_stars[i].color = ColorInfo.GetColor(ColorInfo.PipColor.Gold);
+            
+            iTween.RotateBy(m_stars[i].gameObject, new Vector3(0, 0, 20.02f), tweenDuration);
+            
+            Vector3 originalScale = m_stars[i].transform.localScale;
+            iTween.ScaleTo(m_stars[i].gameObject, originalScale * 2.5f, tweenDuration / 2);
+            yield return new WaitForSeconds(tweenDuration / 2);
+            iTween.ScaleTo(m_stars[i].gameObject, originalScale, tweenDuration / 2);
         }
     }
     
     void OnClickStory(EventRelay relay)
     {
         m_currentStory = relay.GetComponent<BasicStory>().story;
+
+        ScoreInfo.RefreshStars(m_stars, m_quizGameName, CreateScoreType());
 
         (BasicMenuNavigation.Instance as BasicMenuNavigation).SetBookmarkStoryId(m_currentStory.GetId());
 
@@ -151,7 +195,7 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
         if (quizQuestions.Count > 0)
         {
             GameManager.Instance.AddData("quizquestions", quizQuestions);
-            GameManager.Instance.AddGame("NewQuiz");
+            GameManager.Instance.AddGame(m_quizGameName);
 
             WingroveAudio.WingroveRoot.Instance.PostEvent("NAV_QUIZ");
 
