@@ -17,8 +17,6 @@ public class SessionCompleteCoordinator : MonoBehaviour
     [SerializeField]
     private UILabel m_collectableLabel;
     [SerializeField]
-    private UITexture m_collectableIcon;
-    [SerializeField]
     private TweenOnOffBehaviour m_bennyTween;
     [SerializeField]
     private SpriteAnim m_bennyAnim;
@@ -50,6 +48,9 @@ public class SessionCompleteCoordinator : MonoBehaviour
 
 
         int sessionId = VoyageInfo.Instance.currentSessionId;
+
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programsessions WHERE id='" + sessionId + "'");
+        m_collectableLabel.text = dt.Rows.Count > 0 && dt.Rows [0] ["labeltext"] != null ? dt.Rows [0] ["labeltext"].ToString() : "";
         
         for (int i = 0; i < m_spriteNames.Length; ++i)
         {
@@ -58,37 +59,11 @@ public class SessionCompleteCoordinator : MonoBehaviour
             newButton.GetComponent<ClickEvent>().SetString(m_spriteNames[i]);
             newButton.GetComponentInChildren<UISprite>().spriteName = m_spriteNames[i];
         }
-        
-//        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from programmodules WHERE id=" + OldVoyageInfo.Instance.currentModuleId);
-//        
-//        if(dt.Rows.Count > 0 && dt.Rows[0]["modulereward"] != null)
-//        {
-//            string moduleReward = dt.Rows[0]["modulereward"].ToString();
-//            
-//            if(moduleReward == "Phonemes")
-//            {
-//                dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from data_phonemes INNER JOIN phonemes ON phoneme_id=phonemes.id WHERE programsession_id=" + sessionId);
-//                
-//                foreach (DataRow phoneme in dt.Rows)
-//                {
-//                    if (phoneme["is_target_phoneme"] != null && phoneme ["is_target_phoneme"].ToString() == "t")
-//                    {
-//                        m_collectableLabel.text = phoneme["phoneme"].ToString();
-//                        hasSetLabel = true;
-//                    }
-//                }
-//            }
-//        } 
-
-        m_collectableLabel.gameObject.SetActive(hasSetLabel);
-        m_collectableIcon.gameObject.SetActive(hasSetIcon);
 
         m_grid.Reposition();
 
         yield return StartCoroutine(TransitionScreen.WaitForScreenExit());
         yield return new WaitForSeconds(0.5f);
-
-        WingroveAudio.WingroveRoot.Instance.PostEvent("BENNY_ANOTHER_LETTER_2");
 
         m_pipAnimManager.PlayAnimation("WALK");
 

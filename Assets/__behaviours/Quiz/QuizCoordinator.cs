@@ -42,6 +42,8 @@ public class QuizCoordinator : MonoBehaviour
 
     IEnumerator Start()
     {
+        D.Log("QuizCoordinator.Start()");
+
         m_pictureOnPos = m_questionPictureParent.transform.position;
         m_pictureBeforePos = new Vector3(m_pictureOnPos.x - m_widgetOffDistance, m_pictureOnPos.y, m_pictureOnPos.z);
         m_questionPictureParent.transform.position = m_pictureBeforePos;

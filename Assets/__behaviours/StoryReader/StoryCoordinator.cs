@@ -78,7 +78,7 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
             m_storyId = System.Convert.ToInt32(story ["id"]);
         } 
 
-        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "'");
+        DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from storypages where story_id='" + m_storyId + "' ORDER BY pageorder");
         m_storyPages = dt.Rows;
         m_numPages = m_storyPages.Count;
 

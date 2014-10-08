@@ -47,11 +47,17 @@ public class BasicMenuNavigation : Menu
     {
         public string m_subMenu;
         public ColorInfo.PipColor m_pipColor;
+        public int m_storyId = 0;
 
         public Bookmark(string mySubMenu, ColorInfo.PipColor myPipColor)
         {
             m_subMenu = mySubMenu;
             m_pipColor = myPipColor;
+        }
+
+        public void SetStoryId(int myStoryId)
+        {
+            m_storyId = myStoryId;
         }
     }
 
@@ -68,13 +74,6 @@ public class BasicMenuNavigation : Menu
 
     void Start()
     {
-        if(SessionInformation.Instance.GetNumPlayers() == 2) 
-        {
-            m_callButton.SetActive(false);
-        }
-
-        GameManager.Instance.Cancelling += OnGameCancel;
-
         m_games.position = m_subMenuOffLocation.position;
         m_stories.position = m_subMenuOffLocation.position;
 
@@ -96,19 +95,28 @@ public class BasicMenuNavigation : Menu
         SetUpButtons(m_mathsButtonParent, OnClickMaths);
         SetUpButtons(m_readingButtonParent, OnClickReading);
         SetUpButtons(m_storiesButtonParent, OnClickStories);
+    }
 
-        bool isStartLevel = Application.loadedLevel == 0;
+    void OnLevelWasLoaded(int level)
+    {
+        UICamera uiCam = GetComponentInChildren<UICamera>() as UICamera;
+        if (uiCam != null)
+        {
+            uiCam.enabled = true;
+        }
 
-        //m_camera.GetComponent<UICamera>().enabled = isStartLevel;
+        m_callButton.SetActive(SessionInformation.Instance.GetNumPlayers() == 1);
+        
+        bool isStartLevel = level == 0;
+        
         m_panel.alpha = isStartLevel ? 1 : 0;
-
         if (isStartLevel)
         {
             if (m_bookmark != null)
             {
                 if (m_bookmark.m_subMenu == "Stories")
                 {
-                    BasicStoriesMenuCoordinator.Instance.On(m_bookmark.m_pipColor);
+                    BasicStoriesMenuCoordinator.Instance.On(m_bookmark.m_pipColor, m_bookmark.m_storyId);
                     m_stories.position = m_subMenuOnLocation.position;
                     m_camera.transform.position = m_stories.position;
                 } 
@@ -232,23 +240,11 @@ public class BasicMenuNavigation : Menu
         iTween.MoveTo(m_camera, target.position, m_cameraTweenDuration);
     }
 
-    public void SubscribeOnGameComplete()
+    public void SetBookmarkStoryId(int storyId)
     {
-        GameManager.Instance.CompletedAll += OnGameComplete;
-    }
-
-    void OnGameCancel()
-    {
-        GameManager.Instance.CompletedAll -= OnGameComplete;
-        
-        if(Application.loadedLevel != 0)
+        if (m_bookmark != null)
         {
-            m_bookmark = null;
+            m_bookmark.SetStoryId(storyId);
         }
-    }
-    
-    void OnGameComplete()
-    {
-        GameManager.Instance.CompletedAll -= OnGameComplete;
     }
 }

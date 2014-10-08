@@ -32,14 +32,14 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
         m_readButton.SingleClicked += OnClickRead;
     }
 
-    public void On(ColorInfo.PipColor myPipColor)
+    public void On(ColorInfo.PipColor myPipColor, int storyId = 0)
     {
         m_pipColor = myPipColor;
 
-        StartCoroutine(OnCo());
+        StartCoroutine(OnCo(storyId));
     }
 
-    IEnumerator OnCo()
+    IEnumerator OnCo(int storyId)
     {
         CollectionHelpers.DestroyObjects(m_spawnedStories);
 
@@ -68,13 +68,21 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
         
         if (m_spawnedStories.Count > 0)
         {
-            OnClickStory(m_spawnedStories[0].GetComponent<EventRelay>() as EventRelay);
+            GameObject startingStory = m_spawnedStories.Find(x => x.GetComponent<BasicStory>().story.GetId() == storyId);
+            if(startingStory == null)
+            {
+                startingStory = m_spawnedStories[0];
+            }
+
+            OnClickStory(startingStory.GetComponent<EventRelay>() as EventRelay);
         }
     }
     
     void OnClickStory(EventRelay relay)
     {
         m_currentStory = relay.GetComponent<BasicStory>().story;
+
+        (BasicMenuNavigation.Instance as BasicMenuNavigation).SetBookmarkStoryId(m_currentStory.GetId());
 
         DataTable dt = GameDataBridge.Instance.GetDatabase().ExecuteQuery("select * from datasentences WHERE story_id=" + m_currentStory.GetId());
         bool hasQuizQuestions = DataHelpers.OnlyQuizQuestions(dt.Rows).Count > 0;
