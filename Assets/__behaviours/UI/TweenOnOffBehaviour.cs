@@ -58,7 +58,10 @@ public class TweenOnOffBehaviour : MonoBehaviour
     // Use this for initialization
     IEnumerator Start () 
     {
-        yield return null; // Wait a frame so that other scripts (eg. ScreenSetUp) execute Start method first
+        if (SessionInformation.Instance.GetNumPlayers() == 2)
+        {
+            yield return null; // Wait a frame so that other scripts (eg. ScreenSetUp) execute Start method first
+        }
 
         m_duration = Mathf.Clamp(m_duration, 0.1f, m_duration);
         

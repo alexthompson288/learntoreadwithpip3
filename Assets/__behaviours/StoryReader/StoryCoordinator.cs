@@ -212,12 +212,9 @@ public class StoryCoordinator : Singleton<StoryCoordinator>
     {
         m_scaleLabel.transform.localScale = Vector3.one;
 
+        D.Log("textAttribute: " + m_currentTextAttribute);
+
         string originalText = storyPage [m_currentTextAttribute].ToString().Replace("\\n", "\n").Replace("\n", "").Replace("  ", " ");
-
-#if UNITY_EDITOR
-        //originalText = "salkdrje lqirjli awlekjtq lwierjtie rjgliqej alkrjgq elrjgeorfg jorjgeorjt liawejrp ierjgiej lkwJEFLKSJDF ASLDKEFLASDJF JKSDFLdlkfjgeli  kjr wlekrfjwl slkjgrells slijfwli slrkjgle sdlhgliew slijgwl lkrjg lrgijo wleirjow wliejr wliej welitje proyjs";
-#endif
-
         string textToDisplay = originalText;
 
         ColorInfo.PipColor currentColor = GameManager.Instance.pipColor;

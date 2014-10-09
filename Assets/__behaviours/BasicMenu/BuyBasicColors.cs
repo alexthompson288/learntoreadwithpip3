@@ -53,7 +53,7 @@ public class BuyBasicColors : Singleton<BuyBasicColors>
     
     void OnClickButton(EventRelay relay)
     {
-        #if UNITY_IPHONE
+#if UNITY_IPHONE
         if (m_canBuy)
         {
             m_canBuy = false;
@@ -72,10 +72,10 @@ public class BuyBasicColors : Singleton<BuyBasicColors>
             }
             else
             {
-                StartCoroutine(BuyManager.Instance.RestoreBuys(m_restoringMoveable, m_countdownLabel));
+                StartCoroutine(BuyManager.Instance.RestorePurchases(m_restoringMoveable, m_countdownLabel));
             }
         }
-        #endif
+#endif
     }
     
     IEnumerator ResetCanBuy()

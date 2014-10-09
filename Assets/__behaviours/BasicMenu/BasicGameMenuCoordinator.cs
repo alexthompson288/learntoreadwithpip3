@@ -63,7 +63,7 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
 #else
         foreach (EventRelay relay in m_numPlayersButtons)
         {
-            relay.SingleClicked += OnChooseNumPlayers;
+            relay.SingleClicked += OnClickChooseNumPlayers;
         }
 #endif
 

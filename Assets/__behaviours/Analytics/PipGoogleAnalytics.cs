@@ -54,7 +54,7 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Launched")
                              .SetEventAction(deviceType)
-                             .SetEventLabel(IPChecker.Instance.ipAddress));
+                             .SetEventLabel(string.Format("<{0}>__{1}", SystemInfo.deviceUniqueIdentifier, IPChecker.Instance.ipAddress)));
     }
 
     public void ActivitiesCompleted()
@@ -64,7 +64,11 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("ActivitiesCompleted")
                              .SetEventAction(GameManager.Instance.activity)
-                             .SetEventLabel(string.Format("{0}__{1}__{2}", GameManager.Instance.pipColor.ToString(), activityName, SessionInformation.Instance.GetNumPlayers())));
+                             .SetEventLabel(string.Format("<{0}>__{1}__{2}__{3}", 
+                                     new object[] 
+                                     { 
+            SystemInfo.deviceUniqueIdentifier, GameManager.Instance.pipColor.ToString(), activityName, SessionInformation.Instance.GetNumPlayers() 
+        })));
     }
 
     public void ActivitiesCancelled()
@@ -72,7 +76,7 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("ActivitiesCancelled")
                              .SetEventAction(GameManager.Instance.activity)
-                             .SetEventLabel(string.Format("{0}__{1}", GameManager.Instance.pipColor.ToString(), GameManager.Instance.gameName)));
+                             .SetEventLabel(string.Format("<{0}>__{1}__{2}", SystemInfo.deviceUniqueIdentifier, GameManager.Instance.pipColor.ToString(), GameManager.Instance.gameName)));
     }
 
     public void Purchased(string productId)
@@ -80,7 +84,7 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Purchased")
                              .SetEventAction(productId)
-                             .SetEventLabel(productId));
+                             .SetEventLabel(string.Format("<{0}>__{1}", SystemInfo.deviceUniqueIdentifier, productId)));
     }
 
     public void PurchaseCancelled(string productId)
@@ -88,7 +92,7 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("PurchaseCancelled")
                              .SetEventAction(productId)
-                             .SetEventLabel(productId));
+                             .SetEventLabel(string.Format("<{0}>__{1}", SystemInfo.deviceUniqueIdentifier, productId)));
     }
 
     void OnApplicationQuit()
@@ -121,7 +125,7 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Exited")
                              .SetEventAction(deviceType)
-                             .SetEventLabel(fTime.ToString())
+                             .SetEventLabel(SystemInfo.deviceUniqueIdentifier)
                              .SetEventValue(lTime));
     }
 

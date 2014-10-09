@@ -47,7 +47,7 @@ public class BuyManager : Singleton<BuyManager>
 
     public void BuyColor(ColorInfo.PipColor pipColor)
     {
-        m_currentProductId = BuildColorProductId(id);
+        m_currentProductId = BuildColorProductId(pipColor);
 
         ParentGate.Instance.Answered += OnParentGateAnswer;
         ParentGate.Instance.On();
@@ -70,8 +70,6 @@ public class BuyManager : Singleton<BuyManager>
 
     public void BuyBundle(bool isColorBundle)
     {
-        D.Log("BuyManager.BuyBundle(" + bundleType + ")");
-
         m_currentProductId = isColorBundle ? m_allColorsProductId : m_allGamesProductId;
 
         ParentGate.Instance.Answered += OnParentGateAnswer;
@@ -243,7 +241,7 @@ public class BuyManager : Singleton<BuyManager>
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
         D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
-        PipGoogleAnalytics.Purchased(obj.productIdentifier);
+        PipGoogleAnalytics.Instance.Purchased(obj.productIdentifier);
         UnlockProduct(obj.productIdentifier);
         m_purchaseIsResolved = true;
 
@@ -257,7 +255,7 @@ public class BuyManager : Singleton<BuyManager>
 	{
 		D.Log("PURCHASE CANCELLED - " + m_currentProductId);
 		D.Log("Cancelled Message: " + obj);
-        PipGoogleAnalytics.PurchaseCancelled(m_currentProductId);
+        PipGoogleAnalytics.Instance.PurchaseCancelled(m_currentProductId);
 		m_purchaseIsResolved = true;
 
         if (Resolved != null)

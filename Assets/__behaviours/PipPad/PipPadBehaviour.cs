@@ -41,8 +41,6 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
     [SerializeField]
     private Color m_trickyColor;
     [SerializeField]
-    private GameObject m_wordNotFoundParent;
-    [SerializeField]
     private GameObject m_downButtonParent;
 	
 	Vector3 m_offPosition;
@@ -60,7 +58,7 @@ public class PipPadBehaviour : Singleton<PipPadBehaviour>
 	// Use this for initialization
 	void Awake()
 	{
-        m_wordNotFoundParent.SetActive(true);
+        m_pipWordNotFound.gameObject.SetActive(true);
 		m_offPosition = m_mainHierarchyTransform.position;
 	}
 

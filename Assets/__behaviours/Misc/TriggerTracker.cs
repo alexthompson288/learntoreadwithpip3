@@ -62,4 +62,12 @@ public class TriggerTracker : MonoBehaviour
 	{
 		m_trackedObjects.Clear();
 	}
+
+    public void LogTrackedObjectNames()
+    {
+        foreach (GameObject go in m_trackedObjects)
+        {
+            D.Log(go.name);
+        }
+    }
 }
