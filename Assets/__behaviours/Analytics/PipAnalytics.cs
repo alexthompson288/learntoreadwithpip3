@@ -8,32 +8,51 @@ public class PipAnalytics : Singleton<PipAnalytics>
 
     float m_startTime;
 
-    IEnumerator Start()
+    string m_deviceType;
+
+    void Start()
     {
-        yield return StartCoroutine(IPChecker.WaitForResolution());
-        Launched();
+#if UNITY_IPHONE
+        AppPauseChecker.Instance.LaunchedAfterAppPause += OnLaunchAfterAppPause;
+#endif
+        StartCoroutine(OnLaunch());
     }
 
     // TODO: Call Launched after the app is started after Pausing
+    void OnLaunchAfterAppPause()
+    {
+        StopCoroutine("OnLaunch");
+        StartCoroutine("OnLaunch");
+    }
 
+    IEnumerator OnLaunch()
+    {
+        m_startTime = Time.time;
+
+        // Give IPChecker time to reset and then resolve
+        yield return null; 
+        yield return null;
+        yield return StartCoroutine(IPChecker.WaitForResolution());
+        Launched();
+    }
 
     public void Launched()
     {
         m_startTime = Time.time;
 
 #if UNITY_STANDALONE_OSX
-        string deviceType = "OSX";
+        m_deviceType = "OSX";
 #elif UNITY_STANDALONE
-        string deviceType = "Windows";
+        m_deviceType = "Windows";
 #else
-        string deviceType = "iOS";
+        m_deviceType = "iOS";
 #endif
 
-        deviceType += SystemInfo.deviceModel;
+        m_deviceType += SystemInfo.deviceModel;
 
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Launched")
-                             .SetEventAction(deviceType)
+                             .SetEventAction(m_deviceType)
                              .SetEventLabel(IPChecker.Instance.ipAddress));
     }
 
@@ -58,14 +77,29 @@ public class PipAnalytics : Singleton<PipAnalytics>
         Exiting();
     }
 
+#if UNITY_IPHONE
     void OnApplicationPause()
     {
         Exiting();
     }
+#endif
 
-    // TODO
     void Exiting()
     {
-        float m_time = Time.time - m_startTime;
+        float fTime = Time.time - m_startTime;
+        long lTime;
+        try
+        {
+            lTime = System.Convert.ToInt64(fTime);
+        }
+        catch
+        {
+            lTime = -1;
+        }
+
+        m_analytics.LogEvent(new EventHitBuilder()
+                             .SetEventCategory("Exited")
+                             .SetEventAction(m_deviceType)
+                             .SetEventValue(lTime));
     }
 }

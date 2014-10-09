@@ -27,7 +27,15 @@ public class IPChecker : Singleton<IPChecker>
 
     void Start()
     {
-        StartCoroutine(FindIpAddress());
+        AppPauseChecker.Instance.LaunchedAfterAppPause += OnLaunchAfterAppPause;
+        StartCoroutine("FindIpAddress");
+    }
+
+    void OnLaunchAfterAppPause()
+    {
+        StopCoroutine("FindIpAddress");
+        m_ipAddress = "";
+        StartCoroutine("FindIpAddress");
     }
 
     IEnumerator FindIpAddress()
