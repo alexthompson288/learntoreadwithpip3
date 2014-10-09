@@ -73,6 +73,22 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
                              .SetEventLabel(string.Format("{0}__{1}", GameManager.Instance.pipColor.ToString(), GameManager.Instance.gameName)));
     }
 
+    public void Purchased(string productId)
+    {
+        m_analytics.LogEvent(new EventHitBuilder()
+                             .SetEventCategory("Purchased")
+                             .SetEventAction(productId)
+                             .SetEventLabel(productId));
+    }
+
+    public void PurchaseCancelled(string productId)
+    {
+        m_analytics.LogEvent(new EventHitBuilder()
+                             .SetEventCategory("PurchaseCancelled")
+                             .SetEventAction(productId)
+                             .SetEventLabel(productId));
+    }
+
     void OnApplicationQuit()
     {
         Exiting();

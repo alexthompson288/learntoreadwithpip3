@@ -39,7 +39,7 @@ public class BuyManager : Singleton<BuyManager>
         return pipColors;
     }
 
-    #if UNITY_IPHONE
+#if UNITY_IPHONE
     string BuildColorProductId(ColorInfo.PipColor pipColor)
     {
         return m_colorPrefix + pipColor.ToString();
@@ -220,7 +220,7 @@ public class BuyManager : Singleton<BuyManager>
 		float pcTimeOut = 0;
 		while (!m_purchaseIsResolved)
 		{
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
 			pcTimeOut += Time.deltaTime;
 			
 			if (pcTimeOut > 3.0f)
@@ -229,7 +229,7 @@ public class BuyManager : Singleton<BuyManager>
 				UnlockOnTimeOut();
 				m_purchaseIsResolved = true;
 			}
-			#endif
+#endif
 			yield return null;
 		}
 		
@@ -243,6 +243,7 @@ public class BuyManager : Singleton<BuyManager>
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
         D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
+        PipGoogleAnalytics.Purchased(obj.productIdentifier);
         UnlockProduct(obj.productIdentifier);
         m_purchaseIsResolved = true;
 
@@ -256,6 +257,7 @@ public class BuyManager : Singleton<BuyManager>
 	{
 		D.Log("PURCHASE CANCELLED - " + m_currentProductId);
 		D.Log("Cancelled Message: " + obj);
+        PipGoogleAnalytics.PurchaseCancelled(m_currentProductId);
 		m_purchaseIsResolved = true;
 
         if (Resolved != null)
