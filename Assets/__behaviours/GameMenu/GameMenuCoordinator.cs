@@ -71,7 +71,7 @@ public class GameMenuCoordinator : MonoBehaviour
             }
         }
         
-        ScoreInfo.Instance.DestroyNewHighScore();
+        ScoreInfo.Instance.SetNewHighScoreNull();
         GameMenuInfo.Instance.DestroyBookmark();
         
         #if UNITY_EDITOR

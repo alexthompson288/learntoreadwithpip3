@@ -82,7 +82,7 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
 
             OnClickStory(startingStory.GetComponent<EventRelay>() as EventRelay);
 
-            if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_quizGameName)
+            if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_quizGameName && ScoreInfo.Instance.GetNewHighScoreType() == CreateScoreType())
             {
                 StartCoroutine(TweenNewStars());
             }
@@ -95,7 +95,7 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
         int newStars = totalStars - ScoreInfo.Instance.GetPreviousHighScoreStars();
         int newStarIndex = totalStars - newStars;
 
-        ScoreInfo.Instance.DestroyNewHighScore();
+        ScoreInfo.Instance.SetNewHighScoreNull();
         
         // Set the color of the newly unlocked stars back to white beforehand, so we can set their color to gold during the tween
         for (int i = newStarIndex; i < totalStars; ++i)

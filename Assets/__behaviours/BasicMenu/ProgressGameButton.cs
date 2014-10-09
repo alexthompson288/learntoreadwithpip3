@@ -32,7 +32,7 @@ public class ProgressGameButton : MonoBehaviour
         // Stars
         ScoreInfo.RefreshStars(m_stars, m_gameName, pipColor.ToString());
 
-        if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_gameName)
+        if (ScoreInfo.Instance.HasNewHighScore() && ScoreInfo.Instance.GetNewHighScoreGame() == m_gameName && ScoreInfo.Instance.GetNewHighScoreType() == pipColor.ToString())
         {
             StartCoroutine(TweenNewStars());
         }
@@ -44,7 +44,7 @@ public class ProgressGameButton : MonoBehaviour
         int newStars = totalStars - ScoreInfo.Instance.GetPreviousHighScoreStars();
         int newStarIndex = totalStars - newStars;
 
-        ScoreInfo.Instance.DestroyNewHighScore();
+        ScoreInfo.Instance.SetNewHighScoreNull();
 
         // Set the color of the newly unlocked stars back to white beforehand, so we can set their color to gold during the tween
         for (int i = newStarIndex; i < totalStars; ++i)

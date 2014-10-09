@@ -121,6 +121,11 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return m_newHighScore != null;
     }
 
+    public string GetNewHighScoreType()
+    {
+        return m_newHighScore.GetType();
+    }
+
     public string GetNewHighScoreGame()
     {
         return m_newHighScore.GetGame();
@@ -131,7 +136,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
         return m_newHighScore.GetStars();
     }
 
-    public void DestroyNewHighScore()
+    public void SetNewHighScoreNull()
     {
         m_newHighScore = null;
     }
