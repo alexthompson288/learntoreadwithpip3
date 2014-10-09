@@ -191,9 +191,7 @@ public class ScoreInfo : Singleton<ScoreInfo>
             }
 
             ScoreTracker newTracker = new ScoreTracker(game, type, myTime, myScore, myTargetScore, myStars);
-
             ScoreTracker oldTracker = m_scoreTrackers.Find(x => x.GetGame() == game && x.GetType() == type);
-
 
             if (oldTracker == null)
             {

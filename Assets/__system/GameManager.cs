@@ -50,6 +50,8 @@ public class GameManager : Singleton<GameManager>
 
     ColorInfo.PipColor m_maxColor = ColorInfo.PipColor.White;
 
+    // Track startPipColor because the pipColor can change during the game, but we still need to know the original pipColor for GoogleAnalytics and subsequent activities
+    ColorInfo.PipColor m_startPipColor; 
     ColorInfo.PipColor m_pipColor;
     public ColorInfo.PipColor pipColor
     {
@@ -62,6 +64,7 @@ public class GameManager : Singleton<GameManager>
     public void SetPipColor(ColorInfo.PipColor myPipColor)
     {
         m_pipColor = myPipColor;
+        m_startPipColor = m_pipColor;
     }
 
     public bool IncrementPipColor()
@@ -119,6 +122,7 @@ public class GameManager : Singleton<GameManager>
         m_gameNames.Clear();
 
         m_pipColor = ColorInfo.PipColor.Pink;
+        m_startPipColor = m_pipColor;
 
         m_gameName = "";
         m_returnScene = "";
@@ -128,6 +132,8 @@ public class GameManager : Singleton<GameManager>
 
     public void CompleteGame()
     {
+        m_pipColor = m_startPipColor;
+
         if (m_gameNames.Count == 0)
         {
             PipGoogleAnalytics.Instance.ActivitiesCompleted();

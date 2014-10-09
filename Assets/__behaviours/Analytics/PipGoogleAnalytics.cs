@@ -59,10 +59,12 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
 
     public void ActivitiesCompleted()
     {
+        string activityName = GameManager.Instance.activity == ProgrammeInfo.voyage ? VoyageInfo.Instance.currentSessionId.ToString() : GameManager.Instance.gameName;
+
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("ActivitiesCompleted")
                              .SetEventAction(GameManager.Instance.activity)
-                             .SetEventLabel(string.Format("{0}__{1}__{2}", GameManager.Instance.pipColor.ToString(), GameManager.Instance.gameName, SessionInformation.Instance.GetNumPlayers())));
+                             .SetEventLabel(string.Format("{0}__{1}__{2}", GameManager.Instance.pipColor.ToString(), activityName, SessionInformation.Instance.GetNumPlayers())));
     }
 
     public void ActivitiesCancelled()
