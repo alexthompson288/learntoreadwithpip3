@@ -50,9 +50,6 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         m_startTime = Time.time;
 
         string deviceType = GetDeviceType();
-        D.Log("deviceType: " + deviceType);
-
-        D.Log("ipAddress: " + IPChecker.Instance.ipAddress);
 
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Launched")
@@ -102,7 +99,6 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
         }
 
         string deviceType = GetDeviceType();
-        D.Log("deviceType: " + deviceType);
 
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Exited")
@@ -114,15 +110,13 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
     string GetDeviceType()
     {
 #if UNITY_STANDALONE_OSX
-        string deviceType = "OSX";
+        string platform = "OSX";
 #elif UNITY_STANDALONE
-        string deviceType = "Windows";
+        string platform = "Windows";
 #else
-        string deviceType = "iOS";
+        string platform = "iOS";
 #endif
-        
-        deviceType += SystemInfo.deviceModel;
 
-        return deviceType;
+        return string.Format("{0}__{1}", platform, SystemInfo.deviceModel);
     }
 }

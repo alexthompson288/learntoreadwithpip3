@@ -69,9 +69,11 @@ public class IPChecker : Singleton<IPChecker>
                 m_ipAddress = myExtIPWWW.data;
                 m_ipAddress = m_ipAddress.Substring(m_ipAddress.IndexOf(":") + 1);
                 m_ipAddress = m_ipAddress.Substring(0, m_ipAddress.IndexOf("<"));
+                D.Log("Found IP: " + m_ipAddress);
             }
             catch
             {
+                D.Log("Could not find IP");
                 m_ipAddress = "No_IP_Found";
             }
         }         
