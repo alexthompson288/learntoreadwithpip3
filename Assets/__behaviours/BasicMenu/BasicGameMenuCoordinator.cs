@@ -81,7 +81,6 @@ public class BasicGameMenuCoordinator : Singleton<BasicGameMenuCoordinator>
         m_colorBehaviour.SetPipColor(m_pipColor);
 
         string programmeName = isMaths ? ProgrammeInfo.basicMaths : ProgrammeInfo.basicReading;
-
         GameManager.Instance.SetProgramme(programmeName);
 
         if (m_titleLabel != null)

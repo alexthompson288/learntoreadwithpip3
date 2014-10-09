@@ -18,7 +18,7 @@ public class BuyBasicColors : Singleton<BuyBasicColors>
     [SerializeField]
     private UILabel m_countdownLabel;
     
-    string m_buyColorLabelText = "Buy {0}\n£1.49";
+    string m_buyColorLabelText = "Buy {0}\n£1.99";
     
     ColorInfo.PipColor m_pipColor;
     
@@ -88,7 +88,7 @@ public class BuyBasicColors : Singleton<BuyBasicColors>
     {
         BuyManager.Instance.Resolved -= OnBuyResolve;
         m_tweenBehaviour.Off();
-        
-        //PlusGameMenuCoordinator.Instance.RefreshBuys();
+
+        (BasicMenuNavigation.Instance as BasicMenuNavigation).RefreshLocks();
     }
 }

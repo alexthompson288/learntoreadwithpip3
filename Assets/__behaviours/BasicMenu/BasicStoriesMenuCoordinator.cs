@@ -40,6 +40,8 @@ public class BasicStoriesMenuCoordinator : Singleton<BasicStoriesMenuCoordinator
 
     public void On(ColorInfo.PipColor myPipColor, int storyId = 0)
     {
+        GameManager.Instance.SetProgramme(ProgrammeInfo.basicReading);
+
         m_pipColor = myPipColor;
 
         StartCoroutine(OnCo(storyId));

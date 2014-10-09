@@ -5,10 +5,11 @@ public static class D
 {
     public static void Log (object message)
     {
-        if (Debug.isDebugBuild)
-        {
-            Debug.Log(message);
-        }
+        Debug.Log(message);
+//        if (Debug.isDebugBuild)
+//        {
+//            Debug.Log(message);
+//        }
     }
 
     public static void LogError(object message)

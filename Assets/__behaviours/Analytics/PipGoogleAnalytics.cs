@@ -97,12 +97,15 @@ public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics>
 
     void OnApplicationQuit()
     {
+        D.Log("PipGoogleAnalytics.OnApplicationQuit()");
         Exiting();
     }
 
-#if UNITY_IPHONE
+    // Editor calls OnApplicationPause at launch
+#if UNITY_IPHONE && !UNITY_EDITOR 
     void OnApplicationPause()
     {
+        D.Log("PipGoogleAnalytics.OnApplicationPause()");
         Exiting();
     }
 #endif

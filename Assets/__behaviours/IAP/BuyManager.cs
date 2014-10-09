@@ -47,6 +47,7 @@ public class BuyManager : Singleton<BuyManager>
 
     public void BuyColor(ColorInfo.PipColor pipColor)
     {
+        D.Log(string.Format("BuyManager.BuyColor({0})", pipColor));
         m_currentProductId = BuildColorProductId(pipColor);
 
         ParentGate.Instance.Answered += OnParentGateAnswer;

@@ -72,8 +72,18 @@ public class BasicMenuNavigation : Menu
         TweenAlpha.Begin(m_panel.gameObject, 0.25f, 0);
     }
 
+    public void RefreshLocks()
+    {
+        for(int i = 0; i < m_lockSprites.Length; ++i)
+        {
+            m_lockSprites[i].enabled = !BuyInfo.Instance.IsColorPurchased((ColorInfo.PipColor)i + 1);
+        }
+    }
+
     void Start()
     {
+        GameManager.Instance.SetProgramme(ProgrammeInfo.basicReading);
+
         m_games.position = m_subMenuOffLocation.position;
         m_stories.position = m_subMenuOffLocation.position;
 
@@ -87,10 +97,7 @@ public class BasicMenuNavigation : Menu
 
         System.Array.Sort(m_lockSprites, CollectionHelpers.LocalLeftToRight);
 
-        for(int i = 0; i < m_lockSprites.Length; ++i)
-        {
-            m_lockSprites[i].enabled = !BuyInfo.Instance.IsColorPurchased((ColorInfo.PipColor)i + 1);
-        }
+        RefreshLocks();
 
         SetUpButtons(m_mathsButtonParent, OnClickMaths);
         SetUpButtons(m_readingButtonParent, OnClickReading);
@@ -253,6 +260,7 @@ public class BasicMenuNavigation : Menu
     void OnClickFlashcards(EventRelay relay)
     {
         m_bookmark = new Bookmark("Flashcards", ColorInfo.PipColor.Pink);
+        GameManager.Instance.SetProgramme(ProgrammeInfo.basicReading);
         MoveToSubMenu(m_flashcards);
     }
 
