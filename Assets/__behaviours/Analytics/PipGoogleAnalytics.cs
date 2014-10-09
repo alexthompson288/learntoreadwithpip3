@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PipAnalytics : Singleton<PipAnalytics> 
+public class PipGoogleAnalytics : Singleton<PipGoogleAnalytics> 
 {
     [SerializeField]
-    private GoogleAnalyticsV3 m_analytics;
+    private GoogleAnalyticsV3 m_devAnalytics;
+    [SerializeField]
+    private GoogleAnalyticsV3 m_productionAnalytics;
+
+    GoogleAnalyticsV3 m_analytics;
 
     float m_startTime;
 
-    string m_deviceType;
-
     void Start()
     {
+        m_analytics = Debug.isDebugBuild ? m_devAnalytics : m_productionAnalytics;
+
 #if UNITY_IPHONE
         AppPauseChecker.Instance.LaunchedAfterAppPause += OnLaunchAfterAppPause;
 #endif
@@ -21,12 +25,16 @@ public class PipAnalytics : Singleton<PipAnalytics>
     // TODO: Call Launched after the app is started after Pausing
     void OnLaunchAfterAppPause()
     {
+        D.Log("PipGoogleAnalytics.OnLaunchAfterAppPause()");
+
         StopCoroutine("OnLaunch");
         StartCoroutine("OnLaunch");
     }
 
     IEnumerator OnLaunch()
     {
+        D.Log("PipGoogleAnalytics.OnLaunch()");
+
         m_startTime = Time.time;
 
         // Give IPChecker time to reset and then resolve
@@ -38,21 +46,17 @@ public class PipAnalytics : Singleton<PipAnalytics>
 
     public void Launched()
     {
+        D.Log("PipGoogleAnalytics.Launched()");
         m_startTime = Time.time;
 
-#if UNITY_STANDALONE_OSX
-        m_deviceType = "OSX";
-#elif UNITY_STANDALONE
-        m_deviceType = "Windows";
-#else
-        m_deviceType = "iOS";
-#endif
+        string deviceType = GetDeviceType();
+        D.Log("deviceType: " + deviceType);
 
-        m_deviceType += SystemInfo.deviceModel;
+        D.Log("ipAddress: " + IPChecker.Instance.ipAddress);
 
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Launched")
-                             .SetEventAction(m_deviceType)
+                             .SetEventAction(deviceType)
                              .SetEventLabel(IPChecker.Instance.ipAddress));
     }
 
@@ -97,9 +101,28 @@ public class PipAnalytics : Singleton<PipAnalytics>
             lTime = -1;
         }
 
+        string deviceType = GetDeviceType();
+        D.Log("deviceType: " + deviceType);
+
         m_analytics.LogEvent(new EventHitBuilder()
                              .SetEventCategory("Exited")
-                             .SetEventAction(m_deviceType)
+                             .SetEventAction(deviceType)
+                             .SetEventLabel(fTime.ToString())
                              .SetEventValue(lTime));
+    }
+
+    string GetDeviceType()
+    {
+#if UNITY_STANDALONE_OSX
+        string deviceType = "OSX";
+#elif UNITY_STANDALONE
+        string deviceType = "Windows";
+#else
+        string deviceType = "iOS";
+#endif
+        
+        deviceType += SystemInfo.deviceModel;
+
+        return deviceType;
     }
 }

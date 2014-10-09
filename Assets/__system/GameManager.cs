@@ -130,7 +130,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (m_gameNames.Count == 0)
         {
-            PipAnalytics.Instance.ActivitiesCompleted();
+            PipGoogleAnalytics.Instance.ActivitiesCompleted();
 
             Reset();
 
@@ -168,7 +168,7 @@ public class GameManager : Singleton<GameManager>
                 m_state = State.Cancelling;
                 break;
             case State.Cancelling: // The purpose of State.Cancelling is so that PrivateCancelling is only called in the scene after DeliberatelyEmptyScene, therefore, we know what scene we cancelled into
-                PipAnalytics.Instance.ActivitiesCancelled();
+                PipGoogleAnalytics.Instance.ActivitiesCancelled();
                 if(PrivateCancelling != null)
                 {
                     PrivateCancelling();

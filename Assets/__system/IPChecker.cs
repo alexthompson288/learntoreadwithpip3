@@ -27,19 +27,25 @@ public class IPChecker : Singleton<IPChecker>
 
     void Start()
     {
+#if UNITY_IPHONE
         AppPauseChecker.Instance.LaunchedAfterAppPause += OnLaunchAfterAppPause;
+#endif
+
         StartCoroutine("FindIpAddress");
     }
 
+#if UNITY_IPHONE
     void OnLaunchAfterAppPause()
     {
         StopCoroutine("FindIpAddress");
         m_ipAddress = "";
         StartCoroutine("FindIpAddress");
     }
+#endif
 
     IEnumerator FindIpAddress()
     {   
+        D.Log("IPChecker.FindIPAddress()");
         WWW myExtIPWWW = null;
         
         try
