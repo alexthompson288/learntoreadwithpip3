@@ -23,7 +23,9 @@ public class VoyageButton : MonoBehaviour
 
         if (m_session != null)
         {
-            m_label.text = m_session ["labeltext"] != null ? m_session ["labeltext"].ToString() : "?";
+            m_label.text = m_session ["labeltext"] != null && !string.IsNullOrEmpty(m_session["labeltext"].ToString()) ? 
+                m_session ["labeltext"].ToString() 
+                    : "?";
 
             string unlockedSpriteName = VoyageInfo.Instance.GetSessionBackground(m_session.GetId());
             bool hasUnlocked = !string.IsNullOrEmpty(unlockedSpriteName);
