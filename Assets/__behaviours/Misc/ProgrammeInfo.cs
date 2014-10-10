@@ -95,4 +95,36 @@ public static class ProgrammeInfo
             return GameManager.Instance.programme == m_basicMaths || GameManager.Instance.programme == m_basicReading;
         }
     }
+
+    private static ColorInfo.PipColor[] m_basicColors = new ColorInfo.PipColor[] 
+    {
+        ColorInfo.PipColor.Pink,
+        ColorInfo.PipColor.Red,
+        ColorInfo.PipColor.Yellow,
+        ColorInfo.PipColor.Blue,
+        ColorInfo.PipColor.Green,
+        ColorInfo.PipColor.Orange
+    };
+    public static ColorInfo.PipColor[] basicColors
+    {
+        get
+        {
+            return m_basicColors;
+        }
+    }
+
+    private static ColorInfo.PipColor[] m_plusColors = new ColorInfo.PipColor[] 
+    {
+        ColorInfo.PipColor.Turquoise,
+        ColorInfo.PipColor.Purple,
+        ColorInfo.PipColor.Gold,
+        ColorInfo.PipColor.White
+    };
+    public static ColorInfo.PipColor[] plusColors
+    {
+        get
+        {
+            return m_basicColors;
+        }
+    }
 }

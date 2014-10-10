@@ -38,13 +38,19 @@ public class BuyInfo : Singleton<BuyInfo>
         Save();
     }
 
-    public void SetColorsPurchased(List<string> colorNames)
+    public void SetColorsPurchased(string[] colorNames)
     {
         foreach (string colorName in colorNames)
         {
             m_purchasedColors.Add(colorName);
         }
         Save();
+
+        D.Log("LOG ALL PURCHASED COLORS");
+        foreach (string color in m_purchasedColors)
+        {
+            D.Log(color);
+        }
     }
 
     ////////////////////////////////////////////////////////////////

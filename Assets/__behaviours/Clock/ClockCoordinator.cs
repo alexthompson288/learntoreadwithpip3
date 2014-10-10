@@ -103,13 +103,13 @@ public class ClockCoordinator : Singleton<ClockCoordinator>
             for(int i = 0; i < GetNumPlayers(); ++i)
             {
                 m_gamePlayers[i].SetCurrentData(currentData);
-                StartCoroutine(m_gamePlayers[i].ClearQuestion());
+                m_gamePlayers[i].ClearQuestion();
             }
         }
         else
         {
             correctPlayer.SetCurrentData(currentData);
-            StartCoroutine(correctPlayer.ClearQuestion());
+            correctPlayer.ClearQuestion();
         }
     }
 

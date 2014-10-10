@@ -92,25 +92,29 @@ public class ClockPlayer : GamePlayer
 
         if(DateTime.Compare(clockTime.AddMinutes(cushion), currentTime) >= 0 && DateTime.Compare(clockTime.AddMinutes(-cushion), currentTime) <= 0)
         {
-            ////D.Log("CORRECT");
-            ////D.Log("Clock: " + clockTime);
-            ////D.Log("Current: " + currentTime);
             ChangeQuestionBgColor(ColorInfo.PipColor.LightGreen);
             m_scoreKeeper.UpdateScore(1);
             ClockCoordinator.Instance.OnCorrectAnswer(this);
         }
         else
         {
-            ////D.Log("INCORRECT");
-            ////D.Log("Clock: " + clockTime);
-            ////D.Log("Current: " + currentTime);
             ChangeQuestionBgColor(ColorInfo.PipColor.LightRed);
             WingroveAudio.WingroveRoot.Instance.PostEvent("VOCAL_INCORRECT");
             m_scoreKeeper.UpdateScore(-1);
         }
     }
 
-    public IEnumerator ClearQuestion()
+    bool m_isClearingQuestion = false;
+    public void ClearQuestion()
+    {
+        if (!m_isClearingQuestion)
+        {
+            m_isClearingQuestion = true;
+            StartCoroutine("ClearQuestionCo");
+        }
+    }
+
+    IEnumerator ClearQuestionCo()
     {
         m_cuckoo.On();
 
@@ -123,6 +127,7 @@ public class ClockPlayer : GamePlayer
         yield return new WaitForSeconds(m_cuckoo.GetTotalDurationOff() + 0.25f);
 
         AskQuestion();
+        m_isClearingQuestion = false;
     }
 
     void OnScoreKeeperComplete(ScoreKeeper scoreKeeper)

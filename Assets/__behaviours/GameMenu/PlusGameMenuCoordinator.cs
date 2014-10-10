@@ -38,8 +38,6 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
     [SerializeField]
     private GameObject[] m_titleLabels;
 
-    ColorInfo.PipColor[] m_colorBands = new ColorInfo.PipColor[] { ColorInfo.PipColor.Turquoise, ColorInfo.PipColor.Purple, ColorInfo.PipColor.Gold, ColorInfo.PipColor.White};
-
     string m_gameName;
     ColorInfo.PipColor m_pipColor;
     int m_numPlayers;
@@ -206,12 +204,13 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
 
             if (canAccess)
             {
+                ColorInfo.PipColor[] colorBands = ProgrammeInfo.plusColors;
                 ColorInfo.PipColor maxColor = plusGame.GetMaxColor();
-                for (int i = 0; i < m_chooseColorButtons.Length && i < m_colorBands.Length; ++i)
+                for (int i = 0; i < m_chooseColorButtons.Length && i < colorBands.Length; ++i)
                 {
-                    bool isUnlocked = i == 0 || (int)m_colorBands [i] <= (int)maxColor + 1;
+                    bool isUnlocked = i == 0 || (int)colorBands [i] <= (int)maxColor + 1;
                     
-                    m_chooseColorButtons [i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(m_colorBands [i]) : Color.grey;
+                    m_chooseColorButtons [i].GetComponentInChildren<UISprite>().color = isUnlocked ? ColorInfo.GetColor(colorBands [i]) : Color.grey;
 
 #if UNITY_EDITOR
                     m_chooseColorButtons [i].SingleClicked += OnChooseColor;
@@ -247,7 +246,7 @@ public class PlusGameMenuCoordinator : Singleton<PlusGameMenuCoordinator>
             relay.SingleClicked -= OnChooseColor;
         }
 
-        m_pipColor = m_colorBands [System.Array.IndexOf(m_chooseColorButtons, relay)];
+        m_pipColor = ProgrammeInfo.plusColors [System.Array.IndexOf(m_chooseColorButtons, relay)];
 
         WingroveAudio.WingroveRoot.Instance.PostEvent(string.Format("COLOR_{0}", m_pipColor.ToString().ToUpper()));
 

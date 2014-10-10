@@ -26,19 +26,6 @@ public class BuyManager : Singleton<BuyManager>
     string m_gamePrefix = "plusgame_";
     string m_colorPrefix = "color_";
 
-    List<ColorInfo.PipColor> GetAllColors()
-    {
-        List<ColorInfo.PipColor> pipColors = new List<ColorInfo.PipColor>();
-        pipColors.Add(ColorInfo.PipColor.Pink);
-        pipColors.Add(ColorInfo.PipColor.Red);
-        pipColors.Add(ColorInfo.PipColor.Yellow);
-        pipColors.Add(ColorInfo.PipColor.Blue);
-        pipColors.Add(ColorInfo.PipColor.Green);
-        pipColors.Add(ColorInfo.PipColor.Orange);
-
-        return pipColors;
-    }
-
 #if UNITY_IPHONE
     string BuildColorProductId(ColorInfo.PipColor pipColor)
     {
@@ -174,7 +161,7 @@ public class BuyManager : Singleton<BuyManager>
         {
             productIds.Add(m_allColorsProductId);
 
-            List<ColorInfo.PipColor> pipColors = GetAllColors();
+            ColorInfo.PipColor[] pipColors = ProgrammeInfo.basicColors;
             foreach(ColorInfo.PipColor pipColor in pipColors)
             {
                 productIds.Add(BuildColorProductId(pipColor));
@@ -241,7 +228,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void StoreKitManager_purchaseSuccessfulEvent(StoreKitTransaction obj)
     {
-        D.Log("purchaseSuccessfulEvent: " + obj.productIdentifier);
+        D.Log("PURCHASE SUCCESSFUL - " + obj.productIdentifier);
         PipGoogleAnalytics.Instance.Purchased(obj.productIdentifier);
         UnlockProduct(obj.productIdentifier);
         m_purchaseIsResolved = true;
@@ -370,12 +357,12 @@ public class BuyManager : Singleton<BuyManager>
 
     void UnlockAllColors()
     {
-        List<ColorInfo.PipColor> pipColors = GetAllColors();
+        ColorInfo.PipColor[] pipColors = ProgrammeInfo.basicColors;
 
-        List<string> colors = new List<string>();
-        foreach (ColorInfo.PipColor pipColor in pipColors)
+        string[] colors = new string[pipColors.Length];
+        for (int i = 0; i < colors.Length; ++i)
         {
-            colors.Add(pipColor.ToString());
+            colors[i] = pipColors[i].ToString();
         }
 
         BuyInfo.Instance.SetColorsPurchased(colors);
@@ -383,7 +370,7 @@ public class BuyManager : Singleton<BuyManager>
 
     void UnlockProduct(string productId)
     {
-        if (productId == m_allGamesProductId)
+        if (productId == m_allColorsProductId)
         {
             UnlockAllColors();
         } 
