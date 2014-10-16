@@ -37,7 +37,8 @@ public class TransitionScreen : Singleton<TransitionScreen>
     
     // Use this for initialization
     IEnumerator Start () 
-    {   
+    {  
+		Debug.Log ("LEVEL " + Application.loadedLevelName);
         if (m_isEmptyScene)
         {
             yield return new WaitForSeconds(0.05f);
